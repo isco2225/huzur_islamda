@@ -1,17 +1,13 @@
-/// Application string constants.
-///
-/// Contains all hardcoded strings used in the application.
-/// Complexity: O(1) for all operations.
 class AppStrings {
   AppStrings._();
 
-  // Common
   static const String appName = 'Huzur İslamda';
   static const String ok = 'Tamam';
   static const String cancel = 'İptal';
   static const String confirm = 'Onayla';
   static const String retry = 'Tekrar Dene';
   static const String loading = 'Yükleniyor...';
+  static const String start = 'Başla';
 
   // Errors
   static const String errorGeneric = 'Bir hata oluştu';
@@ -20,5 +16,11 @@ class AppStrings {
 
   // Onboarding
   static const String onboardingNext = 'ileri';
-  static const String onboardingSignUp = 'kayıt Ol';
+  static const String signUp = 'kayıt Ol';
+  static const String onboardingTitle1 = 'Hoş Geldiniz';
+  static const String onboardingText1 =
+      'Bu yolculuğunuzda size eşlik edecek manevi rehberiniz';
+  static const String onboardingTitle2 = 'Sizi Anlayan Bir Deneyim';
+  static const String onboardingText2 =
+      'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.';
 }

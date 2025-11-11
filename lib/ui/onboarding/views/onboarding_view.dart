@@ -62,7 +62,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                     onPressed: _handleButtonPress,
                     text: _currentPage == 0
                         ? AppStrings.onboardingNext
-                        : AppStrings.onboardingSignUp,
+                        : AppStrings.start,
                   ),
                 ),
                 Padding(

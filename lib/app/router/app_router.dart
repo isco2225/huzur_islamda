@@ -25,6 +25,15 @@ class SignInRoute extends GoRouteData {
       const SignInScreen();
 }
 
+@TypedGoRoute<SignUpRoute>(path: '/sign_up')
+class SignUpRoute extends GoRouteData {
+  const SignUpRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SignUpScreen();
+}
+
 final GoRouter appRouter = GoRouter(
   routes: $appRoutes,
   initialLocation: '/',

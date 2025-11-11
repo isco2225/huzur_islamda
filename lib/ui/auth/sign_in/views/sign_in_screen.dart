@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huzur_islamda/ui/sign_in/views/sign_in_view.dart';
+import 'package:huzur_islamda/ui/auth/sign_in/views/sign_in_view.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

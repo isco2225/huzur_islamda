@@ -21,6 +21,9 @@ dependencies:
   #indicator
   smooth_page_indicator: ^1.2.1
 
+  #Lottie animations
+  lottie: ^3.3.2
+
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +40,6 @@ flutter:
 
   uses-material-design: true
 
+  assets:
+    - assets/animations/
+    - assets/icons/

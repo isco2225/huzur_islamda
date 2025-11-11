@@ -6,7 +6,11 @@ part of 'app_router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$onboardingRoute, $signInRoute];
+List<RouteBase> get $appRoutes => [
+  $onboardingRoute,
+  $signInRoute,
+  $signUpRoute,
+];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
   path: '/',
@@ -40,6 +44,27 @@ extension $SignInRouteExtension on SignInRoute {
   static SignInRoute _fromState(GoRouterState state) => const SignInRoute();
 
   String get location => GoRouteData.$location('/sign_in');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $signUpRoute => GoRouteData.$route(
+  path: '/sign_up',
+
+  factory: $SignUpRouteExtension._fromState,
+);
+
+extension $SignUpRouteExtension on SignUpRoute {
+  static SignUpRoute _fromState(GoRouterState state) => const SignUpRoute();
+
+  String get location => GoRouteData.$location('/sign_up');
 
   void go(BuildContext context) => context.go(location);
 

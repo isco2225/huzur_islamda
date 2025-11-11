@@ -59,9 +59,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     obscureText = !obscureText;
                     setState(() {});
                   },
-                  child: Text(
-                    obscureText ? widget.showText : widget.hideText,
-                  ),
+                  child: Text(obscureText ? widget.showText : widget.hideText),
                 )
               : null,
           errorText: widget.errorText,
