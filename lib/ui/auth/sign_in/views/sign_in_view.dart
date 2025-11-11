@@ -10,18 +10,22 @@ class SignInView extends StatelessWidget {
   Widget build(BuildContext context) {
     final ValueNotifier<bool> loading = ValueNotifier<bool>(false);
     return BaseScaffold(
+      safeArea: true,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TitleText(title: 'Hemen Giriş Yap'),
-            SubtitleText(text: 'Bu eşsiz deneyim için heasp bilgilerini gir'),
-            EmailTextField(),
+            SubtitleText(text: 'Bu eşsiz deneyim için heasp bilgilerini gir.'),
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: EmailTextField(),
+            ),
             PasswordTextField(),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.only(top: 20),
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -32,22 +36,50 @@ class SignInView extends StatelessWidget {
                 ),
               ),
             ),
-            OrDivider(),
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: Text('Google ile giriş yap'),
-              ),
+            Padding(padding: const EdgeInsets.all(20.0), child: OrDivider()),
+            SocialLoginButton(
+              text: 'Google ile Giriş Yap',
+              // TODO: Add Google icon.
+              icon: Icon(Icons.abc),
+              onPressed: () {},
             ),
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: Text('GApple ile giriş yap'),
-              ),
+            const SizedBox(height: 12),
+            SocialLoginButton(
+              text: 'Apple ile Giriş Yap',
+              icon: Icon(Icons.apple),
+              onPressed: () {},
             ),
+            // you dont have an account?
+            const DontHaveAnAccount(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class DontHaveAnAccount extends StatelessWidget {
+  const DontHaveAnAccount({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('Hesabın yok mu?', style: TextStyle(color: Colors.grey.shade800)),
+        SizedBox(width: 4),
+        GestureDetector(
+          onTap: () {
+            const SignUpRoute().go(context);
+          },
+          child: Text(
+            'Kayıt ol',
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
