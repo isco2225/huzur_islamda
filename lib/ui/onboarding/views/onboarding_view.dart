@@ -36,26 +36,26 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
+    return BaseScaffold(
+      body: Column(
         children: [
-          PageView(
-            controller: _controller,
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
-            },
-            children: [OnboardingViewFirst(), OnboardingViewSecound()],
+          Expanded(
+            child: PageView(
+              controller: _controller,
+              onPageChanged: (int page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              children: [OnboardingViewFirst(), OnboardingViewSecound()],
+            ),
           ),
-          Positioned(
-            bottom: 90,
-            right: 0,
-            left: 0,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: Column(
               children: [
                 SizedBox(
-                  width: 330,
+                  width: double.infinity,
                   height: 50,
                   child: AppButton(
                     running: _isLoading,
@@ -65,10 +65,8 @@ class _OnboardingViewState extends State<OnboardingView> {
                         : AppStrings.start,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PageIndicator(controller: _controller),
-                ),
+                const SizedBox(height: 8),
+                PageIndicator(controller: _controller),
               ],
             ),
           ),
