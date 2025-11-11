@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
 
-class OnboardingTitle extends StatelessWidget {
-  const OnboardingTitle({super.key, required this.title});
+class TitleText extends StatelessWidget {
+  const TitleText({super.key, required this.title});
   final String title;
 
   @override
@@ -11,7 +11,7 @@ class OnboardingTitle extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
         color: AppColors.secondary,
       ),
     );

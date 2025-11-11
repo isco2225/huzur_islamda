@@ -33,4 +33,8 @@ class AppColors {
 
   // Border color.
   static const Color border = Color(0x00000019);
+
+  // Text color.
+  static const Color titleColor = Color(0x00000019);
+  static const Color subtitleColor = Colors.black87;
 }

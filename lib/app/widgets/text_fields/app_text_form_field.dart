@@ -51,8 +51,10 @@ class _AppTextFieldState extends State<AppTextField> {
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.grey.shade300,
           labelText: widget.hintText,
-          border: const OutlineInputBorder(),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
           suffix: widget.isPassword
               ? GestureDetector(
                   onTap: () {

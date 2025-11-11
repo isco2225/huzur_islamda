@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
-import '../../ui.dart';
 
 class OnboardingViewFirst extends StatefulWidget {
   const OnboardingViewFirst({super.key});
@@ -20,10 +19,10 @@ class _OnboardingViewFirstState extends State<OnboardingViewFirst> {
           padding: const EdgeInsets.all(10.0),
           child: CustomLottieAnimation(assetPath: AppAnimations.handDrawnSalam),
         ),
-        OnboardingTitle(title: AppStrings.onboardingTitle1),
+        TitleText(title: AppStrings.onboardingTitle1),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: OnboardingText(text: AppStrings.onboardingText1),
+          child: SubtitleText(text: AppStrings.onboardingText1),
         ),
       ],
     );

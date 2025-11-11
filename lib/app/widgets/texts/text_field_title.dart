@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/app.dart';
-
-class OnboardingText extends StatelessWidget {
-  const OnboardingText({super.key, required this.text});
+class TextFieldTitle extends StatelessWidget {
+  const TextFieldTitle({super.key, required this.text});
   final String text;
-
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-        color: AppColors.secondary,
+      style: TextStyle(
         fontWeight: FontWeight.w500,
+        color: Colors.grey.shade700,
       ),
     );
   }

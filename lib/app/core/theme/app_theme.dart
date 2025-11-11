@@ -8,6 +8,18 @@ class AppTheme {
   /// Light theme configuration.
   static ThemeData get lightTheme {
     return ThemeData(
+      dividerColor: Colors.grey.shade400,
+      inputDecorationTheme: InputDecorationTheme(
+        labelStyle: TextStyle(color: Colors.grey),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+      ),
       useMaterial3: true,
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,

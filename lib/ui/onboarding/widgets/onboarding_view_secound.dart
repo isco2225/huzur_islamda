@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
-import '../../ui.dart';
 
 class OnboardingViewSecound extends StatelessWidget {
   const OnboardingViewSecound({super.key});
@@ -12,10 +11,10 @@ class OnboardingViewSecound extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomLottieAnimation(assetPath: AppAnimations.fatherAndSon),
-        OnboardingTitle(title: 'Sizi Anlayan Bir Deneyim'),
+        TitleText(title: 'Sizi Anlayan Bir Deneyim'),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: OnboardingText(
+          child: SubtitleText(
             text:
                 'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.',
           ),
