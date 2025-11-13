@@ -15,6 +15,14 @@ class _OnboardingViewFirstState extends State<OnboardingViewFirst> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text(
+          'Huzur İslamda',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 25,
+            color: AppColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: CustomLottieAnimation(assetPath: AppAnimations.handDrawnSalam),

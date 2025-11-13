@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "418329675000",
+    "project_id": "huzur-islamda-f1bf3",
+    "storage_bucket": "huzur-islamda-f1bf3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418329675000:android:4efa0dd8b2b8665154670d",
+        "android_client_info": {
+          "package_name": "com.example.huzur_islamda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQqD8QfMnrJ8Sr-IRJ_fBnzXkz3JC0dYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

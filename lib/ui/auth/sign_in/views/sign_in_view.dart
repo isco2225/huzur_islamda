@@ -50,7 +50,10 @@ class SignInView extends StatelessWidget {
               onPressed: () {},
             ),
             // you dont have an account?
-            const DontHaveAnAccount(),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: const DontHaveAnAccount(),
+            ),
           ],
         ),
       ),
@@ -64,6 +67,7 @@ class DontHaveAnAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('Hesabın yok mu?', style: TextStyle(color: Colors.grey.shade800)),
         SizedBox(width: 4),
