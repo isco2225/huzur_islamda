@@ -13,9 +13,21 @@ class AuthRepositoryRemote extends AuthRepository {
   Future<Result<Consumer>> signIn({
     required String email,
     required String password,
-  }) {
-    // TODO: implement signIn
-    throw UnimplementedError();
+  }) async {
+    try {
+      final result = await _firebaseAuthService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      switch (result) {
+        case Ok():
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
   }
 
   @override
@@ -43,8 +55,17 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<void>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<Result<void>> signOut() async {
+    try {
+      final result = await _firebaseAuthService.signOut();
+      switch (result) {
+        case Ok():
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
   }
 }
