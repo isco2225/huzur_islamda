@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
 
-class MaritalStatusSelector extends StatefulWidget {
-  const MaritalStatusSelector({super.key});
+class MaritalStatusSelector extends StatelessWidget {
+  const MaritalStatusSelector({
+    super.key,
+    this.selectedStatus,
+    this.onStatusChanged,
+  });
 
-  @override
-  State<MaritalStatusSelector> createState() => _MaritalStatusSelectorState();
-}
-
-class _MaritalStatusSelectorState extends State<MaritalStatusSelector> {
-  String? _selectedStatus;
+  final String? selectedStatus;
+  final ValueChanged<String>? onStatusChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +24,9 @@ class _MaritalStatusSelectorState extends State<MaritalStatusSelector> {
             Expanded(
               child: _StatusButton(
                 text: 'Evli',
-                isSelected: _selectedStatus == 'Evli',
+                isSelected: selectedStatus == 'Evli',
                 onTap: () {
-                  setState(() {
-                    _selectedStatus = 'Evli';
-                  });
+                  onStatusChanged?.call('Evli');
                 },
               ),
             ),
@@ -36,11 +34,9 @@ class _MaritalStatusSelectorState extends State<MaritalStatusSelector> {
             Expanded(
               child: _StatusButton(
                 text: 'Bekar',
-                isSelected: _selectedStatus == 'Bekar',
+                isSelected: selectedStatus == 'Bekar',
                 onTap: () {
-                  setState(() {
-                    _selectedStatus = 'Bekar';
-                  });
+                  onStatusChanged?.call('Bekar');
                 },
               ),
             ),

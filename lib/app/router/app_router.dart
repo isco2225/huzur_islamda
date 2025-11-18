@@ -34,6 +34,23 @@ class SignUpRoute extends GoRouteData {
       const SignUpScreen();
 }
 
+@TypedGoRoute<EmailVerificationRoute>(path: '/email_verification')
+class EmailVerificationRoute extends GoRouteData {
+  const EmailVerificationRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const EmailVerificationScreen();
+}
+
+@TypedGoRoute<HomeRoute>(path: '/home')
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+}
+
 final GoRouter appRouter = GoRouter(
   routes: $appRoutes,
   initialLocation: '/',

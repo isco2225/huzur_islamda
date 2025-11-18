@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 
 class EmailTextField extends StatelessWidget {
-  const EmailTextField({super.key});
+  const EmailTextField({super.key, this.controller});
+
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +13,14 @@ class EmailTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFieldTitle(text: 'Email'),
-        AppTextField('Email', hideText: 'gizle', showText: 'göster'),
+        const TextFieldTitle(text: 'Email'),
+        AppTextField(
+          'Email',
+          hideText: '',
+          showText: '',
+          textEditingController: controller,
+          keyboardType: TextInputType.emailAddress,
+        ),
       ],
     );
   }

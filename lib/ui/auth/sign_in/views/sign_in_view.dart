@@ -30,7 +30,9 @@ class SignInView extends StatelessWidget {
                 width: double.infinity,
                 height: 50,
                 child: AppButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    const EmailVerificationRoute().go(context);
+                  },
                   text: 'Giriş Yap',
                   running: loading,
                 ),
