@@ -10,10 +10,13 @@ class OnboardingViewSecound extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomLottieAnimation(assetPath: AppAnimations.fatherAndSon),
+        Padding(
+          padding: EdgeInsets.all(context.isSmallScreen ? 8.0 : 10.0),
+          child: CustomLottieAnimation(assetPath: AppAnimations.fatherAndSon),
+        ),
         TitleText(title: 'Sizi Anlayan Bir Deneyim'),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(context.spacingSmall),
           child: SubtitleText(
             text:
                 'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.',

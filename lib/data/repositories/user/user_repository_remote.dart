@@ -101,4 +101,19 @@ class UserRepositoryRemote extends UserRepository {
       return Result.error(Exception(e));
     }
   }
+
+  @override
+  Future<Result<void>> deleteUser(String uid) async {
+    try {
+      final result = await _firestoreUserService.deleteUser(uid);
+      switch (result) {
+        case Ok():
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
 }

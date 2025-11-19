@@ -108,5 +108,23 @@ class FirebaseAuthService {
     }
   }
 
+  Future<Result<void>> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        return Result.error(Exception('No user is currently signed in'));
+      }
+
+      await user.delete();
+      return Result.ok(null);
+    } on FirebaseAuthException catch (e) {
+      return Result.error(
+        Exception(e.message ?? 'Failed to delete account: ${e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to delete account: $e'));
+    }
+  }
+
   User? get currentUser => _auth.currentUser;
 }

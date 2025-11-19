@@ -8,11 +8,14 @@ class TitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+      style: textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         color: AppColors.secondary,
+        fontSize: context.responsiveFontSize(textTheme.titleLarge?.fontSize),
       ),
     );
   }

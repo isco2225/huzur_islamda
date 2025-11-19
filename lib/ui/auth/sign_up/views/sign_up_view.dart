@@ -64,7 +64,7 @@ class _SignUpViewState extends State<SignUpView> {
       safeArea: true,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(context.horizontalPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +74,7 @@ class _SignUpViewState extends State<SignUpView> {
                 text: 'Bilgilerinizi girerek kaydınızı tamamlayın.',
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
                 child: EmailTextField(controller: _emailController),
               ),
               PasswordTextField(
@@ -88,7 +88,7 @@ class _SignUpViewState extends State<SignUpView> {
                 onTap: _selectDate,
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(top: context.isSmallScreen ? 6 : 8),
                 child: MaritalStatusSelector(
                   selectedStatus: _selectedMaritalStatus,
                   onStatusChanged: (status) {
@@ -99,10 +99,10 @@ class _SignUpViewState extends State<SignUpView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(top: context.spacingSmall),
                 child: SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: context.isSmallScreen ? 45 : 50,
                   child: AppButton(
                     onPressed: _handleSignUp,
                     text: 'Hesap Oluştur',
@@ -110,11 +110,14 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: context.isSmallScreen ? 32 : 40),
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: TextStyle(color: Colors.grey.shade800),
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontSize: context.responsiveFontSize(14),
+                    ),
                     children: [
                       const TextSpan(text: 'Zaten hesabın var mı? '),
                       WidgetSpan(
@@ -127,6 +130,7 @@ class _SignUpViewState extends State<SignUpView> {
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
+                              fontSize: context.responsiveFontSize(14),
                             ),
                           ),
                         ),
@@ -135,7 +139,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: context.isSmallScreen ? 12 : 16),
             ],
           ),
         ),

@@ -1,0 +1,247 @@
+# Huzur İslamda - Architecture & Coding Rules
+
+## Architecture Overview
+
+This Flutter application follows **Clean Architecture** principles with clear separation of concerns across four main layers:
+
+1. **Domain Layer** (`lib/domain/`) - Business logic, entities, use cases
+2. **Data Layer** (`lib/data/`) - Repositories, services, data sources
+3. **UI Layer** (`lib/ui/`) - Screens, views, view models, widgets
+4. **App Layer** (`lib/app/`) - Core utilities, routing, theme, constants, shared widgets
+
+## Layer Structure & Responsibilities
+
+### Domain Layer (`lib/domain/`)
+- **Purpose**: Contains business logic and domain entities
+- **Structure**:
+  - `consumer/` - Domain entities (e.g., `Consumer` model)
+  - `consumer/models/` - Domain models with business logic
+  - `consumer/use_cases/` - Business use cases that orchestrate repositories
+  - `consumer/exceptions/` - Domain-specific exceptions
+- **Rules**:
+  - Domain layer MUST NOT depend on data or UI layers
+  - Use cases coordinate between repositories to fulfill business requirements
+  - Models should contain business logic, not just data structures
+  - Use cases return `Result<T>` pattern (Ok/Error sealed classes)
+
+### Data Layer (`lib/data/`)
+- **Purpose**: Handles data operations and external services
+- **Structure**:
+  - `repositories/` - Repository implementations (e.g., `AuthRepositoryRemote`)
+  - `repositories/{feature}/` - Feature-specific repositories with abstract base class
+  - `services/` - External service wrappers (e.g., `FirebaseAuthService`, `FirestoreUserService`)
+- **Rules**:
+  - Repositories implement abstract interfaces defined in the same directory
+  - Services wrap external dependencies (Firebase, APIs, etc.)
+  - All repository methods return `Result<T>` pattern
+  - Services catch exceptions and convert them to `Result.error(Exception)`
+  - Use `ValueNotifier` for reactive state (e.g., `currentUserEmail`, `currentUserId`)
+
+### UI Layer (`lib/ui/`)
+- **Purpose**: Presentation layer with screens, views, and view models
+- **Structure**:
+  - `{feature}/` - Feature-based organization (e.g., `auth/`, `home/`, `onboarding/`)
+  - `{feature}/views/` - Screen and View widgets
+  - `{feature}/view_models/` - ViewModels that manage state and business logic
+  - `{feature}/widgets/` - Feature-specific widgets
+- **Rules**:
+  - **Screen Pattern**: `{Feature}Screen` extends `StatefulWidget` and handles lifecycle, ViewModel initialization, and error handling
+  - **View Pattern**: `{Feature}View` extends `StatelessWidget` and contains only UI/presentation logic
+  - ViewModels use `Command` pattern for async operations
+  - ViewModels expose `ValueListenable` for reactive state
+  - Screens access repositories via `context.read<Repository>()` (Provider)
+  - Screens set up error handling with `command.handleError(context)`
+  - Screens set up success handling with `command.handleCompleted(context)`
+
+### App Layer (`lib/app/`)
+- **Purpose**: Shared utilities, routing, theme, constants, and base widgets
+- **Structure**:
+  - `core/` - Constants, theme, colors, strings
+  - `router/` - Navigation with go_router (typed routes)
+  - `utils/` - Utility classes (Command, Result, snackbar extensions)
+  - `widgets/` - Reusable base widgets (buttons, text fields, scaffolds)
+  - `errors/` - Error handling and localization
+  - `views/` - App-level views (AppScreen, AppView, splash screens)
+- **Rules**:
+  - Use barrel exports (`*.dart` files that export related files)
+  - Constants in `core/constants/`
+  - Theme configuration in `core/theme/`
+  - Base widgets in `widgets/base/` (e.g., `BaseScaffold`, `BaseColumn`)
+
+## Key Patterns & Conventions
+
+### 1. Result Pattern
+- All async operations return `Result<T>` (sealed class with `Ok<T>` and `Error<T>`)
+- Use pattern matching: `switch (result) { case Ok(): ... case Error(): ... }`
+- Create results: `Result.ok(value)` or `Result.error(Exception)`
+
+### 2. Command Pattern
+- ViewModels use `Command0<T>` (no args) or `Command1<T, A>` (one arg) for async operations
+- Commands expose:
+  - `running` - `ValueListenable<bool>` for loading state
+  - `error` - `ValueListenable<bool>` for error state
+  - `completed` - `ValueListenable<bool>` for success state
+  - `result` - `ValueListenable<Result<T>?>` for the result
+- Commands have `handleError(context)` and `handleCompleted(context)` for UI feedback
+- Execute commands: `command.execute()` or `command.execute(argument)`
+
+### 3. ViewModel Pattern
+- ViewModels are plain Dart classes (not extending anything)
+- ViewModels receive dependencies via constructor (repositories, use cases)
+- ViewModels can access both repositories and use cases directly
+- ViewModels can use repositories for simple operations (single repository call)
+- ViewModels should use use cases for complex operations (multiple repositories coordination)
+- ViewModels define Commands in constructor
+- ViewModels expose reactive state via `ValueListenable`
+- ViewModels must have `dispose()` method to clean up resources
+- Use `Logger` for logging: `final _log = Logger('ViewModelName')`
+
+### 4. Screen-View Separation
+- **Screen** (`{Feature}Screen`):
+  - **MUST** extend `StatefulWidget` (required for lifecycle management)
+  - Handles lifecycle (`initState`, `dispose`)
+  - Creates and initializes ViewModel in `initState()`
+  - Sets up error/success handlers
+  - Accesses repositories via Provider (`context.read<Repository>()`)
+  - Handles navigation
+  - Disposes ViewModel in `dispose()`
+  - Returns `{Feature}View(viewModel: _viewModel)`
+- **View** (`{Feature}View`):
+  - **MUST** extend `StatelessWidget` (pure UI, no state management)
+  - Receives ViewModel as parameter
+  - Contains only UI/presentation code
+  - Uses `ValueListenableBuilder` for reactive updates
+  - No business logic
+  - No state management (no `StatefulWidget`, no `setState`)
+
+### 5. Repository Pattern
+- Abstract base class in `{feature}_repository.dart` (e.g., `AuthRepository`)
+- Implementation in `{feature}_repository_remote.dart` (e.g., `AuthRepositoryRemote`)
+- Repositories depend on Services, not directly on external SDKs
+- All methods return `Future<Result<T>>`
+- Use `ValueNotifier` for reactive state that needs to be observed
+
+### 6. Use Case Pattern
+- Use cases orchestrate multiple repositories
+- Use cases contain business logic that spans multiple repositories
+- Use cases return `Result<T>`
+- Use cases are provided via Provider in `AppScreen`
+
+### 7. Routing Pattern
+- Use `go_router` with typed routes
+- Define routes with `@TypedGoRoute<RouteName>(path: '/path')`
+- Route classes extend `GoRouteData`
+- Navigation: `RouteName().go(context)` or `RouteName().push(context)`
+- Router defined in `app_router.dart` with `$appRoutes` (generated)
+
+### 8. Dependency Injection
+- Use `Provider` package for DI
+- Register dependencies in `AppScreen` via `MultiProvider`
+- Access dependencies: `context.read<Type>()` or `Provider.of<Type>(context)`
+- Repositories and Use Cases are provided at app level
+
+### 9. Error Handling
+- Errors are wrapped in `Result.error(Exception)`
+- Use `exceptionToUserFriendlyMessage(context)` extension for user-friendly messages
+- Commands have `handleError(context, showSnackBar: true)` for automatic error display
+- Commands have `handleCompleted(context, successMessage: '...')` for success feedback
+
+### 10. File Organization
+- Use **barrel exports**: Create `{feature}.dart` files that export related files
+- Example: `auth.dart` exports `views/views.dart`, `view_models/view_models.dart`, `widgets/widgets.dart`
+- Group related files in subdirectories: `views/`, `view_models/`, `widgets/`
+- Follow feature-based organization in UI layer
+
+### 11. Naming Conventions
+- **Screens**: `{Feature}Screen` (e.g., `EmailVerificationScreen`)
+- **Views**: `{Feature}View` (e.g., `EmailVerificationView`)
+- **ViewModels**: `{Feature}ViewModel` (e.g., `EmailVerificationViewModel`)
+- **Repositories**: `{Feature}Repository` (abstract), `{Feature}RepositoryRemote` (implementation)
+- **Services**: `{Service}Service` (e.g., `FirebaseAuthService`)
+- **Use Cases**: `{Action}UseCase` (e.g., `CheckEmailVerificationUseCase`)
+- **Routes**: `{Feature}Route` (e.g., `EmailVerificationRoute`)
+- **Widgets**: Descriptive names (e.g., `AppButton`, `BaseScaffold`, `UserEmailDisplayer`)
+
+### 12. Widget Patterns
+- Use `BaseScaffold` for consistent scaffold behavior
+- Use `AppButton` for buttons with loading state
+- Use `AppTextFormField` for text inputs
+- Create feature-specific widgets in `{feature}/widgets/`
+- Create reusable widgets in `app/widgets/`
+
+### 13. Constants & Theme
+- Colors: `AppColors.primary`, `AppColors.secondary`, etc. (in `core/constants/app_colors.dart`)
+- Strings: `AppStrings.appName`, etc. (in `core/constants/app_strings.dart`)
+- Theme: `AppTheme.lightTheme` (in `core/theme/app_theme.dart`)
+- Animations: `AppAnimations.*` (in `core/constants/app_animations.dart`)
+
+### 14. Logging
+- Use `logging` package
+- Create logger: `final _log = Logger('ClassName')`
+- Log levels: `_log.info()`, `_log.warning()`, `_log.severe()`
+- Logger configured in `main.dart`
+
+## Code Style Guidelines
+
+1. **Imports**: Group imports: Flutter → packages → relative imports
+2. **Null Safety**: Always use null-safe Dart (non-nullable by default)
+3. **Async/Await**: Prefer `async/await` over `.then()`
+4. **Type Safety**: Always specify types, avoid `var` when type is not obvious
+5. **Comments**: Use comments for complex business logic, not obvious code
+6. **Documentation**: Document public APIs with doc comments (`///`)
+7. **Dispose**: Always dispose resources (Commands, Timers, ValueNotifiers) in ViewModel's `dispose()`
+8. **Mounted Checks**: Always check `mounted` before using `context` after async operations
+9. **Error Messages**: Use Turkish for user-facing messages (stored in `AppStrings` or inline)
+
+## Adding New Features
+
+When adding a new feature:
+
+1. **Domain Layer**:
+   - Create domain model in `domain/consumer/models/` if needed
+   - Create use case in `domain/consumer/use_cases/` if business logic spans repositories
+
+2. **Data Layer**:
+   - Create service in `data/services/` if new external dependency
+   - Create abstract repository in `data/repositories/{feature}/{feature}_repository.dart`
+   - Create implementation in `data/repositories/{feature}/{feature}_repository_remote.dart`
+   - Export in barrel file `data/repositories/{feature}/{feature}.dart`
+
+3. **UI Layer**:
+   - Create feature directory: `ui/{feature}/`
+   - Create `{feature}_screen.dart` in `views/` (handles lifecycle, ViewModel, error handling)
+   - Create `{feature}_view.dart` in `views/` (pure UI)
+   - Create `{feature}_view_model.dart` in `view_models/` (state management, Commands)
+   - Create feature-specific widgets in `widgets/` if needed
+   - Export in barrel files: `views/views.dart`, `view_models/view_models.dart`, `widgets/widgets.dart`, `{feature}.dart`
+
+4. **Routing**:
+   - Add route in `app/router/app_router.dart` with `@TypedGoRoute`
+   - Run `flutter pub run build_runner build` to generate route code
+
+5. **Dependency Injection**:
+   - Register repositories and use cases in `AppScreen` if needed
+   - Access via `context.read<Type>()` in Screens
+
+## Testing Considerations
+
+- ViewModels should be testable (no direct Flutter dependencies)
+- Use cases should be testable (mock repositories)
+- Repositories should be testable (mock services)
+
+## Firebase Integration
+
+- Firebase services are wrapped in `data/services/` (e.g., `FirebaseAuthService`)
+- Services convert Firebase exceptions to `Result.error(Exception)`
+- Firebase initialization in `main.dart` before `runApp()`
+
+## Important Notes
+
+- **Never** put business logic in Views
+- **Never** access repositories directly from Views (use ViewModels)
+- **Always** use Result pattern for error handling
+- **Always** dispose Commands and resources in ViewModel
+- **Always** check `mounted` before using context after async
+- **Always** use barrel exports for clean imports
+- **Always** follow the Screen-View-ViewModel separation
+

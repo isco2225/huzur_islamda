@@ -8,12 +8,15 @@ class SubtitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+      style: textTheme.bodyLarge?.copyWith(
         color: AppColors.subtitleColor,
         fontWeight: FontWeight.w400,
+        fontSize: context.responsiveFontSize(textTheme.bodyLarge?.fontSize),
       ),
     );
   }

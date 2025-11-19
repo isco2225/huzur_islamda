@@ -43,4 +43,7 @@ abstract class AuthRepository {
 
   /// Perform sign out
   Future<Result<void>> signOut();
+
+  /// Delete current user account
+  Future<Result<void>> deleteAccount();
 }

@@ -131,4 +131,18 @@ class FirestoreUserService {
       return Result.error(Exception('Failed to get user: $e'));
     }
   }
+
+  /// Kullanıcıyı Firestore'dan sil
+  Future<Result<void>> deleteUser(String uid) async {
+    try {
+      await _firestore.collection(_collectionName).doc(uid).delete();
+      return Result.ok(null);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to delete user: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to delete user: $e'));
+    }
+  }
 }

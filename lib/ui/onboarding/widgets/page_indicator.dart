@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../../app/app.dart';
+
 class PageIndicator extends StatelessWidget {
   const PageIndicator({super.key, required this.controller});
   final PageController controller;
 
   @override
   Widget build(BuildContext context) {
+    final dotSize = context.isSmallScreen ? 12.0 : 15.0;
+
     return SmoothPageIndicator(
       controller: controller,
       count: 2,
       effect: WormEffect(
         activeDotColor: Colors.black,
-        dotWidth: 15,
-        dotHeight: 15,
+        dotWidth: dotSize,
+        dotHeight: dotSize,
       ),
     );
   }

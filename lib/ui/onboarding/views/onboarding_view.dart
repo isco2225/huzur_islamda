@@ -47,16 +47,21 @@ class _OnboardingViewState extends State<OnboardingView> {
                   _currentPage = page;
                 });
               },
-              children: [OnboardingViewFirst(), OnboardingViewSecound()],
+              children: const [OnboardingViewFirst(), OnboardingViewSecound()],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: EdgeInsets.fromLTRB(
+              context.horizontalPadding,
+              context.isSmallScreen ? 6 : 8,
+              context.horizontalPadding,
+              context.isSmallScreen ? 12 : 16,
+            ),
             child: Column(
               children: [
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: context.isSmallScreen ? 45 : 50,
                   child: AppButton(
                     running: _isLoading,
                     onPressed: _handleButtonPress,
@@ -65,7 +70,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                         : AppStrings.start,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: context.isSmallScreen ? 6 : 8),
                 PageIndicator(controller: _controller),
               ],
             ),

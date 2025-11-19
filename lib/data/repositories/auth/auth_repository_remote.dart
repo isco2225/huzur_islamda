@@ -128,4 +128,21 @@ class AuthRepositoryRemote extends AuthRepository {
       return Result.error(Exception(e));
     }
   }
+
+  @override
+  Future<Result<void>> deleteAccount() async {
+    try {
+      final result = await _firebaseAuthService.deleteAccount();
+      switch (result) {
+        case Ok():
+          _currentUserEmail.value = null;
+          _currentUserId.value = null;
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
 }

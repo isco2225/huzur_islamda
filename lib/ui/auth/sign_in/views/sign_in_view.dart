@@ -11,52 +11,59 @@ class SignInView extends StatelessWidget {
     final ValueNotifier<bool> loading = ValueNotifier<bool>(false);
     return BaseScaffold(
       safeArea: true,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TitleText(title: 'Hemen Giriş Yap'),
-            SubtitleText(text: 'Bu eşsiz deneyim için heasp bilgilerini gir.'),
-            Padding(
-              padding: const EdgeInsets.only(top: 60),
-              child: EmailTextField(),
-            ),
-            PasswordTextField(),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: AppButton(
-                  onPressed: () {
-                    const EmailVerificationRoute().go(context);
-                  },
-                  text: 'Giriş Yap',
-                  running: loading,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(context.horizontalPadding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TitleText(title: 'Hemen Giriş Yap'),
+              SubtitleText(
+                text: 'Bu eşsiz deneyim için heasp bilgilerini gir.',
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
+                child: EmailTextField(),
+              ),
+              PasswordTextField(),
+              Padding(
+                padding: EdgeInsets.only(top: context.spacingSmall),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: context.isSmallScreen ? 45 : 50,
+                  child: AppButton(
+                    onPressed: () {
+                      const EmailVerificationRoute().go(context);
+                    },
+                    text: 'Giriş Yap',
+                    running: loading,
+                  ),
                 ),
               ),
-            ),
-            Padding(padding: const EdgeInsets.all(20.0), child: OrDivider()),
-            SocialLoginButton(
-              text: 'Google ile Giriş Yap',
-              // TODO: Add Google icon.
-              icon: Icon(Icons.abc),
-              onPressed: () {},
-            ),
-            const SizedBox(height: 12),
-            SocialLoginButton(
-              text: 'Apple ile Giriş Yap',
-              icon: Icon(Icons.apple),
-              onPressed: () {},
-            ),
-            // you dont have an account?
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: const DontHaveAnAccount(),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(context.spacingSmall),
+                child: OrDivider(),
+              ),
+              SocialLoginButton(
+                text: 'Google ile Giriş Yap',
+                // TODO: Add Google icon.
+                icon: Icon(Icons.abc),
+                onPressed: () {},
+              ),
+              SizedBox(height: context.isSmallScreen ? 8 : 12),
+              SocialLoginButton(
+                text: 'Apple ile Giriş Yap',
+                icon: Icon(Icons.apple),
+                onPressed: () {},
+              ),
+              // you dont have an account?
+              Padding(
+                padding: EdgeInsets.only(top: context.spacingSmall),
+                child: const DontHaveAnAccount(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -71,8 +78,14 @@ class DontHaveAnAccount extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Hesabın yok mu?', style: TextStyle(color: Colors.grey.shade800)),
-        SizedBox(width: 4),
+        Text(
+          'Hesabın yok mu?',
+          style: TextStyle(
+            color: Colors.grey.shade800,
+            fontSize: context.responsiveFontSize(14),
+          ),
+        ),
+        SizedBox(width: context.isSmallScreen ? 3 : 4),
         GestureDetector(
           onTap: () {
             const SignUpRoute().go(context);
@@ -82,6 +95,7 @@ class DontHaveAnAccount extends StatelessWidget {
             style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,
+              fontSize: context.responsiveFontSize(14),
             ),
           ),
         ),
@@ -100,8 +114,16 @@ class OrDivider extends StatelessWidget {
       children: [
         const Expanded(child: Divider(color: Colors.grey)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(text, style: TextStyle(color: Colors.grey.shade800)),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.isSmallScreen ? 8 : 12,
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey.shade800,
+              fontSize: context.responsiveFontSize(14),
+            ),
+          ),
         ),
         const Expanded(child: Divider(color: Colors.grey)),
       ],

@@ -10,10 +10,12 @@ import '../../../../domain/consumer/use_cases/use_cases.dart';
 class EmailVerificationViewModel {
   EmailVerificationViewModel({
     required CheckEmailVerificationUseCase checkEmailVerificationUseCase,
+    required DeleteAccountUseCase deleteAccountUseCase,
     required AuthRepository authRepository,
     this.checkInterval = const Duration(seconds: 5),
     this.onEmailVerified,
   }) : _checkEmailVerificationUseCase = checkEmailVerificationUseCase,
+       _deleteAccountUseCase = deleteAccountUseCase,
        _authRepository = authRepository {
     // DEFINE COMMANDS
     sendEmailVerification = Command0<void>(
@@ -26,6 +28,8 @@ class EmailVerificationViewModel {
       debugLabel: 'checkEmailVerification',
     );
 
+    deleteAccount = Command0<void>(_deleteAccount, debugLabel: 'deleteAccount');
+
     // DEFINE LISTENERS
   }
 
@@ -34,6 +38,7 @@ class EmailVerificationViewModel {
 
   // REPOSITORIES & USE CASES
   final CheckEmailVerificationUseCase _checkEmailVerificationUseCase;
+  final DeleteAccountUseCase _deleteAccountUseCase;
   final AuthRepository _authRepository;
 
   // DOMAIN
@@ -57,12 +62,14 @@ class EmailVerificationViewModel {
   // COMMANDS
   late final Command0<void> sendEmailVerification;
   late final Command0<bool> checkEmailVerification;
+  late final Command0<void> deleteAccount;
 
   // DISPOSE
   void dispose() {
     _verificationTimer?.cancel();
     sendEmailVerification.dispose();
     checkEmailVerification.dispose();
+    deleteAccount.dispose();
   }
 
   // FUNCTIONS
@@ -157,5 +164,20 @@ class EmailVerificationViewModel {
     _verificationTimer?.cancel();
     _verificationTimer = null;
     _log.info('Stopped periodic email verification check');
+  }
+
+  /// Kullanıcı hesabını siler
+  Future<Result<void>> _deleteAccount() async {
+    // Periyodik kontrolü durdur
+    _stopPeriodicVerificationCheck();
+
+    final result = await _deleteAccountUseCase.execute();
+    _log.info('Delete account result: $result');
+
+    if (result is Error<void>) {
+      _log.warning('Delete account failed! ${result.error}');
+    }
+
+    return result;
   }
 }

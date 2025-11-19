@@ -29,4 +29,7 @@ abstract class UserRepository {
 
   /// Kullanıcı bilgilerini Firestore'dan getir
   Future<Result<Consumer>> getUser(String uid);
+
+  /// Kullanıcıyı Firestore'dan sil
+  Future<Result<void>> deleteUser(String uid);
 }

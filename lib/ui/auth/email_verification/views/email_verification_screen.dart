@@ -28,6 +28,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
         authRepository: context.read<AuthRepository>(),
         userRepository: context.read<UserRepository>(),
       ),
+      deleteAccountUseCase: DeleteAccountUseCase(
+        authRepository: context.read<AuthRepository>(),
+        userRepository: context.read<UserRepository>(),
+      ),
       authRepository: context.read<AuthRepository>(),
       checkInterval: const Duration(
         seconds: 5,
@@ -46,11 +50,27 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
     _viewModel.sendEmailVerification.handleError(context, showSnackBar: true);
     _viewModel.checkEmailVerification.handleError(context, showSnackBar: false);
+    _viewModel.deleteAccount.handleError(context, showSnackBar: true);
 
     // Email gönderme başarılı olduğunda
     _viewModel.sendEmailVerification.handleCompleted(
       context,
       successMessage: 'Doğrulama e-postası gönderildi!',
+    );
+
+    // Hesap silme başarılı olduğunda
+    _viewModel.deleteAccount.handleCompleted(
+      context,
+      successMessage:
+          'Hesap silindi. Doğru email ile tekrar kayıt olabilirsiniz.',
+      onCompleted: (_) {
+        if (!mounted) return;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && context.mounted) {
+            const SignUpRoute().go(context);
+          }
+        });
+      },
     );
 
     // Ekran açıldığında otomatik olarak email gönder
