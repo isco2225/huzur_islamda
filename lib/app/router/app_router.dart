@@ -116,7 +116,8 @@ GoRouter createAppRouter(Listenable refreshListenable) => GoRouter(
 );
 
 /// Auth screens that authenticated users should not access
-final _authRoutes = {
+final _unAuthenticatedUserRoutes = {
+  const OnboardingRoute().location,
   const SignInRoute().location,
   const SignUpRoute().location,
   const EmailVerificationRoute().location,
@@ -130,10 +131,8 @@ final _protectedRoutes = {
   const DhikrRoute().location,
   const ProfileRoute().location,
   const HomeRoute().location,
+  const CreateProfileRoute().location,
 };
-
-/// Public routes that don't require authentication
-final _publicRoutes = {const OnboardingRoute().location};
 
 /// Redirect logic for protected routes
 ///
@@ -142,19 +141,14 @@ final _publicRoutes = {const OnboardingRoute().location};
 String? _redirect(BuildContext context, GoRouterState state) {
   final location = state.matchedLocation;
 
-  // Public routes are always accessible
-  if (_publicRoutes.contains(location)) {
-    return null;
-  }
-
   final authRepository = context.read<AuthRepository>();
   final userRepository = context.read<UserRepository>();
 
-  // Check if user is authenticated
-  final isSignedIn = authRepository.isSignedIn.value;
+  // Check if user is authenticated - use auth.value.isSignedIn() like example app
+  final isSignedIn = authRepository.auth.value.isSignedIn();
 
   // Signed in but navigating to auth screens: redirect to home
-  if (isSignedIn && _authRoutes.contains(location)) {
+  if (isSignedIn && _unAuthenticatedUserRoutes.contains(location)) {
     // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
     final currentAuth = authRepository.auth.value;
     final currentUser = userRepository.currentUser.value;

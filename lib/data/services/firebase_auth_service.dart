@@ -1,10 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth show User;
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 
 import '../../app/app.dart';
 import '../../domain/domain.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /// Get current user from Firebase Auth
+  /// Returns null if no user is signed in
+  firebase_auth.User? getCurrentUser() {
+    return _auth.currentUser;
+  }
 
   /// Sign up with email and password
   Future<Result<Auth>> signUpWithEmailAndPassword({

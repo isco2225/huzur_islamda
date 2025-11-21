@@ -7,9 +7,28 @@ import '../../services/services.dart';
 
 class AuthRepositoryRemote extends AuthRepository {
   AuthRepositoryRemote({required FirebaseAuthService firebaseAuthService})
-    : _firebaseAuthService = firebaseAuthService;
+    : _firebaseAuthService = firebaseAuthService {
+    // Initialize auth state by checking current user on app startup
+    _initializeAuthState();
+  }
 
   final FirebaseAuthService _firebaseAuthService;
+
+  /// Initialize auth state by checking Firebase Auth current user
+  void _initializeAuthState() {
+    final currentUser = _firebaseAuthService.getCurrentUser();
+    if (currentUser != null) {
+      _auth.value = Auth(
+        uid: currentUser.uid,
+        email: currentUser.email ?? '',
+        isEmailVerified: currentUser.emailVerified,
+      );
+      _isSignedIn.value = true;
+    } else {
+      _auth.value = Auth.empty();
+      _isSignedIn.value = false;
+    }
+  }
 
   @override
   ValueListenable<Auth> get auth => _auth;
@@ -17,6 +36,7 @@ class AuthRepositoryRemote extends AuthRepository {
   @override
   ValueListenable<bool> get isSignedIn => _isSignedIn;
   final ValueNotifier<bool> _isSignedIn = ValueNotifier<bool>(false);
+
   @override
   Future<Result> signIn({
     required String email,
@@ -29,6 +49,7 @@ class AuthRepositoryRemote extends AuthRepository {
       );
       switch (result) {
         case Ok():
+          // Manually update auth state after successful sign in
           _auth.value = result.asOk.value;
           _isSignedIn.value = true;
           return Result.ok(result.asOk.value);
@@ -53,6 +74,7 @@ class AuthRepositoryRemote extends AuthRepository {
       );
       switch (result) {
         case Ok():
+          // Manually update auth state after successful sign up
           _auth.value = result.asOk.value;
           _isSignedIn.value = true;
           return Result.ok(result.asOk.value);
@@ -122,6 +144,7 @@ class AuthRepositoryRemote extends AuthRepository {
       final result = await _firebaseAuthService.signOut();
       switch (result) {
         case Ok():
+          // Manually update auth state after successful sign out
           _auth.value = Auth.empty();
           _isSignedIn.value = false;
           return Result.ok(null);
@@ -139,6 +162,7 @@ class AuthRepositoryRemote extends AuthRepository {
       final result = await _firebaseAuthService.deleteAccount();
       switch (result) {
         case Ok():
+          // Manually update auth state after successful sign out
           _auth.value = Auth.empty();
           _isSignedIn.value = false;
           return Result.ok(null);
