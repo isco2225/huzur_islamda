@@ -3,12 +3,27 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../../ui.dart';
 
-class SignInView extends StatelessWidget {
-  const SignInView({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key, required this.viewModel});
+  final SignInViewModel viewModel;
+
+  @override
+  State<SignInView> createState() => _SignInViewState();
+}
+
+class _SignInViewState extends State<SignInView> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<bool> loading = ValueNotifier<bool>(false);
     return BaseScaffold(
       safeArea: true,
       body: SingleChildScrollView(
@@ -24,9 +39,9 @@ class SignInView extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
-                child: EmailTextField(),
+                child: EmailTextField(controller: _emailController),
               ),
-              PasswordTextField(),
+              PasswordTextField(controller: _passwordController),
               Padding(
                 padding: EdgeInsets.only(top: context.spacingSmall),
                 child: SizedBox(
@@ -34,10 +49,13 @@ class SignInView extends StatelessWidget {
                   height: context.isSmallScreen ? 45 : 50,
                   child: AppButton(
                     onPressed: () {
-                      const EmailVerificationRoute().go(context);
+                      widget.viewModel.signIn.execute((
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text,
+                      ));
                     },
                     text: 'Giriş Yap',
-                    running: loading,
+                    running: widget.viewModel.signIn.running,
                   ),
                 ),
               ),
@@ -47,7 +65,6 @@ class SignInView extends StatelessWidget {
               ),
               SocialLoginButton(
                 text: 'Google ile Giriş Yap',
-                // TODO: Add Google icon.
                 icon: Icon(Icons.abc),
                 onPressed: () {},
               ),

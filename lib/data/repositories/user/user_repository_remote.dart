@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:huzur_islamda/data/repositories/user/user_repository.dart';
 import 'package:huzur_islamda/data/services/firestore_user_service.dart';
 
@@ -11,7 +12,11 @@ class UserRepositoryRemote extends UserRepository {
   final FirestoreUserService _firestoreUserService;
 
   @override
-  Future<Result<void>> createUser({
+  ValueListenable<User> get currentUser => _currentUser;
+  final ValueNotifier<User> _currentUser = ValueNotifier<User>(User.empty());
+
+  @override
+  Future<Result<User>> createUser({
     required String uid,
     required String email,
     required String name,
@@ -30,7 +35,8 @@ class UserRepositoryRemote extends UserRepository {
       );
       switch (result) {
         case Ok():
-          return Result.ok(null);
+          _currentUser.value = result.asOk.value;
+          return Result.ok(result.asOk.value);
         case Error():
           return Result.error(result.asError.error);
       }
@@ -51,6 +57,10 @@ class UserRepositoryRemote extends UserRepository {
       );
       switch (result) {
         case Ok():
+          _currentUser.value = _currentUser.value.copyWith(
+            emailVerified: emailVerified,
+            updatedAt: DateTime.now(),
+          );
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);
@@ -88,13 +98,17 @@ class UserRepositoryRemote extends UserRepository {
   }
 
   @override
-  Future<Result<Consumer>> getUser(String uid) async {
+  Future<Result<User>> fetchAuthenticatedUser({required String uid}) async {
     try {
-      final result = await _firestoreUserService.getUser(uid);
+      final result = await _firestoreUserService.fetchAuthenticatedUser(
+        uid: uid,
+      );
       switch (result) {
         case Ok():
+          _currentUser.value = result.asOk.value;
           return Result.ok(result.asOk.value);
         case Error():
+          _currentUser.value = User.empty();
           return Result.error(result.asError.error);
       }
     } catch (e) {
@@ -103,11 +117,14 @@ class UserRepositoryRemote extends UserRepository {
   }
 
   @override
-  Future<Result<void>> deleteUser(String uid) async {
+  Future<Result<void>> deleteAuthenticatedUser({required String uid}) async {
     try {
-      final result = await _firestoreUserService.deleteUser(uid);
+      final result = await _firestoreUserService.deleteAuthenticatedUser(
+        uid: uid,
+      );
       switch (result) {
         case Ok():
+          _currentUser.value = User.empty();
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);

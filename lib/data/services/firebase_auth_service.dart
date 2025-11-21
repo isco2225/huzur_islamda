@@ -6,7 +6,7 @@ import '../../domain/domain.dart';
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<Result<Consumer>> signUpWithEmailAndPassword({
+  Future<Result<Auth>> signUpWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -20,7 +20,7 @@ class FirebaseAuthService {
         return Result.error(Exception('Failed to sign up'));
       }
 
-      return Result.ok(Consumer(uid: user.uid, email: user.email!));
+      return Result.ok(Auth(uid: user.uid, email: email));
     } on FirebaseAuthException catch (e) {
       return Result.error(
         Exception(e.message ?? 'Failed to sign up: ${e.code}'),
@@ -76,7 +76,7 @@ class FirebaseAuthService {
     }
   }
 
-  Future<Result<Consumer>> signInWithEmailAndPassword({
+  Future<Result<Auth>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -85,11 +85,11 @@ class FirebaseAuthService {
         email: email,
         password: password,
       );
-      final consumer = result.user;
-      if (consumer == null) {
+      final auth = result.user;
+      if (auth == null) {
         return Result.error(Exception('Failed to sign in'));
       }
-      return Result.ok(Consumer(uid: consumer.uid, email: consumer.email!));
+      return Result.ok(Auth(uid: auth.uid, email: email));
     } on FirebaseAuthException catch (e) {
       return Result.error(
         Exception(e.message ?? 'Failed to sign in: ${e.code}'),
@@ -125,6 +125,4 @@ class FirebaseAuthService {
       return Result.error(Exception('Failed to delete account: $e'));
     }
   }
-
-  User? get currentUser => _auth.currentUser;
 }

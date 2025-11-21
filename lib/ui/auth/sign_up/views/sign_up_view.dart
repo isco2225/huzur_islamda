@@ -51,10 +51,6 @@ class _SignUpViewState extends State<SignUpView> {
     widget.viewModel.requestSignUp.execute((
       email: _emailController.text.trim(),
       password: _passwordController.text,
-      name: _nameController.text.trim(),
-      surname: _surnameController.text.trim(),
-      dateOfBirth: _dateOfBirthController.text,
-      maritalStatus: _selectedMaritalStatus ?? '',
     ));
   }
 

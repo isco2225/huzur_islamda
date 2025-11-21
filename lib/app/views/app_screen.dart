@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huzur_islamda/domain/consumer/use_cases/check_email_verification_use_case.dart';
+import 'package:huzur_islamda/domain/user/use_cases/check_email_verification_use_case.dart';
 import 'package:provider/provider.dart';
 import '../../data/data.dart';
 import '../app.dart';
@@ -40,7 +40,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.authRepository),
         Provider(create: (_) => widget.userRepository),
       ],
-      child: AppView(),
+      child: AppView(refreshListenable: widget.authRepository.auth),
     );
   }
 }

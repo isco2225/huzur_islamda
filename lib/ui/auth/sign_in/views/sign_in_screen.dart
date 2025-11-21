@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:huzur_islamda/ui/auth/sign_in/views/sign_in_view.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../data/data.dart';
+import '../../../ui.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -9,8 +12,33 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  late final SignInViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = SignInViewModel(
+      authRepository: context.read<AuthRepository>(),
+    );
+
+    // Error handling
+    _viewModel.signIn.handleError(context, showSnackBar: true);
+
+    // Success handling
+    _viewModel.signIn.handleCompleted(
+      context,
+      successMessage: 'Giriş başarılı!',
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const SignInView();
+    return SignInView(viewModel: _viewModel);
   }
 }

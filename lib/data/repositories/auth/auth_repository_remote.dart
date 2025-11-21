@@ -12,15 +12,13 @@ class AuthRepositoryRemote extends AuthRepository {
   final FirebaseAuthService _firebaseAuthService;
 
   @override
-  ValueListenable<String?> get currentUserEmail => _currentUserEmail;
-  final ValueNotifier<String?> _currentUserEmail = ValueNotifier<String?>(null);
-
+  ValueListenable<Auth> get auth => _auth;
+  final ValueNotifier<Auth> _auth = ValueNotifier<Auth>(Auth.empty());
   @override
-  ValueListenable<String?> get currentUserId => _currentUserId;
-  final ValueNotifier<String?> _currentUserId = ValueNotifier<String?>(null);
-
+  ValueListenable<bool> get isSignedIn => _isSignedIn;
+  final ValueNotifier<bool> _isSignedIn = ValueNotifier<bool>(false);
   @override
-  Future<Result<Consumer>> signIn({
+  Future<Result> signIn({
     required String email,
     required String password,
   }) async {
@@ -31,8 +29,11 @@ class AuthRepositoryRemote extends AuthRepository {
       );
       switch (result) {
         case Ok():
+          _auth.value = result.asOk.value;
+          _isSignedIn.value = true;
           return Result.ok(result.asOk.value);
         case Error():
+          _isSignedIn.value = false;
           return Result.error(result.asError.error);
       }
     } catch (e) {
@@ -41,13 +42,9 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<Consumer>> requestSignUp({
+  Future<Result> requestSignUp({
     required String email,
     required String password,
-    required String name,
-    required String surname,
-    required String dateOfBirth,
-    required String maritalStatus,
   }) async {
     try {
       final result = await _firebaseAuthService.signUpWithEmailAndPassword(
@@ -56,8 +53,7 @@ class AuthRepositoryRemote extends AuthRepository {
       );
       switch (result) {
         case Ok():
-          _currentUserEmail.value = result.asOk.value.email;
-          _currentUserId.value = result.asOk.value.uid;
+          _auth.value = result.asOk.value;
           return Result.ok(result.asOk.value);
         case Error():
           return Result.error(result.asError.error);
@@ -68,7 +64,7 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<Consumer>> createAccount({
+  Future<Result<User>> createAccount({
     required String email,
     required String verificationCode,
   }) {
@@ -113,13 +109,13 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<void>> signOut() async {
+  Future<Result> signOut() async {
     try {
       final result = await _firebaseAuthService.signOut();
       switch (result) {
         case Ok():
-          _currentUserEmail.value = null;
-          _currentUserId.value = null;
+          _auth.value = Auth.empty();
+          _isSignedIn.value = false;
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);
@@ -130,13 +126,13 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<void>> deleteAccount() async {
+  Future<Result> deleteAccount() async {
     try {
       final result = await _firebaseAuthService.deleteAccount();
       switch (result) {
         case Ok():
-          _currentUserEmail.value = null;
-          _currentUserId.value = null;
+          _auth.value = Auth.empty();
+          _isSignedIn.value = false;
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);

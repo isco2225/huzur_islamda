@@ -14,10 +14,10 @@ This Flutter application follows **Clean Architecture** principles with clear se
 ### Domain Layer (`lib/domain/`)
 - **Purpose**: Contains business logic and domain entities
 - **Structure**:
-  - `consumer/` - Domain entities (e.g., `Consumer` model)
-  - `consumer/models/` - Domain models with business logic
-  - `consumer/use_cases/` - Business use cases that orchestrate repositories
-  - `consumer/exceptions/` - Domain-specific exceptions
+  - `user/` - Domain entities (e.g., `user` model)
+  - `user/models/` - Domain models with business logic
+  - `user/use_cases/` - Business use cases that orchestrate repositories
+  - `user/exceptions/` - Domain-specific exceptions
 - **Rules**:
   - Domain layer MUST NOT depend on data or UI layers
   - Use cases coordinate between repositories to fulfill business requirements
@@ -198,8 +198,8 @@ This Flutter application follows **Clean Architecture** principles with clear se
 When adding a new feature:
 
 1. **Domain Layer**:
-   - Create domain model in `domain/consumer/models/` if needed
-   - Create use case in `domain/consumer/use_cases/` if business logic spans repositories
+   - Create domain model in `domain/user/models/` if needed
+   - Create use case in `domain/user/use_cases/` if business logic spans repositories
 
 2. **Data Layer**:
    - Create service in `data/services/` if new external dependency

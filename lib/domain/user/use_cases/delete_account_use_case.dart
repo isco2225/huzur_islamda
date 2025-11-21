@@ -1,6 +1,5 @@
 import '../../../app/app.dart';
-import '../../../data/repositories/auth/auth_repository.dart';
-import '../../../data/repositories/user/user_repository.dart';
+import '../../../domain/domain.dart';
 
 /// Kullanıcı hesabını silen UseCase
 ///
@@ -19,15 +18,13 @@ class DeleteAccountUseCase {
 
   Future<Result<void>> execute() async {
     try {
-      final currentUserId = _authRepository.currentUserId.value;
-
-      if (currentUserId == null) {
-        return Result.error(Exception('No user is currently signed in'));
-      }
+      final currentUserId = _authRepository.auth.value.uid;
 
       // 1. Önce Firestore'dan kullanıcıyı sil
       // (Eğer Auth silme başarısız olursa, en azından Firestore'da orphan data kalmaz)
-      final firestoreResult = await _userRepository.deleteUser(currentUserId);
+      final userResult = await _userRepository.deleteAuthenticatedUser(
+        uid: currentUserId,
+      );
 
       // Firestore silme başarısız olsa bile Auth silmeyi dene
       // (Kullanıcı zaten Auth'da varsa, Firestore'da olmayabilir)
@@ -39,10 +36,10 @@ class DeleteAccountUseCase {
           return Result.ok(null);
         case Error():
           // Auth silme başarısız - Firestore sonucunu da kontrol et
-          if (firestoreResult is Error<void>) {
+          if (userResult is Error<void>) {
             return Result.error(
               Exception(
-                'Failed to delete account: ${authResult.asError.error}. Also failed to delete from Firestore: ${firestoreResult.asError.error}',
+                'Failed to delete account: ${authResult.asError.error}. Also failed to delete from Firestore: ${userResult.asError.error}',
               ),
             );
           }

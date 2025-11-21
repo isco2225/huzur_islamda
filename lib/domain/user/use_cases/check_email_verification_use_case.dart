@@ -24,10 +24,10 @@ class CheckEmailVerificationUseCase {
     switch (authResult) {
       case Ok():
         final isVerified = authResult.asOk.value;
-        final currentUserId = _authRepository.currentUserId.value;
+        final currentUserId = _authRepository.auth.value.uid;
 
         // 2. Email doğrulandıysa Firestore'da da güncelle
-        if (isVerified && currentUserId != null) {
+        if (isVerified) {
           await _userRepository.updateEmailVerificationStatus(
             uid: currentUserId,
             emailVerified: true,

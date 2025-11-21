@@ -8,7 +8,7 @@ class FirestoreUserService {
   static const String _collectionName = 'users';
 
   /// Kullanıcıyı Firestore'a kaydet
-  Future<Result<void>> createUser({
+  Future<Result<User>> createUser({
     required String uid,
     required String email,
     required String name,
@@ -31,7 +31,14 @@ class FirestoreUserService {
 
       await _firestore.collection(_collectionName).doc(uid).set(userData);
 
-      return Result.ok(null);
+      // Firestore'dan gerçek timestamp değerlerini almak için dokümanı tekrar oku
+      final doc = await _firestore.collection(_collectionName).doc(uid).get();
+      final data = doc.data()!;
+      // Timestamp'leri DateTime'a dönüştür (domain layer için temiz veri)
+      final cleanData = _convertTimestampsToDateTime(data);
+      final user = User.fromJson(cleanData);
+
+      return Result.ok(user);
     } on FirebaseException catch (e) {
       return Result.error(
         Exception('Failed to create user: ${e.message ?? e.code}'),
@@ -67,7 +74,7 @@ class FirestoreUserService {
   }
 
   /// Kullanıcı bilgilerini güncelle
-  Future<Result<void>> updateUser({
+  Future<Result<User>> updateUser({
     required String uid,
     String? name,
     String? surname,
@@ -85,8 +92,12 @@ class FirestoreUserService {
       if (maritalStatus != null) updateData['maritalStatus'] = maritalStatus;
 
       await _firestore.collection(_collectionName).doc(uid).update(updateData);
-
-      return Result.ok(null);
+      final doc = await _firestore.collection(_collectionName).doc(uid).get();
+      final data = doc.data()!;
+      // Timestamp'leri DateTime'a dönüştür (domain layer için temiz veri)
+      final cleanData = _convertTimestampsToDateTime(data);
+      final user = User.fromJson(cleanData);
+      return Result.ok(user);
     } on FirebaseException catch (e) {
       return Result.error(
         Exception('Failed to update user: ${e.message ?? e.code}'),
@@ -97,7 +108,7 @@ class FirestoreUserService {
   }
 
   /// Kullanıcı bilgilerini Firestore'dan getir
-  Future<Result<Consumer>> getUser(String uid) async {
+  Future<Result<User>> fetchAuthenticatedUser({required String uid}) async {
     try {
       final doc = await _firestore.collection(_collectionName).doc(uid).get();
 
@@ -106,23 +117,11 @@ class FirestoreUserService {
       }
 
       final data = doc.data()!;
-      final consumer = Consumer(
-        uid: data['uid'] as String,
-        email: data['email'] as String,
-        name: data['name'] as String?,
-        surname: data['surname'] as String?,
-        dateOfBirth: data['dateOfBirth'] as String?,
-        maritalStatus: data['maritalStatus'] as String?,
-        emailVerified: data['emailVerified'] as bool? ?? false,
-        createdAt: data['createdAt'] != null
-            ? (data['createdAt'] as Timestamp).toDate()
-            : null,
-        updatedAt: data['updatedAt'] != null
-            ? (data['updatedAt'] as Timestamp).toDate()
-            : null,
-      );
+      // Timestamp'leri DateTime'a dönüştür (domain layer için temiz veri)
+      final cleanData = _convertTimestampsToDateTime(data);
+      final user = User.fromJson(cleanData);
 
-      return Result.ok(consumer);
+      return Result.ok(user);
     } on FirebaseException catch (e) {
       return Result.error(
         Exception('Failed to get user: ${e.message ?? e.code}'),
@@ -133,16 +132,37 @@ class FirestoreUserService {
   }
 
   /// Kullanıcıyı Firestore'dan sil
-  Future<Result<void>> deleteUser(String uid) async {
+  Future<Result<void>> deleteAuthenticatedUser({required String uid}) async {
     try {
       await _firestore.collection(_collectionName).doc(uid).delete();
       return Result.ok(null);
     } on FirebaseException catch (e) {
       return Result.error(
-        Exception('Failed to delete user: ${e.message ?? e.code}'),
+        Exception(
+          'Failed to delete authenticated user: ${e.message ?? e.code}',
+        ),
       );
     } catch (e) {
-      return Result.error(Exception('Failed to delete user: $e'));
+      return Result.error(Exception('Failed to delete authenticated user: $e'));
     }
+  }
+
+  /// Firestore'dan gelen Timestamp'leri DateTime'a dönüştürür
+  Map<String, dynamic> _convertTimestampsToDateTime(Map<String, dynamic> data) {
+    final cleanData = Map<String, dynamic>.from(data);
+
+    if (cleanData['createdAt'] is Timestamp) {
+      cleanData['createdAt'] = (cleanData['createdAt'] as Timestamp)
+          .toDate()
+          .toIso8601String();
+    }
+
+    if (cleanData['updatedAt'] is Timestamp) {
+      cleanData['updatedAt'] = (cleanData['updatedAt'] as Timestamp)
+          .toDate()
+          .toIso8601String();
+    }
+
+    return cleanData;
   }
 }

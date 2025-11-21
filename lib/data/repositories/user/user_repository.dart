@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 
 abstract class UserRepository {
+  /// Get current user's UID
+  ValueListenable<User> get currentUser;
+
   /// Kullanıcıyı Firestore'a kaydet
-  Future<Result<void>> createUser({
+  Future<Result<User>> createUser({
     required String uid,
     required String email,
     required String name,
@@ -28,8 +33,10 @@ abstract class UserRepository {
   });
 
   /// Kullanıcı bilgilerini Firestore'dan getir
-  Future<Result<Consumer>> getUser(String uid);
+  Future<Result<User>> fetchAuthenticatedUser({required String uid});
 
   /// Kullanıcıyı Firestore'dan sil
-  Future<Result<void>> deleteUser(String uid);
+  Future<Result<void>> deleteAuthenticatedUser({required String uid});
 }
+
+

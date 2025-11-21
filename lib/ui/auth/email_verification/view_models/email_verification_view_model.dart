@@ -5,7 +5,8 @@ import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/repositories/auth/auth_repository.dart';
-import '../../../../domain/consumer/use_cases/use_cases.dart';
+import '../../../../domain/user/use_cases/use_cases.dart';
+import '../../../../domain/domain.dart';
 
 class EmailVerificationViewModel {
   EmailVerificationViewModel({
@@ -46,18 +47,13 @@ class EmailVerificationViewModel {
   bool _isChecking = false;
   bool _isEmailVerified = false; // Email doğrulandı mı?
 
+  ValueListenable<Auth?> get auth => _authRepository.auth;
+
   /// Email doğrulama kontrolü için kullanılacak interval (varsayılan: 5 saniye)
   final Duration checkInterval;
 
   /// Email doğrulandığında çağrılacak callback
   final VoidCallback? onEmailVerified;
-
-  /// Kullanıcının email adresini döndürür
-  ValueListenable<String?> get currentUserEmail =>
-      _authRepository.currentUserEmail;
-
-  /// Kullanıcının UID'sini döndürür
-  ValueListenable<String?> get currentUserId => _authRepository.currentUserId;
 
   // COMMANDS
   late final Command0<void> sendEmailVerification;

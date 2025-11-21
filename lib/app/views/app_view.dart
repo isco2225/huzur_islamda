@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../app.dart';
 
 class AppView extends StatefulWidget {
-  const AppView({super.key});
+  const AppView({super.key, required this.refreshListenable});
+
+  final Listenable refreshListenable;
 
   @override
   State<AppView> createState() => _AppViewState();
@@ -17,7 +19,7 @@ class _AppViewState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-    _appRouter = appRouter;
+    _appRouter = createAppRouter(widget.refreshListenable);
   }
 
   @override

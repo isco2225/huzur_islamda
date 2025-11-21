@@ -12,6 +12,12 @@ List<RouteBase> get $appRoutes => [
   $signUpRoute,
   $emailVerificationRoute,
   $homeRoute,
+  $flowRoute,
+  $searchRoute,
+  $prayerRoute,
+  $dhikrRoute,
+  $profileRoute,
+  $createProfileRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -107,6 +113,130 @@ extension $HomeRouteExtension on HomeRoute {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   String get location => GoRouteData.$location('/home');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $flowRoute =>
+    GoRouteData.$route(path: '/flow', factory: $FlowRouteExtension._fromState);
+
+extension $FlowRouteExtension on FlowRoute {
+  static FlowRoute _fromState(GoRouterState state) => const FlowRoute();
+
+  String get location => GoRouteData.$location('/flow');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $searchRoute => GoRouteData.$route(
+  path: '/search',
+
+  factory: $SearchRouteExtension._fromState,
+);
+
+extension $SearchRouteExtension on SearchRoute {
+  static SearchRoute _fromState(GoRouterState state) => const SearchRoute();
+
+  String get location => GoRouteData.$location('/search');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $prayerRoute => GoRouteData.$route(
+  path: '/prayer',
+
+  factory: $PrayerRouteExtension._fromState,
+);
+
+extension $PrayerRouteExtension on PrayerRoute {
+  static PrayerRoute _fromState(GoRouterState state) => const PrayerRoute();
+
+  String get location => GoRouteData.$location('/prayer');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $dhikrRoute => GoRouteData.$route(
+  path: '/dhikr',
+
+  factory: $DhikrRouteExtension._fromState,
+);
+
+extension $DhikrRouteExtension on DhikrRoute {
+  static DhikrRoute _fromState(GoRouterState state) => const DhikrRoute();
+
+  String get location => GoRouteData.$location('/dhikr');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profileRoute => GoRouteData.$route(
+  path: '/profile',
+
+  factory: $ProfileRouteExtension._fromState,
+);
+
+extension $ProfileRouteExtension on ProfileRoute {
+  static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
+
+  String get location => GoRouteData.$location('/profile');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $createProfileRoute => GoRouteData.$route(
+  path: '/create_profile',
+
+  factory: $CreateProfileRouteExtension._fromState,
+);
+
+extension $CreateProfileRouteExtension on CreateProfileRoute {
+  static CreateProfileRoute _fromState(GoRouterState state) =>
+      const CreateProfileRoute();
+
+  String get location => GoRouteData.$location('/create_profile');
 
   void go(BuildContext context) => context.go(location);
 

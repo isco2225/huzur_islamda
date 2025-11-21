@@ -1,4 +1,4 @@
-class Consumer {
+class User {
   final String uid;
   final String email;
   final String? name;
@@ -9,7 +9,7 @@ class Consumer {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  Consumer({
+  const User({
     required this.uid,
     required this.email,
     this.name,
@@ -20,6 +20,43 @@ class Consumer {
     this.createdAt,
     this.updatedAt,
   });
+
+  factory User.fromJson(Map<String, Object?> json) {
+    DateTime? parseDateTime(dynamic value) {
+      if (value == null) return null;
+      if (value is String) {
+        return DateTime.parse(value);
+      }
+      if (value is DateTime) {
+        return value;
+      }
+      return null;
+    }
+
+    return User(
+      uid: json['uid'] as String,
+      email: json['email'] as String,
+      name: json['name'] as String?,
+      surname: json['surname'] as String?,
+      dateOfBirth: json['dateOfBirth'] as String?,
+      maritalStatus: json['maritalStatus'] as String?,
+      emailVerified: json['emailVerified'] as bool? ?? false,
+      createdAt: parseDateTime(json['createdAt']),
+      updatedAt: parseDateTime(json['updatedAt']),
+    );
+  }
+
+  factory User.empty() => const User(
+    uid: '',
+    email: '',
+    name: null,
+    surname: null,
+    dateOfBirth: null,
+    maritalStatus: null,
+    emailVerified: false,
+    createdAt: null,
+    updatedAt: null,
+  );
 
   Map<String, dynamic> toJson() {
     return {
@@ -35,25 +72,7 @@ class Consumer {
     };
   }
 
-  factory Consumer.fromJson(Map<String, dynamic> json) {
-    return Consumer(
-      uid: json['uid'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String?,
-      surname: json['surname'] as String?,
-      dateOfBirth: json['dateOfBirth'] as String?,
-      maritalStatus: json['maritalStatus'] as String?,
-      emailVerified: json['emailVerified'] as bool? ?? false,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
-    );
-  }
-
-  Consumer copyWith({
+  User copyWith({
     String? uid,
     String? email,
     String? name,
@@ -64,7 +83,7 @@ class Consumer {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return Consumer(
+    return User(
       uid: uid ?? this.uid,
       email: email ?? this.email,
       name: name ?? this.name,
@@ -76,4 +95,6 @@ class Consumer {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  bool isEmpty() => this == User.empty();
 }

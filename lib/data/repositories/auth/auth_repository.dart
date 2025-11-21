@@ -4,30 +4,21 @@ import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 
 abstract class AuthRepository {
-  /// Get current user's email
-  ValueListenable<String?> get currentUserEmail;
-
-  /// Get current user's UID
-  ValueListenable<String?> get currentUserId;
+  /// Get current user
+  ValueListenable<Auth> get auth;
+  ValueListenable<bool> get isSignedIn;
 
   /// Perform Sign In
-  Future<Result<Consumer>> signIn({
-    required String email,
-    required String password,
-  });
+  Future<Result> signIn({required String email, required String password});
 
   /// Perform create account request
-  Future<Result<Consumer>> requestSignUp({
+  Future<Result> requestSignUp({
     required String email,
     required String password,
-    required String name,
-    required String surname,
-    required String dateOfBirth,
-    required String maritalStatus,
   });
 
   /// Perform sign up with code
-  Future<Result<Consumer>> createAccount({
+  Future<Result> createAccount({
     required String email,
     required String verificationCode,
   });
@@ -42,8 +33,10 @@ abstract class AuthRepository {
   Future<Result<bool>> checkEmailVerification();
 
   /// Perform sign out
-  Future<Result<void>> signOut();
+  Future<Result> signOut();
 
   /// Delete current user account
-  Future<Result<void>> deleteAccount();
+  Future<Result> deleteAccount();
 }
+
+

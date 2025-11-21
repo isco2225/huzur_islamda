@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/data.dart';
-import '../../../../domain/consumer/use_cases/use_cases.dart';
+import '../../../../domain/user/use_cases/use_cases.dart';
 import '../../../ui.dart';
 import '../view_models/view_models.dart';
 
