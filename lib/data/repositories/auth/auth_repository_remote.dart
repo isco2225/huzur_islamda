@@ -54,6 +54,7 @@ class AuthRepositoryRemote extends AuthRepository {
       switch (result) {
         case Ok():
           _auth.value = result.asOk.value;
+          _isSignedIn.value = true;
           return Result.ok(result.asOk.value);
         case Error():
           return Result.error(result.asError.error);
@@ -99,7 +100,14 @@ class AuthRepositoryRemote extends AuthRepository {
       final result = await _firebaseAuthService.checkEmailVerification();
       switch (result) {
         case Ok():
-          return Result.ok(result.asOk.value);
+          final isEmailVerified = result.asOk.value;
+          // Auth modelini güncelle (emailVerified durumunu yansıt)
+          if (_auth.value.uid.isNotEmpty) {
+            _auth.value = _auth.value.copyWith(
+              isEmailVerified: isEmailVerified,
+            );
+          }
+          return Result.ok(isEmailVerified);
         case Error():
           return Result.error(result.asError.error);
       }

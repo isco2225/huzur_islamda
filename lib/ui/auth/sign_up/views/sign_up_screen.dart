@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 import '../../../ui.dart';
 
@@ -17,7 +18,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    // ViewModel'i oluştur
     _viewModel = SignUpViewModel(
       authRepository: context.read<AuthRepository>(),
     );
@@ -29,6 +29,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _viewModel.requestSignUp.handleCompleted(
       context,
       successMessage: 'Kayıt başarılı! Email doğrulama linki gönderildi.',
+      onCompleted: (_) {
+        // Kayıt başarılı olduğunda email verification ekranına yönlendir
+        if (!mounted) return;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && context.mounted) {
+            const EmailVerificationRoute().go(context);
+          }
+        });
+      },
     );
   }
 

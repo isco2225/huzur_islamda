@@ -155,20 +155,16 @@ String? _redirect(BuildContext context, GoRouterState state) {
 
   // Signed in but navigating to auth screens: redirect to home
   if (isSignedIn && _authRoutes.contains(location)) {
-    // Check if email is verified
+    // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
+    final currentAuth = authRepository.auth.value;
     final currentUser = userRepository.currentUser.value;
-    final authUserId = authRepository.auth.value.uid;
 
-    if (currentUser.isEmpty() || currentUser.uid != authUserId) {
-      // User data not loaded, allow access to email verification
-      if (location == const EmailVerificationRoute().location) {
-        return null;
-      }
-      // Otherwise redirect to email verification
-      return const EmailVerificationRoute().location;
-    }
+    // Auth'dan emailVerified kontrolü (öncelikli)
+    // Eğer User data yüklenmemişse Auth'u kullan, yüklenmişse User'ı fallback olarak kullan
+    final isEmailVerified = currentAuth.isSignedIn()
+        ? currentAuth.isEmailVerified
+        : (currentUser.isEmpty() ? false : currentUser.emailVerified);
 
-    final isEmailVerified = currentUser.emailVerified;
     if (isEmailVerified) {
       // Email verified, redirect to home
       return const HomeRoute().location;
@@ -189,15 +185,16 @@ String? _redirect(BuildContext context, GoRouterState state) {
 
   // Signed in and navigating to protected routes: check email verification
   if (isSignedIn && _protectedRoutes.contains(location)) {
+    // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
+    final currentAuth = authRepository.auth.value;
     final currentUser = userRepository.currentUser.value;
-    final authUserId = authRepository.auth.value.uid;
 
-    if (currentUser.isEmpty() || currentUser.uid != authUserId) {
-      // User data not loaded, redirect to email verification
-      return const EmailVerificationRoute().location;
-    }
+    // Auth'dan emailVerified kontrolü (öncelikli)
+    // Eğer User data yüklenmemişse Auth'u kullan, yüklenmişse User'ı fallback olarak kullan
+    final isEmailVerified = currentAuth.isSignedIn()
+        ? currentAuth.isEmailVerified
+        : (currentUser.isEmpty() ? false : currentUser.emailVerified);
 
-    final isEmailVerified = currentUser.emailVerified;
     if (!isEmailVerified) {
       // Email not verified, redirect to email verification
       return const EmailVerificationRoute().location;

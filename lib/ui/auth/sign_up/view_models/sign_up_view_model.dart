@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
-import '../../../../data/repositories/auth/auth_repository.dart';
+import '../../../../data/data.dart';
+import '../../../../domain/domain.dart';
 
 class SignUpViewModel {
   SignUpViewModel({required AuthRepository authRepository})
@@ -22,6 +24,7 @@ class SignUpViewModel {
   final AuthRepository _authRepository;
 
   // DOMAIN
+  ValueListenable<Auth> get auth => _authRepository.auth;
 
   // COMMANDS
   late final Command1<void, ({String email, String password})> requestSignUp;
@@ -43,7 +46,7 @@ class SignUpViewModel {
     if (result is Error<void>) {
       _log.warning('Sign up failed! ${result.error}');
     }
-
+    _log.info('Sign up result: $result');
     return result;
   }
 }

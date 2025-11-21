@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/data.dart';
-import '../../../../domain/user/use_cases/use_cases.dart';
 import '../../../ui.dart';
 import '../view_models/view_models.dart';
 
@@ -24,14 +23,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _viewModel = EmailVerificationViewModel(
-      checkEmailVerificationUseCase: CheckEmailVerificationUseCase(
-        authRepository: context.read<AuthRepository>(),
-        userRepository: context.read<UserRepository>(),
-      ),
-      deleteAccountUseCase: DeleteAccountUseCase(
-        authRepository: context.read<AuthRepository>(),
-        userRepository: context.read<UserRepository>(),
-      ),
       authRepository: context.read<AuthRepository>(),
       checkInterval: const Duration(
         seconds: 5,
@@ -72,7 +63,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
         });
       },
     );
-
     // Ekran açıldığında otomatik olarak email gönder
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel.sendEmailVerification.execute();

@@ -5,7 +5,6 @@ import '../../../ui.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key, required this.viewModel});
-
   final SignUpViewModel viewModel;
 
   @override
@@ -16,42 +15,12 @@ class _SignUpViewState extends State<SignUpView> {
   // Text Field Controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
-  final _dateOfBirthController = TextEditingController();
-  String? _selectedMaritalStatus;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
-    _surnameController.dispose();
-    _dateOfBirthController.dispose();
     super.dispose();
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        _dateOfBirthController.text =
-            '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
-      });
-    }
-  }
-
-  void _handleSignUp() {
-    widget.viewModel.requestSignUp.execute((
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    ));
   }
 
   @override
@@ -77,30 +46,18 @@ class _SignUpViewState extends State<SignUpView> {
                 controller: _passwordController,
                 showForgotPassword: false,
               ),
-              NameTextField(controller: _nameController),
-              SurnameTextField(controller: _surnameController),
-              DateOfBirthTextField(
-                controller: _dateOfBirthController,
-                onTap: _selectDate,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: context.isSmallScreen ? 6 : 8),
-                child: MaritalStatusSelector(
-                  selectedStatus: _selectedMaritalStatus,
-                  onStatusChanged: (status) {
-                    setState(() {
-                      _selectedMaritalStatus = status;
-                    });
-                  },
-                ),
-              ),
               Padding(
                 padding: EdgeInsets.only(top: context.spacingSmall),
                 child: SizedBox(
                   width: double.infinity,
                   height: context.isSmallScreen ? 45 : 50,
                   child: AppButton(
-                    onPressed: _handleSignUp,
+                    onPressed: () {
+                      widget.viewModel.requestSignUp.execute((
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text,
+                      ));
+                    },
                     text: 'Hesap Oluştur',
                     running: widget.viewModel.requestSignUp.running,
                   ),

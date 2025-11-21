@@ -5,19 +5,14 @@ import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/repositories/auth/auth_repository.dart';
-import '../../../../domain/user/use_cases/use_cases.dart';
 import '../../../../domain/domain.dart';
 
 class EmailVerificationViewModel {
   EmailVerificationViewModel({
-    required CheckEmailVerificationUseCase checkEmailVerificationUseCase,
-    required DeleteAccountUseCase deleteAccountUseCase,
     required AuthRepository authRepository,
     this.checkInterval = const Duration(seconds: 5),
     this.onEmailVerified,
-  }) : _checkEmailVerificationUseCase = checkEmailVerificationUseCase,
-       _deleteAccountUseCase = deleteAccountUseCase,
-       _authRepository = authRepository {
+  }) : _authRepository = authRepository {
     // DEFINE COMMANDS
     sendEmailVerification = Command0<void>(
       _sendEmailVerification,
@@ -38,16 +33,13 @@ class EmailVerificationViewModel {
   final _log = Logger('EmailVerificationViewModel');
 
   // REPOSITORIES & USE CASES
-  final CheckEmailVerificationUseCase _checkEmailVerificationUseCase;
-  final DeleteAccountUseCase _deleteAccountUseCase;
   final AuthRepository _authRepository;
 
   // DOMAIN
   Timer? _verificationTimer;
   bool _isChecking = false;
-  bool _isEmailVerified = false; // Email doğrulandı mı?
 
-  ValueListenable<Auth?> get auth => _authRepository.auth;
+  ValueListenable<Auth> get auth => _authRepository.auth;
 
   /// Email doğrulama kontrolü için kullanılacak interval (varsayılan: 5 saniye)
   final Duration checkInterval;
@@ -81,7 +73,6 @@ class EmailVerificationViewModel {
       // Email gönderildikten sonra periyodik kontrolü başlat
       _startPeriodicVerificationCheck();
     }
-
     return result;
   }
 
@@ -93,7 +84,7 @@ class EmailVerificationViewModel {
     }
 
     _isChecking = true;
-    final result = await _checkEmailVerificationUseCase.execute();
+    final result = await _authRepository.checkEmailVerification();
     _log.info('Check email verification result: $result');
 
     if (result is Error<bool>) {
@@ -101,22 +92,34 @@ class EmailVerificationViewModel {
     } else if (result is Ok<bool>) {
       final isVerified = result.asOk.value;
       if (isVerified) {
-        _isEmailVerified = true; // Email doğrulandı, flag'i set et
         _log.info('Email verified! Stopping periodic check.');
         _stopPeriodicVerificationCheck();
         // Email doğrulandığında callback'i çağır
         onEmailVerified?.call();
       }
     }
-
     _isChecking = false;
+    return result;
+  }
+
+  /// Kullanıcı hesabını siler
+  Future<Result<void>> _deleteAccount() async {
+    final result = await _authRepository.deleteAccount();
+    _log.info('Delete account result: $result');
+
+    if (result is Error<void>) {
+      _log.warning('Delete account failed! ${result.error}');
+    } else {
+      _log.info('Account deleted successfully');
+    }
+
     return result;
   }
 
   /// Periyodik email doğrulama kontrolünü başlatır
   void _startPeriodicVerificationCheck() {
     // Email zaten doğrulandıysa, timer başlatma
-    if (_isEmailVerified) {
+    if (auth.value.isEmailVerified) {
       _log.info('Email already verified, not starting periodic check.');
       return;
     }
@@ -134,7 +137,7 @@ class EmailVerificationViewModel {
   /// Kontrolü yapar ve bir sonraki kontrolü planlar
   Future<void> _performCheckAndScheduleNext() async {
     // Email zaten doğrulandıysa, timer başlatma
-    if (_isEmailVerified) {
+    if (auth.value.isEmailVerified) {
       _log.info('Email already verified, skipping check.');
       return;
     }
@@ -143,7 +146,7 @@ class EmailVerificationViewModel {
     await _checkEmailVerification();
 
     // Email doğrulandıysa timer başlatma
-    if (_isEmailVerified) {
+    if (auth.value.isEmailVerified) {
       _log.info('Email verified during check, not scheduling next.');
       return;
     }
@@ -160,20 +163,5 @@ class EmailVerificationViewModel {
     _verificationTimer?.cancel();
     _verificationTimer = null;
     _log.info('Stopped periodic email verification check');
-  }
-
-  /// Kullanıcı hesabını siler
-  Future<Result<void>> _deleteAccount() async {
-    // Periyodik kontrolü durdur
-    _stopPeriodicVerificationCheck();
-
-    final result = await _deleteAccountUseCase.execute();
-    _log.info('Delete account result: $result');
-
-    if (result is Error<void>) {
-      _log.warning('Delete account failed! ${result.error}');
-    }
-
-    return result;
   }
 }

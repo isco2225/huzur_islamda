@@ -98,7 +98,7 @@ class EmailVerificationView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: context.spacingSmall),
-                UserEmailDisplayer(email: viewModel.auth.value?.email ?? ''),
+                UserEmailDisplayer(email: viewModel.auth.value.email),
                 SizedBox(height: context.isSmallScreen ? 12 : 16),
                 Container(
                   padding: context.containerPadding,

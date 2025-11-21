@@ -107,10 +107,10 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                       WidgetSpan(
                         child: GestureDetector(
                           onTap: () {
-                            const SignInRoute().go(context);
+                            //const SignInRoute().go(context);
                           },
                           child: Text(
-                            'Giriş Yap',
+                            'Profil oluştur',
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
