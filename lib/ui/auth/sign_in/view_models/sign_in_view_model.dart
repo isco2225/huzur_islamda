@@ -4,8 +4,11 @@ import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 
 class SignInViewModel {
-  SignInViewModel({required AuthRepository authRepository})
-    : _authRepository = authRepository {
+  SignInViewModel({
+    required AuthRepository authRepository,
+    required UserRepository userRepository,
+  }) : _authRepository = authRepository,
+       _userRepository = userRepository {
     // DEFINE COMMANDS
     signIn = Command1(_signIn, debugLabel: 'signIn');
 
@@ -17,6 +20,7 @@ class SignInViewModel {
 
   // REPOSITORIES & USE CASES
   final AuthRepository _authRepository;
+  final UserRepository _userRepository;
 
   // DOMAIN
 
@@ -32,11 +36,38 @@ class SignInViewModel {
   Future<Result<void>> _signIn(
     ({String email, String password}) commands,
   ) async {
-    final result = await _authRepository.signIn(
+    // Sign in with Firebase Auth
+    final signInResult = await _authRepository.signIn(
       email: commands.email,
       password: commands.password,
     );
-    _log.info('Sign in result: $result');
-    return result;
+
+    switch (signInResult) {
+      case Ok():
+        _log.info('Sign in successful, fetching user from Firestore');
+        // Sign in successful, fetch user from Firestore
+        final auth = _authRepository.auth.value;
+        if (auth.isSignedIn() && auth.uid.isNotEmpty) {
+          final fetchResult = await _userRepository.fetchAuthenticatedUser(
+            uid: auth.uid,
+          );
+          switch (fetchResult) {
+            case Ok():
+              _log.info('User fetched successfully from Firestore');
+              return Result.ok(null);
+            case Error():
+              // User not found in Firestore (profile not created yet)
+              // This is OK, user will be redirected to create profile
+              _log.warning(
+                'User not found in Firestore, profile needs to be created',
+              );
+              return Result.ok(null);
+          }
+        }
+        return Result.ok(null);
+      case Error():
+        _log.warning('Sign in failed: ${signInResult.asError.error}');
+        return Result.error(signInResult.asError.error);
+    }
   }
 }

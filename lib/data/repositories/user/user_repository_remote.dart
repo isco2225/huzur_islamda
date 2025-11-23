@@ -24,6 +24,16 @@ class UserRepositoryRemote extends UserRepository {
     required String dateOfBirth,
     required String maritalStatus,
   }) async {
+    if (name.isEmpty ||
+        surname.isEmpty ||
+        dateOfBirth.isEmpty ||
+        maritalStatus.isEmpty) {
+      return Result.error(
+        Exception(
+          'Name, surname, date of birth and marital status are required',
+        ),
+      );
+    }
     try {
       final result = await _firestoreUserService.createUser(
         uid: uid,

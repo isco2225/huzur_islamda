@@ -7,3 +7,4 @@ export 'onboarding/onboarding.dart';
 export 'prayer/prayer.dart';
 export 'profile/profile.dart';
 export 'search/search.dart';
+export 'user/user.dart';

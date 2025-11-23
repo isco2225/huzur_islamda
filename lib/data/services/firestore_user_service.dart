@@ -24,7 +24,7 @@ class FirestoreUserService {
         'surname': surname,
         'dateOfBirth': dateOfBirth,
         'maritalStatus': maritalStatus,
-        'emailVerified': false,
+        'emailVerified': true,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       };

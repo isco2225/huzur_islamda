@@ -2,10 +2,14 @@ import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/data.dart';
+import '../../../../domain/domain.dart';
 
 class CreateProfileViewModel {
-  CreateProfileViewModel({required AuthRepository authRepository})
-    : _authRepository = authRepository {
+  CreateProfileViewModel({
+    required AuthRepository authRepository,
+    required CreateUserProfileUseCase createUserProfileUseCase,
+  }) : _authRepository = authRepository,
+       _createUserProfileUseCase = createUserProfileUseCase {
     // DEFINE COMMANDS
     createUserProfile =
         Command1<
@@ -22,10 +26,11 @@ class CreateProfileViewModel {
   }
 
   // LOGGER
-  final _log = Logger('ProfileViewModel');
+  final _log = Logger('CreateProfileViewModel');
 
   // REPOSITORIES & USE CASES
   final AuthRepository _authRepository;
+  final CreateUserProfileUseCase _createUserProfileUseCase;
   // DOMAIN
 
   // COMMANDS
@@ -45,6 +50,13 @@ class CreateProfileViewModel {
     ({String name, String surname, String dateOfBirth, String maritalStatus})
     commands,
   ) async {
-    return Result.ok(null);
+    final result = await _createUserProfileUseCase.execute(
+      name: commands.name,
+      surname: commands.surname,
+      dateOfBirth: commands.dateOfBirth,
+      maritalStatus: commands.maritalStatus,
+    );
+    _log.info('Create profile result: $result');
+    return result;
   }
 }

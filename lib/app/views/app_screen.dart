@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:huzur_islamda/domain/user/use_cases/check_email_verification_use_case.dart';
+import 'package:huzur_islamda/domain/user/use_cases/create_user_profile_use_case.dart';
 import 'package:provider/provider.dart';
+
 import '../../data/data.dart';
 import '../app.dart';
 
@@ -33,6 +35,12 @@ class _AppScreenState extends State<AppScreen> {
       providers: [
         Provider(
           create: (_) => CheckEmailVerificationUseCase(
+            authRepository: widget.authRepository,
+            userRepository: widget.userRepository,
+          ),
+        ),
+        Provider(
+          create: (_) => CreateUserProfileUseCase(
             authRepository: widget.authRepository,
             userRepository: widget.userRepository,
           ),

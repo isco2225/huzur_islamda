@@ -1,10 +1,10 @@
 class User {
   final String uid;
   final String email;
-  final String? name;
-  final String? surname;
-  final String? dateOfBirth;
-  final String? maritalStatus;
+  final String name;
+  final String surname;
+  final String dateOfBirth;
+  final String maritalStatus;
   final bool emailVerified;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -12,13 +12,13 @@ class User {
   const User({
     required this.uid,
     required this.email,
-    this.name,
-    this.surname,
-    this.dateOfBirth,
-    this.maritalStatus,
-    this.emailVerified = false,
-    this.createdAt,
-    this.updatedAt,
+    required this.name,
+    required this.surname,
+    required this.dateOfBirth,
+    required this.maritalStatus,
+    required this.emailVerified,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory User.fromJson(Map<String, Object?> json) {
@@ -36,23 +36,23 @@ class User {
     return User(
       uid: json['uid'] as String,
       email: json['email'] as String,
-      name: json['name'] as String?,
-      surname: json['surname'] as String?,
-      dateOfBirth: json['dateOfBirth'] as String?,
-      maritalStatus: json['maritalStatus'] as String?,
+      name: json['name'] as String,
+      surname: json['surname'] as String,
+      dateOfBirth: json['dateOfBirth'] as String,
+      maritalStatus: json['maritalStatus'] as String,
       emailVerified: json['emailVerified'] as bool? ?? false,
-      createdAt: parseDateTime(json['createdAt']),
-      updatedAt: parseDateTime(json['updatedAt']),
+      createdAt: parseDateTime(json['createdAt']) ?? DateTime.now(),
+      updatedAt: parseDateTime(json['updatedAt']) ?? DateTime.now(),
     );
   }
 
   factory User.empty() => const User(
     uid: '',
     email: '',
-    name: null,
-    surname: null,
-    dateOfBirth: null,
-    maritalStatus: null,
+    name: '',
+    surname: '',
+    dateOfBirth: '',
+    maritalStatus: '',
     emailVerified: false,
     createdAt: null,
     updatedAt: null,

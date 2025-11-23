@@ -175,7 +175,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
   // Check if user is authenticated - use auth.value.isSignedIn() like example app
   final isSignedIn = authRepository.auth.value.isSignedIn();
 
-  // Signed in but navigating to auth screens: redirect to navigation bar
+  // Signed in but navigating to auth screens: redirect based on profile status
   if (isSignedIn && _unAuthenticatedUserRoutes.contains(location)) {
     // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
     final currentAuth = authRepository.auth.value;
@@ -187,12 +187,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
         ? currentAuth.isEmailVerified
         : (currentUser.isEmpty() ? false : currentUser.emailVerified);
 
-    if (isEmailVerified) {
-      // Email verified, redirect to navigation bar (home tab)
-      // Using NavigationBarRouteData as it's the first branch of NavigationBarRouteData
-      // After build_runner, NavigationBarRouteData().location can be used
-      return const FlowRoute().location;
-    } else {
+    if (!isEmailVerified) {
       // Email not verified, allow access to email verification
       if (location == const EmailVerificationRoute().location) {
         return null;
@@ -200,6 +195,21 @@ String? _redirect(BuildContext context, GoRouterState state) {
       // Otherwise redirect to email verification
       return const EmailVerificationRoute().location;
     }
+
+    // Email verified, check if profile is created
+    final isUserProfileCreated = !currentUser.isEmpty();
+    print('isUserProfileCreated: $isUserProfileCreated');
+
+    if (!isUserProfileCreated) {
+      // Profile not created, redirect to create profile
+      if (location == const CreateProfileRoute().location) {
+        return null;
+      }
+      return const CreateProfileRoute().location;
+    }
+
+    // Email verified and profile created, redirect to navigation bar
+    return const FlowRoute().location;
   }
 
   // Not signed in and navigating to protected routes: redirect to sign in
@@ -207,7 +217,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
     return const SignInRoute().location;
   }
 
-  // Signed in and navigating to protected routes: check email verification
+  // Signed in and navigating to protected routes: check email verification and profile
   if (isSignedIn && _protectedRoutes.contains(location)) {
     // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
     final currentAuth = authRepository.auth.value;
@@ -222,6 +232,19 @@ String? _redirect(BuildContext context, GoRouterState state) {
     if (!isEmailVerified) {
       // Email not verified, redirect to email verification
       return const EmailVerificationRoute().location;
+    }
+
+    // Email verified, check if profile is created
+    final isProfileCreated = !currentUser.isEmpty();
+
+    // Allow access to create profile screen if profile not created
+    if (!isProfileCreated && location == const CreateProfileRoute().location) {
+      return null;
+    }
+
+    // If profile not created and trying to access other protected routes, redirect to create profile
+    if (!isProfileCreated) {
+      return const CreateProfileRoute().location;
     }
   }
 

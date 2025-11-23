@@ -15,11 +15,12 @@ class _SignUpViewState extends State<SignUpView> {
   // Text Field Controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  final _confirmPasswordController = TextEditingController();
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -44,6 +45,10 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               PasswordTextField(
                 controller: _passwordController,
+                showForgotPassword: false,
+              ),
+              PasswordTextField(
+                controller: _confirmPasswordController,
                 showForgotPassword: false,
               ),
               Padding(

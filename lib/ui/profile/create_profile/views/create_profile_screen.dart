@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app/router/app_router.dart';
 import '../../../../data/data.dart';
+import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class CreateProfileScreen extends StatefulWidget {
@@ -18,6 +20,20 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     super.initState();
     _viewModel = CreateProfileViewModel(
       authRepository: context.read<AuthRepository>(),
+      createUserProfileUseCase: context.read<CreateUserProfileUseCase>(),
+    );
+
+    // Error handling
+    _viewModel.createUserProfile.handleError(context, showSnackBar: true);
+
+    // Success handling - navigate to navigation bar after successful profile creation
+    _viewModel.createUserProfile.handleCompleted(
+      context,
+      successMessage: 'Profil başarıyla oluşturuldu!',
+      onCompleted: (_) {
+        // Navigate to navigation bar (FlowRoute)
+        const FlowRoute().go(context);
+      },
     );
   }
 
