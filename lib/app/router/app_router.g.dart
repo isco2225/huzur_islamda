@@ -11,12 +11,7 @@ List<RouteBase> get $appRoutes => [
   $signInRoute,
   $signUpRoute,
   $emailVerificationRoute,
-  $homeRoute,
-  $flowRoute,
-  $searchRoute,
-  $prayerRoute,
-  $dhikrRoute,
-  $profileRoute,
+  $navigationBarRouteData,
   $createProfileRoute,
 ];
 
@@ -106,26 +101,61 @@ extension $EmailVerificationRouteExtension on EmailVerificationRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $homeRoute =>
-    GoRouteData.$route(path: '/home', factory: $HomeRouteExtension._fromState);
+RouteBase get $navigationBarRouteData => StatefulShellRouteData.$route(
+  factory: $NavigationBarRouteDataExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/flow',
 
-extension $HomeRouteExtension on HomeRoute {
-  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
+          factory: $FlowRouteExtension._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/search',
 
-  String get location => GoRouteData.$location('/home');
+          factory: $SearchRouteExtension._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/prayer',
 
-  void go(BuildContext context) => context.go(location);
+          factory: $PrayerRouteExtension._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/dhikr',
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+          factory: $DhikrRouteExtension._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/profile',
 
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+          factory: $ProfileRouteExtension._fromState,
+        ),
+      ],
+    ),
+  ],
+);
 
-  void replace(BuildContext context) => context.replace(location);
+extension $NavigationBarRouteDataExtension on NavigationBarRouteData {
+  static NavigationBarRouteData _fromState(GoRouterState state) =>
+      const NavigationBarRouteData();
 }
-
-RouteBase get $flowRoute =>
-    GoRouteData.$route(path: '/flow', factory: $FlowRouteExtension._fromState);
 
 extension $FlowRouteExtension on FlowRoute {
   static FlowRoute _fromState(GoRouterState state) => const FlowRoute();
@@ -142,12 +172,6 @@ extension $FlowRouteExtension on FlowRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $searchRoute => GoRouteData.$route(
-  path: '/search',
-
-  factory: $SearchRouteExtension._fromState,
-);
-
 extension $SearchRouteExtension on SearchRoute {
   static SearchRoute _fromState(GoRouterState state) => const SearchRoute();
 
@@ -162,12 +186,6 @@ extension $SearchRouteExtension on SearchRoute {
 
   void replace(BuildContext context) => context.replace(location);
 }
-
-RouteBase get $prayerRoute => GoRouteData.$route(
-  path: '/prayer',
-
-  factory: $PrayerRouteExtension._fromState,
-);
 
 extension $PrayerRouteExtension on PrayerRoute {
   static PrayerRoute _fromState(GoRouterState state) => const PrayerRoute();
@@ -184,12 +202,6 @@ extension $PrayerRouteExtension on PrayerRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $dhikrRoute => GoRouteData.$route(
-  path: '/dhikr',
-
-  factory: $DhikrRouteExtension._fromState,
-);
-
 extension $DhikrRouteExtension on DhikrRoute {
   static DhikrRoute _fromState(GoRouterState state) => const DhikrRoute();
 
@@ -204,12 +216,6 @@ extension $DhikrRouteExtension on DhikrRoute {
 
   void replace(BuildContext context) => context.replace(location);
 }
-
-RouteBase get $profileRoute => GoRouteData.$route(
-  path: '/profile',
-
-  factory: $ProfileRouteExtension._fromState,
-);
 
 extension $ProfileRouteExtension on ProfileRoute {
   static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();

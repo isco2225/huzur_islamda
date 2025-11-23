@@ -45,15 +45,50 @@ class EmailVerificationRoute extends GoRouteData {
       const EmailVerificationScreen();
 }
 
-@TypedGoRoute<HomeRoute>(path: '/home')
-class HomeRoute extends GoRouteData {
-  const HomeRoute();
+//BOTTOM NAVIGATION BAR ROUTES
+
+/// Main navigation bar route with stateful shell for bottom navigation.
+///
+/// Each branch represents a tab in the bottom navigation bar.
+/// Each branch maintains its own navigation stack.
+@TypedStatefulShellRoute<NavigationBarRouteData>(
+  branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
+    TypedStatefulShellBranch(
+      routes: <TypedRoute<RouteData>>[TypedGoRoute<FlowRoute>(path: '/flow')],
+    ),
+    TypedStatefulShellBranch(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<SearchRoute>(path: '/search'),
+      ],
+    ),
+    TypedStatefulShellBranch(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<PrayerRoute>(path: '/prayer'),
+      ],
+    ),
+    TypedStatefulShellBranch(
+      routes: <TypedRoute<RouteData>>[TypedGoRoute<DhikrRoute>(path: '/dhikr')],
+    ),
+    TypedStatefulShellBranch(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<ProfileRoute>(path: '/profile'),
+      ],
+    ),
+  ],
+)
+class NavigationBarRouteData extends StatefulShellRouteData {
+  const NavigationBarRouteData();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return NavigationBarScreen(navigationShell: navigationShell);
+  }
 }
 
-@TypedGoRoute<FlowRoute>(path: '/flow')
 class FlowRoute extends GoRouteData {
   const FlowRoute();
 
@@ -61,7 +96,6 @@ class FlowRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => const FlowScreen();
 }
 
-@TypedGoRoute<SearchRoute>(path: '/search')
 class SearchRoute extends GoRouteData {
   const SearchRoute();
 
@@ -70,7 +104,6 @@ class SearchRoute extends GoRouteData {
       const SearchScreen();
 }
 
-@TypedGoRoute<PrayerRoute>(path: '/prayer')
 class PrayerRoute extends GoRouteData {
   const PrayerRoute();
 
@@ -79,7 +112,6 @@ class PrayerRoute extends GoRouteData {
       const PrayerScreen();
 }
 
-@TypedGoRoute<DhikrRoute>(path: '/dhikr')
 class DhikrRoute extends GoRouteData {
   const DhikrRoute();
 
@@ -88,7 +120,6 @@ class DhikrRoute extends GoRouteData {
       const DhikrScreen();
 }
 
-@TypedGoRoute<ProfileRoute>(path: '/profile')
 class ProfileRoute extends GoRouteData {
   const ProfileRoute();
 
@@ -125,19 +156,16 @@ final _unAuthenticatedUserRoutes = {
 
 /// Protected routes that require authentication and email verification
 final _protectedRoutes = {
+  // NavigationBarRouteData branch routes
   const FlowRoute().location,
   const SearchRoute().location,
   const PrayerRoute().location,
   const DhikrRoute().location,
   const ProfileRoute().location,
-  const HomeRoute().location,
+  // Other protected routes
   const CreateProfileRoute().location,
 };
 
-/// Redirect logic for protected routes
-///
-/// Checks if user is authenticated and email is verified.
-/// If not, redirects to appropriate route.
 String? _redirect(BuildContext context, GoRouterState state) {
   final location = state.matchedLocation;
 
@@ -147,7 +175,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
   // Check if user is authenticated - use auth.value.isSignedIn() like example app
   final isSignedIn = authRepository.auth.value.isSignedIn();
 
-  // Signed in but navigating to auth screens: redirect to home
+  // Signed in but navigating to auth screens: redirect to navigation bar
   if (isSignedIn && _unAuthenticatedUserRoutes.contains(location)) {
     // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
     final currentAuth = authRepository.auth.value;
@@ -160,8 +188,10 @@ String? _redirect(BuildContext context, GoRouterState state) {
         : (currentUser.isEmpty() ? false : currentUser.emailVerified);
 
     if (isEmailVerified) {
-      // Email verified, redirect to home
-      return const HomeRoute().location;
+      // Email verified, redirect to navigation bar (home tab)
+      // Using NavigationBarRouteData as it's the first branch of NavigationBarRouteData
+      // After build_runner, NavigationBarRouteData().location can be used
+      return const FlowRoute().location;
     } else {
       // Email not verified, allow access to email verification
       if (location == const EmailVerificationRoute().location) {

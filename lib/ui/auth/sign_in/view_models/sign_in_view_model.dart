@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
-import '../../../../data/repositories/auth/auth_repository.dart';
+import '../../../../data/data.dart';
 
 class SignInViewModel {
   SignInViewModel({required AuthRepository authRepository})
