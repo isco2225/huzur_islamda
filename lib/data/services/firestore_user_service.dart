@@ -27,6 +27,7 @@ class FirestoreUserService {
         'emailVerified': true,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
+        'isRegistered': true,
       };
 
       await _firestore.collection(_collectionName).doc(uid).set(userData);
@@ -108,14 +109,13 @@ class FirestoreUserService {
   }
 
   /// Kullanıcı bilgilerini Firestore'dan getir
-  Future<Result<User>> fetchAuthenticatedUser({required String uid}) async {
+  Future<Result<User?>> readAuthenticatedUser({required String uid}) async {
     try {
       final doc = await _firestore.collection(_collectionName).doc(uid).get();
-
       if (!doc.exists) {
-        return Result.error(Exception('User not found'));
+        print('User not found on firestore');
+        return Result.ok(null);
       }
-
       final data = doc.data()!;
       // Timestamp'leri DateTime'a dönüştür (domain layer için temiz veri)
       final cleanData = _convertTimestampsToDateTime(data);
@@ -165,4 +165,23 @@ class FirestoreUserService {
 
     return cleanData;
   }
+
+  // Future<Result<User?>> initUser({required String uid}) async {
+  //   try {
+  //     final doc = await _firestore.collection(_collectionName).doc(uid).get();
+  //     if (!doc.exists) {
+  //       return Result.ok(null);
+  //     }
+  //     final data = doc.data()!;
+  //     final cleanData = _convertTimestampsToDateTime(data);
+  //     final user = User.fromJson(cleanData);
+  //     return Result.ok(user);
+  //   } on FirebaseException catch (e) {
+  //     return Result.error(
+  //       Exception('Failed to init user: ${e.message ?? e.code}'),
+  //     );
+  //   } catch (e) {
+  //     return Result.error(Exception('Failed to init user: $e'));
+  //   }
+  // }
 }

@@ -17,7 +17,6 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase initialization'ı await ile bekliyoruz (ana thread'de ama gerekli)
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(

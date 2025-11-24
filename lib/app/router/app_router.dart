@@ -128,6 +128,15 @@ class ProfileRoute extends GoRouteData {
       const ProfileScreen();
 }
 
+@TypedGoRoute<UserInitializeRoute>(path: '/user_initialize')
+class UserInitializeRoute extends GoRouteData {
+  const UserInitializeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const UserInitializeScreen();
+}
+
 @TypedGoRoute<CreateProfileRoute>(path: '/create_profile')
 class CreateProfileRoute extends GoRouteData {
   const CreateProfileRoute();
@@ -146,108 +155,62 @@ GoRouter createAppRouter(Listenable refreshListenable) => GoRouter(
   refreshListenable: refreshListenable,
 );
 
-/// Auth screens that authenticated users should not access
-final _unAuthenticatedUserRoutes = {
-  const OnboardingRoute().location,
-  const SignInRoute().location,
-  const SignUpRoute().location,
-  const EmailVerificationRoute().location,
-};
-
-/// Protected routes that require authentication and email verification
-final _protectedRoutes = {
-  // NavigationBarRouteData branch routes
-  const FlowRoute().location,
-  const SearchRoute().location,
-  const PrayerRoute().location,
-  const DhikrRoute().location,
-  const ProfileRoute().location,
-  // Other protected routes
-  const CreateProfileRoute().location,
-};
-
 String? _redirect(BuildContext context, GoRouterState state) {
   final location = state.matchedLocation;
-
   final authRepository = context.read<AuthRepository>();
   final userRepository = context.read<UserRepository>();
 
-  // Check if user is authenticated - use auth.value.isSignedIn() like example app
   final isSignedIn = authRepository.auth.value.isSignedIn();
+  final auth = authRepository.auth.value;
+  final user = userRepository.currentUser.value;
 
-  // Signed in but navigating to auth screens: redirect based on profile status
-  if (isSignedIn && _unAuthenticatedUserRoutes.contains(location)) {
-    // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
-    final currentAuth = authRepository.auth.value;
-    final currentUser = userRepository.currentUser.value;
+  // Auth screens
+  final authLocs = [
+    const OnboardingRoute().location,
+    const SignInRoute().location,
+    const SignUpRoute().location,
+    const EmailVerificationRoute().location,
+  ];
 
-    // Auth'dan emailVerified kontrolü (öncelikli)
-    // Eğer User data yüklenmemişse Auth'u kullan, yüklenmişse User'ı fallback olarak kullan
-    final isEmailVerified = currentAuth.isSignedIn()
-        ? currentAuth.isEmailVerified
-        : (currentUser.isEmpty() ? false : currentUser.emailVerified);
+  // Routes that handle their own redirect logic
+  final noRuleLocs = [
+    const UserInitializeRoute().location,
+    const CreateProfileRoute().location,
+  ];
 
-    if (!isEmailVerified) {
-      // Email not verified, allow access to email verification
-      if (location == const EmailVerificationRoute().location) {
-        return null;
-      }
-      // Otherwise redirect to email verification
-      return const EmailVerificationRoute().location;
-    }
+  // Allow routes with no rules
+  if (noRuleLocs.contains(location)) return null;
 
-    // Email verified, check if profile is created
-    final isUserProfileCreated = !currentUser.isEmpty();
-    print('isUserProfileCreated: $isUserProfileCreated');
-
-    if (!isUserProfileCreated) {
-      // Profile not created, redirect to create profile
-      if (location == const CreateProfileRoute().location) {
-        return null;
-      }
-      return const CreateProfileRoute().location;
-    }
-
-    // Email verified and profile created, redirect to navigation bar
-    return const FlowRoute().location;
-  }
-
-  // Not signed in and navigating to protected routes: redirect to sign in
-  if (!isSignedIn && _protectedRoutes.contains(location)) {
+  // Not signed in: allow auth screens, redirect others to sign in
+  if (!isSignedIn) {
+    if (authLocs.contains(location)) return null;
     return const SignInRoute().location;
   }
 
-  // Signed in and navigating to protected routes: check email verification and profile
-  if (isSignedIn && _protectedRoutes.contains(location)) {
-    // Check if email is verified - önce Auth'dan kontrol et (Firebase Auth kaynağı)
-    final currentAuth = authRepository.auth.value;
-    final currentUser = userRepository.currentUser.value;
-
-    // Auth'dan emailVerified kontrolü (öncelikli)
-    // Eğer User data yüklenmemişse Auth'u kullan, yüklenmişse User'ı fallback olarak kullan
-    final isEmailVerified = currentAuth.isSignedIn()
-        ? currentAuth.isEmailVerified
-        : (currentUser.isEmpty() ? false : currentUser.emailVerified);
-
-    if (!isEmailVerified) {
-      // Email not verified, redirect to email verification
+  // Signed in but navigating to auth screens: redirect based on status
+  if (isSignedIn && authLocs.contains(location)) {
+    if (!auth.isEmailVerified) {
+      if (location == const EmailVerificationRoute().location) return null;
       return const EmailVerificationRoute().location;
     }
-
-    // Email verified, check if profile is created
-    final isProfileCreated = !currentUser.isEmpty();
-
-    // Allow access to create profile screen if profile not created
-    if (!isProfileCreated && location == const CreateProfileRoute().location) {
-      return null;
-    }
-
-    // If profile not created and trying to access other protected routes, redirect to create profile
-    if (!isProfileCreated) {
-      return const CreateProfileRoute().location;
-    }
+    if (user.uid.isEmpty) return const UserInitializeRoute().location;
+    if (!user.isRegistered) return const CreateProfileRoute().location;
+    return const FlowRoute().location;
   }
 
-  // Unknown route, allow access (will show 404 if route doesn't exist)
+  // Signed in: enforce requirements for protected routes
+  if (!auth.isEmailVerified) {
+    if (location == const EmailVerificationRoute().location) return null;
+    return const EmailVerificationRoute().location;
+  }
+  if (user.uid.isEmpty) {
+    if (location == const UserInitializeRoute().location) return null;
+    return const UserInitializeRoute().location;
+  }
+  if (!user.isRegistered) {
+    if (location == const CreateProfileRoute().location) return null;
+    return const CreateProfileRoute().location;
+  }
+
   return null;
 }

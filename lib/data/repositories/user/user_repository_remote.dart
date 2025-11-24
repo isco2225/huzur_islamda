@@ -56,6 +56,29 @@ class UserRepositoryRemote extends UserRepository {
   }
 
   @override
+  Future<Result<bool>> initUser({required String uid}) async {
+    try {
+      final result = await _firestoreUserService.readAuthenticatedUser(
+        uid: uid,
+      );
+      switch (result) {
+        case Ok():
+          if (result.asOk.value == null) {
+            _currentUser.value = User.empty();
+            return Result.ok(false);
+          } else {
+            _currentUser.value = result.asOk.value!;
+            return Result.ok(true);
+          }
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
+
+  @override
   Future<Result<void>> updateEmailVerificationStatus({
     required String uid,
     required bool emailVerified,
@@ -108,17 +131,21 @@ class UserRepositoryRemote extends UserRepository {
   }
 
   @override
-  Future<Result<User>> fetchAuthenticatedUser({required String uid}) async {
+  Future<Result<bool>> fetchAuthenticatedUser({required String uid}) async {
     try {
-      final result = await _firestoreUserService.fetchAuthenticatedUser(
+      final result = await _firestoreUserService.readAuthenticatedUser(
         uid: uid,
       );
       switch (result) {
         case Ok():
-          _currentUser.value = result.asOk.value;
-          return Result.ok(result.asOk.value);
+          if (result.asOk.value != null) {
+            _currentUser.value = result.asOk.value!;
+            return Result.ok(true);
+          } else {
+            _currentUser.value = User.empty();
+            return Result.ok(false);
+          }
         case Error():
-          _currentUser.value = User.empty();
           return Result.error(result.asError.error);
       }
     } catch (e) {
@@ -142,5 +169,10 @@ class UserRepositoryRemote extends UserRepository {
     } catch (e) {
       return Result.error(Exception(e));
     }
+  }
+
+  @override
+  void wipeUser() {
+    _currentUser.value = User.empty();
   }
 }

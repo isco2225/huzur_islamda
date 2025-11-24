@@ -33,10 +33,13 @@ abstract class UserRepository {
   });
 
   /// Kullanıcı bilgilerini Firestore'dan getir
-  Future<Result<User>> fetchAuthenticatedUser({required String uid});
+  Future<Result<bool>> fetchAuthenticatedUser({required String uid});
 
   /// Kullanıcıyı Firestore'dan sil
   Future<Result<void>> deleteAuthenticatedUser({required String uid});
+
+  /// Kullanıcı bilgilerini temizle (wipe)
+  void wipeUser();
+
+  Future<Result<bool>> initUser({required String uid});
 }
-
-

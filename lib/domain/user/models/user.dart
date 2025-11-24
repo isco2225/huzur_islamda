@@ -8,7 +8,7 @@ class User {
   final bool emailVerified;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-
+  final bool isRegistered;
   const User({
     required this.uid,
     required this.email,
@@ -19,6 +19,9 @@ class User {
     required this.emailVerified,
     required this.createdAt,
     required this.updatedAt,
+
+    /// If this value is false then [User] is not registered yet.
+    required this.isRegistered,
   });
 
   factory User.fromJson(Map<String, Object?> json) {
@@ -43,6 +46,7 @@ class User {
       emailVerified: json['emailVerified'] as bool? ?? false,
       createdAt: parseDateTime(json['createdAt']) ?? DateTime.now(),
       updatedAt: parseDateTime(json['updatedAt']) ?? DateTime.now(),
+      isRegistered: json['isRegistered'] as bool? ?? false,
     );
   }
 
@@ -56,6 +60,7 @@ class User {
     emailVerified: false,
     createdAt: null,
     updatedAt: null,
+    isRegistered: false,
   );
 
   Map<String, dynamic> toJson() {
@@ -69,6 +74,7 @@ class User {
       'emailVerified': emailVerified,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'isRegistered': isRegistered,
     };
   }
 
@@ -82,6 +88,7 @@ class User {
     bool? emailVerified,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isRegistered,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -93,6 +100,7 @@ class User {
       emailVerified: emailVerified ?? this.emailVerified,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isRegistered: isRegistered ?? this.isRegistered,
     );
   }
 

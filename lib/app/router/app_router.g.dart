@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [
   $signUpRoute,
   $emailVerificationRoute,
   $navigationBarRouteData,
+  $userInitializeRoute,
   $createProfileRoute,
 ];
 
@@ -221,6 +222,28 @@ extension $ProfileRouteExtension on ProfileRoute {
   static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
 
   String get location => GoRouteData.$location('/profile');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $userInitializeRoute => GoRouteData.$route(
+  path: '/user_initialize',
+
+  factory: $UserInitializeRouteExtension._fromState,
+);
+
+extension $UserInitializeRouteExtension on UserInitializeRoute {
+  static UserInitializeRoute _fromState(GoRouterState state) =>
+      const UserInitializeRoute();
+
+  String get location => GoRouteData.$location('/user_initialize');
 
   void go(BuildContext context) => context.go(location);
 
