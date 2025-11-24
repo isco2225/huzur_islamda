@@ -19,7 +19,6 @@ class _SignInScreenState extends State<SignInScreen> {
     super.initState();
     _viewModel = SignInViewModel(
       authRepository: context.read<AuthRepository>(),
-      userRepository: context.read<UserRepository>(),
     );
 
     // Error handling

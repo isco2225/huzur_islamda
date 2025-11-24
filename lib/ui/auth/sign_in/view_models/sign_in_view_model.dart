@@ -4,11 +4,8 @@ import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 
 class SignInViewModel {
-  SignInViewModel({
-    required AuthRepository authRepository,
-    required UserRepository userRepository,
-  }) : _authRepository = authRepository,
-       _userRepository = userRepository {
+  SignInViewModel({required AuthRepository authRepository})
+    : _authRepository = authRepository {
     // DEFINE COMMANDS
     signIn = Command1(_signIn, debugLabel: 'signIn');
 
@@ -20,7 +17,6 @@ class SignInViewModel {
 
   // REPOSITORIES & USE CASES
   final AuthRepository _authRepository;
-  final UserRepository _userRepository;
 
   // DOMAIN
 
@@ -44,26 +40,7 @@ class SignInViewModel {
 
     switch (signInResult) {
       case Ok():
-        _log.info('Sign in successful, fetching user from Firestore');
-        // Sign in successful, fetch user from Firestore
-        final auth = _authRepository.auth.value;
-        if (auth.isSignedIn() && auth.uid.isNotEmpty) {
-          final fetchResult = await _userRepository.fetchAuthenticatedUser(
-            uid: auth.uid,
-          );
-          switch (fetchResult) {
-            case Ok():
-              _log.info('User fetched successfully from Firestore');
-              return Result.ok(null);
-            case Error():
-              // User not found in Firestore (profile not created yet)
-              // This is OK, user will be redirected to create profile
-              _log.warning(
-                'User not found in Firestore, profile needs to be created',
-              );
-              return Result.ok(null);
-          }
-        }
+        _log.info('Sign in successful');
         return Result.ok(null);
       case Error():
         _log.warning('Sign in failed: ${signInResult.asError.error}');
