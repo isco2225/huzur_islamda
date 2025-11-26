@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../app/router/app_router.dart';
-import '../../../../data/data.dart';
-import '../../../../domain/domain.dart';
-import '../../../ui.dart';
+import '../../../../../app/router/app_router.dart';
+import '../../../../../data/data.dart';
+import '../../../../../domain/domain.dart';
+import '../../../../ui.dart';
 
-class CreateProfileScreen extends StatefulWidget {
-  const CreateProfileScreen({super.key});
+class CreateUserProfileScreen extends StatefulWidget {
+  const CreateUserProfileScreen({super.key});
 
   @override
-  State<CreateProfileScreen> createState() => _CreateProfileScreenState();
+  State<CreateUserProfileScreen> createState() =>
+      _CreateUserProfileScreenState();
 }
 
-class _CreateProfileScreenState extends State<CreateProfileScreen> {
-  late final CreateProfileViewModel _viewModel;
+class _CreateUserProfileScreenState extends State<CreateUserProfileScreen> {
+  late final CreateUserProfileViewModel _viewModel;
   @override
   void initState() {
     super.initState();
-    _viewModel = CreateProfileViewModel(
+    _viewModel = CreateUserProfileViewModel(
       authRepository: context.read<AuthRepository>(),
       createUserProfileUseCase: context.read<CreateUserProfileUseCase>(),
     );
@@ -45,6 +46,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CreateProfileView(viewModel: _viewModel);
+    return CreateUserProfileView(viewModel: _viewModel);
   }
 }

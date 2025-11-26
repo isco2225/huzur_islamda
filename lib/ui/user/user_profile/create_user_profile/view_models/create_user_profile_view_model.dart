@@ -1,11 +1,11 @@
 import 'package:logging/logging.dart';
 
-import '../../../../app/app.dart';
-import '../../../../data/data.dart';
-import '../../../../domain/domain.dart';
+import '../../../../../app/app.dart';
+import '../../../../../data/data.dart';
+import '../../../../../domain/domain.dart';
 
-class CreateProfileViewModel {
-  CreateProfileViewModel({
+class CreateUserProfileViewModel {
+  CreateUserProfileViewModel({
     required AuthRepository authRepository,
     required CreateUserProfileUseCase createUserProfileUseCase,
   }) : _authRepository = authRepository,
@@ -26,7 +26,7 @@ class CreateProfileViewModel {
   }
 
   // LOGGER
-  final _log = Logger('CreateProfileViewModel');
+  final _log = Logger('CreateUserProfileViewModel');
 
   // REPOSITORIES & USE CASES
   final AuthRepository _authRepository;

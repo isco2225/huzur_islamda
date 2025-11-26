@@ -75,7 +75,7 @@ class FirestoreUserService {
   }
 
   /// Kullanıcı bilgilerini güncelle
-  Future<Result<User>> updateUser({
+  Future<Result<User?>> updateUser({
     required String uid,
     String? name,
     String? surname,

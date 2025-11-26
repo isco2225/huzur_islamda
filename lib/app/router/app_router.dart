@@ -125,7 +125,7 @@ class ProfileRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const ProfileScreen();
+      const UserProfileScreen();
 }
 
 @TypedGoRoute<UserInitializeRoute>(path: '/user_initialize')
@@ -143,7 +143,16 @@ class CreateProfileRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const CreateProfileScreen();
+      const CreateUserProfileScreen();
+}
+
+@TypedGoRoute<EditProfileRoute>(path: '/profile/edit_profile')
+class EditProfileRoute extends GoRouteData {
+  const EditProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const EditProfileScreen();
 }
 
 /// Creates and returns the app router with refresh listenable support
@@ -176,6 +185,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
   final noRuleLocs = [
     const UserInitializeRoute().location,
     const CreateProfileRoute().location,
+    const EditProfileRoute().location,
   ];
 
   // Allow routes with no rules

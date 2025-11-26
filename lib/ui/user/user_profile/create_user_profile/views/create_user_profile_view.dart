@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/app.dart';
-import '../../../ui.dart';
+import '../../../../../app/app.dart';
+import '../../../../ui.dart';
 
-class CreateProfileView extends StatefulWidget {
-  const CreateProfileView({super.key, required this.viewModel});
-  final CreateProfileViewModel viewModel;
+class CreateUserProfileView extends StatefulWidget {
+  const CreateUserProfileView({super.key, required this.viewModel});
+  final CreateUserProfileViewModel viewModel;
 
   @override
-  State<CreateProfileView> createState() => _CreateProfileViewState();
+  State<CreateUserProfileView> createState() => _CreateUserProfileViewState();
 }
 
-class _CreateProfileViewState extends State<CreateProfileView> {
+class _CreateUserProfileViewState extends State<CreateUserProfileView> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _dateOfBirthController = TextEditingController();

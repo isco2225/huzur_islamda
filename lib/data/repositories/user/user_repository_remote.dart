@@ -92,7 +92,6 @@ class UserRepositoryRemote extends UserRepository {
         case Ok():
           _currentUser.value = _currentUser.value.copyWith(
             emailVerified: emailVerified,
-            updatedAt: DateTime.now(),
           );
           return Result.ok(null);
         case Error():
@@ -121,6 +120,12 @@ class UserRepositoryRemote extends UserRepository {
       );
       switch (result) {
         case Ok():
+          _currentUser.value = _currentUser.value.copyWith(
+            name: name ?? _currentUser.value.name,
+            surname: surname ?? _currentUser.value.surname,
+            dateOfBirth: dateOfBirth ?? _currentUser.value.dateOfBirth,
+            maritalStatus: maritalStatus ?? _currentUser.value.maritalStatus,
+          );
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);

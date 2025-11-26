@@ -1,9 +1,7 @@
 import 'package:logging/logging.dart';
 
-import '../../../../app/app.dart';
-
-class ProfileViewModel {
-  ProfileViewModel() {
+class UserProfileViewModel {
+  UserProfileViewModel() {
     // DEFINE COMMANDS
     // TODO: Add commands here
 

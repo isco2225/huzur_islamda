@@ -1,10 +1,8 @@
 export 'auth/auth.dart';
 export 'dhikr/dhikr.dart';
 export 'flow/flow.dart';
-export 'home/home.dart';
 export 'navigation_bar/navigation_bar.dart';
 export 'onboarding/onboarding.dart';
 export 'prayer/prayer.dart';
-export 'profile/profile.dart';
 export 'search/search.dart';
 export 'user/user.dart';

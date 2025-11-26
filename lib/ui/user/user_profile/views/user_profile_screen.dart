@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../app/app.dart';
-import '../../../data/data.dart';
-import '../../ui.dart';
+import '../../../../app/app.dart';
+import '../../../../data/data.dart';
+import '../../../ui.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  late final ProfileViewModel _viewModel;
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  late final UserProfileViewModel _viewModel;
   late final LogOutViewModel _logOutViewModel;
   late final FetchUserViewModel _userViewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ProfileViewModel();
+    _viewModel = UserProfileViewModel();
     _logOutViewModel = LogOutViewModel(
       authRepository: context.read<AuthRepository>(),
     );
@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ProfileView(
+    return UserProfileView(
       viewModel: _logOutViewModel,
       userViewModel: _userViewModel,
     );
