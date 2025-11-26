@@ -5,9 +5,14 @@ import '../../../../app/app.dart';
 import '../../ui.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key, required this.viewModel});
+  const SettingsView({
+    super.key,
+    required this.viewModel,
+    required this.logOutViewModel,
+  });
 
   final SettingsViewModel viewModel;
+  final LogOutViewModel logOutViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +67,7 @@ class SettingsView extends StatelessWidget {
                     SettingsDivider(),
                     SettingsLogOutCard(
                       onTap: () {
-                        // TODO: Trigger log out flow
+                        logOutViewModel.logOut.execute();
                       },
                     ),
                   ],
