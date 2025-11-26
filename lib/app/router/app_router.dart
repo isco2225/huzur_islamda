@@ -155,6 +155,15 @@ class EditProfileRoute extends GoRouteData {
       const EditProfileScreen();
 }
 
+@TypedGoRoute<SettingsRoute>(path: '/settings')
+class SettingsRoute extends GoRouteData {
+  const SettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SettingsScreen();
+}
+
 /// Creates and returns the app router with refresh listenable support
 GoRouter createAppRouter(Listenable refreshListenable) => GoRouter(
   routes: $appRoutes,
@@ -186,6 +195,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
     const UserInitializeRoute().location,
     const CreateProfileRoute().location,
     const EditProfileRoute().location,
+    const SettingsRoute().location,
   ];
 
   // Allow routes with no rules

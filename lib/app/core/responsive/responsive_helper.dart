@@ -35,6 +35,10 @@ class ResponsiveHelper {
     return screenWidth < ResponsiveBreakpoints.small ? 16.0 : 20.0;
   }
 
+  static double getSpacingExtraSmall(double screenWidth) {
+    return screenWidth < ResponsiveBreakpoints.small ? 4.0 : 8.0;
+  }
+
   /// Get responsive spacing (medium)
   static double getSpacingMedium(double screenWidth) {
     return screenWidth < ResponsiveBreakpoints.small ? 20.0 : 24.0;

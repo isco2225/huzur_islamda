@@ -30,6 +30,10 @@ extension ResponsiveExtension on BuildContext {
   /// Get responsive spacing (small)
   double get spacingSmall => ResponsiveHelper.getSpacingSmall(screenWidth);
 
+  /// Get responsive spacing (extra small)
+  double get spacingExtraSmall =>
+      ResponsiveHelper.getSpacingExtraSmall(screenWidth);
+
   /// Get responsive spacing (medium)
   double get spacingMedium => ResponsiveHelper.getSpacingMedium(screenWidth);
 

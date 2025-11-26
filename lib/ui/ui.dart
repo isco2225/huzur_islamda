@@ -5,4 +5,5 @@ export 'navigation_bar/navigation_bar.dart';
 export 'onboarding/onboarding.dart';
 export 'prayer/prayer.dart';
 export 'search/search.dart';
+export 'settings/settings.dart';
 export 'user/user.dart';

@@ -31,13 +31,10 @@ class UserProfileView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              viewModel.logOut.execute();
+              const SettingsRoute().push(context);
+              //viewModel.logOut.execute();
             },
-            icon: Icon(
-              Icons.logout,
-              color: AppColors.error,
-              size: context.isSmallScreen ? 22 : 24,
-            ),
+            icon: Icon(Icons.settings, size: context.isSmallScreen ? 22 : 24),
             tooltip: 'Çıkış Yap',
           ),
         ],

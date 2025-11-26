@@ -15,6 +15,7 @@ List<RouteBase> get $appRoutes => [
   $userInitializeRoute,
   $createProfileRoute,
   $editProfileRoute,
+  $settingsRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -279,7 +280,7 @@ extension $CreateProfileRouteExtension on CreateProfileRoute {
 }
 
 RouteBase get $editProfileRoute => GoRouteData.$route(
-  path: '/edit_profile',
+  path: '/profile/edit_profile',
 
   factory: $EditProfileRouteExtension._fromState,
 );
@@ -288,7 +289,28 @@ extension $EditProfileRouteExtension on EditProfileRoute {
   static EditProfileRoute _fromState(GoRouterState state) =>
       const EditProfileRoute();
 
-  String get location => GoRouteData.$location('/edit_profile');
+  String get location => GoRouteData.$location('/profile/edit_profile');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $settingsRoute => GoRouteData.$route(
+  path: '/settings',
+
+  factory: $SettingsRouteExtension._fromState,
+);
+
+extension $SettingsRouteExtension on SettingsRoute {
+  static SettingsRoute _fromState(GoRouterState state) => const SettingsRoute();
+
+  String get location => GoRouteData.$location('/settings');
 
   void go(BuildContext context) => context.go(location);
 

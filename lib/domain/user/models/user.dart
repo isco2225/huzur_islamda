@@ -5,6 +5,9 @@ class User {
   final String surname;
   final String dateOfBirth;
   final String maritalStatus;
+  //final String gender;
+  //final double? latitude;
+  //final double? longitude;
   final bool emailVerified;
   final DateTime? createdAt;
   final DateTime? updatedAt;
