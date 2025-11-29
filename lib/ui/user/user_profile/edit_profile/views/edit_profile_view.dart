@@ -16,7 +16,9 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _surnameController;
   late final TextEditingController _dateOfBirthController;
   late String _selectedMaritalStatus;
-
+  final ValueNotifier<bool> _displayMaritalStatusError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayNameError = ValueNotifier(false);
+  final ValueNotifier<bool> _displaySurnameError = ValueNotifier(false);
   @override
   void initState() {
     super.initState();
@@ -37,6 +39,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _nameController.dispose();
     _surnameController.dispose();
     _dateOfBirthController.dispose();
+    _displayMaritalStatusError.dispose();
     super.dispose();
   }
 
@@ -54,15 +57,6 @@ class _EditProfileViewState extends State<EditProfileView> {
             '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
       });
     }
-  }
-
-  void _handleUpdateProfile() {
-    widget.viewModel.updateProfile.execute((
-      name: _nameController.text.trim(),
-      surname: _surnameController.text.trim(),
-      dateOfBirth: _dateOfBirthController.text,
-      maritalStatus: _selectedMaritalStatus,
-    ));
   }
 
   @override
@@ -96,31 +90,57 @@ class _EditProfileViewState extends State<EditProfileView> {
               const TitleText(title: 'Profil Bilgilerini Güncelle'),
               const SubtitleText(text: 'Bilgilerinizi düzenleyebilirsiniz.'),
               SizedBox(height: context.isSmallScreen ? 24 : 32),
-              NameTextField(controller: _nameController),
-              SizedBox(height: context.isSmallScreen ? 16 : 20),
-              SurnameTextField(controller: _surnameController),
-              SizedBox(height: context.isSmallScreen ? 16 : 20),
-              DateOfBirthTextField(
-                controller: _dateOfBirthController,
-                onTap: _selectDate,
-              ),
-              SizedBox(height: context.isSmallScreen ? 16 : 20),
-              MaritalStatusSelector(
-                selectedStatus: _selectedMaritalStatus,
-                onStatusChanged: (status) {
-                  setState(() {
-                    _selectedMaritalStatus = status;
-                  });
+              ListenableBuilder(
+                listenable: Listenable.merge([
+                  _displayNameError,
+                  _displaySurnameError,
+                  _displayMaritalStatusError,
+                ]),
+                builder: (context, child) {
+                  return Column(
+                    children: [
+                      UserProfileNameTextField(
+                        name: _nameController,
+                        displayError: _displayNameError,
+                      ),
+                      SizedBox(height: context.isSmallScreen ? 16 : 20),
+                      UserProfileSurnameTextField(
+                        surname: _surnameController,
+                        displayError: _displaySurnameError,
+                      ),
+                      SizedBox(height: context.isSmallScreen ? 16 : 20),
+                      DateOfBirthTextField(
+                        controller: _dateOfBirthController,
+                        onTap: _selectDate,
+                      ),
+                      SizedBox(height: context.isSmallScreen ? 16 : 20),
+                      MaritalStatusSelector(
+                        selectedStatus: _selectedMaritalStatus,
+                        onStatusChanged: (status) {
+                          setState(() {
+                            _selectedMaritalStatus = status;
+                          });
+                        },
+                        displayError: _displayMaritalStatusError,
+                      ),
+                    ],
+                  );
                 },
               ),
               SizedBox(height: context.spacingLarge),
               SizedBox(
                 width: double.infinity,
                 height: context.isSmallScreen ? 48 : 52,
-                child: AppButton(
-                  onPressed: _handleUpdateProfile,
-                  text: 'Değişiklikleri Kaydet',
+                child: SaveEditedProfileChangesButton(
+                  viewModel: widget.viewModel,
                   running: widget.viewModel.updateProfile.running,
+                  displayNameError: _displayNameError,
+                  displaySurnameError: _displaySurnameError,
+                  displayMaritalStatusError: _displayMaritalStatusError,
+                  nameController: _nameController,
+                  surnameController: _surnameController,
+                  dateOfBirthController: _dateOfBirthController,
+                  selectedMaritalStatus: _selectedMaritalStatus,
                 ),
               ),
             ],

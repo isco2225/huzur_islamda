@@ -64,6 +64,14 @@ class EditProfileViewModel {
     })
     commands,
   ) async {
+    // check if no changes are made
+    if (commands.name == currentUser.value.name &&
+        commands.surname == currentUser.value.surname &&
+        commands.dateOfBirth == currentUser.value.dateOfBirth &&
+        commands.maritalStatus == currentUser.value.maritalStatus) {
+      print('No changes made');
+      return Result.ok(null);
+    }
     final result = await _userRepository.updateUser(
       uid: currentUser.value.uid,
       name: commands.name,

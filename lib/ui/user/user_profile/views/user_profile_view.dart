@@ -83,35 +83,12 @@ class UserProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: context.spacingLarge),
                   // Edit Profile Button
-                  _buildEditProfileButton(context, textTheme),
+                  EditProfileButton(textTheme: textTheme),
                 ],
               ),
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildEditProfileButton(BuildContext context, TextTheme textTheme) {
-    return SizedBox(
-      width: double.infinity,
-      height: context.isSmallScreen ? 48 : 52,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          const EditProfileRoute().push(context);
-        },
-        icon: Icon(Icons.edit_rounded, size: context.isSmallScreen ? 20 : 22),
-        label: Text(
-          'Profili Düzenle',
-          style: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: context.responsiveFontSize(
-              textTheme.titleMedium?.fontSize,
-            ),
-            color: Colors.white,
-          ),
-        ),
       ),
     );
   }

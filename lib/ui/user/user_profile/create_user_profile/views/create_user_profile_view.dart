@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../app/app.dart';
+import '../../../../../domain/domain.dart';
 import '../../../../ui.dart';
 
 class CreateUserProfileView extends StatefulWidget {
@@ -17,11 +18,21 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
   final _dateOfBirthController = TextEditingController();
   String? _selectedMaritalStatus;
 
+  // Value Object Error Display Notifiers
+  final ValueNotifier<bool> _displayNameError = ValueNotifier(false);
+  final ValueNotifier<bool> _displaySurnameError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayDateOfBirthError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayMaritalStatusError = ValueNotifier(false);
+
   @override
   void dispose() {
     _nameController.dispose();
     _surnameController.dispose();
     _dateOfBirthController.dispose();
+    _displayNameError.dispose();
+    _displaySurnameError.dispose();
+    _displayDateOfBirthError.dispose();
+    _displayMaritalStatusError.dispose();
     super.dispose();
   }
 
@@ -42,12 +53,38 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
   }
 
   void _handleCreateProfile() {
+    if (!_isValueObjectsValid()) return;
     widget.viewModel.createUserProfile.execute((
       name: _nameController.text.trim(),
       surname: _surnameController.text.trim(),
       dateOfBirth: _dateOfBirthController.text,
       maritalStatus: _selectedMaritalStatus ?? '',
     ));
+  }
+
+  bool _isValueObjectsValid() {
+    final isNameValid = NameValueObject.dirty(
+      _nameController.text.trim(),
+    ).isValid;
+    final isSurnameValid = SurnameValueObject.dirty(
+      _surnameController.text.trim(),
+    ).isValid;
+    final isDateOfBirthValid = DateOfBirthValueObject.dirty(
+      _dateOfBirthController.text,
+    ).isValid;
+    final isMaritalStatusValid = MaritalStatusValueObject.dirty(
+      _selectedMaritalStatus ?? '',
+    ).isValid;
+
+    _displayNameError.value = !isNameValid;
+    _displaySurnameError.value = !isSurnameValid;
+    _displayDateOfBirthError.value = !isDateOfBirthValid;
+    _displayMaritalStatusError.value = !isMaritalStatusValid;
+
+    return isNameValid &&
+        isSurnameValid &&
+        isDateOfBirthValid &&
+        isMaritalStatusValid;
   }
 
   @override
@@ -65,20 +102,49 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
               const SubtitleText(
                 text: 'Bilgilerinizi girerek kaydınızı tamamlayın.',
               ),
-              NameTextField(controller: _nameController),
-              SurnameTextField(controller: _surnameController),
-              DateOfBirthTextField(
-                controller: _dateOfBirthController,
-                onTap: _selectDate,
-              ),
               Padding(
-                padding: EdgeInsets.only(top: context.isSmallScreen ? 6 : 8),
-                child: MaritalStatusSelector(
-                  selectedStatus: _selectedMaritalStatus,
-                  onStatusChanged: (status) {
-                    setState(() {
-                      _selectedMaritalStatus = status;
-                    });
+                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _displayNameError,
+                    _displaySurnameError,
+                    _displayDateOfBirthError,
+                    _displayMaritalStatusError,
+                  ]),
+                  builder: (context, child) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        UserProfileNameTextField(
+                          name: _nameController,
+                          displayError: _displayNameError,
+                        ),
+                        UserProfileSurnameTextField(
+                          surname: _surnameController,
+                          displayError: _displaySurnameError,
+                        ),
+                        DateOfBirthTextField(
+                          controller: _dateOfBirthController,
+                          displayError: _displayDateOfBirthError,
+                          onTap: _selectDate,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: context.isSmallScreen ? 6 : 8,
+                          ),
+                          child: MaritalStatusSelector(
+                            selectedStatus: _selectedMaritalStatus,
+                            onStatusChanged: (status) {
+                              setState(() {
+                                _selectedMaritalStatus = status;
+                              });
+                            },
+                            displayError: _displayMaritalStatusError,
+                          ),
+                        ),
+                      ],
+                    );
                   },
                 ),
               ),

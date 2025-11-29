@@ -77,6 +77,32 @@ extension ExceptionLocalizationExtension on BuildContext {
         PasswordWeak() => 'Şifre zayıf',
         PasswordTooLong() => 'Şifre çok uzun',
       },
+      // User
+      DateOfBirthValueObjectFailure() => switch (fail) {
+        DateOfBirthEmpty() => 'Doğum tarihi boş olamaz',
+        DateOfBirthInvalidFormat() => 'Tarih formatı geçersiz (GG/AA/YYYY)',
+        DateOfBirthFutureDate() => 'Gelecek tarih seçilemez',
+        DateOfBirthTooPastDate() => 'Tarih çok eski (1950\'den önce olamaz)',
+        DateOfBirthTooYoung() => 'Minimum yaş 8 olmalıdır',
+      },
+      GenderValueObjectFailure() => switch (fail) {
+        GenderEmpty() => 'Cinsiyet boş olamaz',
+      },
+      MaritalStatusValueObjectFailure() => switch (fail) {
+        MaritalStatusEmpty() => 'Evlilik durumu boş olamaz',
+      },
+      NameValueObjectFailure() => switch (fail) {
+        NameEmpty() => 'Ad boş olamaz',
+        NameTooLong() => 'Ad çok uzun',
+        NameTooShort() => 'Ad çok kısa',
+        NameInvalidFormat() => 'Ad formatı geçersiz',
+      },
+      SurnameValueObjectFailure() => switch (fail) {
+        SurnameEmpty() => 'Soyad boş olamaz',
+        SurnameTooLong() => 'Soyad çok uzun',
+        SurnameTooShort() => 'Soyad çok kısa',
+        SurnameInvalidFormat() => 'Soyad formatı geçersiz',
+      },
       // Unknown
       _ => switch (fail) {
         _ => 'value object failure unknown',
