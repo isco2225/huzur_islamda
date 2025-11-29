@@ -20,6 +20,9 @@ dependencies:
 
   logging: ^1.2.0
 
+  # Validation
+  formz: 0.8.0
+
   #indicator
   smooth_page_indicator: ^1.2.1
 

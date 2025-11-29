@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
+import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class SignUpView extends StatefulWidget {
@@ -16,11 +17,17 @@ class _SignUpViewState extends State<SignUpView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final ValueNotifier<bool> _displayEmailError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayPasswordError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayConfirmPasswordError = ValueNotifier(false);
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _displayEmailError.dispose();
+    _displayPasswordError.dispose();
+    _displayConfirmPasswordError.dispose();
     super.dispose();
   }
 
@@ -41,15 +48,34 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
-                child: EmailTextField(controller: _emailController),
-              ),
-              PasswordTextField(
-                controller: _passwordController,
-                showForgotPassword: false,
-              ),
-              PasswordTextField(
-                controller: _confirmPasswordController,
-                showForgotPassword: false,
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _displayEmailError,
+                    _displayPasswordError,
+                    _displayConfirmPasswordError,
+                  ]),
+                  builder: (context, child) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SignUpEmailTextField(
+                          email: _emailController,
+                          displayError: _displayEmailError,
+                        ),
+                        SignUpPasswordTextField(
+                          password: _passwordController,
+                          displayError: _displayPasswordError,
+                        ),
+                        ConfirmPasswordTextField(
+                          password: _passwordController,
+                          confirmPassword: _confirmPasswordController,
+                          displayError: _displayConfirmPasswordError,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: context.spacingSmall),
@@ -58,6 +84,7 @@ class _SignUpViewState extends State<SignUpView> {
                   height: context.isSmallScreen ? 45 : 50,
                   child: AppButton(
                     onPressed: () {
+                      if (!_isValueObjectsValid()) return;
                       widget.viewModel.requestSignUp.execute((
                         email: _emailController.text.trim(),
                         password: _passwordController.text,
@@ -103,5 +130,20 @@ class _SignUpViewState extends State<SignUpView> {
         ),
       ),
     );
+  }
+
+  bool _isValueObjectsValid() {
+    final isEmailValid = Email.dirty(_emailController.text.trim()).isValid;
+    final isPasswordValid = Password.dirty(_passwordController.text).isValid;
+    final isConfirmPasswordValid = ConfirmPassword.dirty(
+      password: _passwordController.text,
+      value: _confirmPasswordController.text,
+    ).isValid;
+
+    _displayEmailError.value = !isEmailValid;
+    _displayPasswordError.value = !isPasswordValid;
+    _displayConfirmPasswordError.value = !isConfirmPasswordValid;
+
+    return isEmailValid && isPasswordValid && isConfirmPasswordValid;
   }
 }

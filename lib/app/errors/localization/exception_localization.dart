@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../domain/domain.dart';
 import '../../app.dart';
 
 extension ExceptionLocalizationExtension on BuildContext {
@@ -63,6 +64,19 @@ extension ExceptionLocalizationExtension on BuildContext {
     return switch (fail) {
       null => null,
       // Auth
+      ConfirmPasswordValueObjectFailure() => switch (fail) {
+        ConfirmPasswordEmpty() => 'Şifre boş olamaz',
+        ConfirmPasswordDoNotMatch() => 'Şifreler eşleşmiyor',
+      },
+      EmailValueObjectFailure() => switch (fail) {
+        EmailEmpty() => 'Email boş olamaz',
+        EmailInvalid() => 'Email geçersiz',
+      },
+      PasswordValueObjectFailure() => switch (fail) {
+        PasswordEmpty() => 'Şifre boş olamaz',
+        PasswordWeak() => 'Şifre zayıf',
+        PasswordTooLong() => 'Şifre çok uzun',
+      },
       // Unknown
       _ => switch (fail) {
         _ => 'value object failure unknown',

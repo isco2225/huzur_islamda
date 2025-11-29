@@ -12,13 +12,16 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final ValueNotifier<bool> _displayEmailError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayPasswordError = ValueNotifier(false);
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _displayEmailError.dispose();
+    _displayPasswordError.dispose();
     super.dispose();
   }
 
@@ -38,24 +41,41 @@ class _SignInViewState extends State<SignInView> {
                 text: 'Bu eşsiz deneyim için heasp bilgilerini gir.',
               ),
               Padding(
-                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
-                child: EmailTextField(controller: _emailController),
-              ),
-              PasswordTextField(controller: _passwordController),
-              Padding(
                 padding: EdgeInsets.only(top: context.spacingSmall),
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _displayEmailError,
+                    _displayPasswordError,
+                  ]),
+                  builder: (context, child) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SignInEmailTextField(
+                          email: _emailController,
+                          displayError: _displayEmailError,
+                        ),
+                        SignInPasswordTextField(
+                          password: _passwordController,
+                          displayError: _displayPasswordError,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
                 child: SizedBox(
                   width: double.infinity,
                   height: context.isSmallScreen ? 45 : 50,
-                  child: AppButton(
-                    onPressed: () {
-                      widget.viewModel.signIn.execute((
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text,
-                      ));
-                    },
-                    text: 'Giriş Yap',
-                    running: widget.viewModel.signIn.running,
+                  child: SignInButton(
+                    viewModel: widget.viewModel,
+                    email: _emailController,
+                    password: _passwordController,
+                    displayEmailVOError: _displayEmailError,
+                    displayPasswordVOError: _displayPasswordError,
                   ),
                 ),
               ),
