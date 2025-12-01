@@ -34,6 +34,10 @@ dependencies:
   firebase_auth: ^6.1.1
   cloud_firestore: ^6.0.3
 
+  #Hive
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
   #Sign In Methods
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^7.0.1
@@ -47,7 +51,6 @@ dev_dependencies:
 
   # Code Generation
   build_runner: 2.4.15
-  freezed: 3.0.6
   json_serializable: ^6.9.5
   go_router_builder: 2.7.3
 
