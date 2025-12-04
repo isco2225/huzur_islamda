@@ -7,11 +7,11 @@ import '../../data.dart';
 class DhikrRepositoryRemote extends DhikrRepository {
   DhikrRepositoryRemote({
     required FirestoreDhikirService firestoreDhikirService,
-    required HiveDhikirService hiveDhikirService,
+    required HiveService hiveDhikirService,
   }) : _firestoreDhikirService = firestoreDhikirService,
        _hiveDhikirService = hiveDhikirService;
   final FirestoreDhikirService _firestoreDhikirService;
-  final HiveDhikirService _hiveDhikirService;
+  final HiveService _hiveDhikirService;
 
   @override
   ValueListenable<List<Dhikr>> get dhikrs => _dhikrs;
