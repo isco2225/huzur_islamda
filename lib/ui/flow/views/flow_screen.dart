@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../data/data.dart';
 import '../../ui.dart';
 
 class FlowScreen extends StatefulWidget {
@@ -15,7 +17,13 @@ class _FlowScreenState extends State<FlowScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = FlowViewModel();
+    _viewModel = FlowViewModel(postRepository: context.read<PostRepository>());
+    _viewModel.fetchPosts.execute();
+    _viewModel.fetchPosts.handleError(context, showSnackBar: true);
+    _viewModel.fetchPosts.handleCompleted(
+      context,
+      successMessage: 'Posts fetched successfully',
+    );
   }
 
   @override

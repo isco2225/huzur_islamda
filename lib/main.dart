@@ -27,6 +27,9 @@ void main() async {
       userRepository: UserRepositoryRemote(
         firestoreUserService: FirestoreUserService(),
       ),
+      postRepository: PostRepositoryRemote(
+        firestorePostService: FirestorePostService(),
+      ),
     ),
   );
 }

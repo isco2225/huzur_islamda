@@ -1,31 +1,42 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
+import '../../../data/data.dart';
+import '../../../domain/domain.dart';
 
 class FlowViewModel {
-  FlowViewModel() {
-    // DEFINE COMMANDS
-    // TODO: Add commands here
-
-    // DEFINE LISTENERS
+  FlowViewModel({required PostRepository postRepository})
+    : _postRepository = postRepository {
+    fetchPosts = Command0<void>(_fetchPosts, debugLabel: 'fetchPosts');
   }
 
   // LOGGER
   final _log = Logger('FlowViewModel');
 
   // REPOSITORIES & USE CASES
-  // TODO: Add repositories and use cases here
-
+  final PostRepository _postRepository;
   // DOMAIN
-
+  ValueListenable<List<Post>> get posts => _postRepository.posts;
   // COMMANDS
-  // TODO: Add commands here
+  late Command0<void> fetchPosts;
 
   // DISPOSE
   void dispose() {
-    // TODO: Dispose commands and resources
+    fetchPosts.dispose();
+    _log.fine('Disposed');
   }
 
   // FUNCTIONS
-  // TODO: Add functions here
+  Future<Result<void>> _fetchPosts() async {
+    final result = await _postRepository.fetchPosts();
+    switch (result) {
+      case Ok():
+        _log.fine('Posts fetched successfully');
+        return Result.ok(null);
+      case Error():
+        _log.severe('Failed to fetch posts: ${result.asError.error}');
+        return Result.error(result.asError.error);
+    }
+  }
 }
