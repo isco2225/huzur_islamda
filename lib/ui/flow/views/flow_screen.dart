@@ -12,18 +12,19 @@ class FlowScreen extends StatefulWidget {
 }
 
 class _FlowScreenState extends State<FlowScreen> {
-  late final FlowViewModel _viewModel;
+  late final FetchPostsViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = FlowViewModel(postRepository: context.read<PostRepository>());
-    _viewModel.fetchPosts.execute();
-    _viewModel.fetchPosts.handleError(context, showSnackBar: true);
-    _viewModel.fetchPosts.handleCompleted(
-      context,
-      successMessage: 'Posts fetched successfully',
+    _viewModel = FetchPostsViewModel(
+      postRepository: context.read<PostRepository>(),
     );
+    _viewModel.fetchPosts.handleError(context, showSnackBar: true);
+    // _viewModel.fetchPosts.handleCompleted(
+    //   context,
+    //   successMessage: 'Posts fetched successfully',
+    // );
   }
 
   @override

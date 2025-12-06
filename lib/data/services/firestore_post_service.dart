@@ -16,8 +16,8 @@ class FirestorePostService {
       final List<Post> postsList = posts.docs
           .map((doc) => Post.fromJson(doc.data()))
           .toList();
-      print('postsList: $postsList');
       return Result.ok(postsList);
+      //return Result.error(Exception('Failed to fetch posts'));
     } on FirebaseException catch (e) {
       return Result.error(
         Exception('Failed to fetch posts: ${e.message ?? e.code}'),
