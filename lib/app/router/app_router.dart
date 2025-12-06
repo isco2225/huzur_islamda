@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/data.dart';
+import '../../domain/domain.dart';
 import '../../ui/ui.dart';
 
 part 'app_router.g.dart';
@@ -162,6 +163,22 @@ class SettingsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsScreen();
+}
+
+@TypedGoRoute<PostDetailRoute>(path: '/post_detail')
+class PostDetailRoute extends GoRouteData {
+  const PostDetailRoute({this.$extra});
+
+  final Post? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    final post = $extra ?? (state.extra as Post?);
+    if (post == null) {
+      return const Scaffold(body: Center(child: Text('Post not found')));
+    }
+    return PostDetailScreen(post: post);
+  }
 }
 
 /// Creates and returns the app router with refresh listenable support

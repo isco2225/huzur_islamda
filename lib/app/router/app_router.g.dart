@@ -16,6 +16,7 @@ List<RouteBase> get $appRoutes => [
   $createProfileRoute,
   $editProfileRoute,
   $settingsRoute,
+  $postDetailRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -320,4 +321,28 @@ extension $SettingsRouteExtension on SettingsRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $postDetailRoute => GoRouteData.$route(
+  path: '/post_detail',
+
+  factory: $PostDetailRouteExtension._fromState,
+);
+
+extension $PostDetailRouteExtension on PostDetailRoute {
+  static PostDetailRoute _fromState(GoRouterState state) =>
+      PostDetailRoute($extra: state.extra as Post?);
+
+  String get location => GoRouteData.$location('/post_detail');
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
