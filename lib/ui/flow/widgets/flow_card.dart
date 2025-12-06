@@ -10,18 +10,18 @@ class FlowCard extends StatelessWidget {
   Color _getBorderColor(ContentType contentType) {
     switch (contentType) {
       case ContentType.dua:
-        return AppColors.primary;
+        return AppColors.duaColor;
       case ContentType.hadis:
-        return AppColors.secondary;
+        return AppColors.hadisColor;
       case ContentType.ayet:
-        return AppColors.success;
+        return AppColors.ayetColor;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cardHeight = context.isSmallScreen ? 200.0 : 240.0;
+    final cardHeight = context.isSmallScreen ? 220.0 : 280.0;
 
     return GestureDetector(
       onTap: () {
@@ -46,76 +46,76 @@ class FlowCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
-                    Text(
-                      post.title,
-                      style: textTheme.titleLarge?.copyWith(
-                        fontSize: context.responsiveFontSize(
-                          textTheme.titleLarge?.fontSize,
-                        ),
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: context.spacingSmall),
-                    // Content
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Arabic Content (if available)
-                        if (post.arabicContent != null &&
-                            post.arabicContent!.isNotEmpty) ...[
-                          SizedBox(height: context.spacingExtraSmall),
-                          Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Text(
-                              post.arabicContent!,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: context.responsiveFontSize(
-                                  (textTheme.bodyMedium?.fontSize ?? 14) * 1.1,
-                                ),
-                                height: 1.5,
-                                fontFeatures: const [
-                                  FontFeature.enable('liga'),
-                                ],
-                              ),
-                              textAlign: TextAlign.right,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          // Turkish Content
-                          Text(
-                            post.content,
-                            style: textTheme.bodyMedium?.copyWith(
+                        Expanded(
+                          child: Text(
+                            post.title,
+                            style: textTheme.titleLarge?.copyWith(
                               fontSize: context.responsiveFontSize(
-                                textTheme.bodyMedium?.fontSize,
+                                textTheme.titleLarge?.fontSize,
                               ),
-                              height: 1.5,
+                              fontWeight: FontWeight.w600,
                             ),
-                            maxLines: context.isSmallScreen ? 3 : 4,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ],
+                        ),
+                        PopMenuButton(),
                       ],
+                    ),
+                    SizedBox(height: context.spacingSmall),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (post.arabicContent != null &&
+                              post.arabicContent!.isNotEmpty)
+                            Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text(
+                                post.arabicContent!,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: context.responsiveFontSize(
+                                    (textTheme.bodyMedium?.fontSize ?? 14) *
+                                        1.1,
+                                  ),
+                                  height: 1.5,
+                                ),
+                                textAlign: TextAlign.right,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          Flexible(
+                            child: Text(
+                              post.content,
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontSize: context.responsiveFontSize(
+                                  textTheme.bodyMedium?.fontSize,
+                                ),
+                                height: 1.5,
+                              ),
+                              maxLines:
+                                  post.arabicContent != null &&
+                                      post.arabicContent!.isNotEmpty
+                                  ? (context.isSmallScreen ? 2 : 3)
+                                  : (context.isSmallScreen ? 4 : 5),
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                // Three dots menu (top right)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: ContentTypeBadge(type: post.contentType),
-                ),
-                // Content Type Badge (bottom left)
                 Positioned(
                   bottom: 0,
                   left: 0,
                   child: ContentTypeBadge(type: post.contentType),
                 ),
-                // Save Button (bottom right)
                 Positioned(
                   bottom: 0,
                   right: 0,

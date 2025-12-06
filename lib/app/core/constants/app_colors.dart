@@ -37,4 +37,9 @@ class AppColors {
   // Text color.
   static const Color titleColor = Color(0x00000019);
   static const Color subtitleColor = Colors.black87;
+
+  // Content colors.
+  static const Color duaColor = Color(0xFFE65100);
+  static const Color hadisColor = Color(0xFF2E7D32);
+  static const Color ayetColor = Color(0xFF1565C0);
 }

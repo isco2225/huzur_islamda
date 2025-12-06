@@ -8,11 +8,7 @@ class PopMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: Icon(
-        Icons.more_vert,
-        color: AppColors.primary,
-        size: context.isSmallScreen ? 20.0 : 24.0,
-      ),
+      icon: Icon(Icons.more_vert, size: context.isSmallScreen ? 20.0 : 24.0),
 
       itemBuilder: (context) => [
         PopupMenuItem(

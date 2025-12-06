@@ -11,22 +11,22 @@ class ContentTypeBadge extends StatelessWidget {
   Color get _backgroundColor {
     switch (type) {
       case ContentType.hadis:
-        return const Color(0xFFE8F5E9); // Light green
+        return AppColors.hadisColor.withValues(alpha: 0.1);
       case ContentType.ayet:
-        return const Color(0xFFE3F2FD); // Light blue
+        return AppColors.ayetColor.withValues(alpha: 0.1);
       case ContentType.dua:
-        return const Color(0xFFFFF3E0); // Light orange
+        return AppColors.duaColor.withValues(alpha: 0.1);
     }
   }
 
   Color get _textColor {
     switch (type) {
       case ContentType.hadis:
-        return const Color(0xFF2E7D32); // Dark green
+        return AppColors.hadisColor;
       case ContentType.ayet:
-        return const Color(0xFF1565C0); // Dark blue
+        return AppColors.ayetColor;
       case ContentType.dua:
-        return const Color(0xFFE65100); // Dark orange
+        return AppColors.duaColor;
     }
   }
 
