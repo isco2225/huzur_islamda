@@ -181,6 +181,15 @@ class PostDetailRoute extends GoRouteData {
   }
 }
 
+@TypedGoRoute<CreateDhikrRoute>(path: '/dhikr/create_dhikr')
+class CreateDhikrRoute extends GoRouteData {
+  const CreateDhikrRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CreateDhikrScreen();
+}
+
 /// Creates and returns the app router with refresh listenable support
 GoRouter createAppRouter(Listenable refreshListenable) => GoRouter(
   routes: $appRoutes,

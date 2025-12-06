@@ -5,13 +5,9 @@ import '../../../domain/domain.dart';
 import '../../data.dart';
 
 class DhikrRepositoryRemote extends DhikrRepository {
-  DhikrRepositoryRemote({
-    required FirestoreDhikirService firestoreDhikirService,
-    required HiveService hiveDhikirService,
-  }) : _firestoreDhikirService = firestoreDhikirService,
-       _hiveDhikirService = hiveDhikirService;
-  final FirestoreDhikirService _firestoreDhikirService;
-  final HiveService _hiveDhikirService;
+  DhikrRepositoryRemote({required FirestoreDhikrService firestoreDhikirService})
+    : _firestoreDhikirService = firestoreDhikirService;
+  final FirestoreDhikrService _firestoreDhikirService;
 
   @override
   ValueListenable<List<Dhikr>> get dhikrs => _dhikrs;

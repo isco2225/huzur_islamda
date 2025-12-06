@@ -30,6 +30,9 @@ void main() async {
       postRepository: PostRepositoryRemote(
         firestorePostService: FirestorePostService(),
       ),
+      dhikrRepository: DhikrRepositoryRemote(
+        firestoreDhikirService: FirestoreDhikrService(),
+      ),
     ),
   );
 }

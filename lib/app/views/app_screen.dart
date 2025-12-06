@@ -12,10 +12,12 @@ class AppScreen extends StatefulWidget {
     required this.authRepository,
     required this.userRepository,
     required this.postRepository,
+    required this.dhikrRepository,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
   final PostRepository postRepository;
+  final DhikrRepository dhikrRepository;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -53,6 +55,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.authRepository),
         Provider(create: (_) => widget.userRepository),
         Provider(create: (_) => widget.postRepository),
+        Provider(create: (_) => widget.dhikrRepository),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

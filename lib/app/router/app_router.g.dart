@@ -17,6 +17,7 @@ List<RouteBase> get $appRoutes => [
   $editProfileRoute,
   $settingsRoute,
   $postDetailRoute,
+  $createDhikrRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -345,4 +346,26 @@ extension $PostDetailRouteExtension on PostDetailRoute {
 
   void replace(BuildContext context) =>
       context.replace(location, extra: $extra);
+}
+
+RouteBase get $createDhikrRoute => GoRouteData.$route(
+  path: '/dhikr/create_dhikr',
+
+  factory: $CreateDhikrRouteExtension._fromState,
+);
+
+extension $CreateDhikrRouteExtension on CreateDhikrRoute {
+  static CreateDhikrRoute _fromState(GoRouterState state) =>
+      const CreateDhikrRoute();
+
+  String get location => GoRouteData.$location('/dhikr/create_dhikr');
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

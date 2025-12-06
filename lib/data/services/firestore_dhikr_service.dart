@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../app/app.dart';
 import '../../domain/domain.dart';
 
-class FirestoreDhikirService {
+class FirestoreDhikrService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static const String _collectionName = 'dhikirs';
+  static const String _collectionName = 'dhikrs';
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
