@@ -22,7 +22,6 @@ class FlowCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final cardHeight = context.isSmallScreen ? 220.0 : 280.0;
-
     return GestureDetector(
       onTap: () {
         PostDetailRoute($extra: post).push<void>(context);
@@ -47,7 +46,6 @@ class FlowCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
                           child: Text(
@@ -85,7 +83,7 @@ class FlowCard extends StatelessWidget {
                                   height: 1.5,
                                 ),
                                 textAlign: TextAlign.right,
-                                maxLines: 1,
+                                maxLines: context.isSmallScreen ? 1 : 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -119,7 +117,7 @@ class FlowCard extends StatelessWidget {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: SaveButton(isSaved: true),
+                  child: SaveButton(isSaved: false),
                 ),
               ],
             ),
