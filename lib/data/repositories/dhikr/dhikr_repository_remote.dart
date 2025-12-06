@@ -21,10 +21,24 @@ class DhikrRepositoryRemote extends DhikrRepository {
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    required int targetCount,
-  }) {
-    // TODO: implement createDhikr
-    throw UnimplementedError();
+    int? targetCount,
+  }) async {
+    try {
+      final result = await _firestoreDhikirService.createDhikr(
+        userId: userId,
+        name: name,
+        targetCount: targetCount,
+      );
+      switch (result) {
+        case Ok():
+          _dhikrs.value = [..._dhikrs.value, result.asOk.value];
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to create dhikr: $e'));
+    }
   }
 
   @override
