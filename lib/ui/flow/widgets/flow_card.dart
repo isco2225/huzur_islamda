@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../domain/domain.dart';
+
 import '../../../app/app.dart';
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class FlowCard extends StatelessWidget {
@@ -21,15 +22,16 @@ class FlowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cardHeight = context.isSmallScreen ? 220.0 : 280.0;
+    final cardHeight = context.isSmallScreen ? 210.0 : 270.0;
     return GestureDetector(
       onTap: () {
         PostDetailRoute($extra: post).push<void>(context);
       },
       child: SizedBox(
-        width: double.infinity,
+        width: context.screenWidth * 0.9,
         height: cardHeight,
         child: Card(
+          color: Colors.white,
           elevation: 2.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
@@ -50,9 +52,9 @@ class FlowCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             post.title,
-                            style: textTheme.titleLarge?.copyWith(
+                            style: textTheme.titleMedium?.copyWith(
                               fontSize: context.responsiveFontSize(
-                                textTheme.titleLarge?.fontSize,
+                                textTheme.titleMedium?.fontSize,
                               ),
                               fontWeight: FontWeight.w600,
                             ),
@@ -63,7 +65,7 @@ class FlowCard extends StatelessWidget {
                         PopMenuButton(),
                       ],
                     ),
-                    SizedBox(height: context.spacingSmall),
+                    SizedBox(height: context.spacingExtraSmall),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

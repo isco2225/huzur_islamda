@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
-import '../view_models/create_dhikr_view_model.dart';
-import '../widgets/dhikr_name_text_field.dart';
-import '../widgets/dhikr_target_count_field.dart';
-import '../widgets/create_dhikr_accept_button.dart';
+import '../../../ui.dart';
 
 class CreateDhikrView extends StatelessWidget {
   const CreateDhikrView({super.key, required this.viewModel});
@@ -42,11 +39,34 @@ class CreateDhikrView extends StatelessWidget {
             ),
             SizedBox(height: context.spacingExtraLarge),
             // Create Button
-            CreateDhikrAcceptButton(viewModel: viewModel),
+            AppButton(
+              onPressed: () {
+                if (!_isValueObjectsValid()) return;
+                viewModel.createDhikr.execute((
+                  name: viewModel.nameController.text.trim(),
+                  targetCount: viewModel.targetCount.value,
+                ));
+              },
+              text: 'Kaydet ve Ekle',
+              running: viewModel.createDhikr.running,
+            ),
+            //CreateDhikrAcceptButton(viewModel: viewModel),
             SizedBox(height: context.spacingLarge),
           ],
         ),
       ),
     );
+  }
+
+  bool _isValueObjectsValid() {
+    final name = viewModel.nameController.text.trim();
+    if (name.isEmpty) {
+      return false;
+    }
+    final targetCount = viewModel.targetCount.value;
+    if (targetCount <= 0) {
+      return false;
+    }
+    return true;
   }
 }
