@@ -6,6 +6,7 @@ import '../../domain/domain.dart';
 class FirestoreDhikrService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const String _collectionName = 'dhikrs';
+  static const String _usersCollectionName = 'users';
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
@@ -13,7 +14,11 @@ class FirestoreDhikrService {
   }) async {
     try {
       final currentDate = DateTime.now();
-      final docRef = _firestore.collection(_collectionName).doc();
+      final docRef = _firestore
+          .collection(_usersCollectionName)
+          .doc(userId)
+          .collection(_collectionName)
+          .doc();
       final dhikr = Dhikr(
         id: docRef.id,
         userId: userId,
@@ -34,6 +39,31 @@ class FirestoreDhikrService {
       );
     } catch (e) {
       return Result.error(Exception('Failed to create dhikir: $e'));
+    }
+  }
+
+  Future<Result<List<Dhikr>>> fetchDhikrs({
+    required String userId,
+    required DateTime day,
+  }) async {
+    try {
+      final normalizedDay = DateTime(day.year, day.month, day.day);
+      final docs = await _firestore
+          .collection(_usersCollectionName)
+          .doc(userId)
+          .collection(_collectionName)
+          .where('day', isEqualTo: normalizedDay)
+          .get();
+      final dhikrs = docs.docs
+          .map((doc) => Dhikr.fromJson(doc.data()))
+          .toList();
+      return Result.ok(dhikrs);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to fetch dhikrs: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch dhikrs: $e'));
     }
   }
 }

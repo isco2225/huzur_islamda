@@ -22,7 +22,11 @@ class FlowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cardHeight = context.isSmallScreen ? 210.0 : 270.0;
+    final cardHeight = context.isSmallScreen
+        ? 250.0
+        : context.isMediumScreen
+        ? 270.0
+        : 320.0;
     return GestureDetector(
       onTap: () {
         PostDetailRoute($extra: post).push<void>(context);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../app/app.dart';
+import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class UserProfileView extends StatelessWidget {
@@ -58,25 +59,19 @@ class UserProfileView extends StatelessWidget {
                   SizedBox(height: context.spacingLarge),
 
                   // Profile Information Cards
-                  _buildInfoCard(
-                    context,
-                    textTheme,
+                  UserProfileInfoCard(
                     icon: Icons.email_outlined,
                     label: 'E-posta',
                     value: user.email,
                   ),
                   SizedBox(height: context.spacingMedium),
-                  _buildInfoCard(
-                    context,
-                    textTheme,
+                  UserProfileInfoCard(
                     icon: Icons.cake_outlined,
                     label: 'Doğum Tarihi',
                     value: user.dateOfBirth,
                   ),
                   SizedBox(height: context.spacingMedium),
-                  _buildInfoCard(
-                    context,
-                    textTheme,
+                  UserProfileInfoCard(
                     icon: Icons.favorite_outline,
                     label: 'Medeni Durum',
                     value: user.maritalStatus,
@@ -93,9 +88,11 @@ class UserProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, TextTheme textTheme, user) {
-    final initials = _getInitials(user.name, user.surname);
-
+  Widget _buildProfileHeader(
+    BuildContext context,
+    TextTheme textTheme,
+    User user,
+  ) {
     return Container(
       padding: EdgeInsets.all(context.spacingLarge),
       decoration: BoxDecoration(
@@ -123,7 +120,7 @@ class UserProfileView extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                initials,
+                '${user.name[0]}${user.surname[0]}',
                 style: textTheme.headlineMedium?.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
@@ -150,79 +147,5 @@ class UserProfileView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildInfoCard(
-    BuildContext context,
-    TextTheme textTheme, {
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Container(
-      padding: context.containerPadding,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.isSmallScreen ? 10 : 12),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              color: AppColors.primary,
-              size: context.isSmallScreen ? 20 : 24,
-            ),
-          ),
-          SizedBox(width: context.spacingMedium),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
-                    fontSize: context.responsiveFontSize(
-                      textTheme.bodySmall?.fontSize,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  value,
-                  style: textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.subtitleColor,
-                    fontSize: context.responsiveFontSize(
-                      textTheme.bodyLarge?.fontSize,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getInitials(String name, String surname) {
-    final nameInitial = name.isNotEmpty ? name[0].toUpperCase() : '';
-    final surnameInitial = surname.isNotEmpty ? surname[0].toUpperCase() : '';
-    return '$nameInitial$surnameInitial';
   }
 }
