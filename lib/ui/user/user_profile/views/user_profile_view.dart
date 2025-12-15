@@ -110,28 +110,8 @@ class UserProfileView extends StatelessWidget {
       child: Column(
         children: [
           // Avatar Circle
-          Container(
-            width: context.isSmallScreen ? 80 : 100,
-            height: context.isSmallScreen ? 80 : 100,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary, width: 3),
-            ),
-            child: Center(
-              child: Text(
-                '${user.name[0]}${user.surname[0]}',
-                style: textTheme.headlineMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: context.responsiveFontSize(
-                    context.isSmallScreen ? 28 : 36,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: context.spacingMedium),
+          UserProfileAvatar(user: userViewModel.currentUser.value),
+          SizedBox(height: context.spacingSmall),
           // Name
           Text(
             '${user.name} ${user.surname}',

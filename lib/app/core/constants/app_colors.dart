@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// Application color palette.
-///
-/// Defines all colors used in the application.
-/// Complexity: O(1) for all operations.
 class AppColors {
   AppColors._();
 
@@ -42,4 +39,8 @@ class AppColors {
   static const Color duaColor = Color(0xFFE65100);
   static const Color hadisColor = Color(0xFF2E7D32);
   static const Color ayetColor = Color(0xFF1565C0);
+
+  // Gender colors.
+  static const Color maleColor = Colors.blueAccent;
+  static const Color femaleColor = Colors.pinkAccent;
 }
