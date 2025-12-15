@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../app/app.dart';
-import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class UserProfileView extends StatelessWidget {
@@ -33,7 +32,6 @@ class UserProfileView extends StatelessWidget {
           IconButton(
             onPressed: () {
               const SettingsRoute().push(context);
-              //viewModel.logOut.execute();
             },
             icon: Icon(Icons.settings, size: context.isSmallScreen ? 22 : 24),
             tooltip: 'Çıkış Yap',
@@ -55,28 +53,27 @@ class UserProfileView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Profile Header Card
-                  _buildProfileHeader(context, textTheme, user),
-                  SizedBox(height: context.spacingLarge),
-
+                  ProfileHeaderDisplayer(user: user, textTheme: textTheme),
+                  SizedBox(height: context.spacingSmall),
                   // Profile Information Cards
                   UserProfileInfoCard(
                     icon: Icons.email_outlined,
                     label: 'E-posta',
                     value: user.email,
                   ),
-                  SizedBox(height: context.spacingMedium),
+                  SizedBox(height: context.spacingExtraSmall),
                   UserProfileInfoCard(
                     icon: Icons.cake_outlined,
                     label: 'Doğum Tarihi',
                     value: user.dateOfBirth,
                   ),
-                  SizedBox(height: context.spacingMedium),
+                  SizedBox(height: context.spacingExtraSmall),
                   UserProfileInfoCard(
                     icon: Icons.favorite_outline,
                     label: 'Medeni Durum',
                     value: user.maritalStatus,
                   ),
-                  SizedBox(height: context.spacingLarge),
+                  SizedBox(height: context.spacingSmall),
                   // Edit Profile Button
                   EditProfileButton(textTheme: textTheme),
                 ],
@@ -84,47 +81,6 @@ class UserProfileView extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader(
-    BuildContext context,
-    TextTheme textTheme,
-    User user,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(context.spacingLarge),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Avatar Circle
-          UserProfileAvatar(user: userViewModel.currentUser.value),
-          SizedBox(height: context.spacingSmall),
-          // Name
-          Text(
-            '${user.name} ${user.surname}',
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.subtitleColor,
-              fontSize: context.responsiveFontSize(
-                textTheme.headlineSmall?.fontSize,
-              ),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }
