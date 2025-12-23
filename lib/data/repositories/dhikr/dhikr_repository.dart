@@ -9,7 +9,7 @@ abstract class DhikrRepository {
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    int? targetCount,
+    required int targetCount,
   });
 
   Future<Result<Dhikr>> updateDhikr({

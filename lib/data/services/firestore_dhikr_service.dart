@@ -10,7 +10,7 @@ class FirestoreDhikrService {
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    int? targetCount,
+    required int targetCount,
   }) async {
     try {
       final currentDate = DateTime.now();

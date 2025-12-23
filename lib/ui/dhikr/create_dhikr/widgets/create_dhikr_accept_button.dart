@@ -8,22 +8,6 @@ class CreateDhikrAcceptButton extends StatelessWidget {
 
   final CreateDhikrViewModel viewModel;
 
-  void _onPressed(BuildContext context) {
-    final name = viewModel.nameController.text.trim();
-    if (name.isEmpty) {
-      context.showErrorSnackBar('Lütfen zikir adını girin');
-      return;
-    }
-
-    final targetCount = viewModel.targetCount.value;
-    if (targetCount <= 0) {
-      context.showErrorSnackBar('Hedef sayı 0\'dan büyük olmalıdır');
-      return;
-    }
-
-    viewModel.createDhikr.execute((name: name, targetCount: targetCount));
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -32,7 +16,8 @@ class CreateDhikrAcceptButton extends StatelessWidget {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: isRunning ? null : () => _onPressed(context),
+            // TODO: check it after.
+            onPressed: isRunning ? null : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,

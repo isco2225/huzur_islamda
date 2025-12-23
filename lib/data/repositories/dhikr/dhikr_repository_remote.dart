@@ -17,7 +17,7 @@ class DhikrRepositoryRemote extends DhikrRepository {
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    int? targetCount,
+    required int targetCount,
   }) async {
     try {
       final result = await _firestoreDhikirService.createDhikr(

@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
@@ -13,7 +12,7 @@ class CreateDhikrViewModel {
   }) : _dhikrRepository = dhikrRepository,
        _userRepository = userRepository {
     // DEFINE COMMANDS
-    createDhikr = Command1<Dhikr, ({String name, int? targetCount})>(
+    createDhikr = Command1<Dhikr, ({String name, int targetCount})>(
       _createDhikr,
       debugLabel: 'createDhikr',
     );
@@ -31,25 +30,21 @@ class CreateDhikrViewModel {
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
 
-  // CONTROLLERS
-  final nameController = TextEditingController();
-
   // TARGET COUNT
   final ValueNotifier<int> targetCount = ValueNotifier<int>(33);
 
   // COMMANDS
-  late final Command1<Dhikr, ({String name, int? targetCount})> createDhikr;
+  late final Command1<Dhikr, ({String name, int targetCount})> createDhikr;
 
   // DISPOSE
   void dispose() {
     createDhikr.dispose();
-    nameController.dispose();
     targetCount.dispose();
   }
 
   // FUNCTIONS
   Future<Result<Dhikr>> _createDhikr(
-    ({String name, int? targetCount}) params,
+    ({String name, int targetCount}) params,
   ) async {
     final userId = currentUser.value.uid;
     if (userId.isEmpty) {
@@ -57,13 +52,10 @@ class CreateDhikrViewModel {
       return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
     }
 
-    // Use targetCount from params, or use the ValueNotifier value if null
-    final finalTargetCount = params.targetCount ?? targetCount.value;
-
     final result = await _dhikrRepository.createDhikr(
       userId: userId,
       name: params.name,
-      targetCount: finalTargetCount > 0 ? finalTargetCount : null,
+      targetCount: params.targetCount,
     );
 
     if (result is Error<Dhikr>) {
