@@ -27,7 +27,7 @@ class Dhikr {
   });
 
   factory Dhikr.fromJson(Map<String, Object?> json) {
-    DateTime _parseDateTime(dynamic value) {
+    DateTime parseDateTime(dynamic value) {
       if (value == null) return DateTime.now();
       if (value is String) return DateTime.parse(value);
       if (value is DateTime) return value;
@@ -40,13 +40,20 @@ class Dhikr {
       name: json['name'] as String,
       targetCount: json['targetCount'] as int,
       currentCount: json['currentCount'] as int,
-      day: _parseDateTime(json['day']),
+      day: parseDateTime(json['day']),
       isCompleted: json['isCompleted'] as bool? ?? false,
-      createdAt: _parseDateTime(json['createdAt']),
-      lastUpdatedAt: _parseDateTime(json['lastUpdatedAt']),
+      createdAt: parseDateTime(json['createdAt']),
+      lastUpdatedAt: parseDateTime(json['lastUpdatedAt']),
       isSynced: json['isSynced'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
     );
+  }
+
+  bool get isExpired {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dhikrDate = DateTime(day.year, day.month, day.day);
+    return dhikrDate.isBefore(today);
   }
 
   Map<String, dynamic> toJson() {

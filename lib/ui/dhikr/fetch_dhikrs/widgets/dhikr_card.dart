@@ -2,25 +2,34 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
 import '../../../../domain/domain.dart';
+import '../../../ui.dart';
 
 class DhikrCard extends StatelessWidget {
   const DhikrCard({super.key, required this.dhikr});
 
   final Dhikr dhikr;
 
+  Color _getBorderColor() {
+    if ((dhikr.isExpired && !dhikr.isCompleted)) {
+      return AppColors.border;
+    } else if (dhikr.isCompleted) {
+      return AppColors.primary;
+    } else {
+      return AppColors.info;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final progress = (dhikr.currentCount / dhikr.targetCount).clamp(0.0, 1.0);
+    final borderColor = _getBorderColor();
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
-        side: BorderSide(
-          color: dhikr.isCompleted ? AppColors.primary : Colors.grey.shade300,
-          width: dhikr.isCompleted ? 2.0 : 1.0,
-        ),
+        side: BorderSide(color: borderColor, width: 2.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -37,8 +46,7 @@ class DhikrCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (dhikr.isCompleted)
-                  Icon(Icons.check_circle, color: AppColors.primary, size: 24),
+                DhikrStatusDisplayer(dhikr: dhikr),
               ],
             ),
             const SizedBox(height: 12),
