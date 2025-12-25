@@ -28,7 +28,11 @@ class AppTheme {
         surface: AppColors.surface,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+      appBarTheme: const AppBarTheme(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: AppColors.background,
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
