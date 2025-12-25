@@ -2,7 +2,7 @@ class Dhikr {
   final String id;
   final String userId;
   final String name;
-  final int? targetCount;
+  final int targetCount;
   final int currentCount;
   final DateTime day;
   final bool isCompleted;
@@ -16,7 +16,7 @@ class Dhikr {
     required this.id,
     required this.userId,
     required this.name,
-    this.targetCount,
+    required this.targetCount,
     required this.currentCount,
     required this.day,
     required this.isCompleted,
@@ -38,7 +38,7 @@ class Dhikr {
       id: json['id'] as String,
       userId: json['userId'] as String,
       name: json['name'] as String,
-      targetCount: json['targetCount'] as int?,
+      targetCount: json['targetCount'] as int,
       currentCount: json['currentCount'] as int,
       day: _parseDateTime(json['day']),
       isCompleted: json['isCompleted'] as bool? ?? false,

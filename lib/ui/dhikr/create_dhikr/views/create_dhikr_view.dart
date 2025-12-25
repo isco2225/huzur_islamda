@@ -60,10 +60,9 @@ class _CreateDhikrViewState extends State<CreateDhikrView> {
                   targetCount: widget.viewModel.targetCount.value,
                 ));
               },
-              text: 'Kaydet ve Ekle',
+              text: 'Oluştur',
               running: widget.viewModel.createDhikr.running,
             ),
-            //CreateDhikrAcceptButton(viewModel: viewModel),
             SizedBox(height: context.spacingLarge),
           ],
         ),
