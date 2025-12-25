@@ -66,4 +66,25 @@ class FirestoreDhikrService {
       return Result.error(Exception('Failed to fetch dhikrs: $e'));
     }
   }
+
+  Future<Result<List<Dhikr>>> fetchAllDhikrs({required String userId}) async {
+    try {
+      final docs = await _firestore
+          .collection(_usersCollectionName)
+          .doc(userId)
+          .collection(_collectionName)
+          .orderBy('createdAt', descending: true)
+          .get();
+      final dhikrs = docs.docs
+          .map((doc) => Dhikr.fromJson(doc.data()))
+          .toList();
+      return Result.ok(dhikrs);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to fetch all dhikrs: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch all dhikrs: $e'));
+    }
+  }
 }
