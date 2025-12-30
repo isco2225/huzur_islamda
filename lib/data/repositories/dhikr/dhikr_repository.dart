@@ -4,12 +4,12 @@ import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 
 abstract class DhikrRepository {
-  ValueListenable<List<Dhikr>>? get dhikrs;
+  ValueListenable<List<Dhikr>> get dhikrs;
 
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    int? targetCount,
+    required int targetCount,
   });
 
   Future<Result<Dhikr>> updateDhikr({
@@ -18,7 +18,7 @@ abstract class DhikrRepository {
     required int targetCount,
   });
 
-  Future<Result<List<Dhikr>>> fetchTodayDhikrs({required String userId});
+  Future<Result<List<Dhikr>>> fetchDhikrs({required String userId});
 
   Future<Result<List<Dhikr>>> fetchDhikrsByDay({
     required String userId,

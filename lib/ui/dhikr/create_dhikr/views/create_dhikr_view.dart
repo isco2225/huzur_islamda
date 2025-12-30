@@ -3,10 +3,22 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../../ui.dart';
 
-class CreateDhikrView extends StatelessWidget {
+class CreateDhikrView extends StatefulWidget {
   const CreateDhikrView({super.key, required this.viewModel});
 
   final CreateDhikrViewModel viewModel;
+
+  @override
+  State<CreateDhikrView> createState() => _CreateDhikrViewState();
+}
+
+class _CreateDhikrViewState extends State<CreateDhikrView> {
+  final TextEditingController nameController = TextEditingController();
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +37,16 @@ class CreateDhikrView extends StatelessWidget {
           children: [
             SizedBox(height: context.spacingLarge),
             // Dhikr Name Field
-            DhikrNameTextField(controller: viewModel.nameController),
+            DhikrNameTextField(controller: nameController),
             SizedBox(height: context.spacingLarge),
             // Target Count Field
             ValueListenableBuilder<int>(
-              valueListenable: viewModel.targetCount,
+              valueListenable: widget.viewModel.targetCount,
               builder: (context, targetCount, _) {
                 return DhikrTargetCountField(
                   value: targetCount,
-                  onChanged: (value) => viewModel.targetCount.value = value,
+                  onChanged: (value) =>
+                      widget.viewModel.targetCount.value = value,
                 );
               },
             ),
@@ -42,15 +55,14 @@ class CreateDhikrView extends StatelessWidget {
             AppButton(
               onPressed: () {
                 if (!_isValueObjectsValid()) return;
-                viewModel.createDhikr.execute((
-                  name: viewModel.nameController.text.trim(),
-                  targetCount: viewModel.targetCount.value,
+                widget.viewModel.createDhikr.execute((
+                  name: nameController.text.trim(),
+                  targetCount: widget.viewModel.targetCount.value,
                 ));
               },
-              text: 'Kaydet ve Ekle',
-              running: viewModel.createDhikr.running,
+              text: 'Oluştur',
+              running: widget.viewModel.createDhikr.running,
             ),
-            //CreateDhikrAcceptButton(viewModel: viewModel),
             SizedBox(height: context.spacingLarge),
           ],
         ),
@@ -59,11 +71,11 @@ class CreateDhikrView extends StatelessWidget {
   }
 
   bool _isValueObjectsValid() {
-    final name = viewModel.nameController.text.trim();
+    final name = nameController.text.trim();
     if (name.isEmpty) {
       return false;
     }
-    final targetCount = viewModel.targetCount.value;
+    final targetCount = widget.viewModel.targetCount.value;
     if (targetCount <= 0) {
       return false;
     }

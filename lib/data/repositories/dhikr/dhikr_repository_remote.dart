@@ -17,7 +17,7 @@ class DhikrRepositoryRemote extends DhikrRepository {
   Future<Result<Dhikr>> createDhikr({
     required String userId,
     required String name,
-    int? targetCount,
+    required int targetCount,
   }) async {
     try {
       final result = await _firestoreDhikirService.createDhikr(
@@ -48,18 +48,43 @@ class DhikrRepositoryRemote extends DhikrRepository {
   }
 
   @override
-  Future<Result<List<Dhikr>>> fetchTodayDhikrs({required String userId}) {
-    // TODO: implement fetchTodayDhikrs
-    throw UnimplementedError();
+  Future<Result<List<Dhikr>>> fetchDhikrs({required String userId}) async {
+    try {
+      final result = await _firestoreDhikirService.fetchAllDhikrs(
+        userId: userId,
+      );
+      switch (result) {
+        case Ok():
+          _dhikrs.value = result.asOk.value;
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch dhikrs: $e'));
+    }
   }
 
   @override
   Future<Result<List<Dhikr>>> fetchDhikrsByDay({
     required String userId,
     required DateTime day,
-  }) {
-    // TODO: implement fetchDhikrsByDay
-    throw UnimplementedError();
+  }) async {
+    try {
+      final result = await _firestoreDhikirService.fetchDhikrs(
+        userId: userId,
+        day: day,
+      );
+      switch (result) {
+        case Ok():
+          _dhikrs.value = result.asOk.value;
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch dhikrs by day: $e'));
+    }
   }
 
   @override

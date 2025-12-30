@@ -11,11 +11,7 @@ class FlowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: AppBar(
-        title: const Text('Keşfet'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Keşfet'), elevation: 0),
       safeArea: true,
       body: InfinityScrollablePosts(
         fetchPostsViewModel: viewModel,

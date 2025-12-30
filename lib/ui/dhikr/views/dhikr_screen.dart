@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../data/data.dart';
 import '../../ui.dart';
 
 class DhikrScreen extends StatefulWidget {
@@ -10,12 +12,16 @@ class DhikrScreen extends StatefulWidget {
 }
 
 class _DhikrScreenState extends State<DhikrScreen> {
-  late final DhikrViewModel _viewModel;
+  late final FetchDhikrsViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = DhikrViewModel();
+    _viewModel = FetchDhikrsViewModel(
+      dhikrRepository: context.read<DhikrRepository>(),
+      userRepository: context.read<UserRepository>(),
+    );
+    _viewModel.fetchDhikrs.handleError(context, showSnackBar: true);
   }
 
   @override
