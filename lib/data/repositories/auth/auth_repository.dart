@@ -11,6 +11,9 @@ abstract class AuthRepository {
   /// Perform Sign In
   Future<Result> signIn({required String email, required String password});
 
+  /// Perform Sign In with Google
+  Future<Result> signInWithGoogle();
+
   /// Perform create account request
   Future<Result> requestSignUp({
     required String email,
@@ -38,5 +41,3 @@ abstract class AuthRepository {
   /// Delete current user account
   Future<Result> deleteAccount();
 }
-
-

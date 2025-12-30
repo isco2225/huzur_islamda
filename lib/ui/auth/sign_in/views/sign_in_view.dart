@@ -85,8 +85,10 @@ class _SignInViewState extends State<SignInView> {
               ),
               SocialLoginButton(
                 text: 'Google ile Giriş Yap',
-                icon: Icon(Icons.abc),
-                onPressed: () {},
+                icon: Icon(Icons.g_mobiledata),
+                onPressed: () {
+                  widget.viewModel.signInWithGoogle.execute();
+                },
               ),
               SizedBox(height: context.isSmallScreen ? 8 : 12),
               SocialLoginButton(

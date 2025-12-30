@@ -72,7 +72,9 @@ abstract class Command<T> {
   void _pop(BuildContext context, int popCount) {
     for (var i = 0; i < popCount; i++) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.canPop()) context.pop();
+        if (context.mounted && context.canPop()) {
+          context.pop();
+        }
       });
     }
   }
@@ -87,6 +89,7 @@ abstract class Command<T> {
       if (!_error.value) return;
       final value = _result.value;
       if (value == null) return;
+      if (!context.mounted) return;
       final Exception exception = value.asError.error;
       clearResult();
       if (showSnackBar) {
@@ -109,6 +112,14 @@ abstract class Command<T> {
   }) {
     _completedListener = () {
       if (!_completed.value) return;
+      if (!context.mounted) {
+        // if context is not mounted, only call onCompleted callback
+        if (onCompleted != null && _result.value != null) {
+          onCompleted(_result.value!.asOk.value);
+        }
+        clearResult();
+        return;
+      }
       if (successMessage != null) {
         context.showSuccessSnackBar(successMessage);
       }

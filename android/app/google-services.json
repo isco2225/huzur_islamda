@@ -12,7 +12,20 @@
           "package_name": "com.example.huzur_islamda"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "418329675000-aqr013k6d4ppu9vcviadu4cc2td3k5o2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.huzur_islamda",
+            "certificate_hash": "5eedbf2b91e20c093df754f894ca887064e1eefe"
+          }
+        },
+        {
+          "client_id": "418329675000-f4eb2vigvvn0j5v0dm4mcn63c2494tdb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCQqD8QfMnrJ8Sr-IRJ_fBnzXkz3JC0dYc"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418329675000-f4eb2vigvvn0j5v0dm4mcn63c2494tdb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "418329675000-vmesaqqgq7hhattb1b5jl35mt796s81k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.huzurIslamda"
+              }
+            }
+          ]
         }
       }
     }

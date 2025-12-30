@@ -63,6 +63,25 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
+  Future<Result> signInWithGoogle() async {
+    try {
+      final result = await _firebaseAuthService.signInWithGoogle();
+      switch (result) {
+        case Ok():
+          // Manually update auth state after successful sign in
+          _auth.value = result.asOk.value;
+          _isSignedIn.value = true;
+          return Result.ok(result.asOk.value);
+        case Error():
+          _isSignedIn.value = false;
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
+
+  @override
   Future<Result> requestSignUp({
     required String email,
     required String password,

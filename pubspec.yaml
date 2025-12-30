@@ -39,7 +39,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   #Sign In Methods
-  google_sign_in: ^7.2.0
+  google_sign_in: ^7.0.0
   sign_in_with_apple: ^7.0.1
 
   #Dependency Injection
