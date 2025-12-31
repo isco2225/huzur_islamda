@@ -69,14 +69,50 @@ abstract class Command<T> {
   VoidCallback? _errorListener;
   VoidCallback? _completedListener;
 
+  /// Safely pops routes, waiting for them to be in idle state
   void _pop(BuildContext context, int popCount) {
-    for (var i = 0; i < popCount; i++) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted && context.canPop()) {
+    if (popCount <= 0) return;
+
+    // Wait for route to be in idle state by waiting multiple frames
+    // This ensures route animations are complete before popping
+    Future<void> performPop() async {
+      // Wait for at least 2 frames to ensure route is in idle state
+      // Route animations typically complete within 1-2 frames
+      for (int frame = 0; frame < 2; frame++) {
+        await WidgetsBinding.instance.endOfFrame;
+        if (!context.mounted) return;
+      }
+
+      if (!context.mounted) return;
+
+      try {
+        final navigator = Navigator.of(context, rootNavigator: false);
+
+        for (var i = 0; i < popCount; i++) {
+          if (!context.mounted) break;
+
+          // Check if we can pop before attempting
+          if (!navigator.canPop() || !context.canPop()) break;
+
+          // Perform the pop operation
           context.pop();
+
+          // Wait a frame between pops to avoid race conditions
+          if (i < popCount - 1) {
+            await WidgetsBinding.instance.endOfFrame;
+          }
         }
-      });
+      } catch (e) {
+        // Silently ignore navigation errors when context is disposed
+        // or route is in an invalid state (e.g., already popped)
+        debugPrint('Navigation error in Command._pop: $e');
+      }
     }
+
+    // Schedule the pop operation after current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      performPop();
+    });
   }
 
   void handleError(
@@ -89,16 +125,28 @@ abstract class Command<T> {
       if (!_error.value) return;
       final value = _result.value;
       if (value == null) return;
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        clearResult();
+        return;
+      }
       final Exception exception = value.asError.error;
       clearResult();
-      if (showSnackBar) {
-        final String message = context.exceptionToUserFriendlyMessage(
-          exception,
-        );
-        context.showErrorSnackBar(message);
+
+      if (showSnackBar && context.mounted) {
+        try {
+          final String message = context.exceptionToUserFriendlyMessage(
+            exception,
+          );
+          context.showErrorSnackBar(message);
+        } catch (e) {
+          debugPrint('Error showing snackbar: $e');
+        }
       }
-      _pop(context, popCount);
+
+      if (popCount > 0 && context.mounted) {
+        _pop(context, popCount);
+      }
+
       onDone?.call();
     };
     _error.addListener(_errorListener!);
@@ -120,11 +168,22 @@ abstract class Command<T> {
         clearResult();
         return;
       }
-      if (successMessage != null) {
-        context.showSuccessSnackBar(successMessage);
+
+      if (successMessage != null && context.mounted) {
+        try {
+          context.showSuccessSnackBar(successMessage);
+        } catch (e) {
+          debugPrint('Error showing snackbar: $e');
+        }
       }
-      _pop(context, popCount);
-      onCompleted?.call(_result.value!.asOk.value);
+
+      if (popCount > 0 && context.mounted) {
+        _pop(context, popCount);
+      }
+
+      if (_result.value != null) {
+        onCompleted?.call(_result.value!.asOk.value);
+      }
       clearResult();
     };
     _completed.addListener(_completedListener!);

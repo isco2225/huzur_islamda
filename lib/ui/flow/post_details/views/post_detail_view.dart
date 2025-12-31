@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
 import '../../../../domain/domain.dart';
-import '../../widgets/content_type_badge.dart';
-import '../../widgets/pop_menu_button.dart';
+import '../../../ui.dart';
 
 class PostDetailView extends StatelessWidget {
   const PostDetailView({super.key, required this.post});
@@ -17,6 +16,7 @@ class PostDetailView extends StatelessWidget {
     return BaseScaffold(
       safeArea: true,
       appBar: AppBar(
+        leading: const SafeBackButton(),
         title: const Text('Gönderi Detayı'),
         backgroundColor: AppColors.background,
         elevation: 0,
