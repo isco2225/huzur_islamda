@@ -24,7 +24,9 @@ class AuthViewModel {
   // COMMANDS
 
   // DISPOSE
-  void dispose() {}
+  void dispose() {
+    _log.fine('Disposed');
+  }
 
   // FUNCTIONS
 }

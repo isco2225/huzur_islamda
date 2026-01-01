@@ -1,15 +1,12 @@
 import 'package:logging/logging.dart';
 
 import '../../../../../app/app.dart';
-import '../../../../../data/data.dart';
 import '../../../../../domain/domain.dart';
 
 class CreateUserProfileViewModel {
   CreateUserProfileViewModel({
-    required AuthRepository authRepository,
     required CreateUserProfileUseCase createUserProfileUseCase,
-  }) : _authRepository = authRepository,
-       _createUserProfileUseCase = createUserProfileUseCase {
+  }) : _createUserProfileUseCase = createUserProfileUseCase {
     // DEFINE COMMANDS
     createUserProfile =
         Command1<
@@ -29,7 +26,6 @@ class CreateUserProfileViewModel {
   final _log = Logger('CreateUserProfileViewModel');
 
   // REPOSITORIES & USE CASES
-  final AuthRepository _authRepository;
   final CreateUserProfileUseCase _createUserProfileUseCase;
   // DOMAIN
 

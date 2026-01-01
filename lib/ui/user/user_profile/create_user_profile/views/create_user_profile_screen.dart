@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../app/router/app_router.dart';
-import '../../../../../data/data.dart';
 import '../../../../../domain/domain.dart';
 import '../../../../ui.dart';
 
@@ -20,7 +19,6 @@ class _CreateUserProfileScreenState extends State<CreateUserProfileScreen> {
   void initState() {
     super.initState();
     _viewModel = CreateUserProfileViewModel(
-      authRepository: context.read<AuthRepository>(),
       createUserProfileUseCase: context.read<CreateUserProfileUseCase>(),
     );
 

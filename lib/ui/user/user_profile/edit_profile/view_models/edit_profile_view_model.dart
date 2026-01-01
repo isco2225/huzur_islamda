@@ -69,7 +69,6 @@ class EditProfileViewModel {
         commands.surname == currentUser.value.surname &&
         commands.dateOfBirth == currentUser.value.dateOfBirth &&
         commands.maritalStatus == currentUser.value.maritalStatus) {
-      print('No changes made');
       return Result.ok(null);
     }
     final result = await _userRepository.updateUser(

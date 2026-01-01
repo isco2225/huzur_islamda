@@ -21,7 +21,7 @@ class DhikrViewModel {
 
   // DISPOSE
   void dispose() {
-    // TODO: Dispose commands and resources
+    _log.fine('Disposed');
   }
 
   // FUNCTIONS
