@@ -29,6 +29,9 @@ dependencies:
   #Lottie animations
   lottie: ^3.3.2
 
+  #Shimmer effect
+  shimmer: ^3.0.0
+
   #Firebase
   firebase_core: ^4.2.0
   firebase_auth: ^6.1.1
