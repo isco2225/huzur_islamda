@@ -20,6 +20,9 @@ class _SignUpViewState extends State<SignUpView> {
   final ValueNotifier<bool> _displayEmailError = ValueNotifier(false);
   final ValueNotifier<bool> _displayPasswordError = ValueNotifier(false);
   final ValueNotifier<bool> _displayConfirmPasswordError = ValueNotifier(false);
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
   @override
   void dispose() {
     _emailController.dispose();
@@ -28,6 +31,9 @@ class _SignUpViewState extends State<SignUpView> {
     _displayEmailError.dispose();
     _displayPasswordError.dispose();
     _displayConfirmPasswordError.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
@@ -62,15 +68,34 @@ class _SignUpViewState extends State<SignUpView> {
                         SignUpEmailTextField(
                           email: _emailController,
                           displayError: _displayEmailError,
+                          focusNode: _emailFocusNode,
+                          onEmailSubmitted: (email) {
+                            _emailFocusNode.unfocus();
+                            _passwordFocusNode.requestFocus();
+                          },
                         ),
                         SignUpPasswordTextField(
                           password: _passwordController,
                           displayError: _displayPasswordError,
+                          focusNode: _passwordFocusNode,
+                          onPasswordSubmitted: (password) {
+                            _passwordFocusNode.unfocus();
+                            _confirmPasswordFocusNode.requestFocus();
+                          },
                         ),
                         ConfirmPasswordTextField(
                           password: _passwordController,
                           confirmPassword: _confirmPasswordController,
                           displayError: _displayConfirmPasswordError,
+                          focusNode: _confirmPasswordFocusNode,
+                          onConfirmPasswordSubmitted: (confirmPassword) {
+                            _confirmPasswordFocusNode.unfocus();
+                            if (!_isValueObjectsValid()) return;
+                            widget.viewModel.requestSignUp.execute((
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text,
+                            ));
+                          },
                         ),
                       ],
                     );

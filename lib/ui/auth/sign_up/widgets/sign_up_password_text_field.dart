@@ -8,10 +8,14 @@ class SignUpPasswordTextField extends StatelessWidget {
     super.key,
     required TextEditingController password,
     required ValueNotifier<bool> displayError,
+    this.focusNode,
+    this.onPasswordSubmitted,
   }) : _password = password,
        _displayError = displayError;
   final TextEditingController _password;
   final ValueNotifier<bool> _displayError;
+  final FocusNode? focusNode;
+  final void Function(String)? onPasswordSubmitted;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -24,6 +28,8 @@ class SignUpPasswordTextField extends StatelessWidget {
           hideText: 'gizle',
           showText: 'göster',
           isPassword: true,
+          focusNode: focusNode,
+          onSubmitted: onPasswordSubmitted,
           textEditingController: _password,
           errorText: _displayError.value
               ? context.voFailureToUserFriendlyMessage(
