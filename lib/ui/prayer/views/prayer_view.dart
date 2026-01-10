@@ -98,6 +98,36 @@ class PrayerView extends StatelessWidget {
               ),
               SizedBox(height: context.spacingExtraSmall),
               RemainingTimeToNextPrayer(),
+
+              // Show countries.
+              ValueListenableBuilder<bool>(
+                valueListenable: viewModel.getCountries.running,
+                builder: (context, isLoading, child) {
+                  return TextButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            viewModel.getCountries.execute();
+                            showDialog<void>(
+                              context: context,
+                              builder: (context) => PlaceSelector(
+                                viewModel: viewModel,
+                                onCountryIdSelected: (countryId) {
+                                  viewModel.selectCountry.execute(countryId);
+                                },
+                              ),
+                            );
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Ülke Seçin'),
+                  );
+                },
+              ),
             ],
           ),
         ),

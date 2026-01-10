@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../data/data.dart';
 import '../../ui.dart';
 
 class PrayerScreen extends StatefulWidget {
@@ -15,7 +17,14 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = PrayerViewModel();
+    _viewModel = PrayerViewModel(
+      countryRepository: context.read<CountryRepository>(),
+    );
+    _viewModel.getCountries.handleError(context, showSnackBar: true);
+    _viewModel.getCountries.handleCompleted(
+      context,
+      successMessage: 'Countries fetched successfully',
+    );
   }
 
   @override
