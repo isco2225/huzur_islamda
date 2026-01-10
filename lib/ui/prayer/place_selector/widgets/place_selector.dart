@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../ui.dart';
+import '../../../ui.dart';
 
 class PlaceSelector extends StatefulWidget {
   const PlaceSelector({
@@ -8,7 +8,7 @@ class PlaceSelector extends StatefulWidget {
     required this.viewModel,
     required this.onCountryIdSelected,
   });
-  final PrayerViewModel viewModel;
+  final PlaceSelectorViewModel viewModel;
   final Function(String) onCountryIdSelected;
 
   @override

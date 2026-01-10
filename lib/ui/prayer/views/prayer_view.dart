@@ -4,9 +4,14 @@ import '../../../../app/app.dart';
 import '../../ui.dart';
 
 class PrayerView extends StatelessWidget {
-  const PrayerView({super.key, required this.viewModel});
+  const PrayerView({
+    super.key,
+    required this.viewModel,
+    required this.placeSelectorViewModel,
+  });
 
   final PrayerViewModel viewModel;
+  final PlaceSelectorViewModel placeSelectorViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -101,19 +106,21 @@ class PrayerView extends StatelessWidget {
 
               // Show countries.
               ValueListenableBuilder<bool>(
-                valueListenable: viewModel.getCountries.running,
+                valueListenable: placeSelectorViewModel.getCountries.running,
                 builder: (context, isLoading, child) {
                   return TextButton(
                     onPressed: isLoading
                         ? null
                         : () {
-                            viewModel.getCountries.execute();
+                            placeSelectorViewModel.getCountries.execute();
                             showDialog<void>(
                               context: context,
                               builder: (context) => PlaceSelector(
-                                viewModel: viewModel,
+                                viewModel: placeSelectorViewModel,
                                 onCountryIdSelected: (countryId) {
-                                  viewModel.selectCountry.execute(countryId);
+                                  placeSelectorViewModel.selectCountry.execute(
+                                    countryId,
+                                  );
                                 },
                               ),
                             );

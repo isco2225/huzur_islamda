@@ -13,15 +13,20 @@ class PrayerScreen extends StatefulWidget {
 
 class _PrayerScreenState extends State<PrayerScreen> {
   late final PrayerViewModel _viewModel;
+  late final PlaceSelectorViewModel _placeSelectorViewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = PrayerViewModel(
+    _viewModel = PrayerViewModel();
+    _placeSelectorViewModel = PlaceSelectorViewModel(
       countryRepository: context.read<CountryRepository>(),
     );
-    _viewModel.getCountries.handleError(context, showSnackBar: true);
-    _viewModel.getCountries.handleCompleted(
+    _placeSelectorViewModel.getCountries.handleError(
+      context,
+      showSnackBar: true,
+    );
+    _placeSelectorViewModel.getCountries.handleCompleted(
       context,
       successMessage: 'Countries fetched successfully',
     );
@@ -30,11 +35,15 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   void dispose() {
     _viewModel.dispose();
+    _placeSelectorViewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return PrayerView(viewModel: _viewModel);
+    return PrayerView(
+      viewModel: _viewModel,
+      placeSelectorViewModel: _placeSelectorViewModel,
+    );
   }
 }
