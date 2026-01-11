@@ -27,11 +27,12 @@ class _SignInViewState extends State<SignInView> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BaseScaffold(
       safeArea: true,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(context.horizontalPadding),
+          padding: EdgeInsets.all(responsive.horizontalPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +42,7 @@ class _SignInViewState extends State<SignInView> {
                 text: 'Bu eşsiz deneyim için heasp bilgilerini gir.',
               ),
               Padding(
-                padding: EdgeInsets.only(top: context.spacingSmall),
+                padding: EdgeInsets.only(top: responsive.spacingSmall),
                 child: ListenableBuilder(
                   listenable: Listenable.merge([
                     _displayEmailError,
@@ -66,10 +67,12 @@ class _SignInViewState extends State<SignInView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
+                padding: EdgeInsets.only(
+                  top: responsive.isSmallScreen ? 40 : 60,
+                ),
                 child: SizedBox(
                   width: double.infinity,
-                  height: context.isSmallScreen ? 45 : 50,
+                  height: responsive.isSmallScreen ? 45 : 50,
                   child: SignInButton(
                     viewModel: widget.viewModel,
                     email: _emailController,
@@ -80,7 +83,7 @@ class _SignInViewState extends State<SignInView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(context.spacingSmall),
+                padding: EdgeInsets.all(responsive.spacingSmall),
                 child: OrDivider(),
               ),
               SocialLoginButton(
@@ -90,7 +93,7 @@ class _SignInViewState extends State<SignInView> {
                   widget.viewModel.signInWithGoogle.execute();
                 },
               ),
-              SizedBox(height: context.isSmallScreen ? 8 : 12),
+              SizedBox(height: responsive.isSmallScreen ? 8 : 12),
               SocialLoginButton(
                 text: 'Apple ile Giriş Yap',
                 icon: Icon(Icons.apple),
@@ -98,7 +101,7 @@ class _SignInViewState extends State<SignInView> {
               ),
               // you dont have an account?
               Padding(
-                padding: EdgeInsets.only(top: context.spacingSmall),
+                padding: EdgeInsets.only(top: responsive.spacingSmall),
                 child: const DontHaveAnAccount(),
               ),
             ],
@@ -114,6 +117,7 @@ class DontHaveAnAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -121,10 +125,10 @@ class DontHaveAnAccount extends StatelessWidget {
           'Hesabın yok mu?',
           style: TextStyle(
             color: Colors.grey.shade800,
-            fontSize: context.responsiveFontSize(14),
+            fontSize: responsive.responsiveFontSize(14),
           ),
         ),
-        SizedBox(width: context.isSmallScreen ? 3 : 4),
+        SizedBox(width: responsive.isSmallScreen ? 3 : 4),
         GestureDetector(
           onTap: () {
             const SignUpRoute().go(context);
@@ -134,7 +138,7 @@ class DontHaveAnAccount extends StatelessWidget {
             style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,
-              fontSize: context.responsiveFontSize(14),
+              fontSize: responsive.responsiveFontSize(14),
             ),
           ),
         ),
@@ -149,18 +153,19 @@ class OrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Row(
       children: [
         const Expanded(child: Divider(color: Colors.grey)),
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: context.isSmallScreen ? 8 : 12,
+            horizontal: responsive.isSmallScreen ? 8 : 12,
           ),
           child: Text(
             text,
             style: TextStyle(
               color: Colors.grey.shade800,
-              fontSize: context.responsiveFontSize(14),
+              fontSize: responsive.responsiveFontSize(14),
             ),
           ),
         ),

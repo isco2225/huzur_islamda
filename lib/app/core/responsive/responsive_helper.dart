@@ -125,7 +125,7 @@ class ResponsiveHelper {
 
   /// Check if screen is large
   static bool isLargeScreen(double screenWidth) {
-    return screenWidth >= ResponsiveBreakpoints.medium;
+    return screenWidth >= ResponsiveBreakpoints.large;
   }
 
   /// Get responsive font size
