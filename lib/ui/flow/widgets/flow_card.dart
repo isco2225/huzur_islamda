@@ -21,10 +21,11 @@ class FlowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     final textTheme = Theme.of(context).textTheme;
-    final cardHeight = context.isSmallScreen
+    final cardHeight = responsive.isSmallScreen
         ? 250.0
-        : context.isMediumScreen
+        : responsive.isMediumScreen
         ? 270.0
         : 320.0;
     return GestureDetector(
@@ -32,7 +33,7 @@ class FlowCard extends StatelessWidget {
         PostDetailRoute($extra: post).push<void>(context);
       },
       child: SizedBox(
-        width: context.screenWidth * 0.9,
+        width: responsive.screenWidth * 0.9,
         height: cardHeight,
         child: Card(
           color: Colors.white,
@@ -45,7 +46,7 @@ class FlowCard extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: context.containerPadding,
+            padding: responsive.containerPadding,
             child: Stack(
               children: [
                 Column(
@@ -57,7 +58,7 @@ class FlowCard extends StatelessWidget {
                           child: Text(
                             post.title,
                             style: textTheme.titleMedium?.copyWith(
-                              fontSize: context.responsiveFontSize(
+                              fontSize: responsive.responsiveFontSize(
                                 textTheme.titleMedium?.fontSize,
                               ),
                               fontWeight: FontWeight.w600,
@@ -69,7 +70,7 @@ class FlowCard extends StatelessWidget {
                         PopMenuButton(),
                       ],
                     ),
-                    SizedBox(height: context.spacingExtraSmall),
+                    SizedBox(height: responsive.spacingExtraSmall),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,14 +83,14 @@ class FlowCard extends StatelessWidget {
                               child: Text(
                                 post.arabicContent!,
                                 style: textTheme.bodyMedium?.copyWith(
-                                  fontSize: context.responsiveFontSize(
+                                  fontSize: responsive.responsiveFontSize(
                                     (textTheme.bodyMedium?.fontSize ?? 14) *
                                         1.1,
                                   ),
                                   height: 1.5,
                                 ),
                                 textAlign: TextAlign.right,
-                                maxLines: context.isSmallScreen ? 1 : 2,
+                                maxLines: responsive.isSmallScreen ? 1 : 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -97,7 +98,7 @@ class FlowCard extends StatelessWidget {
                             child: Text(
                               post.content,
                               style: textTheme.bodyMedium?.copyWith(
-                                fontSize: context.responsiveFontSize(
+                                fontSize: responsive.responsiveFontSize(
                                   textTheme.bodyMedium?.fontSize,
                                 ),
                                 height: 1.5,
@@ -105,8 +106,8 @@ class FlowCard extends StatelessWidget {
                               maxLines:
                                   post.arabicContent != null &&
                                       post.arabicContent!.isNotEmpty
-                                  ? (context.isSmallScreen ? 2 : 3)
-                                  : (context.isSmallScreen ? 4 : 5),
+                                  ? (responsive.isSmallScreen ? 2 : 3)
+                                  : (responsive.isSmallScreen ? 4 : 5),
                               overflow: TextOverflow.fade,
                             ),
                           ),

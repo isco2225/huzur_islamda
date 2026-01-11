@@ -7,16 +7,17 @@ class OnboardingViewSecound extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: EdgeInsets.all(context.isSmallScreen ? 8.0 : 10.0),
+          padding: EdgeInsets.all(responsive.isSmallScreen ? 8.0 : 10.0),
           child: CustomLottieAnimation(assetPath: AppAnimations.fatherAndSon),
         ),
         TitleText(title: 'Sizi Anlayan Bir Deneyim'),
         Padding(
-          padding: EdgeInsets.all(context.spacingSmall),
+          padding: EdgeInsets.all(responsive.spacingSmall),
           child: SubtitleText(
             text:
                 'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.',

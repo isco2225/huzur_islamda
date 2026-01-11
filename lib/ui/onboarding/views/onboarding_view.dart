@@ -36,6 +36,7 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BaseScaffold(
       body: Column(
         children: [
@@ -52,16 +53,16 @@ class _OnboardingViewState extends State<OnboardingView> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(
-              context.horizontalPadding,
-              context.isSmallScreen ? 6 : 8,
-              context.horizontalPadding,
-              context.isSmallScreen ? 12 : 16,
+              responsive.horizontalPadding,
+              responsive.isSmallScreen ? 6 : 8,
+              responsive.horizontalPadding,
+              responsive.isSmallScreen ? 12 : 16,
             ),
             child: Column(
               children: [
                 SizedBox(
                   width: double.infinity,
-                  height: context.isSmallScreen ? 45 : 50,
+                  height: responsive.isSmallScreen ? 45 : 50,
                   child: AppButton(
                     running: _isLoading,
                     onPressed: _handleButtonPress,
@@ -70,7 +71,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                         : AppStrings.start,
                   ),
                 ),
-                SizedBox(height: context.isSmallScreen ? 6 : 8),
+                SizedBox(height: responsive.isSmallScreen ? 6 : 8),
                 PageIndicator(controller: _controller),
               ],
             ),

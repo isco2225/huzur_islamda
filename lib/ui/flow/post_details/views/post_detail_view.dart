@@ -11,6 +11,7 @@ class PostDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     final textTheme = Theme.of(context).textTheme;
 
     return BaseScaffold(
@@ -30,7 +31,7 @@ class PostDetailView extends StatelessWidget {
         child: Icon(Icons.bookmark_border, color: Colors.black),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(context.horizontalPadding),
+        padding: EdgeInsets.all(responsive.horizontalPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -38,27 +39,27 @@ class PostDetailView extends StatelessWidget {
             Text(
               post.title,
               style: textTheme.headlineSmall?.copyWith(
-                fontSize: context.responsiveFontSize(
+                fontSize: responsive.responsiveFontSize(
                   textTheme.headlineSmall?.fontSize,
                 ),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: context.spacingMedium),
+            SizedBox(height: responsive.spacingMedium),
             // Content Type Badge
             ContentTypeBadge(type: post.contentType),
             // Arabic Content (if available)
             if (post.arabicContent != null &&
                 post.arabicContent!.isNotEmpty) ...[
-              SizedBox(height: context.spacingLarge),
+              SizedBox(height: responsive.spacingLarge),
               Divider(color: Colors.grey[300]),
-              SizedBox(height: context.spacingMedium),
+              SizedBox(height: responsive.spacingMedium),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Text(
                   post.arabicContent!,
                   style: textTheme.bodyLarge?.copyWith(
-                    fontSize: context.responsiveFontSize(
+                    fontSize: responsive.responsiveFontSize(
                       (textTheme.bodyLarge?.fontSize ?? 16) * 1.2,
                     ),
                     height: 1.8,
@@ -68,38 +69,38 @@ class PostDetailView extends StatelessWidget {
                 ),
               ),
             ],
-            SizedBox(height: context.spacingLarge),
+            SizedBox(height: responsive.spacingLarge),
             // Content
             Text(
               post.content,
               style: textTheme.bodyLarge?.copyWith(
-                fontSize: context.responsiveFontSize(
+                fontSize: responsive.responsiveFontSize(
                   textTheme.bodyLarge?.fontSize,
                 ),
                 height: 1.8,
               ),
             ),
-            SizedBox(height: context.spacingExtraLarge),
+            SizedBox(height: responsive.spacingExtraLarge),
             // Kaynak (Source)
             Divider(color: Colors.grey[300]),
-            SizedBox(height: context.spacingMedium),
+            SizedBox(height: responsive.spacingMedium),
             Text(
               'Kaynak',
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: context.spacingSmall),
+            SizedBox(height: responsive.spacingSmall),
             Text(
               post.source,
               style: textTheme.bodyMedium?.copyWith(
-                fontSize: context.responsiveFontSize(
+                fontSize: responsive.responsiveFontSize(
                   textTheme.bodyMedium?.fontSize,
                 ),
                 color: Colors.grey[600],
               ),
             ),
-            SizedBox(height: context.spacingLarge),
+            SizedBox(height: responsive.spacingLarge),
           ],
         ),
       ),

@@ -15,6 +15,7 @@ class PrayerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BaseScaffold(
       appBar: AppBar(
         title: Text('Ezan Vakitleri'),
@@ -25,8 +26,8 @@ class PrayerView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: context.horizontalPadding,
-            vertical: context.verticalPadding,
+            horizontal: responsive.horizontalPadding,
+            vertical: responsive.verticalPadding,
           ),
           child: Column(
             children: [
@@ -43,7 +44,7 @@ class PrayerView extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: context.spacingMedium),
+              SizedBox(height: responsive.spacingMedium),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -90,18 +91,18 @@ class PrayerView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: context.spacingMedium),
+              SizedBox(height: responsive.spacingMedium),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Sonraki vakit için:',
                   style: TextStyle(
-                    fontSize: context.isSmallScreen ? 12 : 16,
+                    fontSize: responsive.isSmallScreen ? 12 : 16,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
               ),
-              SizedBox(height: context.spacingExtraSmall),
+              SizedBox(height: responsive.spacingExtraSmall),
               RemainingTimeToNextPrayer(),
 
               // Show countries.

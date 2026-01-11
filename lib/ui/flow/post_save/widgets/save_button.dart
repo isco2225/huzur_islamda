@@ -7,6 +7,7 @@ class SaveButton extends StatelessWidget {
   final bool isSaved;
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
@@ -16,7 +17,7 @@ class SaveButton extends StatelessWidget {
         icon: Icon(
           isSaved ? Icons.bookmark : Icons.bookmark_border,
           color: AppColors.primary,
-          size: context.isSmallScreen ? 20.0 : 24.0,
+          size: responsive.isSmallScreen ? 20.0 : 24.0,
         ),
         onPressed: () {},
         tooltip: 'Kaydet',

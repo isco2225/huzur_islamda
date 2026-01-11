@@ -9,7 +9,8 @@ class PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dotSize = context.isSmallScreen ? 12.0 : 15.0;
+    final responsive = context.responsive;
+    final dotSize = responsive.isSmallScreen ? 12.0 : 15.0;
 
     return SmoothPageIndicator(
       controller: controller,

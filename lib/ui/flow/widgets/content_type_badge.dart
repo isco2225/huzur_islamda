@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 
@@ -32,10 +33,11 @@ class ContentTypeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.isSmallScreen ? 8.0 : 12.0,
-        vertical: context.isSmallScreen ? 4.0 : 6.0,
+        horizontal: responsive.isSmallScreen ? 8.0 : 12.0,
+        vertical: responsive.isSmallScreen ? 4.0 : 6.0,
       ),
       decoration: BoxDecoration(
         color: _backgroundColor,
@@ -48,8 +50,8 @@ class ContentTypeBadge extends StatelessWidget {
       child: Text(
         type.name,
         style: TextStyle(
-          fontSize: context.responsiveFontSize(
-            context.isSmallScreen ? 10.0 : 12.0,
+          fontSize: responsive.responsiveFontSize(
+            responsive.isSmallScreen ? 10.0 : 12.0,
           ),
           fontWeight: FontWeight.w600,
           color: _textColor,

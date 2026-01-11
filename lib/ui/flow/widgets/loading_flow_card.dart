@@ -8,14 +8,15 @@ class LoadingFlowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardHeight = context.isSmallScreen
+    final responsive = context.responsive;
+    final cardHeight = responsive.isSmallScreen
         ? 250.0
-        : context.isMediumScreen
+        : responsive.isMediumScreen
         ? 270.0
         : 320.0;
 
     return SizedBox(
-      width: context.screenWidth * 0.9,
+      width: responsive.screenWidth * 0.9,
       height: cardHeight,
       child: Card(
         color: Colors.white,
@@ -25,7 +26,7 @@ class LoadingFlowCard extends StatelessWidget {
           side: BorderSide(color: Colors.grey.shade300, width: 1.0),
         ),
         child: Padding(
-          padding: context.containerPadding,
+          padding: responsive.containerPadding,
           child: Shimmer.fromColors(
             baseColor: Colors.grey.shade300,
             highlightColor: Colors.grey.shade100,
@@ -50,7 +51,7 @@ class LoadingFlowCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Container(
-                                width: context.screenWidth * 0.5,
+                                width: responsive.screenWidth * 0.5,
                                 height: 20,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -71,7 +72,7 @@ class LoadingFlowCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: context.spacingExtraSmall),
+                    SizedBox(height: responsive.spacingExtraSmall),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +80,7 @@ class LoadingFlowCard extends StatelessWidget {
                         children: [
                           Container(
                             width: double.infinity,
-                            height: context.isSmallScreen ? 18 : 36,
+                            height: responsive.isSmallScreen ? 18 : 36,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
@@ -105,7 +106,7 @@ class LoadingFlowCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            width: context.screenWidth * 0.7,
+                            width: responsive.screenWidth * 0.7,
                             height: 16,
                             decoration: BoxDecoration(
                               color: Colors.white,

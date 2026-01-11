@@ -12,6 +12,7 @@ class OnboardingViewFirst extends StatefulWidget {
 class _OnboardingViewFirstState extends State<OnboardingViewFirst> {
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -20,20 +21,18 @@ class _OnboardingViewFirstState extends State<OnboardingViewFirst> {
         Text(
           'Huzur İslamda',
           style: textTheme.bodyLarge?.copyWith(
-            fontSize: context.responsiveFontSize(25) ?? 25,
+            fontSize: responsive.responsiveFontSize(25) ?? 25,
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(context.isSmallScreen ? 8.0 : 10.0),
-          child: CustomLottieAnimation(
-            assetPath: AppAnimations.handDrawnSalam,
-          ),
+          padding: EdgeInsets.all(responsive.isSmallScreen ? 8.0 : 10.0),
+          child: CustomLottieAnimation(assetPath: AppAnimations.handDrawnSalam),
         ),
         TitleText(title: AppStrings.onboardingTitle1),
         Padding(
-          padding: EdgeInsets.all(context.spacingSmall),
+          padding: EdgeInsets.all(responsive.spacingSmall),
           child: SubtitleText(text: AppStrings.onboardingText1),
         ),
       ],

@@ -7,8 +7,9 @@ class PopMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return PopupMenuButton<String>(
-      icon: Icon(Icons.more_vert, size: context.isSmallScreen ? 20.0 : 24.0),
+      icon: Icon(Icons.more_vert, size: responsive.isSmallScreen ? 20.0 : 24.0),
 
       itemBuilder: (context) => [
         PopupMenuItem(
