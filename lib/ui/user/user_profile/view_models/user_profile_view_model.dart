@@ -9,7 +9,7 @@ class UserProfileViewModel {
   }
 
   // LOGGER
-  final _log = Logger('ProfileViewModel');
+  final _log = Logger('UserProfileViewModel');
 
   // REPOSITORIES & USE CASES
   // TODO: Add repositories and use cases here
@@ -21,7 +21,7 @@ class UserProfileViewModel {
 
   // DISPOSE
   void dispose() {
-    // TODO: Dispose commands and resources
+    _log.fine('Disposed');
   }
 
   // FUNCTIONS

@@ -8,12 +8,15 @@ class SignInEmailTextField extends StatelessWidget {
     super.key,
     required TextEditingController email,
     required ValueNotifier<bool> displayError,
+    this.focusNode,
+    this.onEmailSubmitted,
   }) : _email = email,
        _displayError = displayError;
 
   final TextEditingController _email;
   final ValueNotifier<bool> _displayError;
-
+  final FocusNode? focusNode;
+  final void Function(String)? onEmailSubmitted;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -25,7 +28,9 @@ class SignInEmailTextField extends StatelessWidget {
           'Email',
           hideText: '',
           showText: '',
+          focusNode: focusNode,
           textEditingController: _email,
+          onSubmitted: onEmailSubmitted,
           keyboardType: TextInputType.emailAddress,
           errorText: _displayError.value
               ? context.voFailureToUserFriendlyMessage(

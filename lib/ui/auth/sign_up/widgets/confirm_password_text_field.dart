@@ -9,12 +9,16 @@ class ConfirmPasswordTextField extends StatelessWidget {
     required TextEditingController confirmPassword,
     required ValueNotifier<bool> displayError,
     required TextEditingController password,
+    this.focusNode,
+    this.onConfirmPasswordSubmitted,
   }) : _confirmPassword = confirmPassword,
        _displayError = displayError,
        _password = password;
   final TextEditingController _confirmPassword;
   final ValueNotifier<bool> _displayError;
   final TextEditingController _password;
+  final FocusNode? focusNode;
+  final void Function(String)? onConfirmPasswordSubmitted;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -27,6 +31,8 @@ class ConfirmPasswordTextField extends StatelessWidget {
           hideText: 'gizle',
           showText: 'göster',
           isPassword: true,
+          focusNode: focusNode,
+          onSubmitted: onConfirmPasswordSubmitted,
           textEditingController: _confirmPassword,
           errorText: _displayError.value
               ? context.voFailureToUserFriendlyMessage(

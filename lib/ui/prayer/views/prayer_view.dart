@@ -4,9 +4,14 @@ import '../../../../app/app.dart';
 import '../../ui.dart';
 
 class PrayerView extends StatelessWidget {
-  const PrayerView({super.key, required this.viewModel});
+  const PrayerView({
+    super.key,
+    required this.viewModel,
+    required this.placeSelectorViewModel,
+  });
 
   final PrayerViewModel viewModel;
+  final PlaceSelectorViewModel placeSelectorViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +103,38 @@ class PrayerView extends StatelessWidget {
               ),
               SizedBox(height: context.spacingExtraSmall),
               RemainingTimeToNextPrayer(),
+
+              // Show countries.
+              ValueListenableBuilder<bool>(
+                valueListenable: placeSelectorViewModel.getCountries.running,
+                builder: (context, isLoading, child) {
+                  return TextButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            placeSelectorViewModel.getCountries.execute();
+                            showDialog<void>(
+                              context: context,
+                              builder: (context) => PlaceSelector(
+                                viewModel: placeSelectorViewModel,
+                                onCountryIdSelected: (countryId) {
+                                  placeSelectorViewModel.selectCountry.execute(
+                                    countryId,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Ülke Seçin'),
+                  );
+                },
+              ),
             ],
           ),
         ),

@@ -1,11 +1,8 @@
 import 'package:logging/logging.dart';
 
-import '../../../../app/app.dart';
-
 class PrayerViewModel {
   PrayerViewModel() {
     // DEFINE COMMANDS
-    // TODO: Add commands here
 
     // DEFINE LISTENERS
   }
@@ -14,18 +11,15 @@ class PrayerViewModel {
   final _log = Logger('PrayerViewModel');
 
   // REPOSITORIES & USE CASES
-  // TODO: Add repositories and use cases here
 
   // DOMAIN
 
   // COMMANDS
-  // TODO: Add commands here
 
   // DISPOSE
   void dispose() {
-    // TODO: Dispose commands and resources
+    _log.fine('PrayerViewModel Disposed');
   }
 
   // FUNCTIONS
-  // TODO: Add functions here
 }

@@ -3,14 +3,15 @@ import 'package:logging/logging.dart';
 import '../../../data/data.dart';
 
 class FlowViewModel {
-  FlowViewModel({required PostRepository postRepository})
-    : _postRepository = postRepository {}
+  FlowViewModel({required PostRepository postRepository}) {
+    // DEFINE COMMANDS
+    // DEFINE LISTENERS
+  }
 
   // LOGGER
   final _log = Logger('FlowViewModel');
 
   // REPOSITORIES & USE CASES
-  final PostRepository _postRepository;
   // DOMAIN
   // COMMANDS
 

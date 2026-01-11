@@ -66,7 +66,13 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
           isFetching: widget.isFetching.value,
           onFetchMore: () => widget.onFetch(),
           isAllItemsFetched: widget.isAllItemsFetched.value,
-          fetchingFirstItems: const SizedBox.shrink(),
+          fetchingFirstItems: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(3, (index) => LoadingFlowCard()),
+              ),
+            ),
+          ),
           fetchingMoreItemsWidget: const Padding(
             padding: EdgeInsets.all(16),
             child: Center(

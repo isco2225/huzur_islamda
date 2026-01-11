@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
+import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class SignInView extends StatefulWidget {
@@ -16,12 +17,16 @@ class _SignInViewState extends State<SignInView> {
   final TextEditingController _passwordController = TextEditingController();
   final ValueNotifier<bool> _displayEmailError = ValueNotifier(false);
   final ValueNotifier<bool> _displayPasswordError = ValueNotifier(false);
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _displayEmailError.dispose();
     _displayPasswordError.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -55,11 +60,25 @@ class _SignInViewState extends State<SignInView> {
                       children: [
                         SignInEmailTextField(
                           email: _emailController,
+                          focusNode: _emailFocusNode,
                           displayError: _displayEmailError,
+                          onEmailSubmitted: (email) {
+                            _emailFocusNode.unfocus();
+                            _passwordFocusNode.requestFocus();
+                          },
                         ),
                         SignInPasswordTextField(
                           password: _passwordController,
+                          focusNode: _passwordFocusNode,
                           displayError: _displayPasswordError,
+                          onPasswordSubmitted: (password) {
+                            _passwordFocusNode.unfocus();
+                            if (!_isValueObjectsValid()) return;
+                            widget.viewModel.signIn.execute((
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text,
+                            ));
+                          },
                         ),
                       ],
                     );
@@ -73,12 +92,16 @@ class _SignInViewState extends State<SignInView> {
                 child: SizedBox(
                   width: double.infinity,
                   height: responsive.isSmallScreen ? 45 : 50,
-                  child: SignInButton(
-                    viewModel: widget.viewModel,
-                    email: _emailController,
-                    password: _passwordController,
-                    displayEmailVOError: _displayEmailError,
-                    displayPasswordVOError: _displayPasswordError,
+                  child: AppButton(
+                    onPressed: () {
+                      if (!_isValueObjectsValid()) return;
+                      widget.viewModel.signIn.execute((
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text,
+                      ));
+                    },
+                    text: 'Giriş Yap',
+                    running: widget.viewModel.signIn.running,
                   ),
                 ),
               ),
@@ -109,6 +132,14 @@ class _SignInViewState extends State<SignInView> {
         ),
       ),
     );
+  }
+
+  bool _isValueObjectsValid() {
+    final isEmailValid = Email.dirty(_emailController.text.trim()).isValid;
+    final isPasswordValid = Password.dirty(_passwordController.text).isValid;
+    _displayEmailError.value = !isEmailValid;
+    _displayPasswordError.value = !isPasswordValid;
+    return isPasswordValid && isEmailValid;
   }
 }
 

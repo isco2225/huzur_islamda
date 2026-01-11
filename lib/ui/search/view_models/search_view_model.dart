@@ -1,7 +1,5 @@
 import 'package:logging/logging.dart';
 
-import '../../../../app/app.dart';
-
 class SearchViewModel {
   SearchViewModel() {
     // DEFINE COMMANDS
@@ -23,7 +21,7 @@ class SearchViewModel {
 
   // DISPOSE
   void dispose() {
-    // TODO: Dispose commands and resources
+    _log.fine('Disposed');
   }
 
   // FUNCTIONS

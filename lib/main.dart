@@ -33,6 +33,9 @@ void main() async {
       dhikrRepository: DhikrRepositoryRemote(
         firestoreDhikirService: FirestoreDhikrService(),
       ),
+      countryRepository: CountryRepositoryRemote(
+        countryService: CountryService(),
+      ),
     ),
   );
 }
