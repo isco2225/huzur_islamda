@@ -36,7 +36,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         if (!mounted) return;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && context.mounted) {
-            const SignInRoute().go(context);
+            context.goToSignIn();
           }
         });
       },

@@ -13,7 +13,7 @@ class EditProfileButton extends StatelessWidget {
       height: context.isSmallScreen ? 48 : 52,
       child: ElevatedButton.icon(
         onPressed: () {
-          const EditProfileRoute().push(context);
+          context.pushEditProfile();
         },
         icon: Icon(Icons.edit_rounded, size: context.isSmallScreen ? 20 : 22),
         label: Text(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../app/router/app_router.dart';
+import '../../../../../app/app.dart';
 import '../../../../../domain/domain.dart';
 import '../../../../ui.dart';
 
@@ -31,7 +31,7 @@ class _CreateUserProfileScreenState extends State<CreateUserProfileScreen> {
       successMessage: 'Profil başarıyla oluşturuldu!',
       onCompleted: (_) {
         // Navigate to navigation bar (FlowRoute)
-        const FlowRoute().go(context);
+        context.goToFlow();
       },
     );
   }

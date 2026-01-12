@@ -26,9 +26,9 @@ class _UserInitializeScreenState extends State<UserInitializeScreen> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
           if (isRegistered) {
-            const FlowRoute().go(context);
+            context.goToFlow();
           } else {
-            const CreateProfileRoute().go(context);
+            context.goToCreateProfile();
           }
         });
       },

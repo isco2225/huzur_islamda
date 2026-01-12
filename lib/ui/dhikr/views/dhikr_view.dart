@@ -14,8 +14,9 @@ class DhikrView extends StatelessWidget {
       safeArea: true,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          const CreateDhikrRoute().push(context);
+          context.pushCreateDhikr();
         },
+        heroTag: 'create_dhikr',
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),

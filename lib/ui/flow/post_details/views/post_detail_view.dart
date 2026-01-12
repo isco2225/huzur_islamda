@@ -27,6 +27,7 @@ class PostDetailView extends StatelessWidget {
         onPressed: () {
           // TODO: Implement save functionality
         },
+        heroTag: 'save_post',
         backgroundColor: AppColors.background,
         child: Icon(Icons.bookmark_border, color: Colors.black),
       ),

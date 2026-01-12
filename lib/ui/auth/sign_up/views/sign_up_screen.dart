@@ -34,7 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (!mounted) return;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && context.mounted) {
-            const EmailVerificationRoute().go(context);
+            context.goToEmailVerification();
           }
         });
       },

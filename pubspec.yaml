@@ -61,7 +61,6 @@ dev_dependencies:
   # Code Generation
   build_runner: 2.4.15
   json_serializable: ^6.9.5
-  go_router_builder: 2.7.3
 
   flutter_lints: ^5.0.0
 flutter:

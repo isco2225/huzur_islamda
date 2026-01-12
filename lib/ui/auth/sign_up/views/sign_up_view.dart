@@ -133,7 +133,7 @@ class _SignUpViewState extends State<SignUpView> {
                       WidgetSpan(
                         child: GestureDetector(
                           onTap: () {
-                            const SignInRoute().go(context);
+                            context.goToSignIn();
                           },
                           child: Text(
                             'Giriş Yap',

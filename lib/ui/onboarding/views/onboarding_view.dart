@@ -23,7 +23,7 @@ class _OnboardingViewState extends State<OnboardingView> {
         curve: Curves.easeInOut,
       );
     } else {
-      const SignInRoute().go(context);
+      context.goToSignIn();
     }
   }
 

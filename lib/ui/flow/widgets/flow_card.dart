@@ -30,7 +30,7 @@ class FlowCard extends StatelessWidget {
         : 320.0;
     return GestureDetector(
       onTap: () {
-        PostDetailRoute($extra: post).push<void>(context);
+        context.pushPostDetail(post);
       },
       child: SizedBox(
         width: responsive.screenWidth * 0.9,

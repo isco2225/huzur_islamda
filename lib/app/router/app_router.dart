@@ -5,200 +5,173 @@ import 'package:provider/provider.dart';
 import '../../data/data.dart';
 import '../../domain/domain.dart';
 import '../../ui/ui.dart';
+import 'app_routes.dart';
 
-part 'app_router.g.dart';
-
-// -------------------- PUBLIC ROUTES --------------------
-
-@TypedGoRoute<OnboardingRoute>(path: '/')
-class OnboardingRoute extends GoRouteData {
-  const OnboardingRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const OnboardingScreen();
-}
-
-@TypedGoRoute<SignInRoute>(path: '/sign_in')
-class SignInRoute extends GoRouteData {
-  const SignInRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SignInScreen();
-}
-
-@TypedGoRoute<SignUpRoute>(path: '/sign_up')
-class SignUpRoute extends GoRouteData {
-  const SignUpRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SignUpScreen();
-}
-
-@TypedGoRoute<EmailVerificationRoute>(path: '/email_verification')
-class EmailVerificationRoute extends GoRouteData {
-  const EmailVerificationRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const EmailVerificationScreen();
-}
-
-//BOTTOM NAVIGATION BAR ROUTES
-
-/// Main navigation bar route with stateful shell for bottom navigation.
+/// Creates and returns the app router with refresh listenable support.
 ///
-/// Each branch represents a tab in the bottom navigation bar.
-/// Each branch maintains its own navigation stack.
-@TypedStatefulShellRoute<NavigationBarRouteData>(
-  branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
-    TypedStatefulShellBranch(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<FlowRoute>(path: '/flow')],
-    ),
-    TypedStatefulShellBranch(
-      routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<SearchRoute>(path: '/search'),
-      ],
-    ),
-    TypedStatefulShellBranch(
-      routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<PrayerRoute>(path: '/prayer'),
-      ],
-    ),
-    TypedStatefulShellBranch(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<DhikrRoute>(path: '/dhikr')],
-    ),
-    TypedStatefulShellBranch(
-      routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<ProfileRoute>(path: '/profile'),
-      ],
-    ),
-  ],
-)
-class NavigationBarRouteData extends StatefulShellRouteData {
-  const NavigationBarRouteData();
-
-  @override
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigationShell,
-  ) {
-    return NavigationBarScreen(navigationShell: navigationShell);
-  }
+/// This router handles all navigation logic including authentication-based
+/// redirects and maintains the bottom navigation bar state.
+GoRouter createAppRouter(Listenable refreshListenable) {
+  return GoRouter(
+    routes: _routes,
+    initialLocation: AppRoutes.onboarding,
+    routerNeglect: false,
+    redirect: _redirect,
+    refreshListenable: refreshListenable,
+  );
 }
 
-class FlowRoute extends GoRouteData {
-  const FlowRoute();
+// -------------------- ROUTE DEFINITIONS --------------------
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const FlowScreen();
-}
+final List<RouteBase> _routes = [
+  // -------------------- PUBLIC ROUTES --------------------
+  GoRoute(
+    path: AppRoutes.onboarding,
+    name: 'onboarding',
+    builder: (context, state) => const OnboardingScreen(),
+  ),
 
-class SearchRoute extends GoRouteData {
-  const SearchRoute();
+  GoRoute(
+    path: AppRoutes.signIn,
+    name: 'sign_in',
+    builder: (context, state) => const SignInScreen(),
+  ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SearchScreen();
-}
+  GoRoute(
+    path: AppRoutes.signUp,
+    name: 'sign_up',
+    builder: (context, state) => const SignUpScreen(),
+  ),
 
-class PrayerRoute extends GoRouteData {
-  const PrayerRoute();
+  GoRoute(
+    path: AppRoutes.emailVerification,
+    name: 'email_verification',
+    builder: (context, state) => const EmailVerificationScreen(),
+  ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const PrayerScreen();
-}
+  // -------------------- BOTTOM NAVIGATION BAR ROUTES --------------------
 
-class DhikrRoute extends GoRouteData {
-  const DhikrRoute();
+  /// Stateful Shell Route for Bottom Navigation.
+  ///
+  /// Each branch represents a tab in the bottom navigation bar.
+  /// Each branch maintains its own navigation stack.
+  StatefulShellRoute.indexedStack(
+    builder: (context, state, navigationShell) {
+      return NavigationBarScreen(navigationShell: navigationShell);
+    },
+    branches: [
+      // Flow Tab
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.flow,
+            name: 'flow',
+            builder: (context, state) => const FlowScreen(),
+          ),
+        ],
+      ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const DhikrScreen();
-}
+      // Search Tab
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.search,
+            name: 'search',
+            builder: (context, state) => const SearchScreen(),
+          ),
+        ],
+      ),
 
-class ProfileRoute extends GoRouteData {
-  const ProfileRoute();
+      // Prayer Tab
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.prayer,
+            name: 'prayer',
+            builder: (context, state) => const PrayerScreen(),
+          ),
+        ],
+      ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const UserProfileScreen();
-}
+      // Dhikr Tab
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.dhikr,
+            name: 'dhikr',
+            builder: (context, state) => const DhikrScreen(),
+          ),
+        ],
+      ),
 
-@TypedGoRoute<UserInitializeRoute>(path: '/user_initialize')
-class UserInitializeRoute extends GoRouteData {
-  const UserInitializeRoute();
+      // Profile Tab
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.profile,
+            name: 'profile',
+            builder: (context, state) => const UserProfileScreen(),
+          ),
+        ],
+      ),
+    ],
+  ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const UserInitializeScreen();
-}
+  // -------------------- USER ROUTES --------------------
+  GoRoute(
+    path: AppRoutes.userInitialize,
+    name: 'user_initialize',
+    builder: (context, state) => const UserInitializeScreen(),
+  ),
 
-@TypedGoRoute<CreateProfileRoute>(path: '/create_profile')
-class CreateProfileRoute extends GoRouteData {
-  const CreateProfileRoute();
+  GoRoute(
+    path: AppRoutes.createProfile,
+    name: 'create_profile',
+    builder: (context, state) => const CreateUserProfileScreen(),
+  ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const CreateUserProfileScreen();
-}
+  GoRoute(
+    path: AppRoutes.editProfile,
+    name: 'edit_profile',
+    builder: (context, state) => const EditProfileScreen(),
+  ),
 
-@TypedGoRoute<EditProfileRoute>(path: '/profile/edit_profile')
-class EditProfileRoute extends GoRouteData {
-  const EditProfileRoute();
+  // -------------------- OTHER ROUTES --------------------
+  GoRoute(
+    path: AppRoutes.settings,
+    name: 'settings',
+    builder: (context, state) => const SettingsScreen(),
+  ),
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const EditProfileScreen();
-}
+  GoRoute(
+    path: AppRoutes.postDetail,
+    name: 'post_detail',
+    builder: (context, state) {
+      final post = state.extra as Post?;
+      if (post == null) {
+        return const Scaffold(body: Center(child: Text('Post not found')));
+      }
+      return PostDetailScreen(post: post);
+    },
+  ),
 
-@TypedGoRoute<SettingsRoute>(path: '/settings')
-class SettingsRoute extends GoRouteData {
-  const SettingsRoute();
+  GoRoute(
+    path: AppRoutes.createDhikr,
+    name: 'create_dhikr',
+    builder: (context, state) => const CreateDhikrScreen(),
+  ),
+];
 
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SettingsScreen();
-}
+// -------------------- REDIRECT LOGIC --------------------
 
-@TypedGoRoute<PostDetailRoute>(path: '/post_detail')
-class PostDetailRoute extends GoRouteData {
-  const PostDetailRoute({this.$extra});
-
-  final Post? $extra;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    final post = $extra ?? (state.extra as Post?);
-    if (post == null) {
-      return const Scaffold(body: Center(child: Text('Post not found')));
-    }
-    return PostDetailScreen(post: post);
-  }
-}
-
-@TypedGoRoute<CreateDhikrRoute>(path: '/dhikr/create_dhikr')
-class CreateDhikrRoute extends GoRouteData {
-  const CreateDhikrRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const CreateDhikrScreen();
-}
-
-/// Creates and returns the app router with refresh listenable support
-GoRouter createAppRouter(Listenable refreshListenable) => GoRouter(
-  routes: $appRoutes,
-  initialLocation: '/',
-  routerNeglect: false,
-  redirect: _redirect,
-  refreshListenable: refreshListenable,
-);
-
+/// Handles authentication-based redirects.
+///
+/// This function checks the user's authentication state and redirects
+/// to appropriate screens based on their status:
+/// - Not signed in → Sign in screen
+/// - Signed in but email not verified → Email verification screen
+/// - Signed in but user not initialized → User initialization screen
+/// - Signed in but profile not created → Create profile screen
 String? _redirect(BuildContext context, GoRouterState state) {
   final location = state.matchedLocation;
   final authRepository = context.read<AuthRepository>();
@@ -210,18 +183,18 @@ String? _redirect(BuildContext context, GoRouterState state) {
 
   // Auth screens
   final authLocs = [
-    const OnboardingRoute().location,
-    const SignInRoute().location,
-    const SignUpRoute().location,
-    const EmailVerificationRoute().location,
+    AppRoutes.onboarding,
+    AppRoutes.signIn,
+    AppRoutes.signUp,
+    AppRoutes.emailVerification,
   ];
 
   // Routes that handle their own redirect logic
   final noRuleLocs = [
-    const UserInitializeRoute().location,
-    const CreateProfileRoute().location,
-    const EditProfileRoute().location,
-    const SettingsRoute().location,
+    AppRoutes.userInitialize,
+    AppRoutes.createProfile,
+    AppRoutes.editProfile,
+    AppRoutes.settings,
   ];
 
   // Allow routes with no rules
@@ -230,32 +203,32 @@ String? _redirect(BuildContext context, GoRouterState state) {
   // Not signed in: allow auth screens, redirect others to sign in
   if (!isSignedIn) {
     if (authLocs.contains(location)) return null;
-    return const SignInRoute().location;
+    return AppRoutes.signIn;
   }
 
   // Signed in but navigating to auth screens: redirect based on status
   if (isSignedIn && authLocs.contains(location)) {
     if (!auth.isEmailVerified) {
-      if (location == const EmailVerificationRoute().location) return null;
-      return const EmailVerificationRoute().location;
+      if (location == AppRoutes.emailVerification) return null;
+      return AppRoutes.emailVerification;
     }
-    if (user.uid.isEmpty) return const UserInitializeRoute().location;
-    if (!user.isRegistered) return const CreateProfileRoute().location;
-    return const FlowRoute().location;
+    if (user.uid.isEmpty) return AppRoutes.userInitialize;
+    if (!user.isRegistered) return AppRoutes.createProfile;
+    return AppRoutes.flow;
   }
 
   // Signed in: enforce requirements for protected routes
   if (!auth.isEmailVerified) {
-    if (location == const EmailVerificationRoute().location) return null;
-    return const EmailVerificationRoute().location;
+    if (location == AppRoutes.emailVerification) return null;
+    return AppRoutes.emailVerification;
   }
   if (user.uid.isEmpty) {
-    if (location == const UserInitializeRoute().location) return null;
-    return const UserInitializeRoute().location;
+    if (location == AppRoutes.userInitialize) return null;
+    return AppRoutes.userInitialize;
   }
   if (!user.isRegistered) {
-    if (location == const CreateProfileRoute().location) return null;
-    return const CreateProfileRoute().location;
+    if (location == AppRoutes.createProfile) return null;
+    return AppRoutes.createProfile;
   }
 
   return null;

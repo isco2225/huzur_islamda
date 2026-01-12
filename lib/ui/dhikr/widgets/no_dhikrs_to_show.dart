@@ -19,7 +19,7 @@ class NoDhikrsToShow extends StatelessWidget {
           ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
         ),
         TextButton(
-          onPressed: () => const CreateDhikrRoute().push(context),
+          onPressed: () => context.pushCreateDhikr(),
           child: const Text(
             'Hemen bir zikir oluştur',
             style: TextStyle(color: AppColors.primary),

@@ -33,7 +33,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && context.mounted) {
-            const FlowRoute().go(context);
+            context.goToFlow();
           }
         });
       },
@@ -58,7 +58,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
         if (!mounted) return;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && context.mounted) {
-            const SignUpRoute().go(context);
+            context.goToSignUp();
           }
         });
       },

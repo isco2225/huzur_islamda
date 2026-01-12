@@ -31,7 +31,7 @@ class UserProfileView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              const SettingsRoute().push(context);
+              context.pushSettings();
             },
             icon: Icon(Icons.settings, size: context.isSmallScreen ? 22 : 24),
             tooltip: 'Çıkış Yap',
