@@ -8,10 +8,12 @@ class PlaceSelector extends StatefulWidget {
     required this.viewModel,
     required this.onCountryIdSelected,
     this.onStateIdSelected,
+    this.onDistrictIdSelected,
   });
   final PlaceSelectorViewModel viewModel;
   final Function(String) onCountryIdSelected;
   final Function(String)? onStateIdSelected;
+  final Function(String)? onDistrictIdSelected;
 
   @override
   State<PlaceSelector> createState() => _PlaceSelectorState();
@@ -37,13 +39,34 @@ class _PlaceSelectorState extends State<PlaceSelector> {
           builder: (context, selectionMode, _) {
             final isSelectingCountry =
                 selectionMode == PlaceSelectionMode.country;
-            final currentSearchQuery = isSelectingCountry
-                ? widget.viewModel.countrySelector.searchQuery
-                : widget.viewModel.stateSelector.searchQuery;
+
+            // Get current search query based on selection mode
+            final currentSearchQuery = switch (selectionMode) {
+              PlaceSelectionMode.country =>
+                widget.viewModel.countrySelector.searchQuery,
+              PlaceSelectionMode.state =>
+                widget.viewModel.stateSelector.searchQuery,
+              PlaceSelectionMode.district =>
+                widget.viewModel.districtSelector.searchQuery,
+            };
+
+            // Get title based on selection mode
+            final title = switch (selectionMode) {
+              PlaceSelectionMode.country => 'Ülke Seçin',
+              PlaceSelectionMode.state => 'Şehir Seçin',
+              PlaceSelectionMode.district => 'İlçe Seçin',
+            };
+
+            // Get hint text based on selection mode
+            final hintText = switch (selectionMode) {
+              PlaceSelectionMode.country => 'Ülke ara...',
+              PlaceSelectionMode.state => 'Şehir ara...',
+              PlaceSelectionMode.district => 'İlçe ara...',
+            };
 
             return Column(
               children: [
-                // Header with back button (if selecting state)
+                // Header with back button
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -52,14 +75,14 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                         IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
-                            // Ülkelere geri dön
-                            widget.viewModel.backToCountrySelection();
+                            // Bir önceki adıma dön ama dönerken
+                            widget.viewModel.goBack();
                             _searchQueryController.clear();
                           },
                         ),
                       Expanded(
                         child: Text(
-                          isSelectingCountry ? 'Ülke Seçin' : 'Şehir Seçin',
+                          title,
                           style: Theme.of(context).textTheme.titleLarge,
                           textAlign: isSelectingCountry
                               ? TextAlign.center
@@ -76,9 +99,7 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                     controller: _searchQueryController,
                     onChanged: (value) => currentSearchQuery.value = value,
                     decoration: InputDecoration(
-                      hintText: isSelectingCountry
-                          ? 'Ülke ara...'
-                          : 'Şehir ara...',
+                      hintText: hintText,
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: ValueListenableBuilder<String>(
                         valueListenable: currentSearchQuery,
@@ -104,11 +125,13 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // List: Countries OR States
+                // List: Countries, States, or Districts
                 Expanded(
-                  child: isSelectingCountry
-                      ? _buildCountryList()
-                      : _buildStateList(),
+                  child: switch (selectionMode) {
+                    PlaceSelectionMode.country => _buildCountryList(),
+                    PlaceSelectionMode.state => _buildStateList(),
+                    PlaceSelectionMode.district => _buildDistrictList(),
+                  },
                 ),
               ],
             );
@@ -170,11 +193,47 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                         itemCount: filteredStates.length,
                         itemBuilder: (context, index) => ListTile(
                           title: Text(filteredStates[index].name),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () {
-                            // Şehir seçildi
+                            // Şehir seçildi -> districts'leri getir
                             final stateId = filteredStates[index].id;
-                            stateSelector.selectState.execute(stateId);
                             widget.onStateIdSelected?.call(stateId);
+                            stateSelector.selectState.execute(stateId);
+                            // Arama sorgusunu temizle
+                            _searchQueryController.clear();
+                          },
+                        ),
+                      ),
+              );
+      },
+    );
+  }
+
+  /// Build district list
+  Widget _buildDistrictList() {
+    final districtSelector = widget.viewModel.districtSelector;
+    return ValueListenableBuilder(
+      valueListenable: districtSelector.getDistricts.running,
+      builder: (context, running, _) {
+        return running
+            ? const Center(child: CircularProgressIndicator())
+            : ValueListenableBuilder(
+                valueListenable: districtSelector.filteredDistricts,
+                builder: (context, filteredDistricts, _) =>
+                    filteredDistricts.isEmpty
+                    ? const Center(child: Text('İlçe bulunamadı'))
+                    : ListView.builder(
+                        itemCount: filteredDistricts.length,
+                        itemBuilder: (context, index) => ListTile(
+                          title: Text(filteredDistricts[index].name),
+                          onTap: () {
+                            // İlçe seçildi - son adım
+                            final districtId = filteredDistricts[index].id;
+                            districtSelector.selectDistrict.execute(districtId);
+                            widget.onDistrictIdSelected?.call(districtId);
                             // Dialog'u kapat
                             Navigator.of(context).pop();
                           },

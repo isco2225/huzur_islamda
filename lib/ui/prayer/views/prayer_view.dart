@@ -112,7 +112,7 @@ class PrayerView extends StatelessWidget {
               SizedBox(height: responsive.spacingExtraSmall),
               RemainingTimeToNextPrayer(),
 
-              // Show countries.
+              // Show place selector button.
               ValueListenableBuilder<bool>(
                 valueListenable:
                     placeSelectorViewModel.countrySelector.getCountries.running,
@@ -132,7 +132,11 @@ class PrayerView extends StatelessWidget {
                                   // by the CountrySelectorViewModel
                                 },
                                 onStateIdSelected: (stateId) {
-                                  // Şehir seçildiğinde yapılacak işlem
+                                  // State selection is now handled automatically
+                                  // by the StateSelectorViewModel
+                                },
+                                onDistrictIdSelected: (districtId) {
+                                  // İlçe seçildiğinde yapılacak işlem
                                   // TODO: Namaz vakitlerini getir
                                 },
                               ),
@@ -144,7 +148,7 @@ class PrayerView extends StatelessWidget {
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Ülke Seçin'),
+                        : const Text('Yer Seçin'),
                   );
                 },
               ),

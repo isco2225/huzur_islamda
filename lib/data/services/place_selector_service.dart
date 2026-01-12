@@ -10,7 +10,7 @@ class PlaceSelectorService {
 
   static const String _countriesJsonPath = 'assets/data/places/countries.json';
   static const String _statesJsonPath = 'assets/data/places/states.json';
-  // static const String _districtsJsonPath = 'assets/data/places/districts.json';
+  static const String _districtsJsonPath = 'assets/data/places/districts.json';
 
   Future<Result<List<Country>>> getCountries() async {
     try {
@@ -42,6 +42,23 @@ class PlaceSelectorService {
       return Result.ok(filteredStates);
     } catch (e) {
       return Result.error(Exception('Failed to get states: $e'));
+    }
+  }
+
+  Future<Result<List<District>>> getDistricts(String stateId) async {
+    try {
+      _log.info('Getting districts for state: $stateId');
+      final districtsJson = await rootBundle.loadString(_districtsJsonPath);
+      final jsonDistricts = jsonDecode(districtsJson) as List<dynamic>;
+      final filteredDistricts = jsonDistricts
+          .map((e) => e as Map<String, dynamic>)
+          .where((e) => e['state_id'] == stateId)
+          .map((e) => District.fromJson(e))
+          .toList();
+      _log.info('${filteredDistricts.length} districts successfully loaded');
+      return Result.ok(filteredDistricts);
+    } catch (e) {
+      return Result.error(Exception('Failed to get districts: $e'));
     }
   }
 }

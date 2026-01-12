@@ -115,7 +115,6 @@ class StateSelectorViewModel {
   /// Reset selection and states
   void resetSelection() {
     _selectedStateId.value = null;
-    _states.value = [];
     _searchQuery.value = '';
   }
 }
