@@ -22,7 +22,7 @@ class FetchDhikrsViewModel {
   final UserRepository _userRepository;
 
   // DOMAIN
-  ValueListenable<List<Dhikr>> get dhikrs => _dhikrRepository.dhikrs;
+  ValueListenable<List<Dhikr>> get dhikrs => _dhikrRepository.dhikrsLocally;
 
   // COMMANDS
   late Command0<void> fetchDhikrs;
@@ -41,7 +41,7 @@ class FetchDhikrsViewModel {
       return Result.error(Exception('No authenticated user found'));
     }
 
-    final result = await _dhikrRepository.fetchDhikrs(userId: currentUser.uid);
+    final result = await _dhikrRepository.getAllDhikrsLocally();
     switch (result) {
       case Ok():
         _log.fine('Dhikrs fetched successfully');

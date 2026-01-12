@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:huzur_islamda/domain/user/use_cases/create_user_profile_use_case.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/data.dart';
+import '../../domain/domain.dart';
 import '../app.dart';
 import '../view_models/app_view_model.dart';
 
@@ -24,7 +25,7 @@ class AppScreen extends StatefulWidget {
   State<AppScreen> createState() => _AppScreenState();
 }
 
-class _AppScreenState extends State<AppScreen> {
+class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
   late final AppViewModel _appViewModel;
 
   @override
@@ -33,14 +34,28 @@ class _AppScreenState extends State<AppScreen> {
     _appViewModel = AppViewModel(
       authRepository: widget.authRepository,
       userRepository: widget.userRepository,
+      hiveRepository: HiveRepositoryRemote(
+        hiveService: HiveService<Dhikr>(Dhikr.boxName),
+      ),
     );
+    WidgetsBinding.instance.addObserver(this);
     // App'i başlat
     _appViewModel.initApp.execute();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      // Uygulama tamamen kapanıyor - tüm Hive box'larını kapat
+      Hive.close();
+    }
+  }
+
+  @override
   void dispose() {
     _appViewModel.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

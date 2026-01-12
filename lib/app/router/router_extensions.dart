@@ -74,4 +74,8 @@ extension RouterExtensions on BuildContext {
   /// Push post detail screen
   Future<T?> pushPostDetail<T extends Object?>(Post post) =>
       push<T>(AppRoutes.postDetail, extra: post);
+
+  /// Push dhikr detail screen
+  Future<T?> pushToDhikrDetail<T extends Object?>(String dhikrId) =>
+      push<T>(AppRoutes.dhikrDetail, extra: dhikrId);
 }

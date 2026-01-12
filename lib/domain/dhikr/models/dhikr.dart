@@ -1,15 +1,43 @@
+import 'package:hive/hive.dart';
+
+part 'dhikr.g.dart';
+
+@HiveType(typeId: 0)
 class Dhikr {
+  static const String boxName = 'dhikrs';
+
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String userId;
+
+  @HiveField(2)
   final String name;
+
+  @HiveField(3)
   final int targetCount;
+
+  @HiveField(4)
   final int currentCount;
+
+  @HiveField(5)
   final DateTime day;
+
+  @HiveField(6)
   final bool isCompleted;
+
+  @HiveField(7)
   final DateTime createdAt;
+
+  @HiveField(8)
   final DateTime lastUpdatedAt;
+
   // Lokal/offline senkronizasyon durumu – Firestore'a yazılması şart değil
+  @HiveField(9)
   final bool isSynced;
+
+  @HiveField(10)
   final bool isDeleted;
 
   const Dhikr({

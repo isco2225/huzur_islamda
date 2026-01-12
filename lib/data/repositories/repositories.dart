@@ -4,3 +4,4 @@ export 'dhikr/dhikr.dart';
 export 'post/post.dart';
 export 'places/places.dart';
 export 'prayer/prayer.dart';
+export 'hive/hive.dart';

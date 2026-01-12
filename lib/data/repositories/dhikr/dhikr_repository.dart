@@ -1,29 +1,27 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../app/app.dart';
-import '../../../domain/domain.dart';
+import '../../../domain/dhikr/models/dhikr.dart';
 
+/// Abstract repository for Dhikr operations
+///
+/// Provides methods for both local (Hive) and remote (Firestore) storage
 abstract class DhikrRepository {
-  ValueListenable<List<Dhikr>> get dhikrs;
+  ValueListenable<List<Dhikr>> get dhikrsLocally;
+  // Local operations (Hive)
+  Future<Result<Dhikr>> saveDhikrLocally(Dhikr dhikr);
+  Future<Result<Dhikr?>> getDhikrLocally(String id);
+  Future<Result<void>> getAllDhikrsLocally();
+  Future<Result<void>> deleteDhikrLocally(String id);
+  Future<Result<void>> clearAllDhikrsLocally();
+  Future<Result<void>> updateDhikrLocally(String id, Dhikr dhikr);
+  // Remote operations (Firestore)
+  Future<Result<void>> saveDhikrToFirestore(Dhikr dhikr);
+  Future<Result<Dhikr?>> getDhikrFromFirestore(String id);
+  Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore(String userId);
+  Future<Result<void>> deleteDhikrFromFirestore(String id);
 
-  Future<Result<Dhikr>> createDhikr({
-    required String userId,
-    required String name,
-    required int targetCount,
-  });
-
-  Future<Result<Dhikr>> updateDhikr({
-    required String dhikrId,
-    required String name,
-    required int targetCount,
-  });
-
-  Future<Result<List<Dhikr>>> fetchDhikrs({required String userId});
-
-  Future<Result<List<Dhikr>>> fetchDhikrsByDay({
-    required String userId,
-    required DateTime day,
-  });
-
-  Future<Result<void>> deleteDhikr({required String dhikrId});
+  // Sync operations
+  Future<Result<void>> syncDhikrs(String userId);
+  Future<Result<List<Dhikr>>> getUnsyncedDhikrs();
 }

@@ -58,4 +58,7 @@ class AppRoutes {
 
   /// Create dhikr screen route
   static const String createDhikr = '/dhikr/create_dhikr';
+
+  /// Dhikr detail screen route
+  static const String dhikrDetail = '/dhikr/dhikr_detail';
 }

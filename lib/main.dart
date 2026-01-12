@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 
 import 'app/app.dart';
 import 'data/data.dart';
+import 'domain/domain.dart';
 
 void main() async {
   // Logger'ı sadece debug mode'da aç (production'da kapat)
@@ -31,7 +32,7 @@ void main() async {
         firestorePostService: FirestorePostService(),
       ),
       dhikrRepository: DhikrRepositoryRemote(
-        firestoreDhikirService: FirestoreDhikrService(),
+        hiveService: HiveService<Dhikr>(Dhikr.boxName),
       ),
       placesRepository: PlacesRepositoryRemote(
         placeSelectorService: PlaceSelectorService(),

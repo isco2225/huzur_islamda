@@ -46,24 +46,39 @@ class CreateDhikrViewModel {
   Future<Result<Dhikr>> _createDhikr(
     ({String name, int targetCount}) params,
   ) async {
-    final userId = currentUser.value.uid;
-    if (userId.isEmpty) {
-      _log.warning('User ID is empty, cannot create dhikr');
-      return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+    try {
+      final userId = currentUser.value.uid;
+      if (userId.isEmpty) {
+        _log.warning('User ID is empty, cannot create dhikr');
+        return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+      }
+
+      final result = await _dhikrRepository.saveDhikrLocally(
+        Dhikr(
+          id: userId + params.name + params.targetCount.toString(),
+          userId: userId,
+          name: params.name,
+          targetCount: params.targetCount,
+          currentCount: 0,
+          day: DateTime.now(),
+          isCompleted: false,
+          createdAt: DateTime.now(),
+          lastUpdatedAt: DateTime.now(),
+          isSynced: false,
+          isDeleted: false,
+        ),
+      );
+
+      if (result is Error<Dhikr>) {
+        _log.warning('Create dhikr failed: ${result.error}');
+      } else {
+        _log.info('Dhikr created successfully: ${result.asOk.value.id}');
+      }
+
+      return result;
+    } catch (e) {
+      _log.severe('Failed to create dhikr: $e');
+      return Result.error(Exception('Failed to create dhikr: $e'));
     }
-
-    final result = await _dhikrRepository.createDhikr(
-      userId: userId,
-      name: params.name,
-      targetCount: params.targetCount,
-    );
-
-    if (result is Error<Dhikr>) {
-      _log.warning('Create dhikr failed: ${result.error}');
-    } else {
-      _log.info('Dhikr created successfully: ${result.asOk.value.id}');
-    }
-
-    return result;
   }
 }

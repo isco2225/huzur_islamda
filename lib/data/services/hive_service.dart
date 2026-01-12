@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 
 import '../../app/app.dart';
+import '../../domain/dhikr/models/dhikr.dart';
 
 /// Generic Hive service for CRUD operations on local storage.
 ///
@@ -13,6 +14,32 @@ class HiveService<T> {
   final String boxName;
   final Logger _log;
   Box<T>? _box;
+  bool _isInitialized = false;
+
+  Future<Result<void>> initializeHive() async {
+    if (_isInitialized) {
+      _log.info('Hive already initialized, skipping...');
+      return Result.ok(null);
+    }
+    try {
+      _log.info('Initializing Hive...');
+      await Hive.initFlutter();
+      _registerAdapters();
+      _isInitialized = true;
+      _log.info('Hive initialized successfully');
+      return Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception('Failed to initialize Hive: $e'));
+    }
+  }
+
+  void _registerAdapters() {
+    // Register Dhikr adapter if not already registered
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(DhikrAdapter());
+      _log.info('Registered DhikrAdapter');
+    }
+  }
 
   /// Get the box instance (lazy initialization)
   Future<Box<T>> get _getBox async {
@@ -25,18 +52,35 @@ class HiveService<T> {
   }
 
   /// Save a single item to the box
-  Future<Result<void>> save(String key, T value) async {
+  Future<Result<T>> save(String key, T value) async {
     try {
       final box = await _getBox;
       await box.put(key, value);
       _log.info('Saved item with key: $key');
-      return Result.ok(null);
+      return Result.ok(value);
     } on HiveError catch (e) {
       _log.severe('Hive error saving item: ${e.message}');
       return Result.error(Exception('Hive error: ${e.message}'));
     } catch (e) {
       _log.severe('Failed to save item: $e');
       return Result.error(Exception('Failed to save item: $e'));
+    }
+  }
+
+  /// Update a single item in the box (alias for save)
+  /// In Hive, updating is the same as saving with the same key
+  Future<Result<T>> update(String key, T value) async {
+    try {
+      final box = await _getBox;
+      await box.put(key, value);
+      _log.info('Updated item with key: $key');
+      return Result.ok(value);
+    } on HiveError catch (e) {
+      _log.severe('Hive error updating item: ${e.message}');
+      return Result.error(Exception('Hive error: ${e.message}'));
+    } catch (e) {
+      _log.severe('Failed to update item: $e');
+      return Result.error(Exception('Failed to update item: $e'));
     }
   }
 

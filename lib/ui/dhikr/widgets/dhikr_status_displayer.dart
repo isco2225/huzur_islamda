@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/app.dart';
-import '../../../../domain/domain.dart';
+import '../../../app/app.dart';
+import '../../../domain/domain.dart';
 
 class DhikrStatusDisplayer extends StatelessWidget {
   const DhikrStatusDisplayer({super.key, required this.dhikr});

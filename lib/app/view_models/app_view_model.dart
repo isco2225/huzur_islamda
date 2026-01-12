@@ -9,8 +9,10 @@ class AppViewModel {
   AppViewModel({
     required AuthRepository authRepository,
     required UserRepository userRepository,
+    required HiveRepository hiveRepository,
   }) : _authRepository = authRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _hiveRepository = hiveRepository {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
 
@@ -29,7 +31,7 @@ class AppViewModel {
   // REPOSITORIES & USE CASES
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
-
+  final HiveRepository _hiveRepository;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -47,11 +49,18 @@ class AppViewModel {
 
   // FUNCTIONS
   Future<Result<void>> _initApp() async {
-    _log.info('Initializing app...');
-    // App initialization logic buraya eklenecek
-    // User data yükleme işlemi router redirect mantığı tarafından
-    // UserInitializeRoute'a yönlendirilerek yapılıyor
-    return Result.ok(null);
+    try {
+      _log.info('Initializing app...');
+
+      // initialize hive
+      await _hiveRepository.initializeHive();
+
+      _log.info('App initialized successfully');
+      return Result.ok(null);
+    } catch (e) {
+      _log.severe('Failed to initialize app: $e');
+      return Result.error(Exception('Uygulama başlatılamadı: $e'));
+    }
   }
 
   void _onAuthStateChanged() {
