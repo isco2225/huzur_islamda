@@ -35,7 +35,8 @@ class PrayerView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ValueListenableBuilder(
-                    valueListenable: placeSelectorViewModel.selectedCountryId,
+                    valueListenable:
+                        placeSelectorViewModel.countrySelector.selectedCountryId,
                     builder: (context, selectedCountryId, _) => Text(
                       selectedCountryId ?? '',
                       style: TextStyle(
@@ -113,21 +114,22 @@ class PrayerView extends StatelessWidget {
 
               // Show countries.
               ValueListenableBuilder<bool>(
-                valueListenable: placeSelectorViewModel.getCountries.running,
+                valueListenable:
+                    placeSelectorViewModel.countrySelector.getCountries.running,
                 builder: (context, isLoading, child) {
                   return TextButton(
                     onPressed: isLoading
                         ? null
                         : () {
-                            placeSelectorViewModel.getCountries.execute();
+                            placeSelectorViewModel.countrySelector.getCountries
+                                .execute();
                             showDialog<void>(
                               context: context,
                               builder: (context) => PlaceSelector(
                                 viewModel: placeSelectorViewModel,
                                 onCountryIdSelected: (countryId) {
-                                  placeSelectorViewModel.selectCountry.execute(
-                                    countryId,
-                                  );
+                                  // Country selection is now handled automatically
+                                  // by the CountrySelectorViewModel
                                 },
                                 onStateIdSelected: (stateId) {
                                   // Şehir seçildiğinde yapılacak işlem

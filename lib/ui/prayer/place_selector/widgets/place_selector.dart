@@ -32,10 +32,15 @@ class _PlaceSelectorState extends State<PlaceSelector> {
       child: SizedBox(
         width: 300,
         height: 400,
-        child: ValueListenableBuilder<String?>(
-          valueListenable: widget.viewModel.selectedCountryId,
-          builder: (context, selectedCountryId, _) {
-            final isSelectingCountry = selectedCountryId == null;
+        child: ValueListenableBuilder<PlaceSelectionMode>(
+          valueListenable: widget.viewModel.selectionMode,
+          builder: (context, selectionMode, _) {
+            final isSelectingCountry =
+                selectionMode == PlaceSelectionMode.country;
+            final currentSearchQuery = isSelectingCountry
+                ? widget.viewModel.countrySelector.searchQuery
+                : widget.viewModel.stateSelector.searchQuery;
+
             return Column(
               children: [
                 // Header with back button (if selecting state)
@@ -47,9 +52,8 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                         IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
-                            // Ülke seçimini sıfırla ve ülkelere geri dön
-                            widget.viewModel.selectedCountryId.value = null;
-                            widget.viewModel.searchQuery.value = '';
+                            // Ülkelere geri dön
+                            widget.viewModel.backToCountrySelection();
                             _searchQueryController.clear();
                           },
                         ),
@@ -70,21 +74,20 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: TextField(
                     controller: _searchQueryController,
-                    onChanged: (value) =>
-                        widget.viewModel.searchQuery.value = value,
+                    onChanged: (value) => currentSearchQuery.value = value,
                     decoration: InputDecoration(
                       hintText: isSelectingCountry
                           ? 'Ülke ara...'
                           : 'Şehir ara...',
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: ValueListenableBuilder<String>(
-                        valueListenable: widget.viewModel.searchQuery,
+                        valueListenable: currentSearchQuery,
                         builder: (context, query, child) {
                           if (query.isEmpty) return const SizedBox.shrink();
                           return IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: () {
-                              widget.viewModel.searchQuery.value = '';
+                              currentSearchQuery.value = '';
                               _searchQueryController.clear();
                             },
                           );
@@ -117,13 +120,14 @@ class _PlaceSelectorState extends State<PlaceSelector> {
 
   /// Build country list
   Widget _buildCountryList() {
+    final countrySelector = widget.viewModel.countrySelector;
     return ValueListenableBuilder(
-      valueListenable: widget.viewModel.getCountries.running,
+      valueListenable: countrySelector.getCountries.running,
       builder: (context, running, _) {
         return running
             ? const Center(child: CircularProgressIndicator())
             : ValueListenableBuilder(
-                valueListenable: widget.viewModel.filteredCountries,
+                valueListenable: countrySelector.filteredCountries,
                 builder: (context, filteredCountries, _) =>
                     filteredCountries.isEmpty
                     ? const Center(child: Text('Ülke bulunamadı'))
@@ -137,14 +141,10 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                           ),
                           onTap: () {
                             // Ülke seçildi -> states'leri getir
-                            widget.onCountryIdSelected(
-                              filteredCountries[index].id,
-                            );
-                            widget.viewModel.getStates.execute(
-                              filteredCountries[index].id,
-                            );
+                            final countryId = filteredCountries[index].id;
+                            widget.onCountryIdSelected(countryId);
+                            countrySelector.selectCountry.execute(countryId);
                             // Arama sorgusunu temizle
-                            widget.viewModel.searchQuery.value = '';
                             _searchQueryController.clear();
                           },
                         ),
@@ -156,13 +156,14 @@ class _PlaceSelectorState extends State<PlaceSelector> {
 
   /// Build state list
   Widget _buildStateList() {
+    final stateSelector = widget.viewModel.stateSelector;
     return ValueListenableBuilder(
-      valueListenable: widget.viewModel.getStates.running,
+      valueListenable: stateSelector.getStates.running,
       builder: (context, running, _) {
         return running
             ? const Center(child: CircularProgressIndicator())
             : ValueListenableBuilder(
-                valueListenable: widget.viewModel.filteredStates,
+                valueListenable: stateSelector.filteredStates,
                 builder: (context, filteredStates, _) => filteredStates.isEmpty
                     ? const Center(child: Text('Şehir bulunamadı'))
                     : ListView.builder(
@@ -171,12 +172,9 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                           title: Text(filteredStates[index].name),
                           onTap: () {
                             // Şehir seçildi
-                            widget.viewModel.selectState.execute(
-                              filteredStates[index].id,
-                            );
-                            widget.onStateIdSelected?.call(
-                              filteredStates[index].id,
-                            );
+                            final stateId = filteredStates[index].id;
+                            stateSelector.selectState.execute(stateId);
+                            widget.onStateIdSelected?.call(stateId);
                             // Dialog'u kapat
                             Navigator.of(context).pop();
                           },

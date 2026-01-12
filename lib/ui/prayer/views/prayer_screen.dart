@@ -22,13 +22,13 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _placeSelectorViewModel = PlaceSelectorViewModel(
       placesRepository: context.read<PlacesRepository>(),
     );
-    _placeSelectorViewModel.getCountries.handleError(
+    _placeSelectorViewModel.countrySelector.getCountries.handleError(
       context,
       showSnackBar: true,
     );
-    _placeSelectorViewModel.getCountries.handleCompleted(
+    _placeSelectorViewModel.countrySelector.getCountries.handleCompleted(
       context,
-      successMessage: 'Countries fetched successfully',
+      successMessage: 'Ülkeler başarıyla yüklendi',
     );
   }
 
