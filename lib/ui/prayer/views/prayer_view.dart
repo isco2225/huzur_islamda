@@ -34,9 +34,15 @@ class PrayerView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'istanbul,Türkiye',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ValueListenableBuilder(
+                    valueListenable: placeSelectorViewModel.selectedCountryId,
+                    builder: (context, selectedCountryId, _) => Text(
+                      selectedCountryId ?? '',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                   Text(
                     '07 kasım 2025'
@@ -122,6 +128,10 @@ class PrayerView extends StatelessWidget {
                                   placeSelectorViewModel.selectCountry.execute(
                                     countryId,
                                   );
+                                },
+                                onStateIdSelected: (stateId) {
+                                  // Şehir seçildiğinde yapılacak işlem
+                                  // TODO: Namaz vakitlerini getir
                                 },
                               ),
                             );

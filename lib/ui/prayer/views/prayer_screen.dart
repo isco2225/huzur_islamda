@@ -20,7 +20,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     super.initState();
     _viewModel = PrayerViewModel();
     _placeSelectorViewModel = PlaceSelectorViewModel(
-      countryRepository: context.read<CountryRepository>(),
+      placesRepository: context.read<PlacesRepository>(),
     );
     _placeSelectorViewModel.getCountries.handleError(
       context,

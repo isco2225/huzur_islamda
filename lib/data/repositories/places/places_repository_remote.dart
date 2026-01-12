@@ -4,11 +4,11 @@ import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 import '../../data.dart';
 
-class CountryRepositoryRemote extends CountryRepository {
-  CountryRepositoryRemote({required CountryService countryService})
-    : _countryService = countryService;
+class PlacesRepositoryRemote extends PlacesRepository {
+  PlacesRepositoryRemote({required PlaceSelectorService placeSelectorService})
+    : _placeSelectorService = placeSelectorService;
 
-  final CountryService _countryService;
+  final PlaceSelectorService _placeSelectorService;
 
   @override
   ValueListenable<List<Country>> get countries => _countries;
@@ -23,7 +23,7 @@ class CountryRepositoryRemote extends CountryRepository {
         print('Countries fetched from cache');
         return Result.ok(null);
       }
-      final result = await _countryService.getCountries();
+      final result = await _placeSelectorService.getCountries();
       switch (result) {
         case Ok():
           _countries.value = result.asOk.value;
@@ -33,6 +33,21 @@ class CountryRepositoryRemote extends CountryRepository {
       }
     } catch (e) {
       return Result.error(Exception('Failed to get countries: $e'));
+    }
+  }
+
+  @override
+  Future<Result<List<StateModel>>> getStates(String countryId) async {
+    try {
+      final result = await _placeSelectorService.getStates(countryId);
+      switch (result) {
+        case Ok():
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to get states: $e'));
     }
   }
 }
