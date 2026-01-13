@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/data.dart';
+import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class CreateDhikrScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
     _viewModel = CreateDhikrViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       userRepository: context.read<UserRepository>(),
+      dhikrUseCase: context.read<DhikrUseCase>(),
     );
     _viewModel.createDhikr.handleError(context);
     _viewModel.createDhikr.handleCompleted(

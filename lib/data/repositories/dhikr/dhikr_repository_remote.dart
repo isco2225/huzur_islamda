@@ -11,13 +11,14 @@ import '../../data.dart';
 class DhikrRepositoryRemote implements DhikrRepository {
   DhikrRepositoryRemote({
     required HiveService<Dhikr> hiveService,
-    // TODO: Firestore service eklendiğinde buraya ekle
+    required FirestoreDhikrService firestoreDhikrService,
   }) : _hiveService = hiveService,
+       _firestoreDhikrService = firestoreDhikrService,
        _log = Logger('DhikrRepositoryRemote');
 
   final HiveService<Dhikr> _hiveService;
+  final FirestoreDhikrService _firestoreDhikrService;
   final Logger _log;
-
   @override
   ValueListenable<List<Dhikr>> get dhikrsLocally => _dhikrsLocally;
   final ValueNotifier<List<Dhikr>> _dhikrsLocally = ValueNotifier<List<Dhikr>>(
@@ -144,57 +145,51 @@ class DhikrRepositoryRemote implements DhikrRepository {
   Future<Result<List<Dhikr>>> getUnsyncedDhikrs() async {
     _log.info('Getting unsynced dhikrs');
     final result = await _hiveService.getAll();
-
-    return switch (result) {
-      Ok(:final value) => () {
-        final unsynced = value.where((d) => !d.isSynced).toList();
+    switch (result) {
+      case Ok():
+        final unsynced = result.asOk.value.where((d) => !d.isSynced).toList();
         _log.info('Found ${unsynced.length} unsynced dhikrs');
         return Result.ok(unsynced);
-      }(),
-      Error(:final error) => Result.error(error),
-    };
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   @override
+  // sync to firestore
   Future<Result<void>> syncDhikrs(String userId) async {
-    _log.info('Syncing dhikrs for user: $userId');
-
-    // 1. Get unsynced dhikrs from local
-    final unsyncedResult = await getUnsyncedDhikrs();
-
-    return switch (unsyncedResult) {
-      Ok(:final value) => await () async {
-        if (value.isEmpty) {
-          _log.info('No dhikrs to sync');
+    // get unsynced dhikrs
+    final result = await getUnsyncedDhikrs();
+    switch (result) {
+      case Ok():
+        final unsyncedDhikrs = result.asOk.value;
+        if (unsyncedDhikrs.isEmpty) {
+          _log.info('No unsynced dhikrs found');
           return Result.ok(null);
         }
-
-        // 2. Upload each unsynced dhikr to Firestore
-        for (final dhikr in value) {
-          if (dhikr.isDeleted) {
-            // Delete from Firestore
-            await deleteDhikrFromFirestore(dhikr.id);
-            // Delete from local
-            await deleteDhikrLocally(dhikr.id);
-          } else {
-            // Upload to Firestore
-            final uploadResult = await saveDhikrToFirestore(dhikr);
-
-            switch (uploadResult) {
-              case Ok():
-                // Mark as synced in local storage
-                final syncedDhikr = dhikr.copyWith(isSynced: true);
-                await saveDhikrLocally(syncedDhikr);
-              case Error(:final error):
-                _log.severe('Failed to sync dhikr ${dhikr.id}: $error');
+        // save to firestore
+        final firestoreResult = await _firestoreDhikrService.saveDhikrs(
+          userId: userId,
+          dhikrs: unsyncedDhikrs,
+        );
+        switch (firestoreResult) {
+          case Ok():
+            // mark as synced in local storage
+            for (final dhikr in unsyncedDhikrs) {
+              await updateDhikrLocally(
+                dhikr.id,
+                dhikr.copyWith(isSynced: true),
+              );
             }
-          }
+            return Result.ok(null);
+          case Error():
+            return Result.error(
+              firestoreResult.asError.error,
+            ); // TODO(Omran): Check it after
         }
 
-        _log.info('Sync completed');
-        return Result.ok(null);
-      }(),
-      Error(:final error) => Result.error(error),
-    };
+      case Error<List<Dhikr>>():
+        return Result.error(result.asError.error);
+    }
   }
 }

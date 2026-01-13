@@ -10,9 +10,11 @@ class AppViewModel {
     required AuthRepository authRepository,
     required UserRepository userRepository,
     required HiveRepository hiveRepository,
+    required DhikrUseCase dhikrUseCase,
   }) : _authRepository = authRepository,
        _userRepository = userRepository,
-       _hiveRepository = hiveRepository {
+       _hiveRepository = hiveRepository,
+       _dhikrUseCase = dhikrUseCase {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     _authRepository.isSignedIn.addListener(_onAuthStateChanged);
@@ -25,6 +27,7 @@ class AppViewModel {
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
   final HiveRepository _hiveRepository;
+  final DhikrUseCase _dhikrUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -49,7 +52,7 @@ class AppViewModel {
       await _hiveRepository.initializeHive();
 
       // sync dhikrs
-      //await _dhikrUseCase.syncDhikrs();
+      await _dhikrUseCase.syncDhikrs();
 
       _log.info('App initialized successfully');
       return Result.ok(null);

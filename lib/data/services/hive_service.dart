@@ -132,6 +132,26 @@ class HiveService<T> {
     }
   }
 
+  // Get with filter
+  Future<Result<List<T>?>> getWithFilter(bool Function(T) filter) async {
+    try {
+      final box = await _getBox;
+      final values = box.values.where(filter).toList();
+      _log.info('Retrieved ${values.length} items with filter');
+      if (values.isEmpty) {
+        _log.info('No items found with filter');
+        return Result.ok(null);
+      }
+      return Result.ok(values);
+    } on HiveError catch (e) {
+      _log.severe('Hive error getting items with filter: ${e.message}');
+      return Result.error(Exception('Hive error: ${e.message}'));
+    } catch (e) {
+      _log.severe('Failed to get items with filter: $e');
+      return Result.error(Exception('Failed to get items with filter: $e'));
+    }
+  }
+
   /// Get all items as a map (key -> value)
   Future<Result<Map<String, T>>> getAllAsMap() async {
     try {

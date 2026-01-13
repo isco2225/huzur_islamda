@@ -14,12 +14,14 @@ class AppScreen extends StatefulWidget {
     required this.userRepository,
     required this.postRepository,
     required this.dhikrRepository,
+    required this.dhikrUseCase,
     required this.placesRepository,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
   final PostRepository postRepository;
   final DhikrRepository dhikrRepository;
+  final DhikrUseCase dhikrUseCase;
   final PlacesRepository placesRepository;
   @override
   State<AppScreen> createState() => _AppScreenState();
@@ -37,6 +39,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
       hiveRepository: HiveRepositoryRemote(
         hiveService: HiveService<Dhikr>(Dhikr.boxName),
       ),
+      dhikrUseCase: widget.dhikrUseCase,
     );
     WidgetsBinding.instance.addObserver(this);
     // App'i başlat
@@ -73,6 +76,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
         Provider(create: (_) => widget.userRepository),
         Provider(create: (_) => widget.postRepository),
         Provider(create: (_) => widget.dhikrRepository),
+        Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.placesRepository),
       ],
       child: ValueListenableBuilder(

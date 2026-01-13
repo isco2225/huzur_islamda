@@ -1,9 +1,13 @@
 import 'package:logging/logging.dart';
 
+import '../../../app/app.dart';
+import '../../../domain/domain.dart';
+
 class DhikrViewModel {
-  DhikrViewModel() {
+  DhikrViewModel({required DhikrUseCase dhikrUseCase})
+    : _dhikrUseCase = dhikrUseCase {
     // DEFINE COMMANDS
-    // TODO: Add commands here
+    syncDhikrs = Command0<void>(_syncDhikrs, debugLabel: 'syncDhikrs');
 
     // DEFINE LISTENERS
   }
@@ -12,18 +16,28 @@ class DhikrViewModel {
   final _log = Logger('DhikrViewModel');
 
   // REPOSITORIES & USE CASES
-  // TODO: Add repositories and use cases here
+  final DhikrUseCase _dhikrUseCase;
 
   // DOMAIN
 
   // COMMANDS
-  // TODO: Add commands here
+  late final Command0<void> syncDhikrs;
 
   // DISPOSE
   void dispose() {
+    syncDhikrs.dispose();
     _log.fine('Disposed');
   }
 
   // FUNCTIONS
-  // TODO: Add functions here
+  Future<Result<void>> _syncDhikrs() async {
+    final result = await _dhikrUseCase.syncDhikrs();
+    switch (result) {
+      case Ok():
+        _log.info('Dhikrs synced successfully');
+      case Error():
+        _log.warning('Failed to sync dhikrs: ${result.error}');
+    }
+    return result;
+  }
 }

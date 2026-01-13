@@ -42,6 +42,29 @@ class FirestoreDhikrService {
     }
   }
 
+  Future<Result<void>> saveDhikrs({
+    required String userId,
+    required List<Dhikr> dhikrs,
+  }) async {
+    try {
+      for (final dhikr in dhikrs) {
+        final docRef = _firestore
+            .collection(_usersCollectionName)
+            .doc(userId)
+            .collection(_collectionName)
+            .doc(dhikr.id);
+        await docRef.set(dhikr.toJson());
+      }
+      return Result.ok(null);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to save dhikrs to firestore: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to save dhikrs to firestore: $e'));
+    }
+  }
+
   Future<Result<List<Dhikr>>> fetchDhikrs({
     required String userId,
     required DateTime day,

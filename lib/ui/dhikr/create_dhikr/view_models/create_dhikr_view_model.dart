@@ -9,8 +9,10 @@ class CreateDhikrViewModel {
   CreateDhikrViewModel({
     required DhikrRepository dhikrRepository,
     required UserRepository userRepository,
+    required DhikrUseCase dhikrUseCase,
   }) : _dhikrRepository = dhikrRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _dhikrUseCase = dhikrUseCase {
     // DEFINE COMMANDS
     createDhikr = Command1<Dhikr, ({String name, int targetCount})>(
       _createDhikr,
@@ -26,6 +28,7 @@ class CreateDhikrViewModel {
   // REPOSITORIES & USE CASES
   final DhikrRepository _dhikrRepository;
   final UserRepository _userRepository;
+  final DhikrUseCase _dhikrUseCase;
 
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
@@ -53,9 +56,10 @@ class CreateDhikrViewModel {
         return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
       }
 
+      final currentDate = DateTime.now();
       final result = await _dhikrRepository.saveDhikrLocally(
         Dhikr(
-          id: userId + params.name + params.targetCount.toString(),
+          id: currentDate.toString(),
           userId: userId,
           name: params.name,
           targetCount: params.targetCount,
@@ -72,6 +76,13 @@ class CreateDhikrViewModel {
       if (result is Error<Dhikr>) {
         _log.warning('Create dhikr failed: ${result.error}');
       } else {
+        final syncResult = await _dhikrUseCase.syncDhikrs();
+        switch (syncResult) {
+          case Ok():
+            _log.info('Dhikr synced successfully');
+          case Error():
+            _log.warning('Failed to sync dhikr: ${syncResult.error}');
+        }
         _log.info('Dhikr created successfully: ${result.asOk.value.id}');
       }
 

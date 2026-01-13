@@ -33,6 +33,17 @@ void main() async {
       ),
       dhikrRepository: DhikrRepositoryRemote(
         hiveService: HiveService<Dhikr>(Dhikr.boxName),
+        firestoreDhikrService: FirestoreDhikrService(),
+      ),
+      dhikrUseCase: DhikrUseCase(
+        dhikrRepository: DhikrRepositoryRemote(
+          hiveService: HiveService<Dhikr>(Dhikr.boxName),
+          firestoreDhikrService: FirestoreDhikrService(),
+        ),
+        connectivityUseCase: ConnectivityUseCase(),
+        authRepository: AuthRepositoryRemote(
+          firebaseAuthService: FirebaseAuthService(),
+        ),
       ),
       placesRepository: PlacesRepositoryRemote(
         placeSelectorService: PlaceSelectorService(),

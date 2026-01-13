@@ -20,8 +20,8 @@ abstract class DhikrRepository {
   Future<Result<Dhikr?>> getDhikrFromFirestore(String id);
   Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore(String userId);
   Future<Result<void>> deleteDhikrFromFirestore(String id);
+  Future<Result<List<Dhikr>>> getUnsyncedDhikrs();
 
   // Sync operations
   Future<Result<void>> syncDhikrs(String userId);
-  Future<Result<List<Dhikr>>> getUnsyncedDhikrs();
 }

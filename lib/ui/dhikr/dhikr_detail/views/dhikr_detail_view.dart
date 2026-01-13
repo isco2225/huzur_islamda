@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/app.dart';
-import '../view_models/view_models.dart';
-import '../widgets/widgets.dart';
+import '../../../ui.dart';
 
 class DhikrDetailView extends StatelessWidget {
-  const DhikrDetailView({super.key, required this.viewModel});
+  const DhikrDetailView({
+    super.key,
+    required this.viewModel,
+    required this.dhikrViewModel,
+  });
 
   final DhikrDetailViewModel viewModel;
+  final DhikrViewModel dhikrViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +44,13 @@ class DhikrDetailView extends StatelessWidget {
             return BaseScaffold(
               appBar: AppBar(
                 title: Text(dhikr.name),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    dhikrViewModel.syncDhikrs.execute();
+                    context.pop();
+                  },
+                ),
                 backgroundColor: AppColors.background,
                 elevation: 0,
                 actions: [

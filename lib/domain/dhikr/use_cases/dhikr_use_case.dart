@@ -1,24 +1,63 @@
+import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
+
 import '../../../app/app.dart';
 import '../../../data/data.dart';
+import '../../domain.dart';
 
 class DhikrUseCase {
-  DhikrUseCase({required DhikrRepository dhikrRepository})
-    : _dhikrRepository = dhikrRepository;
+  DhikrUseCase({
+    required DhikrRepository dhikrRepository,
+    required ConnectivityUseCase connectivityUseCase,
+    required AuthRepository authRepository,
+  }) : _dhikrRepository = dhikrRepository,
+       _connectivityUseCase = connectivityUseCase,
+       _authRepository = authRepository;
+
+  // LOGGER
+  final _log = Logger('DhikrUseCase');
 
   final DhikrRepository _dhikrRepository;
+  final ConnectivityUseCase _connectivityUseCase;
+  final AuthRepository _authRepository;
 
-  Future<Result<bool>> syncDhikrs() async {
-    // chech network connection
-    //final hasConnection = await _networkService.hasConnection();
+  // DOMAIN
+  ValueListenable<Auth> get auth => _authRepository.auth;
 
-    /*if (hasConnection) {
-      // get unsynced dhikrs from hive
+  ValueListenable<bool> get deviceHasConnection => _deviceHasConnection;
+  final ValueNotifier<bool> _deviceHasConnection = ValueNotifier<bool>(false);
 
+  Future<Result<void>> syncDhikrs() async {
+    // check network connection
+    await _updateDeviceHasConnection();
+    if (_deviceHasConnection.value) {
+      if (auth.value.uid.isEmpty) {
+        _log.warning('User ID is empty, cannot sync dhikrs');
+        return Result.error(Exception('User ID is empty'));
+      }
+      final result = await _dhikrRepository.syncDhikrs(auth.value.uid);
+      switch (result) {
+        case Ok():
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } else {
+      _log.warning('No network connection, skipping sync');
+      return Result.ok(null);
+    }
+  }
 
-      // try to sync dhikrs to firestore
-      // if success, mark dhikrs as synced in hive
-      
-  }*/
-    return Result.ok(true);
+  Future<void> _updateDeviceHasConnection() async {
+    final result = await _connectivityUseCase.connectionType();
+    switch (result) {
+      case Ok():
+        _log.info('Device has connection: ${result.asOk.value}');
+        _deviceHasConnection.value = result.asOk.value != ConnectivityEnum.none;
+      case Error():
+        _log.severe(
+          'Failed to update device has connection: ${result.asError.error}',
+        );
+    }
   }
 }

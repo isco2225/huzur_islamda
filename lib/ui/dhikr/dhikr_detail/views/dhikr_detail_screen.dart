@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/data.dart';
-import '../view_models/view_models.dart';
-import 'dhikr_detail_view.dart';
+import '../../../../domain/domain.dart';
+import '../../../ui.dart';
 
 class DhikrDetailScreen extends StatefulWidget {
   const DhikrDetailScreen({super.key, required this.dhikrId});
@@ -16,6 +16,7 @@ class DhikrDetailScreen extends StatefulWidget {
 
 class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
   late final DhikrDetailViewModel _viewModel;
+  late final DhikrViewModel _dhikrViewModel;
 
   @override
   void initState() {
@@ -23,6 +24,9 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel = DhikrDetailViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       dhikrId: widget.dhikrId,
+    );
+    _dhikrViewModel = DhikrViewModel(
+      dhikrUseCase: context.read<DhikrUseCase>(),
     );
 
     // Error handling
@@ -43,11 +47,15 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
   @override
   void dispose() {
     _viewModel.dispose();
+    _dhikrViewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DhikrDetailView(viewModel: _viewModel);
+    return DhikrDetailView(
+      viewModel: _viewModel,
+      dhikrViewModel: _dhikrViewModel,
+    );
   }
 }
