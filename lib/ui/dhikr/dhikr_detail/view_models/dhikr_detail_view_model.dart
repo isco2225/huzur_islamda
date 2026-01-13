@@ -13,7 +13,7 @@ class DhikrDetailViewModel {
        _dhikrId = dhikrId,
        _log = Logger('DhikrDetailViewModel') {
     // Commands
-    loadDhikr = Command0<Dhikr>(_loadDhikr, debugLabel: 'loadDhikr');
+    loadDhikr = Command0<void>(_loadDhikr, debugLabel: 'loadDhikr');
     incrementCount = Command0<void>(
       _incrementCount,
       debugLabel: 'incrementCount',
@@ -38,7 +38,7 @@ class DhikrDetailViewModel {
   ValueListenable<Dhikr?> get currentDhikr => _currentDhikr;
 
   // Commands
-  late final Command0<Dhikr> loadDhikr;
+  late final Command0<void> loadDhikr;
   late final Command0<void> incrementCount;
   late final Command0<void> decrementCount;
   late final Command0<void> deleteDhikr;
@@ -59,23 +59,18 @@ class DhikrDetailViewModel {
   }
 
   // Functions
-  Future<Result<Dhikr>> _loadDhikr() async {
+  Future<Result<void>> _loadDhikr() async {
     _log.info('Loading dhikr: $_dhikrId');
 
     final result = await _dhikrRepository.getDhikrLocally(_dhikrId);
-
-    return switch (result) {
-      Ok() => () {
-        if (result.asOk.value == null) {
-          _log.warning('Dhikr not found: $_dhikrId');
-          return Result<Dhikr>.error(Exception('Zikir bulunamadı'));
-        }
+    switch (result) {
+      case Ok():
         _currentDhikr.value = result.asOk.value;
         _log.info('Dhikr loaded successfully: $_dhikrId');
-        return Result.ok(result.asOk.value!);
-      }(),
-      Error() => Result.error(result.asError.error),
-    };
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   Future<Result<void>> _incrementCount() async {
@@ -97,14 +92,14 @@ class DhikrDetailViewModel {
       _dhikrId,
       updatedDhikr,
     );
-
-    return switch (result) {
-      Ok() => () {
+    switch (result) {
+      case Ok():
         _currentDhikr.value = updatedDhikr;
+        _log.info('Dhikr updated successfully: $_dhikrId');
         return Result.ok(null);
-      }(),
-      Error() => Result.error(result.asError.error),
-    };
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   Future<Result<void>> _decrementCount() async {
@@ -132,13 +127,14 @@ class DhikrDetailViewModel {
       updatedDhikr,
     );
 
-    return switch (result) {
-      Ok() => () {
+    switch (result) {
+      case Ok():
         _currentDhikr.value = updatedDhikr;
+        _log.info('Dhikr updated successfully: $_dhikrId');
         return Result.ok(null);
-      }(),
-      Error() => Result.error(result.asError.error),
-    };
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   Future<Result<void>> _resetCount() async {
@@ -160,25 +156,28 @@ class DhikrDetailViewModel {
       _dhikrId,
       updatedDhikr,
     );
-
-    return switch (result) {
-      Ok() => () {
+    switch (result) {
+      case Ok():
         _currentDhikr.value = updatedDhikr;
+        _log.info('Dhikr updated successfully: $_dhikrId');
         return Result.ok(null);
-      }(),
-      Error() => Result.error(result.asError.error),
-    };
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   Future<Result<void>> _deleteDhikr() async {
     _log.info('Deleting dhikr: $_dhikrId');
 
     final result = await _dhikrRepository.deleteDhikrLocally(_dhikrId);
-
-    return switch (result) {
-      Ok() => Result.ok(null),
-      Error() => Result.error(result.asError.error),
-    };
+    switch (result) {
+      case Ok():
+        _currentDhikr.value = null;
+        _log.info('Dhikr deleted successfully: $_dhikrId');
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   void dispose() {
