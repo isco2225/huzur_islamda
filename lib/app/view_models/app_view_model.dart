@@ -15,14 +15,7 @@ class AppViewModel {
        _hiveRepository = hiveRepository {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
-
-    // Define Listeners
-    // Auth state değişikliklerini dinle (isSignedIn daha direkt)
     _authRepository.isSignedIn.addListener(_onAuthStateChanged);
-
-    // INIT
-    // initUser artık initApp içinde await ediliyor
-    // Constructor'da çağırmıyoruz çünkü initApp zaten user'ı yükleyecek
   }
 
   // LOGGER
@@ -54,6 +47,9 @@ class AppViewModel {
 
       // initialize hive
       await _hiveRepository.initializeHive();
+
+      // sync dhikrs
+      //await _dhikrUseCase.syncDhikrs();
 
       _log.info('App initialized successfully');
       return Result.ok(null);
