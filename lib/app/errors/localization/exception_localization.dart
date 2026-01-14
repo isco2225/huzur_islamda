@@ -55,8 +55,12 @@ extension ExceptionLocalizationExtension on BuildContext {
       //   AdminInternalError() => 'internal error',
       //   AdminBlocked() => 'blocked',
       // },
+      ConnectivityException() => switch (exception) {
+        ConnectivityNoConnection() => 'İnternet bağlantısı yok',
+        ConnectivityUnknown() => 'Bağlantınızı kontrol ediniz',
+      },
       // // Unknown
-      _ => 'failure unknown',
+      _ => 'Bilinmeyen bir hata oluştu',
     };
   }
 

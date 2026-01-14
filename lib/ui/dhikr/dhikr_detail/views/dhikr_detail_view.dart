@@ -16,9 +16,15 @@ class DhikrDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: viewModel.loadDhikr.running,
-      builder: (context, isLoading, child) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        viewModel.loadDhikr.running,
+        viewModel.deleteDhikr.running,
+      ]),
+      builder: (context, child) {
+        final isLoading =
+            viewModel.loadDhikr.running.value ||
+            viewModel.deleteDhikr.running.value;
         if (isLoading) {
           return BaseScaffold(
             appBar: AppBar(backgroundColor: AppColors.background, elevation: 0),
@@ -40,7 +46,6 @@ class DhikrDetailView extends StatelessWidget {
                 body: const Center(child: Text('Zikir bulunamadı')),
               );
             }
-
             return BaseScaffold(
               appBar: AppBar(
                 title: Text(dhikr.name),
