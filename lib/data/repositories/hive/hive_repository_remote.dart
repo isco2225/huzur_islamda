@@ -3,14 +3,18 @@ import 'package:huzur_islamda/app/utils/result.dart';
 import '../../data.dart';
 
 class HiveRepositoryRemote implements HiveRepository {
-  HiveRepositoryRemote({required HiveService hiveService})
-    : _hiveService = hiveService;
+  HiveRepositoryRemote({
+    required HiveInitializerService hiveInitializer,
+    required HiveService hiveService,
+  }) : _hiveInitializer = hiveInitializer,
+       _hiveService = hiveService;
 
+  final HiveInitializerService _hiveInitializer;
   final HiveService _hiveService;
 
   @override
   Future<Result<void>> initializeHive() async {
-    final result = await _hiveService.initializeHive();
+    final result = await _hiveInitializer.initialize();
     switch (result) {
       case Ok():
         return Result.ok(null);

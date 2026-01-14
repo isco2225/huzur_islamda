@@ -2,7 +2,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 
 import '../../app/app.dart';
-import '../../domain/dhikr/models/dhikr.dart';
 
 /// Generic Hive service for CRUD operations on local storage.
 ///
@@ -14,32 +13,6 @@ class HiveService<T> {
   final String boxName;
   final Logger _log;
   Box<T>? _box;
-  bool _isInitialized = false;
-
-  Future<Result<void>> initializeHive() async {
-    if (_isInitialized) {
-      _log.info('Hive already initialized, skipping...');
-      return Result.ok(null);
-    }
-    try {
-      _log.info('Initializing Hive...');
-      await Hive.initFlutter();
-      _registerAdapters();
-      _isInitialized = true;
-      _log.info('Hive initialized successfully');
-      return Result.ok(null);
-    } catch (e) {
-      return Result.error(Exception('Failed to initialize Hive: $e'));
-    }
-  }
-
-  void _registerAdapters() {
-    // Register Dhikr adapter if not already registered
-    if (!Hive.isAdapterRegistered(0)) {
-      Hive.registerAdapter(DhikrAdapter());
-      _log.info('Registered DhikrAdapter');
-    }
-  }
 
   /// Get the box instance (lazy initialization)
   Future<Box<T>> get _getBox async {
@@ -253,6 +226,7 @@ class HiveService<T> {
   }
 
   /// Clear all items in the box
+  // TODO(omran): it will work when the user sign out(only for user data) or delete the account.
   Future<Result<void>> clear() async {
     try {
       final box = await _getBox;

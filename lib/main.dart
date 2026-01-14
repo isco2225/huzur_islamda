@@ -19,35 +19,38 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final hiveDhikr = HiveService<Dhikr>(Dhikr.boxName);
+  final authRepository = AuthRepositoryRemote(
+    firebaseAuthService: FirebaseAuthService(),
+  );
+  final dhikrRepository = DhikrRepositoryRemote(
+    hiveService: hiveDhikr,
+    firestoreDhikrService: FirestoreDhikrService(),
+  );
+
+  // final hiveUser = HiveService<User>(User.boxName);
+  // final hivePost = HiveService<Post>(Post.boxName);
 
   runApp(
     AppScreen(
-      authRepository: AuthRepositoryRemote(
-        firebaseAuthService: FirebaseAuthService(),
-      ),
+      authRepository: authRepository,
       userRepository: UserRepositoryRemote(
         firestoreUserService: FirestoreUserService(),
       ),
       postRepository: PostRepositoryRemote(
         firestorePostService: FirestorePostService(),
       ),
-      dhikrRepository: DhikrRepositoryRemote(
-        hiveService: HiveService<Dhikr>(Dhikr.boxName),
-        firestoreDhikrService: FirestoreDhikrService(),
-      ),
+      dhikrRepository: dhikrRepository,
       dhikrUseCase: DhikrUseCase(
-        dhikrRepository: DhikrRepositoryRemote(
-          hiveService: HiveService<Dhikr>(Dhikr.boxName),
-          firestoreDhikrService: FirestoreDhikrService(),
-        ),
+        dhikrRepository: dhikrRepository,
         connectivityUseCase: ConnectivityUseCase(),
-        authRepository: AuthRepositoryRemote(
-          firebaseAuthService: FirebaseAuthService(),
-        ),
+        authRepository: authRepository,
       ),
       placesRepository: PlacesRepositoryRemote(
         placeSelectorService: PlaceSelectorService(),
       ),
+      connectivityUseCase: ConnectivityUseCase(),
+      hiveDhikr: hiveDhikr,
     ),
   );
 }

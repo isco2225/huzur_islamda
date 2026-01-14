@@ -16,6 +16,8 @@ class AppScreen extends StatefulWidget {
     required this.dhikrRepository,
     required this.dhikrUseCase,
     required this.placesRepository,
+    required this.connectivityUseCase,
+    required this.hiveDhikr,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -23,6 +25,8 @@ class AppScreen extends StatefulWidget {
   final DhikrRepository dhikrRepository;
   final DhikrUseCase dhikrUseCase;
   final PlacesRepository placesRepository;
+  final ConnectivityUseCase connectivityUseCase;
+  final HiveService hiveDhikr;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -37,7 +41,8 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
       authRepository: widget.authRepository,
       userRepository: widget.userRepository,
       hiveRepository: HiveRepositoryRemote(
-        hiveService: HiveService<Dhikr>(Dhikr.boxName),
+        hiveInitializer: HiveInitializerService(),
+        hiveService: widget.hiveDhikr,
       ),
       dhikrUseCase: widget.dhikrUseCase,
     );
@@ -66,6 +71,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // repositories
         Provider(
           create: (_) => CreateUserProfileUseCase(
             authRepository: widget.authRepository,
@@ -78,6 +84,9 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
         Provider(create: (_) => widget.dhikrRepository),
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.placesRepository),
+
+        // use cases
+        Provider(create: (_) => widget.connectivityUseCase, lazy: true),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

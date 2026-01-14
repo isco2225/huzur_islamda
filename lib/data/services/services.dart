@@ -1,6 +1,7 @@
 export 'firebase_auth_service.dart';
 export 'firestore_user_service.dart';
 export 'firestore_dhikr_service.dart';
+export 'hive_initializer_service.dart';
 export 'hive_service.dart';
 export 'firestore_post_service.dart';
 export 'place_selector_service.dart';
