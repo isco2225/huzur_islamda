@@ -35,7 +35,7 @@ class DhikrUseCase {
         _log.warning('User ID is empty, cannot sync dhikrs');
         return Result.error(Exception('User ID is empty'));
       }
-      final result = await _dhikrRepository.syncDhikrs(auth.value.uid);
+      final result = await _dhikrRepository.syncDhikrs(userId: auth.value.uid);
       switch (result) {
         case Ok():
           return Result.ok(null);
@@ -45,6 +45,37 @@ class DhikrUseCase {
     } else {
       _log.warning('No network connection, skipping sync');
       return Result.ok(null);
+    }
+  }
+
+  Future<Result<void>> deleteDhikr({required String dhikrId}) async {
+    await _updateDeviceHasConnection();
+    if (_deviceHasConnection.value) {
+      if (auth.value.uid.isEmpty) {
+        _log.warning('User ID is empty, cannot delete dhikr');
+        return Result.error(Exception('User ID is empty'));
+      }
+      final firestoreResult = await _dhikrRepository.deleteDhikrFromFirestore(
+        dhikrId: dhikrId,
+        userId: auth.value.uid,
+      );
+      switch (firestoreResult) {
+        case Ok():
+          final localResult = await _dhikrRepository.deleteDhikrLocally(
+            dhikrId: dhikrId,
+          );
+          switch (localResult) {
+            case Ok():
+              return Result.ok(null);
+            case Error():
+              return Result.error(localResult.asError.error);
+          }
+        case Error():
+          return Result.error(firestoreResult.asError.error);
+      }
+    } else {
+      _log.warning('No network connection, skipping delete');
+      return Result.error(Exception('No network connection'));
     }
   }
 

@@ -110,4 +110,25 @@ class FirestoreDhikrService {
       return Result.error(Exception('Failed to fetch all dhikrs: $e'));
     }
   }
+
+  Future<Result<void>> deleteDhikr({
+    required String userId,
+    required String dhikrId,
+  }) async {
+    try {
+      await _firestore
+          .collection(_usersCollectionName)
+          .doc(userId)
+          .collection(_collectionName)
+          .doc(dhikrId)
+          .delete();
+      return Result.ok(null);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to delete dhikr: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to delete dhikr: $e'));
+    }
+  }
 }

@@ -24,6 +24,7 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel = DhikrDetailViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       dhikrId: widget.dhikrId,
+      dhikrUseCase: context.read<DhikrUseCase>(),
     );
     _dhikrViewModel = DhikrViewModel(
       dhikrUseCase: context.read<DhikrUseCase>(),
@@ -34,7 +35,7 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel.incrementCount.handleError(context);
     _viewModel.decrementCount.handleError(context);
     _viewModel.resetCount.handleError(context);
-
+    _viewModel.deleteDhikr.handleError(context);
     // Delete handling with navigation
     _viewModel.deleteDhikr.handleError(context);
     _viewModel.deleteDhikr.handleCompleted(

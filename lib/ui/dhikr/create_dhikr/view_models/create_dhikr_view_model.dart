@@ -58,7 +58,7 @@ class CreateDhikrViewModel {
 
       final currentDate = DateTime.now();
       final result = await _dhikrRepository.saveDhikrLocally(
-        Dhikr(
+        dhikr: Dhikr(
           id: currentDate.toString(),
           userId: userId,
           name: params.name,

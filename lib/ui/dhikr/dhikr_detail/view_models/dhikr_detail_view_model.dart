@@ -8,9 +8,11 @@ import '../../../../domain/domain.dart';
 class DhikrDetailViewModel {
   DhikrDetailViewModel({
     required DhikrRepository dhikrRepository,
+    required DhikrUseCase dhikrUseCase,
     required String dhikrId,
   }) : _dhikrRepository = dhikrRepository,
        _dhikrId = dhikrId,
+       _dhikrUseCase = dhikrUseCase,
        _log = Logger('DhikrDetailViewModel') {
     // Commands
     loadDhikr = Command0<void>(_loadDhikr, debugLabel: 'loadDhikr');
@@ -32,7 +34,7 @@ class DhikrDetailViewModel {
   final DhikrRepository _dhikrRepository;
   final String _dhikrId;
   final Logger _log;
-
+  final DhikrUseCase _dhikrUseCase;
   // State
   final ValueNotifier<Dhikr?> _currentDhikr = ValueNotifier<Dhikr?>(null);
   ValueListenable<Dhikr?> get currentDhikr => _currentDhikr;
@@ -62,7 +64,7 @@ class DhikrDetailViewModel {
   Future<Result<void>> _loadDhikr() async {
     _log.info('Loading dhikr: $_dhikrId');
 
-    final result = await _dhikrRepository.getDhikrLocally(_dhikrId);
+    final result = await _dhikrRepository.getDhikrLocally(dhikrId: _dhikrId);
     switch (result) {
       case Ok():
         _currentDhikr.value = result.asOk.value;
@@ -89,8 +91,8 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      _dhikrId,
-      updatedDhikr,
+      dhikrId: _dhikrId,
+      dhikr: updatedDhikr,
     );
     switch (result) {
       case Ok():
@@ -123,8 +125,8 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      _dhikrId,
-      updatedDhikr,
+      dhikrId: _dhikrId,
+      dhikr: updatedDhikr,
     );
 
     switch (result) {
@@ -153,8 +155,8 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      _dhikrId,
-      updatedDhikr,
+      dhikrId: _dhikrId,
+      dhikr: updatedDhikr,
     );
     switch (result) {
       case Ok():
@@ -169,7 +171,7 @@ class DhikrDetailViewModel {
   Future<Result<void>> _deleteDhikr() async {
     _log.info('Deleting dhikr: $_dhikrId');
 
-    final result = await _dhikrRepository.deleteDhikrLocally(_dhikrId);
+    final result = await _dhikrUseCase.deleteDhikr(dhikrId: _dhikrId);
     switch (result) {
       case Ok():
         _currentDhikr.value = null;

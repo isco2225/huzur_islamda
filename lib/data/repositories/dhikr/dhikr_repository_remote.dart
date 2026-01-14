@@ -26,7 +26,7 @@ class DhikrRepositoryRemote implements DhikrRepository {
   );
 
   @override
-  Future<Result<Dhikr>> saveDhikrLocally(Dhikr dhikr) async {
+  Future<Result<Dhikr>> saveDhikrLocally({required Dhikr dhikr}) async {
     _log.info('Saving dhikr locally: ${dhikr.id}');
     final result = await _hiveService.save(dhikr.id, dhikr);
     switch (result) {
@@ -39,9 +39,9 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  Future<Result<Dhikr?>> getDhikrLocally(String id) async {
-    _log.info('Getting dhikr locally: $id');
-    final result = await _hiveService.getById(id);
+  Future<Result<Dhikr?>> getDhikrLocally({required String dhikrId}) async {
+    _log.info('Getting dhikr locally: $dhikrId');
+    final result = await _hiveService.getById(dhikrId);
     if (result is Error<Dhikr?>) {
       return Result.error(result.asError.error);
     }
@@ -65,13 +65,13 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  Future<Result<void>> deleteDhikrLocally(String id) async {
-    _log.info('Deleting dhikr locally: $id');
-    final result = await _hiveService.delete(id);
+  Future<Result<void>> deleteDhikrLocally({required String dhikrId}) async {
+    _log.info('Deleting dhikr locally: $dhikrId');
+    final result = await _hiveService.delete(dhikrId);
     switch (result) {
       case Ok():
         _dhikrsLocally.value = _dhikrsLocally.value
-            .where((d) => d.id != id)
+            .where((d) => d.id != dhikrId)
             .toList();
         return Result.ok(null);
       case Error():
@@ -93,15 +93,18 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  Future<Result<void>> updateDhikrLocally(String id, Dhikr dhikr) async {
-    _log.info('Updating dhikr locally: $id');
+  Future<Result<void>> updateDhikrLocally({
+    required String dhikrId,
+    required Dhikr dhikr,
+  }) async {
+    _log.info('Updating dhikr locally: $dhikrId');
 
-    final result = await _hiveService.update(id, dhikr);
+    final result = await _hiveService.update(dhikrId, dhikr);
 
     switch (result) {
       case Ok():
         _dhikrsLocally.value = _dhikrsLocally.value
-            .map((d) => d.id == id ? result.asOk.value : d)
+            .map((d) => d.id == dhikrId ? result.asOk.value : d)
             .toList();
         return Result.ok(null);
       case Error():
@@ -112,31 +115,47 @@ class DhikrRepositoryRemote implements DhikrRepository {
   // ========== REMOTE OPERATIONS (FIRESTORE) ==========
 
   @override
-  Future<Result<void>> saveDhikrToFirestore(Dhikr dhikr) async {
+  Future<Result<void>> saveDhikrToFirestore({required Dhikr dhikr}) async {
     _log.info('Saving dhikr to Firestore: ${dhikr.id}');
     // TODO: Firestore implementation
     return Result.error(Exception('Not implemented yet'));
   }
 
   @override
-  Future<Result<Dhikr?>> getDhikrFromFirestore(String id) async {
-    _log.info('Getting dhikr from Firestore: $id');
+  Future<Result<Dhikr?>> getDhikrFromFirestore({
+    required String dhikrId,
+    required String userId,
+  }) async {
+    _log.info('Getting dhikr from Firestore: $dhikrId');
     // TODO: Firestore implementation
     return Result.error(Exception('Not implemented yet'));
   }
 
   @override
-  Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore(String userId) async {
+  Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore({
+    required String userId,
+  }) async {
     _log.info('Getting all dhikrs from Firestore for user: $userId');
     // TODO: Firestore implementation
     return Result.error(Exception('Not implemented yet'));
   }
 
   @override
-  Future<Result<void>> deleteDhikrFromFirestore(String id) async {
-    _log.info('Deleting dhikr from Firestore: $id');
-    // TODO: Firestore implementation
-    return Result.error(Exception('Not implemented yet'));
+  Future<Result<void>> deleteDhikrFromFirestore({
+    required String dhikrId,
+    required String userId,
+  }) async {
+    _log.info('Deleting dhikr from Firestore: $dhikrId');
+    final result = await _firestoreDhikrService.deleteDhikr(
+      userId: userId,
+      dhikrId: dhikrId,
+    );
+    switch (result) {
+      case Ok():
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   // ========== SYNC OPERATIONS ==========
@@ -157,7 +176,7 @@ class DhikrRepositoryRemote implements DhikrRepository {
 
   @override
   // sync to firestore
-  Future<Result<void>> syncDhikrs(String userId) async {
+  Future<Result<void>> syncDhikrs({required String userId}) async {
     // get unsynced dhikrs
     final result = await getUnsyncedDhikrs();
     switch (result) {
@@ -177,8 +196,8 @@ class DhikrRepositoryRemote implements DhikrRepository {
             // mark as synced in local storage
             for (final dhikr in unsyncedDhikrs) {
               await updateDhikrLocally(
-                dhikr.id,
-                dhikr.copyWith(isSynced: true),
+                dhikrId: dhikr.id,
+                dhikr: dhikr.copyWith(isSynced: true),
               );
             }
             return Result.ok(null);
