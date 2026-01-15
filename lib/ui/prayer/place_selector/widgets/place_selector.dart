@@ -35,7 +35,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
           builder: (context, selectionMode, _) {
             final isSelectingCountry =
                 selectionMode == PlaceSelectionMode.country;
-
             // Get current search query based on selection mode
             final currentSearchQuery = switch (selectionMode) {
               PlaceSelectionMode.country =>
@@ -45,24 +44,20 @@ class _PlaceSelectorState extends State<PlaceSelector> {
               PlaceSelectionMode.district =>
                 widget.viewModel.districtSelector.searchQuery,
             };
-
             // Get title based on selection mode
             final title = switch (selectionMode) {
               PlaceSelectionMode.country => 'Ülke Seçin',
               PlaceSelectionMode.state => 'Şehir Seçin',
               PlaceSelectionMode.district => 'İlçe Seçin',
             };
-
             // Get hint text based on selection mode
             final hintText = switch (selectionMode) {
               PlaceSelectionMode.country => 'Ülke ara...',
               PlaceSelectionMode.state => 'Şehir ara...',
               PlaceSelectionMode.district => 'İlçe ara...',
             };
-
             return Column(
               children: [
-                // Header with back button
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -71,7 +66,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                         IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
-                            // Bir önceki adıma dön ama dönerken
                             widget.viewModel.goBack();
                             _searchQueryController.clear();
                           },
@@ -97,9 +91,9 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                     decoration: InputDecoration(
                       hintText: hintText,
                       prefixIcon: const Icon(Icons.search),
-                      suffixIcon: ValueListenableBuilder<String>(
+                      suffixIcon: ValueListenableBuilder(
                         valueListenable: currentSearchQuery,
-                        builder: (context, query, child) {
+                        builder: (context, query, _) {
                           if (query.isEmpty) return const SizedBox.shrink();
                           return IconButton(
                             icon: const Icon(Icons.clear),
@@ -121,12 +115,23 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // List: Countries, States, or Districts
                 Expanded(
                   child: switch (selectionMode) {
-                    PlaceSelectionMode.country => _buildCountryList(),
-                    PlaceSelectionMode.state => _buildStateList(),
-                    PlaceSelectionMode.district => _buildDistrictList(),
+                    PlaceSelectionMode.country => CountryList(
+                      placeSelectorViewModel: widget.viewModel,
+                      onTapClearSearchQuery: () =>
+                          _searchQueryController.clear(),
+                    ),
+                    PlaceSelectionMode.state => StateList(
+                      placeSelectorViewModel: widget.viewModel,
+                      onTapClearSearchQuery: () =>
+                          _searchQueryController.clear(),
+                    ),
+                    PlaceSelectionMode.district => DistrictList(
+                      placeSelectorViewModel: widget.viewModel,
+                      onTapClearSearchQuery: () =>
+                          _searchQueryController.clear(),
+                    ),
                   },
                 ),
                 if (selectionMode == PlaceSelectionMode.district)
@@ -182,103 +187,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
           },
         ),
       ),
-    );
-  }
-
-  /// Build country list
-  Widget _buildCountryList() {
-    final countrySelector = widget.viewModel.countrySelector;
-    return ValueListenableBuilder(
-      valueListenable: countrySelector.getCountries.running,
-      builder: (context, running, _) {
-        return running
-            ? const Center(child: CircularProgressIndicator())
-            : ValueListenableBuilder(
-                valueListenable: countrySelector.filteredCountries,
-                builder: (context, filteredCountries, _) =>
-                    filteredCountries.isEmpty
-                    ? const Center(child: Text('Ülke bulunamadı'))
-                    : ListView.builder(
-                        itemCount: filteredCountries.length,
-                        itemBuilder: (context, index) => ListTile(
-                          title: Text(filteredCountries[index].name),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                          ),
-                          onTap: () {
-                            // Ülke seçildi -> states'leri getir
-                            final countryId = filteredCountries[index].id;
-                            countrySelector.selectCountry.execute(countryId);
-                            // Arama sorgusunu temizle
-                            _searchQueryController.clear();
-                          },
-                        ),
-                      ),
-              );
-      },
-    );
-  }
-
-  /// Build state list
-  Widget _buildStateList() {
-    final stateSelector = widget.viewModel.stateSelector;
-    return ValueListenableBuilder(
-      valueListenable: stateSelector.getStates.running,
-      builder: (context, running, _) {
-        return running
-            ? const Center(child: CircularProgressIndicator())
-            : ValueListenableBuilder(
-                valueListenable: stateSelector.filteredStates,
-                builder: (context, filteredStates, _) => filteredStates.isEmpty
-                    ? const Center(child: Text('Şehir bulunamadı'))
-                    : ListView.builder(
-                        itemCount: filteredStates.length,
-                        itemBuilder: (context, index) => ListTile(
-                          title: Text(filteredStates[index].name),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                          ),
-                          onTap: () {
-                            // Şehir seçildi -> districts'leri getir
-                            final stateId = filteredStates[index].id;
-                            stateSelector.selectState.execute(stateId);
-                            // Arama sorgusunu temizle
-                            _searchQueryController.clear();
-                          },
-                        ),
-                      ),
-              );
-      },
-    );
-  }
-
-  /// Build district list
-  Widget _buildDistrictList() {
-    final districtSelector = widget.viewModel.districtSelector;
-    return ValueListenableBuilder(
-      valueListenable: districtSelector.getDistricts.running,
-      builder: (context, running, _) {
-        return running
-            ? const Center(child: CircularProgressIndicator())
-            : ValueListenableBuilder(
-                valueListenable: districtSelector.filteredDistricts,
-                builder: (context, filteredDistricts, _) =>
-                    filteredDistricts.isEmpty
-                    ? const Center(child: Text('İlçe bulunamadı'))
-                    : ListView.builder(
-                        itemCount: filteredDistricts.length,
-                        itemBuilder: (context, index) => ListTile(
-                          title: Text(filteredDistricts[index].name),
-                          onTap: () {
-                            final districtId = filteredDistricts[index].id;
-                            districtSelector.selectDistrict.execute(districtId);
-                          },
-                        ),
-                      ),
-              );
-      },
     );
   }
 }
