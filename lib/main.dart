@@ -19,7 +19,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Hive Services
   final hiveDhikr = HiveService<Dhikr>(Dhikr.boxName);
+  final hivePrayer = HiveService<Prayer>(Prayer.boxName);
+
+  // Services
+  final prayerService = PrayerService();
+
+  // Repositories
   final authRepository = AuthRepositoryRemote(
     firebaseAuthService: FirebaseAuthService(),
   );
@@ -27,9 +35,17 @@ void main() async {
     hiveService: hiveDhikr,
     firestoreDhikrService: FirestoreDhikrService(),
   );
+  final prayerRepository = PrayerRepositoryRemote(
+    hiveService: hivePrayer,
+    prayerService: prayerService,
+  );
 
-  // final hiveUser = HiveService<User>(User.boxName);
-  // final hivePost = HiveService<Post>(Post.boxName);
+  // Use Cases
+  final connectivityUseCase = ConnectivityUseCase();
+  final prayerTimeUseCase = PrayerTimeUseCase(
+    prayerRepository: prayerRepository,
+    connectivityUseCase: connectivityUseCase,
+  );
 
   runApp(
     AppScreen(
@@ -43,13 +59,15 @@ void main() async {
       dhikrRepository: dhikrRepository,
       dhikrUseCase: DhikrUseCase(
         dhikrRepository: dhikrRepository,
-        connectivityUseCase: ConnectivityUseCase(),
+        connectivityUseCase: connectivityUseCase,
         authRepository: authRepository,
       ),
       placesRepository: PlacesRepositoryRemote(
         placeSelectorService: PlaceSelectorService(),
       ),
-      connectivityUseCase: ConnectivityUseCase(),
+      connectivityUseCase: connectivityUseCase,
+      prayerRepository: prayerRepository,
+      prayerTimeUseCase: prayerTimeUseCase,
       hiveDhikr: hiveDhikr,
     ),
   );

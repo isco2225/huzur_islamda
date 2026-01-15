@@ -29,12 +29,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _prayerTimesViewModel = PrayerTimesViewModel(
       prayerTimeUseCase: context.read<PrayerTimeUseCase>(),
     );
-    _prayerTimesViewModel.getPrayerTimes.execute((
-      districtId: '',
-      city: '',
-      country: '',
-      userId: '',
-    ));
+    // Error ve success handler'ları ayarla
     _prayerTimesViewModel.getPrayerTimes.handleError(
       context,
       showSnackBar: true,
@@ -65,6 +60,19 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _editProfileViewModel.updateUserLocation.handleCompleted(
       context,
       successMessage: 'Konum başarıyla güncellendi!',
+      onCompleted: (_) {
+        final updatedUser = _editProfileViewModel.currentUser.value;
+        if (updatedUser.districtId != null &&
+            updatedUser.city != null &&
+            updatedUser.country != null) {
+          _prayerTimesViewModel.getPrayerTimes.execute((
+            districtId: updatedUser.districtId!,
+            city: updatedUser.city!,
+            country: updatedUser.country!,
+            userId: updatedUser.uid,
+          ));
+        }
+      },
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
@@ -22,6 +24,8 @@ class PrayerView extends StatefulWidget {
 }
 
 class _PrayerViewState extends State<PrayerView> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
@@ -32,36 +36,43 @@ class _PrayerViewState extends State<PrayerView> {
         widget.user.city != null &&
         widget.user.country != null) {
       widget.prayerTimesViewModel.getPrayerTimes.execute((
-        districtId: widget.user.districtId ?? '',
-        city: widget.user.city ?? '',
-        country: widget.user.country ?? '',
+        districtId: widget.user.districtId!,
+        city: widget.user.city!,
+        country: widget.user.country!,
         userId: widget.user.uid,
       ));
     } else {
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Konum Seçin'),
-          content: const Text('Konum seçiniz'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('İptal'),
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          widget.placeSelectorViewModel.countrySelector.getCountries.execute();
+          showDialog<void>(
+            context: context,
+            builder: (context) => PlaceSelector(
+              viewModel: widget.placeSelectorViewModel,
+              editProfileViewModel: widget.editProfileViewModel,
             ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Seç'),
-            ),
-          ],
-        ),
-      );
+          );
+        }
+      });
     }
+
+    // Her saniye güncelle (şu anki vakti highlight etmek için)
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-
     return BaseScaffold(
       appBar: AppBar(
         title: Text('Ezan Vakitleri'),
@@ -83,29 +94,16 @@ class _PrayerViewState extends State<PrayerView> {
               ),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: widget
-                            .placeSelectorViewModel
-                            .countrySelector
-                            .selectedCountryId,
-                        builder: (context, selectedCountryId, _) => Text(
-                          selectedCountryId ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '07 kasım 2025'
-                        '-Cumartesi',
-                      ),
-                    ],
+                  // Header: Konum ve Tarih
+                  ValueListenableBuilder<User>(
+                    valueListenable: widget.editProfileViewModel.currentUser,
+                    builder: (context, user, _) {
+                      return PrayerHeader(user: user);
+                    },
                   ),
                   SizedBox(height: responsive.spacingMedium),
+
+                  // Namaz Vakitleri Listesi
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -123,50 +121,13 @@ class _PrayerViewState extends State<PrayerView> {
                             ),
                           );
                         }
-
-                        return Column(
-                          children: [
-                            PrayerTimeDisplayer(
-                              name: 'İmsak',
-                              time: _formatTime(prayerTimes.fajr),
-                              isHighlighted: false,
-                            ),
-                            _buildDivider(),
-                            PrayerTimeDisplayer(
-                              name: 'Güneş',
-                              time: _formatTime(prayerTimes.dhuhr),
-                              isHighlighted: false,
-                            ),
-                            _buildDivider(),
-                            PrayerTimeDisplayer(
-                              name: 'Öğle',
-                              time: _formatTime(prayerTimes.dhuhr),
-                              isHighlighted: true,
-                            ),
-                            _buildDivider(),
-                            PrayerTimeDisplayer(
-                              name: 'İkindi',
-                              time: _formatTime(prayerTimes.asr),
-                              isHighlighted: false,
-                            ),
-                            _buildDivider(),
-                            PrayerTimeDisplayer(
-                              name: 'Akşam',
-                              time: _formatTime(prayerTimes.maghrib),
-                              isHighlighted: false,
-                            ),
-                            _buildDivider(),
-                            PrayerTimeDisplayer(
-                              name: 'Yatsı',
-                              time: _formatTime(prayerTimes.isha),
-                              isHighlighted: false,
-                            ),
-                          ],
-                        );
+                        return PrayerTimesList(prayerTimes: prayerTimes);
                       },
                     ),
                   ),
                   SizedBox(height: responsive.spacingMedium),
+
+                  // Sonraki Vakit İçin Kalan Süre
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -178,45 +139,19 @@ class _PrayerViewState extends State<PrayerView> {
                     ),
                   ),
                   SizedBox(height: responsive.spacingExtraSmall),
-                  RemainingTimeToNextPrayer(),
-
-                  // Show place selector button.
-                  ValueListenableBuilder<bool>(
-                    valueListenable: widget
-                        .placeSelectorViewModel
-                        .countrySelector
-                        .getCountries
-                        .running,
-                    builder: (context, isLoading, child) {
-                      return TextButton(
-                        onPressed: isLoading
-                            ? null
-                            : () {
-                                widget
-                                    .placeSelectorViewModel
-                                    .countrySelector
-                                    .getCountries
-                                    .execute();
-                                showDialog<void>(
-                                  context: context,
-                                  builder: (context) => PlaceSelector(
-                                    viewModel: widget.placeSelectorViewModel,
-                                    editProfileViewModel:
-                                        widget.editProfileViewModel,
-                                  ),
-                                );
-                              },
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('Yer Seçin'),
+                  ValueListenableBuilder<PrayerTimes?>(
+                    valueListenable: widget.prayerTimesViewModel.prayerTimes,
+                    builder: (context, prayerTimes, _) {
+                      return RemainingTimeToNextPrayer(
+                        prayerTimes: prayerTimes,
                       );
                     },
+                  ),
+
+                  // Yer Seçin Butonu
+                  PlaceSelectorButton(
+                    placeSelectorViewModel: widget.placeSelectorViewModel,
+                    editProfileViewModel: widget.editProfileViewModel,
                   ),
                 ],
               ),
@@ -225,16 +160,5 @@ class _PrayerViewState extends State<PrayerView> {
         },
       ),
     );
-  }
-
-  Widget _buildDivider() {
-    return Divider(color: Colors.grey.shade200, height: 1, thickness: 1);
-  }
-
-  /// DateTime'ı "HH:mm" formatına çevirir
-  String _formatTime(DateTime dateTime) {
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 }

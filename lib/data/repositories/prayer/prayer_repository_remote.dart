@@ -162,18 +162,14 @@ class PrayerRepositoryRemote implements PrayerRepository {
     required String districtId,
     required String city,
     required String country,
-    required int year,
     required String userId,
   }) async {
     try {
-      _log.info(
-        'Getting prayer times from remote for district: $districtId, year: $year',
-      );
+      _log.info('Getting prayer times from remote for district: $districtId');
 
       // API'den veriyi çek
       final apiResult = await _prayerService.getPrayerTimes(
         districtId: districtId,
-        year: year,
       );
 
       switch (apiResult) {

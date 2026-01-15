@@ -1,12 +1,59 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
+import '../../../domain/domain.dart';
 
-class RemainingTimeToNextPrayer extends StatelessWidget {
-  const RemainingTimeToNextPrayer({super.key});
+class RemainingTimeToNextPrayer extends StatefulWidget {
+  const RemainingTimeToNextPrayer({super.key, required this.prayerTimes});
+
+  final PrayerTimes? prayerTimes;
+
+  @override
+  State<RemainingTimeToNextPrayer> createState() =>
+      _RemainingTimeToNextPrayerState();
+}
+
+class _RemainingTimeToNextPrayerState extends State<RemainingTimeToNextPrayer> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Her saniye güncelle
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.prayerTimes == null) {
+      return const SizedBox.shrink();
+    }
+
+    final nextPrayer = widget.prayerTimes!.getNextPrayerTime();
+    if (nextPrayer == null) {
+      return const SizedBox.shrink();
+    }
+
+    final remainingTime = widget.prayerTimes!.getRemainingTimeToNextPrayer();
+    if (remainingTime == null) {
+      return const SizedBox.shrink();
+    }
+
+    final formattedTime = _formatDuration(remainingTime);
+    final prayerName = nextPrayer.name;
+
     return Container(
       padding: context.containerPadding,
       decoration: BoxDecoration(
@@ -25,7 +72,7 @@ class RemainingTimeToNextPrayer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Ezana Kalan Süre',
+            '$prayerName\'e Kalan Süre',
             style: TextStyle(
               fontSize: context.isSmallScreen ? 12 : 16,
               fontWeight: FontWeight.w500,
@@ -35,8 +82,9 @@ class RemainingTimeToNextPrayer extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.timer_sharp, size: 20, color: AppColors.primary),
+              const SizedBox(width: 4),
               Text(
-                '24 Dakika',
+                formattedTime,
                 style: TextStyle(
                   fontSize: context.isSmallScreen ? 12 : 16,
                   fontWeight: FontWeight.w600,
@@ -48,5 +96,24 @@ class RemainingTimeToNextPrayer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Duration'ı "X Saat Y Dakika" veya "Y Dakika" formatına çevirir
+  String _formatDuration(Duration duration) {
+    if (duration.isNegative) {
+      return 'Vakit geçti';
+    }
+
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+
+    if (hours > 0) {
+      return '$hours Saat $minutes Dakika';
+    } else if (minutes > 0) {
+      return '$minutes Dakika $seconds Saniye';
+    } else {
+      return '$seconds Saniye';
+    }
   }
 }

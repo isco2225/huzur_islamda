@@ -23,7 +23,6 @@ abstract class PrayerRepository {
     required String districtId,
     required String city,
     required String country,
-    required int year,
     required String userId,
   });
 }

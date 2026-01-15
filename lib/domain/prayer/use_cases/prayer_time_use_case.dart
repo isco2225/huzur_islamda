@@ -29,12 +29,16 @@ class PrayerTimeUseCase {
     required String userId,
   }) async {
     try {
+      // Boş parametre kontrolü
+      if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
+        _log.warning('Empty parameters provided for prayer times');
+        return Result.error(Exception('Lütfen konum bilgilerini seçiniz'));
+      }
       _log.info(
         'Getting prayer times for district: $districtId, city: $city, country: $country',
       );
 
       final now = DateTime.now();
-      final currentYear = now.year;
 
       // 1. Önce Hive'dan kontrol et
       final localResult = await _prayerRepository.getPrayerTimesLocally(
@@ -47,7 +51,7 @@ class PrayerTimeUseCase {
       switch (localResult) {
         case Ok():
           final prayer = localResult.asOk.value;
-          if (prayer != null && prayer.year == currentYear) {
+          if (prayer != null) {
             // Hive'da güncel veri var, bugünün vakitlerini döndür
             final todayTimes = prayer.getTodayPrayerTimes();
             if (todayTimes != null) {
@@ -90,7 +94,6 @@ class PrayerTimeUseCase {
         districtId: districtId,
         city: city,
         country: country,
-        year: currentYear,
         userId: userId,
       );
 

@@ -9,25 +9,16 @@ class PrayerService {
   PrayerService() : _log = Logger('PrayerService');
 
   final Logger _log;
-  static const String _baseUrl = 'https://api.ezanvakti.imsakiyem.com';
+  static const String _baseUrl = 'https://ezanvakti.imsakiyem.com/api';
 
-  /// API'den yıllık namaz vakitlerini getirir
-  ///
-  /// [districtId]: İlçe ID'si
-  /// [year]: Yıl (örn: 2024)
-  ///
-  /// Returns: API response JSON'u (Prayer.fromApiJson ile parse edilebilir)
   Future<Result<Map<String, dynamic>>> getPrayerTimes({
     required String districtId,
-    required int year,
   }) async {
     try {
-      _log.info('Fetching prayer times for district: $districtId, year: $year');
+      _log.info('Fetching prayer times for district: $districtId');
 
-      final uri = Uri.parse(
-        '$_baseUrl/prayer-times?district_id=$districtId&year=$year',
-      );
-
+      // API endpoint: /api/prayer-times/{districtId}/yearly
+      final uri = Uri.parse('$_baseUrl/prayer-times/$districtId/yearly');
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {

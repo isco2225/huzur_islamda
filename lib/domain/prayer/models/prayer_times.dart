@@ -102,4 +102,116 @@ class PrayerTimes {
       isha: isha ?? this.isha,
     );
   }
+
+  /// Tüm namaz vakitlerini sıralı liste olarak döndürür
+  List<({String name, DateTime time})> get allPrayerTimes {
+    return [
+      (name: 'İmsak', time: fajr),
+      (
+        name: 'Güneş',
+        time: dhuhr,
+      ), // Not: Güneş vakti için ayrı field yok, dhuhr kullanılıyor
+      (name: 'Öğle', time: dhuhr),
+      (name: 'İkindi', time: asr),
+      (name: 'Akşam', time: maghrib),
+      (name: 'Yatsı', time: isha),
+    ];
+  }
+
+  /// Şu anki zamandan sonraki ilk namaz vaktini ve ismini döndürür
+  /// Eğer bugünün tüm vakitleri geçmişse, yarının ilk vaktini (İmsak) döndürür
+  ({String name, DateTime time})? getNextPrayerTime() {
+    final now = DateTime.now();
+
+    // Bugünün tüm vakitlerini al
+    final todayPrayers = allPrayerTimes;
+
+    // Şu anki zamandan sonraki ilk vakti bul
+    for (final prayer in todayPrayers) {
+      if (prayer.time.isAfter(now)) {
+        return prayer;
+      }
+    }
+
+    // Eğer bugünün tüm vakitleri geçmişse, yarının İmsak vaktini döndür
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    return (
+      name: 'İmsak',
+      time: DateTime(
+        tomorrow.year,
+        tomorrow.month,
+        tomorrow.day,
+        fajr.hour,
+        fajr.minute,
+      ),
+    );
+  }
+
+  /// Şu anki zamandan sonraki vakte kalan süreyi Duration olarak döndürür
+  Duration? getRemainingTimeToNextPrayer() {
+    final nextPrayer = getNextPrayerTime();
+    if (nextPrayer == null) return null;
+
+    final now = DateTime.now();
+    return nextPrayer.time.difference(now);
+  }
+
+  /// Şu anki zamanda hangi namaz vakti içinde olduğumuzu döndürür
+  /// Örneğin: Öğle vakti geçmiş ama İkindi vakti gelmemişse "Öğle" döndürür
+  /// Eğer hiçbir vakit içinde değilsek (tüm vakitler geçmişse) "Yatsı" döndürür
+  String? getCurrentPrayerTime() {
+    final now = DateTime.now();
+
+    // Vakitleri sırayla kontrol et
+    // İmsak (fajr) -> Öğle (dhuhr) -> İkindi (asr) -> Akşam (maghrib) -> Yatsı (isha)
+
+    // İmsak ile Öğle arası -> İmsak
+    if (now.isAfter(fajr) && now.isBefore(dhuhr)) {
+      return 'İmsak';
+    }
+
+    // Öğle ile İkindi arası -> Öğle
+    if (now.isAfter(dhuhr) && now.isBefore(asr)) {
+      return 'Öğle';
+    }
+
+    // İkindi ile Akşam arası -> İkindi
+    if (now.isAfter(asr) && now.isBefore(maghrib)) {
+      return 'İkindi';
+    }
+
+    // Akşam ile Yatsı arası -> Akşam
+    if (now.isAfter(maghrib) && now.isBefore(isha)) {
+      return 'Akşam';
+    }
+
+    // Yatsı'dan sonra (yarının İmsak'ına kadar) -> Yatsı
+    if (now.isAfter(isha)) {
+      return 'Yatsı';
+    }
+
+    // İmsak'tan önce (dünün Yatsı'sından sonra) -> Yatsı
+    if (now.isBefore(fajr)) {
+      return 'Yatsı';
+    }
+
+    // Tam vakit anında (eşitse) -> O vakit
+    if (now.hour == fajr.hour && now.minute == fajr.minute) {
+      return 'İmsak';
+    }
+    if (now.hour == dhuhr.hour && now.minute == dhuhr.minute) {
+      return 'Öğle';
+    }
+    if (now.hour == asr.hour && now.minute == asr.minute) {
+      return 'İkindi';
+    }
+    if (now.hour == maghrib.hour && now.minute == maghrib.minute) {
+      return 'Akşam';
+    }
+    if (now.hour == isha.hour && now.minute == isha.minute) {
+      return 'Yatsı';
+    }
+
+    return null;
+  }
 }
