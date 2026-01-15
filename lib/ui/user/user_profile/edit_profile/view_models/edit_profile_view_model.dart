@@ -15,7 +15,10 @@ class EditProfileViewModel {
       _updateProfile,
       debugLabel: 'EditProfileViewModel.updateProfile',
     );
-
+    updateUserLocation = Command1(
+      _updateUserLocation,
+      debugLabel: 'EditProfileViewModel.updateUserLocation',
+    );
     // DEFINE LISTENERS
   }
 
@@ -49,9 +52,14 @@ class EditProfileViewModel {
   >
   updateProfile;
 
+  late Command1<void, ({String districtId, String city, String country})>
+  updateUserLocation;
+
   // DISPOSE
   void dispose() {
     updateProfile.dispose();
+    updateUserLocation.dispose();
+    _log.fine('EditProfileViewModel Disposed');
   }
 
   // FUNCTIONS
@@ -62,21 +70,21 @@ class EditProfileViewModel {
       String? dateOfBirth,
       String? maritalStatus,
     })
-    commands,
+    arguments,
   ) async {
     // check if no changes are made
-    if (commands.name == currentUser.value.name &&
-        commands.surname == currentUser.value.surname &&
-        commands.dateOfBirth == currentUser.value.dateOfBirth &&
-        commands.maritalStatus == currentUser.value.maritalStatus) {
+    if (arguments.name == currentUser.value.name &&
+        arguments.surname == currentUser.value.surname &&
+        arguments.dateOfBirth == currentUser.value.dateOfBirth &&
+        arguments.maritalStatus == currentUser.value.maritalStatus) {
       return Result.ok(null);
     }
     final result = await _userRepository.updateUser(
       uid: currentUser.value.uid,
-      name: commands.name,
-      surname: commands.surname,
-      dateOfBirth: commands.dateOfBirth,
-      maritalStatus: commands.maritalStatus,
+      name: arguments.name,
+      surname: arguments.surname,
+      dateOfBirth: arguments.dateOfBirth,
+      maritalStatus: arguments.maritalStatus,
     );
 
     switch (result) {
@@ -85,6 +93,25 @@ class EditProfileViewModel {
         return result;
       case Error():
         _log.warning('Failed to update profile', result.error);
+        return result;
+    }
+  }
+
+  Future<Result<void>> _updateUserLocation(
+    ({String districtId, String city, String country}) arguments,
+  ) async {
+    final result = await _userRepository.updateUserLocation(
+      uid: currentUser.value.uid,
+      country: arguments.country,
+      city: arguments.city,
+      districtId: arguments.districtId,
+    );
+    switch (result) {
+      case Ok():
+        _log.info('User location updated successfully');
+        return result;
+      case Error():
+        _log.warning('Failed to update user location', result.error);
         return result;
     }
   }

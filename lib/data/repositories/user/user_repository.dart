@@ -42,4 +42,11 @@ abstract class UserRepository {
   void wipeUser();
 
   Future<Result<bool>> initUser({required String uid});
+
+  Future<Result<void>> updateUserLocation({
+    required String uid,
+    required String country,
+    required String city,
+    required String districtId,
+  });
 }

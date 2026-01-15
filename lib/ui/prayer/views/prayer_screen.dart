@@ -14,13 +14,17 @@ class PrayerScreen extends StatefulWidget {
 class _PrayerScreenState extends State<PrayerScreen> {
   late final PrayerViewModel _viewModel;
   late final PlaceSelectorViewModel _placeSelectorViewModel;
-
+  late final EditProfileViewModel _editProfileViewModel;
   @override
   void initState() {
     super.initState();
     _viewModel = PrayerViewModel();
     _placeSelectorViewModel = PlaceSelectorViewModel(
       placesRepository: context.read<PlacesRepository>(),
+    );
+    _editProfileViewModel = EditProfileViewModel(
+      userRepository: context.read<UserRepository>(),
+      authRepository: context.read<AuthRepository>(),
     );
     _placeSelectorViewModel.countrySelector.getCountries.handleError(
       context,
@@ -30,12 +34,21 @@ class _PrayerScreenState extends State<PrayerScreen> {
       context,
       successMessage: 'Ülkeler başarıyla yüklendi',
     );
+    _editProfileViewModel.updateUserLocation.handleError(
+      context,
+      showSnackBar: true,
+    );
+    _editProfileViewModel.updateUserLocation.handleCompleted(
+      context,
+      successMessage: 'Konum başarıyla güncellendi!',
+    );
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
     _placeSelectorViewModel.dispose();
+    _editProfileViewModel.dispose();
     super.dispose();
   }
 
@@ -44,6 +57,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     return PrayerView(
       viewModel: _viewModel,
       placeSelectorViewModel: _placeSelectorViewModel,
+      editProfileViewModel: _editProfileViewModel,
     );
   }
 }

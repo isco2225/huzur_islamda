@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/app.dart';
 import '../../../ui.dart';
 
 class PlaceSelector extends StatefulWidget {
   const PlaceSelector({
     super.key,
     required this.viewModel,
-    required this.onCountryIdSelected,
-    this.onStateIdSelected,
-    this.onDistrictIdSelected,
+    required this.editProfileViewModel,
   });
   final PlaceSelectorViewModel viewModel;
-  final Function(String) onCountryIdSelected;
-  final Function(String)? onStateIdSelected;
-  final Function(String)? onDistrictIdSelected;
-
+  final EditProfileViewModel editProfileViewModel;
   @override
   State<PlaceSelector> createState() => _PlaceSelectorState();
 }
@@ -133,6 +129,54 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                     PlaceSelectionMode.district => _buildDistrictList(),
                   },
                 ),
+                if (selectionMode == PlaceSelectionMode.district)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ValueListenableBuilder<String?>(
+                      valueListenable:
+                          widget.viewModel.districtSelector.selectedDistrictId,
+                      builder: (context, selectedDistrictId, _) {
+                        if (selectedDistrictId == null) {
+                          return const SizedBox.shrink();
+                        }
+                        return SizedBox(
+                          width: double.infinity,
+                          child: AppButton(
+                            text: 'Vakitleri Getir',
+                            onPressed: () async {
+                              await widget
+                                  .editProfileViewModel
+                                  .updateUserLocation
+                                  .execute((
+                                    country:
+                                        widget
+                                            .viewModel
+                                            .countrySelector
+                                            .selectedCountryId
+                                            .value ??
+                                        '',
+                                    city:
+                                        widget
+                                            .viewModel
+                                            .stateSelector
+                                            .selectedStateId
+                                            .value ??
+                                        '',
+                                    districtId: selectedDistrictId,
+                                  ));
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            running: widget
+                                .editProfileViewModel
+                                .updateUserLocation
+                                .running,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
               ],
             );
           },
@@ -165,7 +209,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                           onTap: () {
                             // Ülke seçildi -> states'leri getir
                             final countryId = filteredCountries[index].id;
-                            widget.onCountryIdSelected(countryId);
                             countrySelector.selectCountry.execute(countryId);
                             // Arama sorgusunu temizle
                             _searchQueryController.clear();
@@ -200,7 +243,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                           onTap: () {
                             // Şehir seçildi -> districts'leri getir
                             final stateId = filteredStates[index].id;
-                            widget.onStateIdSelected?.call(stateId);
                             stateSelector.selectState.execute(stateId);
                             // Arama sorgusunu temizle
                             _searchQueryController.clear();
@@ -230,12 +272,8 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                         itemBuilder: (context, index) => ListTile(
                           title: Text(filteredDistricts[index].name),
                           onTap: () {
-                            // İlçe seçildi - son adım
                             final districtId = filteredDistricts[index].id;
                             districtSelector.selectDistrict.execute(districtId);
-                            widget.onDistrictIdSelected?.call(districtId);
-                            // Dialog'u kapat
-                            Navigator.of(context).pop();
                           },
                         ),
                       ),

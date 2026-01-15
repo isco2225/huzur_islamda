@@ -3,19 +3,27 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../ui.dart';
 
-class PrayerView extends StatelessWidget {
+class PrayerView extends StatefulWidget {
   const PrayerView({
     super.key,
     required this.viewModel,
     required this.placeSelectorViewModel,
+    required this.editProfileViewModel,
   });
 
   final PrayerViewModel viewModel;
   final PlaceSelectorViewModel placeSelectorViewModel;
+  final EditProfileViewModel editProfileViewModel;
 
+  @override
+  State<PrayerView> createState() => _PrayerViewState();
+}
+
+class _PrayerViewState extends State<PrayerView> {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+
     return BaseScaffold(
       appBar: AppBar(
         title: Text('Ezan Vakitleri'),
@@ -35,8 +43,10 @@ class PrayerView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ValueListenableBuilder(
-                    valueListenable:
-                        placeSelectorViewModel.countrySelector.selectedCountryId,
+                    valueListenable: widget
+                        .placeSelectorViewModel
+                        .countrySelector
+                        .selectedCountryId,
                     builder: (context, selectedCountryId, _) => Text(
                       selectedCountryId ?? '',
                       style: TextStyle(
@@ -114,31 +124,27 @@ class PrayerView extends StatelessWidget {
 
               // Show place selector button.
               ValueListenableBuilder<bool>(
-                valueListenable:
-                    placeSelectorViewModel.countrySelector.getCountries.running,
+                valueListenable: widget
+                    .placeSelectorViewModel
+                    .countrySelector
+                    .getCountries
+                    .running,
                 builder: (context, isLoading, child) {
                   return TextButton(
                     onPressed: isLoading
                         ? null
                         : () {
-                            placeSelectorViewModel.countrySelector.getCountries
+                            widget
+                                .placeSelectorViewModel
+                                .countrySelector
+                                .getCountries
                                 .execute();
                             showDialog<void>(
                               context: context,
                               builder: (context) => PlaceSelector(
-                                viewModel: placeSelectorViewModel,
-                                onCountryIdSelected: (countryId) {
-                                  // Country selection is now handled automatically
-                                  // by the CountrySelectorViewModel
-                                },
-                                onStateIdSelected: (stateId) {
-                                  // State selection is now handled automatically
-                                  // by the StateSelectorViewModel
-                                },
-                                onDistrictIdSelected: (districtId) {
-                                  // İlçe seçildiğinde yapılacak işlem
-                                  // TODO: Namaz vakitlerini getir
-                                },
+                                viewModel: widget.placeSelectorViewModel,
+                                editProfileViewModel:
+                                    widget.editProfileViewModel,
                               ),
                             );
                           },

@@ -147,22 +147,50 @@ class FirestoreUserService {
     }
   }
 
+  Future<Result<User?>> updateUserLocation({
+    required String uid,
+    required String country,
+    required String city,
+    required String districtId,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'country': country,
+        'city': city,
+        'districtId': districtId,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+      await _firestore.collection(_collectionName).doc(uid).update(updateData);
+      final doc = await _firestore.collection(_collectionName).doc(uid).get();
+      final data = doc.data();
+      if (data != null) {
+        final cleanData = _convertTimestampsToDateTime(data);
+        final user = User.fromJson(cleanData);
+        return Result.ok(user);
+      }
+      return Result.ok(null);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to update user location: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to update user location: $e'));
+    }
+  }
+
   /// Firestore'dan gelen Timestamp'leri DateTime'a dönüştürür
   Map<String, dynamic> _convertTimestampsToDateTime(Map<String, dynamic> data) {
     final cleanData = Map<String, dynamic>.from(data);
-
     if (cleanData['createdAt'] is Timestamp) {
       cleanData['createdAt'] = (cleanData['createdAt'] as Timestamp)
           .toDate()
           .toIso8601String();
     }
-
     if (cleanData['updatedAt'] is Timestamp) {
       cleanData['updatedAt'] = (cleanData['updatedAt'] as Timestamp)
           .toDate()
           .toIso8601String();
     }
-
     return cleanData;
   }
 

@@ -12,6 +12,9 @@ class User {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final bool isRegistered;
+  final String? country;
+  final String? city;
+  final String? districtId;
   const User({
     required this.uid,
     required this.email,
@@ -25,6 +28,10 @@ class User {
 
     /// If this value is false then [User] is not registered yet.
     required this.isRegistered,
+
+    required this.country,
+    required this.city,
+    required this.districtId,
   });
 
   factory User.fromJson(Map<String, Object?> json) {
@@ -50,6 +57,9 @@ class User {
       createdAt: parseDateTime(json['createdAt']) ?? DateTime.now(),
       updatedAt: parseDateTime(json['updatedAt']) ?? DateTime.now(),
       isRegistered: json['isRegistered'] as bool? ?? false,
+      country: json['country'] as String? ?? '',
+      city: json['city'] as String? ?? '',
+      districtId: json['districtId'] as String? ?? '',
     );
   }
 
@@ -64,6 +74,9 @@ class User {
     createdAt: null,
     updatedAt: null,
     isRegistered: false,
+    country: '',
+    city: '',
+    districtId: '',
   );
 
   Map<String, dynamic> toJson() {
@@ -78,6 +91,9 @@ class User {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'isRegistered': isRegistered,
+      'country': country,
+      'city': city,
+      'districtId': districtId,
     };
   }
 
@@ -92,6 +108,9 @@ class User {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isRegistered,
+    String? country,
+    String? city,
+    String? districtId,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -104,6 +123,9 @@ class User {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isRegistered: isRegistered ?? this.isRegistered,
+      country: country ?? this.country,
+      city: city ?? this.city,
+      districtId: districtId ?? this.districtId,
     );
   }
 

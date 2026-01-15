@@ -180,4 +180,38 @@ class UserRepositoryRemote extends UserRepository {
   void wipeUser() {
     _currentUser.value = User.empty();
   }
+
+  @override
+  Future<Result<void>> updateUserLocation({
+    required String uid,
+    required String country,
+    required String city,
+    required String districtId,
+  }) async {
+    try {
+      final result = await _firestoreUserService.updateUserLocation(
+        uid: uid,
+        country: country,
+        city: city,
+        districtId: districtId,
+      );
+      switch (result) {
+        case Ok():
+          if (result.asOk.value != null) {
+            _currentUser.value = _currentUser.value.copyWith(
+              country: country,
+              city: city,
+              districtId: districtId,
+            );
+            return Result.ok(null);
+          } else {
+            return Result.error(Exception('User not found on firestore'));
+          }
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to update user location: $e'));
+    }
+  }
 }
