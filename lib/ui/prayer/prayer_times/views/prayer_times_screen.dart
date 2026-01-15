@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../domain/domain.dart';
 import '../view_models/prayer_times_view_model.dart';
 import 'prayer_times_view.dart';
 
@@ -16,7 +18,9 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = PrayerTimesViewModel();
+    _viewModel = PrayerTimesViewModel(
+      prayerTimeUseCase: context.read<PrayerTimeUseCase>(),
+    );
 
     // TODO: Set up error handlers
     // _viewModel.someCommand.handleError(context);

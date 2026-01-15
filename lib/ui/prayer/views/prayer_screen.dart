@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/data.dart';
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class PrayerScreen extends StatefulWidget {
@@ -12,13 +13,36 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  late final PrayerViewModel _viewModel;
+  late final PrayerTimesViewModel _prayerTimesViewModel;
   late final PlaceSelectorViewModel _placeSelectorViewModel;
   late final EditProfileViewModel _editProfileViewModel;
+  late final FetchUserViewModel _fetchUserViewModel;
+  late final User _user;
   @override
   void initState() {
     super.initState();
-    _viewModel = PrayerViewModel();
+    _fetchUserViewModel = FetchUserViewModel(
+      userRepository: context.read<UserRepository>(),
+      authRepository: context.read<AuthRepository>(),
+    );
+    _user = _fetchUserViewModel.currentUser.value;
+    _prayerTimesViewModel = PrayerTimesViewModel(
+      prayerTimeUseCase: context.read<PrayerTimeUseCase>(),
+    );
+    _prayerTimesViewModel.getPrayerTimes.execute((
+      districtId: '',
+      city: '',
+      country: '',
+      userId: '',
+    ));
+    _prayerTimesViewModel.getPrayerTimes.handleError(
+      context,
+      showSnackBar: true,
+    );
+    _prayerTimesViewModel.getPrayerTimes.handleCompleted(
+      context,
+      successMessage: 'Namaz vakitleri başarıyla yüklendi',
+    );
     _placeSelectorViewModel = PlaceSelectorViewModel(
       placesRepository: context.read<PlacesRepository>(),
     );
@@ -46,7 +70,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   void dispose() {
-    _viewModel.dispose();
+    _prayerTimesViewModel.dispose();
     _placeSelectorViewModel.dispose();
     _editProfileViewModel.dispose();
     super.dispose();
@@ -55,7 +79,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   Widget build(BuildContext context) {
     return PrayerView(
-      viewModel: _viewModel,
+      user: _user,
+      prayerTimesViewModel: _prayerTimesViewModel,
       placeSelectorViewModel: _placeSelectorViewModel,
       editProfileViewModel: _editProfileViewModel,
     );
