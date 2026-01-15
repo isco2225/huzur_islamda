@@ -2,7 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 
 import '../../app/app.dart';
-import '../../domain/dhikr/models/dhikr.dart';
+import '../../domain/domain.dart';
 
 class HiveInitializerService {
   HiveInitializerService() : _log = Logger('HiveInitializer');
@@ -34,6 +34,18 @@ class HiveInitializerService {
     if (!Hive.isAdapterRegistered(0)) {
       Hive.registerAdapter(DhikrAdapter());
       _log.info('Registered DhikrAdapter');
+    }
+
+    // Prayer
+    if (!Hive.isAdapterRegistered(1)) {
+      Hive.registerAdapter(PrayerAdapter());
+      _log.info('Registered PrayerAdapter');
+    }
+
+    // PrayerTimes
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(PrayerTimesAdapter());
+      _log.info('Registered PrayerTimesAdapter');
     }
 
     // TODO(omran): Register other model adapters here (User, Post, etc.)

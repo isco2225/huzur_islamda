@@ -5,3 +5,4 @@ export 'permission/permission.dart';
 export 'places/places.dart';
 export 'post/post.dart';
 export 'user/user.dart';
+export 'prayer/prayer.dart';
