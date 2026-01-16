@@ -21,8 +21,8 @@ class _RemainingTimeToNextPrayerState extends State<RemainingTimeToNextPrayer> {
   @override
   void initState() {
     super.initState();
-    // Her saniye güncelle
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    // Her dakika güncelle
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
       if (mounted) {
         setState(() {});
       }
@@ -106,14 +106,13 @@ class _RemainingTimeToNextPrayerState extends State<RemainingTimeToNextPrayer> {
 
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
-    final seconds = duration.inSeconds.remainder(60);
 
     if (hours > 0) {
       return '$hours Saat $minutes Dakika';
     } else if (minutes > 0) {
-      return '$minutes Dakika $seconds Saniye';
+      return '$minutes Dakika';
     } else {
-      return '$seconds Saniye';
+      return '1 Dakika';
     }
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
@@ -24,8 +22,6 @@ class PrayerView extends StatefulWidget {
 }
 
 class _PrayerViewState extends State<PrayerView> {
-  Timer? _timer;
-
   @override
   void initState() {
     super.initState();
@@ -55,19 +51,6 @@ class _PrayerViewState extends State<PrayerView> {
         }
       });
     }
-
-    // Her saniye güncelle (şu anki vakti highlight etmek için)
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 
   @override

@@ -1,46 +1,72 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../domain/domain.dart';
 import 'prayer_time_displayer.dart';
 
-class PrayerTimesList extends StatelessWidget {
+class PrayerTimesList extends StatefulWidget {
   const PrayerTimesList({super.key, required this.prayerTimes});
 
   final PrayerTimes prayerTimes;
 
   @override
+  State<PrayerTimesList> createState() => _PrayerTimesListState();
+}
+
+class _PrayerTimesListState extends State<PrayerTimesList> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Her dakika güncelle (şu anki vakti highlight etmek için)
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentPrayerTime = prayerTimes.getCurrentPrayerTime();
+    final currentPrayerTime = widget.prayerTimes.getCurrentPrayerTime();
 
     return Column(
       children: [
         PrayerTimeDisplayer(
           name: 'İmsak',
-          time: _formatTime(prayerTimes.fajr),
+          time: _formatTime(widget.prayerTimes.fajr),
           isHighlighted: currentPrayerTime == 'İmsak',
         ),
         _buildDivider(),
         PrayerTimeDisplayer(
           name: 'Öğle',
-          time: _formatTime(prayerTimes.dhuhr),
+          time: _formatTime(widget.prayerTimes.dhuhr),
           isHighlighted: currentPrayerTime == 'Öğle',
         ),
         _buildDivider(),
         PrayerTimeDisplayer(
           name: 'İkindi',
-          time: _formatTime(prayerTimes.asr),
+          time: _formatTime(widget.prayerTimes.asr),
           isHighlighted: currentPrayerTime == 'İkindi',
         ),
         _buildDivider(),
         PrayerTimeDisplayer(
           name: 'Akşam',
-          time: _formatTime(prayerTimes.maghrib),
+          time: _formatTime(widget.prayerTimes.maghrib),
           isHighlighted: currentPrayerTime == 'Akşam',
         ),
         _buildDivider(),
         PrayerTimeDisplayer(
           name: 'Yatsı',
-          time: _formatTime(prayerTimes.isha),
+          time: _formatTime(widget.prayerTimes.isha),
           isHighlighted: currentPrayerTime == 'Yatsı',
         ),
       ],
