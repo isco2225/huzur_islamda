@@ -92,6 +92,7 @@ class HiveService<T> {
   /// Get all items from the box as a list
   Future<Result<List<T>>> getAll() async {
     try {
+      await Future.delayed(const Duration(seconds: 5));
       final box = await _getBox;
       final values = box.values.toList();
       _log.info('Retrieved ${values.length} items');

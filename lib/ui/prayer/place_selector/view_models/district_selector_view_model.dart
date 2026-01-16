@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 import '../../../../domain/domain.dart';
+import 'base_selector_view_model.dart';
 
 /// ViewModel for district selection and filtering
-class DistrictSelectorViewModel {
+class DistrictSelectorViewModel extends BaseSelectorViewModel<District> {
   DistrictSelectorViewModel({required PlacesRepository placesRepository})
-    : _placesRepository = placesRepository {
+    : _placesRepository = placesRepository,
+      super(loggerName: 'DistrictSelectorViewModel') {
     // DEFINE COMMANDS
     getDistricts = Command1<void, String>(
       _getDistricts,
@@ -20,54 +21,39 @@ class DistrictSelectorViewModel {
     );
 
     // DEFINE LISTENERS
-    _districts.addListener(_filterDistricts);
-    _searchQuery.addListener(_filterDistricts);
-
-    // Initial filter
-    _filterDistricts();
+    _districts.addListener(filterItems);
   }
-
-  // LOGGER
-  final _log = Logger('DistrictSelectorViewModel');
 
   // REPOSITORIES
   final PlacesRepository _placesRepository;
 
   // DOMAIN
-  ValueListenable<List<District>> get districts => _districts;
+  @override
+  ValueListenable<List<District>> get items => _districts;
   final ValueNotifier<List<District>> _districts =
       ValueNotifier<List<District>>([]);
 
-  /// Search query for filtering districts
-  ValueNotifier<String> get searchQuery => _searchQuery;
-  final ValueNotifier<String> _searchQuery = ValueNotifier<String>('');
+  /// Districts list
+  ValueListenable<List<District>> get districts => _districts;
 
   /// Filtered districts based on search query
-  ValueListenable<List<District>> get filteredDistricts => _filteredDistricts;
-  final ValueNotifier<List<District>> _filteredDistricts =
-      ValueNotifier<List<District>>([]);
+  ValueListenable<List<District>> get filteredDistricts => filteredItems;
 
   /// Selected district ID
-  ValueNotifier<String?> get selectedDistrictId => _selectedDistrictId;
-  final ValueNotifier<String?> _selectedDistrictId = ValueNotifier<String?>(
-    null,
-  );
+  ValueNotifier<String?> get selectedDistrictId => selectedId;
 
   // COMMANDS
   late final Command1<void, String> getDistricts;
   late final Command1<void, String> selectDistrict;
 
   // DISPOSE
+  @override
   void dispose() {
-    _districts.removeListener(_filterDistricts);
-    _searchQuery.removeListener(_filterDistricts);
-    _searchQuery.dispose();
-    _filteredDistricts.dispose();
+    _districts.removeListener(filterItems);
     _districts.dispose();
-    _selectedDistrictId.dispose();
     getDistricts.dispose();
     selectDistrict.dispose();
-    _log.fine('DistrictSelectorViewModel Disposed');
+    super.dispose();
   }
 
   // FUNCTIONS
@@ -75,54 +61,34 @@ class DistrictSelectorViewModel {
   /// Get districts for a specific state
   Future<Result<void>> _getDistricts(String stateId) async {
     try {
-      _log.fine('Getting districts for state: $stateId');
+      log.fine('Getting districts for state: $stateId');
       final result = await _placesRepository.getDistricts(stateId);
       switch (result) {
         case Ok():
           _districts.value = result.asOk.value;
-          _log.fine(
+          log.fine(
             '${result.asOk.value.length} districts fetched successfully',
           );
           return Result.ok(null);
         case Error():
-          _log.severe('Failed to get districts: ${result.asError.error}');
+          log.severe('Failed to get districts: ${result.asError.error}');
           return Result.error(result.asError.error);
       }
     } catch (e) {
-      _log.severe('Exception while getting districts: $e');
+      log.severe('Exception while getting districts: $e');
       return Result.error(Exception('Failed to get districts: $e'));
     }
   }
 
   /// Select a district by ID
   Future<Result<void>> _selectDistrict(String districtId) async {
-    _selectedDistrictId.value = districtId;
-    _log.fine('District selected: $districtId');
-    return Result.ok(null);
-  }
-
-  /// Filter districts based on search query
-  void _filterDistricts() {
-    final query = _searchQuery.value.toLowerCase().trim();
-    final allDistricts = _districts.value;
-
-    if (query.isEmpty) {
-      _filteredDistricts.value = allDistricts;
-    } else {
-      _filteredDistricts.value = allDistricts
-          .where((district) => district.name.toLowerCase().startsWith(query))
-          .toList();
-    }
-
-    _log.fine(
-      'Filtered ${_filteredDistricts.value.length} districts with query: "$query"',
-    );
+    return selectItem(districtId);
   }
 
   /// Reset selection and districts
+  @override
   void resetSelection() {
-    _selectedDistrictId.value = null;
+    super.resetSelection();
     _districts.value = [];
-    _searchQuery.value = '';
   }
 }

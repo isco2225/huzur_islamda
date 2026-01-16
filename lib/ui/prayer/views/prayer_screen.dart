@@ -17,7 +17,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
   late final PlaceSelectorViewModel _placeSelectorViewModel;
   late final EditProfileViewModel _editProfileViewModel;
   late final FetchUserViewModel _fetchUserViewModel;
-  late final User _user;
   @override
   void initState() {
     super.initState();
@@ -25,11 +24,12 @@ class _PrayerScreenState extends State<PrayerScreen> {
       userRepository: context.read<UserRepository>(),
       authRepository: context.read<AuthRepository>(),
     );
-    _user = _fetchUserViewModel.currentUser.value;
     _prayerTimesViewModel = PrayerTimesViewModel(
       prayerTimeUseCase: context.read<PrayerTimeUseCase>(),
     );
-    // Error ve success handler'ları ayarla
+    _placeSelectorViewModel = PlaceSelectorViewModel(
+      placesRepository: context.read<PlacesRepository>(),
+    );
     _prayerTimesViewModel.getPrayerTimes.handleError(
       context,
       showSnackBar: true,
@@ -37,9 +37,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _prayerTimesViewModel.getPrayerTimes.handleCompleted(
       context,
       successMessage: 'Namaz vakitleri başarıyla yüklendi',
-    );
-    _placeSelectorViewModel = PlaceSelectorViewModel(
-      placesRepository: context.read<PlacesRepository>(),
     );
     _editProfileViewModel = EditProfileViewModel(
       userRepository: context.read<UserRepository>(),
@@ -81,13 +78,14 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _prayerTimesViewModel.dispose();
     _placeSelectorViewModel.dispose();
     _editProfileViewModel.dispose();
+    _fetchUserViewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PrayerView(
-      user: _user,
+      user: _fetchUserViewModel.currentUser.value,
       prayerTimesViewModel: _prayerTimesViewModel,
       placeSelectorViewModel: _placeSelectorViewModel,
       editProfileViewModel: _editProfileViewModel,
