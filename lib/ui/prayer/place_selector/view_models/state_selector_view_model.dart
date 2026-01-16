@@ -39,6 +39,21 @@ class StateSelectorViewModel extends BaseSelectorViewModel<StateModel> {
   /// Selected state ID
   ValueNotifier<String?> get selectedStateId => selectedId;
 
+  /// Get selected state name (returns empty string if not found)
+  String getSelectedStateName() {
+    final stateId = selectedStateId.value;
+    if (stateId == null) return '';
+    try {
+      final state = states.value.firstWhere(
+        (s) => s.id == stateId,
+        orElse: () => StateModel(id: '', name: ''),
+      );
+      return state.name;
+    } catch (e) {
+      return '';
+    }
+  }
+
   // COMMANDS
   late final Command1<void, String> getStates;
   late final Command1<void, String> selectState;

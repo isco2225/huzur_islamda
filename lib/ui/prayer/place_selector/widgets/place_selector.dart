@@ -153,20 +153,10 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                                   .editProfileViewModel
                                   .updateUserLocation
                                   .execute((
-                                    country:
-                                        widget
-                                            .viewModel
-                                            .countrySelector
-                                            .selectedCountryId
-                                            .value ??
-                                        '',
-                                    city:
-                                        widget
-                                            .viewModel
-                                            .stateSelector
-                                            .selectedStateId
-                                            .value ??
-                                        '',
+                                    country: widget.viewModel.countrySelector
+                                        .getSelectedCountryName(),
+                                    city: widget.viewModel.stateSelector
+                                        .getSelectedStateName(),
                                     districtId: selectedDistrictId,
                                   ));
                               if (context.mounted) {

@@ -16,7 +16,6 @@ class PrayerService {
   }) async {
     try {
       _log.info('Fetching prayer times for district: $districtId');
-      await Future.delayed(const Duration(seconds: 5));
       // API endpoint: /api/prayer-times/{districtId}/yearly
       final uri = Uri.parse('$_baseUrl/prayer-times/$districtId/yearly');
       final response = await http.get(uri);

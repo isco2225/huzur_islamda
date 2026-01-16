@@ -37,6 +37,21 @@ class CountrySelectorViewModel extends BaseSelectorViewModel<Country> {
   /// Selected country ID
   ValueNotifier<String?> get selectedCountryId => selectedId;
 
+  /// Get selected country name (returns empty string if not found)
+  String getSelectedCountryName() {
+    final countryId = selectedCountryId.value;
+    if (countryId == null) return '';
+    try {
+      final country = countries.value.firstWhere(
+        (c) => c.id == countryId,
+        orElse: () => Country(id: '', name: ''),
+      );
+      return country.name;
+    } catch (e) {
+      return '';
+    }
+  }
+
   // COMMANDS
   late final Command0<void> getCountries;
   late final Command1<void, String> selectCountry;

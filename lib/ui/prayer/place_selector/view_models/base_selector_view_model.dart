@@ -7,7 +7,7 @@ import '../../../../app/app.dart';
 /// Handles common functionality: search, filtering, and selection
 abstract class BaseSelectorViewModel<T extends Object> {
   BaseSelectorViewModel({required String loggerName})
-      : _log = Logger(loggerName) {
+    : _log = Logger(loggerName) {
     // DEFINE LISTENERS
     _searchQuery.addListener(_filterItems);
 
