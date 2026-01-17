@@ -41,18 +41,12 @@ class _RemainingTimeToNextPrayerState extends State<RemainingTimeToNextPrayer> {
       return const SizedBox.shrink();
     }
 
-    final nextPrayer = widget.prayerTimes!.getNextPrayerTime();
-    if (nextPrayer == null) {
-      return const SizedBox.shrink();
-    }
-
     final remainingTime = widget.prayerTimes!.getRemainingTimeToNextPrayer();
     if (remainingTime == null) {
       return const SizedBox.shrink();
     }
 
     final formattedTime = _formatDuration(remainingTime);
-    final prayerName = nextPrayer.name;
 
     return Container(
       padding: context.containerPadding,
@@ -72,7 +66,7 @@ class _RemainingTimeToNextPrayerState extends State<RemainingTimeToNextPrayer> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '$prayerName\'e Kalan Süre',
+            'Kalan Süre',
             style: TextStyle(
               fontSize: context.isSmallScreen ? 12 : 16,
               fontWeight: FontWeight.w500,

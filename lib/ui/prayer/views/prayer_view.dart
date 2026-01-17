@@ -25,9 +25,7 @@ class _PrayerViewState extends State<PrayerView> {
   @override
   void initState() {
     super.initState();
-    // ekran ilk açıldığında namaz vakitlerini getir.
-    // eğer kullanıcının daha önce girdiği konum varsa, onu kullanır.
-    // eğer kullanıcının daha önce girdiği konum yoksa, konum seçme ekranını gösterir.
+    // if user has location, get prayer times, otherwise show place selector.
     if (widget.user.districtId != null &&
         widget.user.city != null &&
         widget.user.country != null) {
@@ -61,6 +59,12 @@ class _PrayerViewState extends State<PrayerView> {
         title: Text('Ezan Vakitleri'),
         backgroundColor: AppColors.background,
         elevation: 0,
+        actions: [
+          PrayerPopMenuButton(
+            placeSelectorViewModel: widget.placeSelectorViewModel,
+            editProfileViewModel: widget.editProfileViewModel,
+          ),
+        ],
       ),
       safeArea: true,
       body: ValueListenableBuilder(
@@ -77,16 +81,18 @@ class _PrayerViewState extends State<PrayerView> {
               ),
               child: Column(
                 children: [
-                  // Header: Konum ve Tarih
                   ValueListenableBuilder<User>(
                     valueListenable: widget.editProfileViewModel.currentUser,
                     builder: (context, user, _) {
-                      return PrayerHeader(user: user);
+                      return PrayerHeader(
+                        user: user,
+                        onLocationTap: () {
+                          _showPlaceSelector();
+                        },
+                      );
                     },
                   ),
                   SizedBox(height: responsive.spacingMedium),
-
-                  // Namaz Vakitleri Listesi
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -109,12 +115,10 @@ class _PrayerViewState extends State<PrayerView> {
                     ),
                   ),
                   SizedBox(height: responsive.spacingMedium),
-
-                  // Sonraki Vakit İçin Kalan Süre
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Sonraki vakit için:',
+                      'Sonraki vakit için(${widget.prayerTimesViewModel.prayerTimes.value?.getNextPrayerTime()?.name ?? ''}):',
                       style: TextStyle(
                         fontSize: responsive.isSmallScreen ? 12 : 16,
                         fontWeight: FontWeight.normal,
@@ -130,12 +134,6 @@ class _PrayerViewState extends State<PrayerView> {
                       );
                     },
                   ),
-
-                  // Yer Seçin Butonu
-                  PlaceSelectorButton(
-                    placeSelectorViewModel: widget.placeSelectorViewModel,
-                    editProfileViewModel: widget.editProfileViewModel,
-                  ),
                 ],
               ),
             ),
@@ -143,5 +141,18 @@ class _PrayerViewState extends State<PrayerView> {
         },
       ),
     );
+  }
+
+  void _showPlaceSelector() {
+    widget.placeSelectorViewModel.countrySelector.getCountries.execute();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog<void>(
+        context: context,
+        builder: (context) => PlaceSelector(
+          viewModel: widget.placeSelectorViewModel,
+          editProfileViewModel: widget.editProfileViewModel,
+        ),
+      );
+    });
   }
 }

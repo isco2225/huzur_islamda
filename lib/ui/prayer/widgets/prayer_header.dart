@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../domain/domain.dart';
 
 class PrayerHeader extends StatelessWidget {
-  const PrayerHeader({super.key, required this.user});
+  const PrayerHeader({
+    super.key,
+    required this.user,
+    required this.onLocationTap,
+  });
 
   final User user;
+  final VoidCallback onLocationTap;
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +19,14 @@ class PrayerHeader extends StatelessWidget {
       children: [
         // Ülke ve Şehir bilgisi
         Expanded(
-          child: Text(
-            _buildLocationText(user),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          child: GestureDetector(
+            onTap: onLocationTap,
+            child: Text(
+              _buildLocationText(user),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
         // Tarih bilgisi
