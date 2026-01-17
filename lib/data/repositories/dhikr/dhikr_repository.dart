@@ -11,7 +11,9 @@ abstract class DhikrRepository {
   // Local operations (Hive)
   Future<Result<Dhikr>> saveDhikrLocally({required Dhikr dhikr});
   Future<Result<Dhikr?>> getDhikrLocally({required String dhikrId});
-  Future<Result<void>> getAllDhikrsLocally();
+  Future<Result<List<Dhikr>?>> getAllDhikrsByDateLocally({
+    required DateTime date,
+  });
   Future<Result<void>> deleteDhikrLocally({required String dhikrId});
   Future<Result<void>> clearAllDhikrsLocally();
   Future<Result<void>> updateDhikrLocally({

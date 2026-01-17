@@ -10,6 +10,7 @@ class DhikrView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedDate = viewModel.selectedDate.value;
     return BaseScaffold(
       safeArea: true,
       floatingActionButton: FloatingActionButton(
@@ -21,14 +22,31 @@ class DhikrView extends StatelessWidget {
         child: const Icon(Icons.add, color: Colors.white),
       ),
       appBar: AppBar(title: const Text('Zikirlerim')),
-      body: InfinityScrollableDhikrs(
-        fetchDhikrsViewModel: viewModel,
-        noItemsToShowWidget: Center(child: const NoDhikrsToShow()),
-        onFetch: () => viewModel.fetchDhikrs.execute(),
-        dhikrs: viewModel.dhikrs,
-        hasError: viewModel.fetchDhikrs.error,
-        isFetching: viewModel.fetchDhikrs.running,
-        isAllItemsFetched: viewModel.fetchDhikrs.completed,
+      body: Column(
+        children: [
+          DhikrDateSelector(viewModel: viewModel),
+          Expanded(
+            child: InfinityScrollableDhikrs(
+              fetchDhikrsViewModel: viewModel,
+              noItemsToShowWidget: selectedDate == DateTime.now()
+                  ? const Center(child: NoDhikrsToShow())
+                  : const Center(
+                      child: Text(
+                        'Bu tarih için zikir yok.',
+                        style: TextStyle(color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+              onFetch: () {
+                viewModel.fetchDhikrs.execute(selectedDate);
+              },
+              dhikrs: viewModel.dhikrs,
+              hasError: viewModel.fetchDhikrs.error,
+              isFetching: viewModel.fetchDhikrs.running,
+              isAllItemsFetched: viewModel.fetchDhikrs.completed,
+            ),
+          ),
+        ],
       ),
     );
   }

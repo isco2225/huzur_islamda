@@ -52,13 +52,25 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  Future<Result<void>> getAllDhikrsLocally() async {
-    _log.info('Getting all dhikrs locally');
-    final result = await _hiveService.getAll();
+  Future<Result<List<Dhikr>?>> getAllDhikrsByDateLocally({
+    required DateTime date,
+  }) async {
+    _log.info('Getting all dhikrs locally for date: $date');
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    final result = await _hiveService.getWithFilter((dhikr) {
+      final dhikrDate = DateTime(
+        dhikr.day.year,
+        dhikr.day.month,
+        dhikr.day.day,
+      );
+      return dhikrDate.year == normalizedDate.year &&
+          dhikrDate.month == normalizedDate.month &&
+          dhikrDate.day == normalizedDate.day;
+    });
     switch (result) {
       case Ok():
-        _dhikrsLocally.value = result.asOk.value;
-        return Result.ok(null);
+        final dhikrs = result.asOk.value;
+        return Result.ok(dhikrs);
       case Error():
         return Result.error(result.asError.error);
     }

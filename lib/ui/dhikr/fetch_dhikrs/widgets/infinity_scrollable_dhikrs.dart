@@ -20,7 +20,7 @@ class InfinityScrollableDhikrs extends StatefulWidget {
   final FetchDhikrsViewModel fetchDhikrsViewModel;
   final Widget noItemsToShowWidget;
   final VoidCallback onFetch;
-  final ValueListenable<List<Dhikr>> dhikrs;
+  final ValueListenable<List<Dhikr>?> dhikrs;
   final ValueListenable<bool> hasError;
   final ValueListenable<bool> isFetching;
   final ValueListenable<bool> isAllItemsFetched;
@@ -32,16 +32,13 @@ class InfinityScrollableDhikrs extends StatefulWidget {
 
 class _InfinityScrollableDhikrsState extends State<InfinityScrollableDhikrs> {
   @override
-  void initState() {
-    super.initState();
-    widget.fetchDhikrsViewModel.fetchDhikrs.execute();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<Dhikr>>(
+    return ValueListenableBuilder<List<Dhikr>?>(
       valueListenable: widget.dhikrs,
       builder: (context, dhikrs, _) {
+        if (dhikrs == null) {
+          return widget.noItemsToShowWidget;
+        }
         return InfinityScrollable.listView(
           scrollController: null,
           bottomPadding: 8,
@@ -50,8 +47,9 @@ class _InfinityScrollableDhikrsState extends State<InfinityScrollableDhikrs> {
               children: [
                 Text('Zikirler yüklenemedi. Tekrar deneyiniz.'),
                 TextButton(
-                  onPressed: () =>
-                      widget.fetchDhikrsViewModel.fetchDhikrs.execute(),
+                  onPressed: () {
+                    widget.onFetch();
+                  },
                   child: Text('Retry'),
                 ),
               ],
