@@ -15,6 +15,7 @@ abstract class DhikrRepository {
     required DateTime date,
   });
   Future<Result<void>> deleteDhikrLocally({required String dhikrId});
+  Future<Result<int>> getDhikrsCountLocally();
   Future<Result<void>> clearAllDhikrsLocally();
   Future<Result<void>> updateDhikrLocally({
     required String dhikrId,
@@ -33,7 +34,10 @@ abstract class DhikrRepository {
     required String dhikrId,
     required String userId,
   });
-  Future<Result<List<Dhikr>>> getUnsyncedDhikrs();
+
+  Future<Result<int?>> getFirestoreDhikrsCount({required String userId});
+
+  Future<Result<List<Dhikr>?>> getUnsyncedDhikrs();
 
   // Sync operations
   Future<Result<void>> syncDhikrs({required String userId});

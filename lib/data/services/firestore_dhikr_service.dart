@@ -131,4 +131,25 @@ class FirestoreDhikrService {
       return Result.error(Exception('Failed to delete dhikr: $e'));
     }
   }
+
+  Future<Result<int?>> getDhikrsCount({required String userId}) async {
+    try {
+      final snapshot = await _firestore
+          .collection(_usersCollectionName)
+          .doc(userId)
+          .collection(_collectionName)
+          .count()
+          .get();
+      if (snapshot.count == null) {
+        return Result.ok(null);
+      }
+      return Result.ok(snapshot.count);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to get dhikrs count: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to get dhikrs count: $e'));
+    }
+  }
 }

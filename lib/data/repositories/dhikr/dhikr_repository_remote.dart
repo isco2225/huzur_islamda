@@ -92,6 +92,30 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
+  Future<Result<int>> getDhikrsCountLocally() async {
+    _log.info('Getting dhikrs count locally');
+    final result = await _hiveService.count();
+    switch (result) {
+      case Ok():
+        return Result.ok(result.asOk.value);
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
+  Future<Result<int?>> getFirestoreDhikrsCount({required String userId}) async {
+    _log.info('Getting firebase dhikrs count for user: $userId');
+    final result = await _firestoreDhikrService.getDhikrsCount(userId: userId);
+    switch (result) {
+      case Ok():
+        return Result.ok(result.asOk.value);
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
   Future<Result<void>> clearAllDhikrsLocally() async {
     _log.info('Clearing all dhikrs locally');
     final result = await _hiveService.clear();
@@ -148,8 +172,13 @@ class DhikrRepositoryRemote implements DhikrRepository {
     required String userId,
   }) async {
     _log.info('Getting all dhikrs from Firestore for user: $userId');
-    // TODO: Firestore implementation
-    return Result.error(Exception('Not implemented yet'));
+    final result = await _firestoreDhikrService.fetchAllDhikrs(userId: userId);
+    switch (result) {
+      case Ok():
+        return Result.ok(result.asOk.value);
+      case Error():
+        return Result.error(result.asError.error);
+    }
   }
 
   @override
@@ -173,31 +202,36 @@ class DhikrRepositoryRemote implements DhikrRepository {
   // ========== SYNC OPERATIONS ==========
 
   @override
-  Future<Result<List<Dhikr>>> getUnsyncedDhikrs() async {
+  Future<Result<List<Dhikr>?>> getUnsyncedDhikrs() async {
     _log.info('Getting unsynced dhikrs');
-    final result = await _hiveService.getAll();
+    final result = await _hiveService.getWithFilter((dhikr) => !dhikr.isSynced);
     switch (result) {
       case Ok():
-        final unsynced = result.asOk.value.where((d) => !d.isSynced).toList();
-        _log.info('Found ${unsynced.length} unsynced dhikrs');
-        return Result.ok(unsynced);
+        final unsyncedDhikrs = result.asOk.value;
+        if (unsyncedDhikrs == null) {
+          _log.info('No unsynced dhikrs found');
+          return Result.ok(null);
+        }
+        _log.info('Found ${unsyncedDhikrs.length} unsynced dhikrs');
+        return Result.ok(unsyncedDhikrs);
       case Error():
         return Result.error(result.asError.error);
     }
   }
 
   @override
-  // sync to firestore
+  // sync to firestore (upload unsynced local dhikrs)
   Future<Result<void>> syncDhikrs({required String userId}) async {
-    // get unsynced dhikrs
-    final result = await getUnsyncedDhikrs();
-    switch (result) {
+    _log.info('Uploading unsynced dhikrs to Firestore');
+    final unsyncedResult = await getUnsyncedDhikrs();
+    switch (unsyncedResult) {
       case Ok():
-        final unsyncedDhikrs = result.asOk.value;
-        if (unsyncedDhikrs.isEmpty) {
+        final unsyncedDhikrs = unsyncedResult.asOk.value;
+        if (unsyncedDhikrs == null || unsyncedDhikrs.isEmpty) {
           _log.info('No unsynced dhikrs found');
           return Result.ok(null);
         }
+        _log.info('Found ${unsyncedDhikrs.length} unsynced dhikrs to upload');
         // save to firestore
         final firestoreResult = await _firestoreDhikrService.saveDhikrs(
           userId: userId,
@@ -212,15 +246,13 @@ class DhikrRepositoryRemote implements DhikrRepository {
                 dhikr: dhikr.copyWith(isSynced: true),
               );
             }
+            _log.info('Successfully synced ${unsyncedDhikrs.length} dhikrs');
             return Result.ok(null);
           case Error():
-            return Result.error(
-              firestoreResult.asError.error,
-            ); // TODO(Omran): Check it after
+            return Result.error(firestoreResult.asError.error);
         }
-
-      case Error<List<Dhikr>>():
-        return Result.error(result.asError.error);
+      case Error():
+        return Result.error(unsyncedResult.asError.error);
     }
   }
 }
