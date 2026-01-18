@@ -220,9 +220,7 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  // sync to firestore (upload unsynced local dhikrs)
-  Future<Result<void>> syncDhikrs({required String userId}) async {
-    _log.info('Uploading unsynced dhikrs to Firestore');
+  Future<Result<void>> syncDhikrsToFirestore({required String userId}) async {
     final unsyncedResult = await getUnsyncedDhikrs();
     switch (unsyncedResult) {
       case Ok():
@@ -231,28 +229,44 @@ class DhikrRepositoryRemote implements DhikrRepository {
           _log.info('No unsynced dhikrs found');
           return Result.ok(null);
         }
-        _log.info('Found ${unsyncedDhikrs.length} unsynced dhikrs to upload');
-        // save to firestore
         final firestoreResult = await _firestoreDhikrService.saveDhikrs(
           userId: userId,
           dhikrs: unsyncedDhikrs,
         );
         switch (firestoreResult) {
           case Ok():
-            // mark as synced in local storage
-            for (final dhikr in unsyncedDhikrs) {
-              await updateDhikrLocally(
-                dhikrId: dhikr.id,
-                dhikr: dhikr.copyWith(isSynced: true),
-              );
-            }
-            _log.info('Successfully synced ${unsyncedDhikrs.length} dhikrs');
             return Result.ok(null);
           case Error():
             return Result.error(firestoreResult.asError.error);
         }
       case Error():
         return Result.error(unsyncedResult.asError.error);
+    }
+  }
+
+  @override
+  Future<Result<void>> syncDhikrsToLocally({required String userId}) async {
+    // get dhikrs from firestore
+    // save to locally
+    final firestoreResult = await _firestoreDhikrService.fetchAllDhikrs(
+      userId: userId,
+    );
+    switch (firestoreResult) {
+      case Ok():
+        final dhikrs = firestoreResult.asOk.value;
+        if (dhikrs.isEmpty) {
+          _log.info('No dhikrs found in Firestore');
+          return Result.ok(null);
+        }
+        _log.info('Found ${dhikrs.length} dhikrs to sync to locally');
+        // save to locally
+        for (final dhikr in dhikrs) {
+          await saveDhikrLocally(dhikr: dhikr.copyWith(isSynced: true));
+        }
+        _log.info('Successfully synced ${dhikrs.length} dhikrs to locally');
+        return Result.ok(null);
+      case Error():
+        return Result.error(firestoreResult.asError.error);
     }
   }
 }

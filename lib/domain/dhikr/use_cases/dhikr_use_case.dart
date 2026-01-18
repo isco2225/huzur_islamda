@@ -29,6 +29,11 @@ class DhikrUseCase {
 
   Future<Result<void>> syncDhikrs() async {
     // check network connection
+    // check is there any unsynced dhikrs?
+    // check is firestore dhikrs count is greater than locally dhikrs count?
+    // if yes, sync to firestore
+    // if no and not equal, sync to locally
+    // if equal, do nothing
     await _updateDeviceHasConnection();
     if (_deviceHasConnection.value) {
       if (auth.value.uid.isEmpty) {
@@ -36,102 +41,98 @@ class DhikrUseCase {
         return Result.error(Exception('User ID is empty'));
       }
       final userId = auth.value.uid;
-      // STEP 1: get dhikrs count from Firestore
-      _log.info('Getting dhikrs count from Firestore for user: $userId');
-      final firestoreDhikrsCount = await _dhikrRepository
-          .getFirestoreDhikrsCount(userId: userId);
-      switch (firestoreDhikrsCount) {
+      final unsyncedDhikrsResult = await _dhikrRepository.getUnsyncedDhikrs();
+      switch (unsyncedDhikrsResult) {
         case Ok():
-          final firestoreDhikrs = firestoreDhikrsCount.asOk.value;
-          if (firestoreDhikrs == null) {
-            _log.warning('Firestore dhikrs count is null');
-            return Result.error(Exception('Firestore dhikrs count is null'));
+          final unsyncedDhikrs = unsyncedDhikrsResult.asOk.value;
+          if (unsyncedDhikrs == null || unsyncedDhikrs.isEmpty) {
+            _log.info('No unsynced dhikrs found');
+            break;
           }
-          _log.info('Firestore dhikrs count: $firestoreDhikrs');
-          final localDhikrsCountResult = await _dhikrRepository
-              .getDhikrsCountLocally();
-          switch (localDhikrsCountResult) {
+          _log.info('Found ${unsyncedDhikrs.length} unsynced dhikrs');
+          // sync to firestore
+          final firestoreResult = await _dhikrRepository.syncDhikrsToFirestore(
+            userId: userId,
+          );
+          switch (firestoreResult) {
             case Ok():
-              final localDhikrsCount = localDhikrsCountResult.asOk.value;
-              if (localDhikrsCount > firestoreDhikrs) {
-                _log.info(
-                  'Local dhikrs count is greater than firestore dhikrs count, syncing dhikrs',
-                );
-                await _dhikrRepository.syncDhikrs(userId: userId);
-              } else if (localDhikrsCount < firestoreDhikrs) {
-                _log.info(
-                  'Local dhikrs count is less than firestore dhikrs count, downloading dhikrs from Firestore',
-                );
-                final downloadResult = await _dhikrRepository
-                    .getAllDhikrsFromFirestore(userId: userId);
-                switch (downloadResult) {
-                  case Ok():
-                    for (final dhikr in downloadResult.asOk.value) {
-                      final localResult = await _dhikrRepository
-                          .getDhikrLocally(dhikrId: dhikr.id);
-                      switch (localResult) {
-                        case Ok():
-                          final localDhikr = localResult.asOk.value;
-                          if (localDhikr != null) {
-                            if (!localDhikr.isSynced) {
-                              if (dhikr.lastUpdatedAt.isAfter(
-                                localDhikr.lastUpdatedAt,
-                              )) {
-                                await _dhikrRepository.updateDhikrLocally(
-                                  dhikrId: dhikr.id,
-                                  dhikr: dhikr.copyWith(isSynced: true),
-                                );
-                              }
-                            }
-                          } else {
-                            await _dhikrRepository.saveDhikrLocally(
-                              dhikr: dhikr.copyWith(isSynced: true),
-                            );
-                          }
-                        case Error():
-                          await _dhikrRepository.saveDhikrLocally(
-                            dhikr: dhikr.copyWith(isSynced: true),
-                          );
-                      }
-                    }
-                  case Error<List<Dhikr>>():
-                    _log.warning(
-                      'Failed to download dhikrs from Firestore: ${downloadResult.asError.error}',
-                    );
-                    return Result.error(downloadResult.asError.error);
-                }
-              } else {
-                _log.info(
-                  'Local dhikrs count is equal to firestore dhikrs count, no need to sync dhikrs',
+              _log.info(
+                'Successfully synced ${unsyncedDhikrs.length} unsynced dhikrs to firestore',
+              );
+              // mark unsynced dhikrs as synced
+              for (final dhikr in unsyncedDhikrs) {
+                await _dhikrRepository.updateDhikrLocally(
+                  dhikrId: dhikr.id,
+                  dhikr: dhikr.copyWith(isSynced: true),
                 );
               }
+              return Result.ok(null);
             case Error():
-              _log.warning(
-                'Failed to get local dhikrs count: ${localDhikrsCountResult.asError.error}',
-              );
-              return Result.error(localDhikrsCountResult.asError.error);
+              return Result.error(firestoreResult.asError.error);
           }
         case Error():
-          _log.warning(
-            'Failed to get dhikrs count from Firestore: ${firestoreDhikrsCount.asError.error}',
-          );
-          return Result.error(firestoreDhikrsCount.asError.error);
+          return Result.error(unsyncedDhikrsResult.asError.error);
       }
-
-      // STEP 2: Upload unsynced local dhikrs to Firestore
-      final uploadResult = await _dhikrRepository.syncDhikrs(userId: userId);
-      switch (uploadResult) {
+      final firestoreDhikrsCountResult = await _dhikrRepository
+          .getFirestoreDhikrsCount(userId: userId);
+      switch (firestoreDhikrsCountResult) {
         case Ok():
-          _log.info('Dhikrs synced successfully');
-          return Result.ok(null);
+          final firestoreDhikrsCount = firestoreDhikrsCountResult.asOk.value;
+          if (firestoreDhikrsCount == null) {
+            _log.info('No firestore dhikrs count found');
+            return Result.error(Exception('No firestore dhikrs count found'));
+          }
+          // get locally dhikrs count
+          final locallyDhikrsCountResult = await _dhikrRepository
+              .getDhikrsCountLocally();
+          switch (locallyDhikrsCountResult) {
+            case Ok():
+              final locallyDhikrsCount = locallyDhikrsCountResult.asOk.value;
+              if (locallyDhikrsCount > firestoreDhikrsCount) {
+                final firestoreResult = await _dhikrRepository
+                    .syncDhikrsToFirestore(userId: userId);
+                switch (firestoreResult) {
+                  case Ok():
+                    _log.info(
+                      'Successfully synced $firestoreDhikrsCount firestore dhikrs to locally',
+                    );
+                    break;
+                  case Error():
+                    _log.warning(
+                      'Failed to sync $firestoreDhikrsCount firestore dhikrs to locally: ${firestoreResult.asError.error}',
+                    );
+                    return Result.error(firestoreResult.asError.error);
+                }
+              } else if (locallyDhikrsCount < firestoreDhikrsCount) {
+                final locallyResult = await _dhikrRepository
+                    .syncDhikrsToLocally(userId: userId);
+                switch (locallyResult) {
+                  case Ok():
+                    _log.info(
+                      'Successfully synced $locallyDhikrsCount locally dhikrs to firestore',
+                    );
+                    break;
+                  case Error():
+                    _log.warning(
+                      'Failed to sync $locallyDhikrsCount locally dhikrs to firestore: ${locallyResult.asError.error}',
+                    );
+                    return Result.error(locallyResult.asError.error);
+                }
+              } else {
+                _log.info('Dhikrs are equal');
+                break;
+              }
+            case Error():
+              return Result.error(locallyDhikrsCountResult.asError.error);
+          }
         case Error():
-          _log.warning('Failed to sync dhikrs: ${uploadResult.asError.error}');
-          return Result.error(uploadResult.asError.error);
+          return Result.error(firestoreDhikrsCountResult.asError.error);
       }
     } else {
       _log.warning('No network connection, skipping sync');
       return Result.ok(null);
     }
+    return Result.ok(null);
   }
 
   Future<Result<void>> deleteDhikr({required String dhikrId}) async {

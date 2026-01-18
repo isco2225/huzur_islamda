@@ -21,7 +21,10 @@ abstract class DhikrRepository {
     required String dhikrId,
     required Dhikr dhikr,
   });
+
+  Future<Result<void>> syncDhikrsToLocally({required String userId});
   // Remote operations (Firestore)
+  Future<Result<void>> syncDhikrsToFirestore({required String userId});
   Future<Result<void>> saveDhikrToFirestore({required Dhikr dhikr});
   Future<Result<Dhikr?>> getDhikrFromFirestore({
     required String dhikrId,
@@ -38,7 +41,4 @@ abstract class DhikrRepository {
   Future<Result<int?>> getFirestoreDhikrsCount({required String userId});
 
   Future<Result<List<Dhikr>?>> getUnsyncedDhikrs();
-
-  // Sync operations
-  Future<Result<void>> syncDhikrs({required String userId});
 }
