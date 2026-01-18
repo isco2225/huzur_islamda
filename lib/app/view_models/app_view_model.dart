@@ -70,6 +70,8 @@ class AppViewModel {
       // User data yükleme işlemi router redirect mantığı tarafından
       // UserInitializeRoute'a yönlendirilerek yapılıyor
       // Bu yüzden burada tekrar yüklemeye gerek yok
+      // Command pattern kullanarak state tracking ve hata yönetimi yapılır
+      initApp.execute();
       _log.info('User signed in, router will handle user initialization');
     } else {
       // Kullanıcı çıkış yaptı, user bilgilerini temizle
