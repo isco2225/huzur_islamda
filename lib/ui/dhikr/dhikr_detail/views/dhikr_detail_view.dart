@@ -53,7 +53,8 @@ class DhikrDetailView extends StatelessWidget {
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     dhikrViewModel.syncDhikrs.execute();
-                    context.pop();
+                    // Zikir güncellenmiş olabilir, geri dönüldüğünde listeyi yenilemek için true döndür
+                    context.pop(true);
                   },
                 ),
                 backgroundColor: AppColors.background,

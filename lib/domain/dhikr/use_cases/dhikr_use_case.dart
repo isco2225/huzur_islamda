@@ -155,8 +155,12 @@ class DhikrUseCase {
         );
         switch (localResult) {
           case Ok():
+            _log.info('Dhikr deleted successfully: $dhikrId');
             return Result.ok(null);
           case Error():
+            _log.warning(
+              'Failed to delete dhikr locally: ${localResult.asError.error}',
+            );
             return Result.error(localResult.asError.error);
         }
       case Error():

@@ -36,12 +36,16 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel.decrementCount.handleError(context);
     _viewModel.resetCount.handleError(context);
     _viewModel.deleteDhikr.handleError(context);
-    // Delete handling with navigation
-    _viewModel.deleteDhikr.handleError(context);
     _viewModel.deleteDhikr.handleCompleted(
       context,
       successMessage: 'Zikir silindi',
-      popCount: 1,
+      popCount: 0,
+      onCompleted: (_) {
+        // return true to the parent screen for fetching dhikrs
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      },
     );
   }
 

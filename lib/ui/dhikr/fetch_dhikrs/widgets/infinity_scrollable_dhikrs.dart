@@ -61,7 +61,15 @@ class _InfinityScrollableDhikrsState extends State<InfinityScrollableDhikrs> {
           itemCount: dhikrs.length,
           itemBuilder: (context, index) {
             final dhikr = dhikrs[index];
-            return DhikrCard(dhikr: dhikr);
+            return DhikrCard(
+              dhikr: dhikr,
+              onRefresh: () {
+                // fetch the dhikrs for the selected date
+                final selectedDate =
+                    widget.fetchDhikrsViewModel.selectedDate.value;
+                widget.fetchDhikrsViewModel.fetchDhikrs.execute(selectedDate);
+              },
+            );
           },
           isFetching: widget.isFetching.value,
           onFetchMore: () => widget.onFetch(),

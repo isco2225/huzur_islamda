@@ -5,9 +5,10 @@ import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class DhikrCard extends StatelessWidget {
-  const DhikrCard({super.key, required this.dhikr});
+  const DhikrCard({super.key, required this.dhikr, this.onRefresh});
 
   final Dhikr dhikr;
+  final VoidCallback? onRefresh;
 
   Color _getBorderColor() {
     if ((dhikr.isExpired && !dhikr.isCompleted)) {
@@ -25,7 +26,14 @@ class DhikrCard extends StatelessWidget {
     final progress = (dhikr.currentCount / dhikr.targetCount).clamp(0.0, 1.0);
     final borderColor = _getBorderColor();
     return GestureDetector(
-      onTap: () => context.pushToDhikrDetail(dhikr.id),
+      onTap: () async {
+        // listen to the result of the navigation
+        final result = await context.pushToDhikrDetail<bool>(dhikr.id);
+        // if the dhikr is deleted or updated (true is returned), refresh the list
+        if (result == true && onRefresh != null) {
+          onRefresh!();
+        }
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         elevation: 2.0,
