@@ -28,6 +28,9 @@ class FirestoreUserService {
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
         'isRegistered': true,
+        'country': '',
+        'city': '',
+        'districtId': '',
       };
 
       await _firestore.collection(_collectionName).doc(uid).set(userData);

@@ -8,9 +8,11 @@ class PlaceSelector extends StatefulWidget {
     super.key,
     required this.viewModel,
     required this.editProfileViewModel,
+    this.onLocationSelected,
   });
   final PlaceSelectorViewModel viewModel;
   final EditProfileViewModel editProfileViewModel;
+  final VoidCallback? onLocationSelected;
   @override
   State<PlaceSelector> createState() => _PlaceSelectorState();
 }
@@ -161,6 +163,9 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                                   ));
                               if (context.mounted) {
                                 Navigator.of(context).pop();
+                                if (widget.onLocationSelected != null) {
+                                  widget.onLocationSelected!.call();
+                                }
                               }
                             },
                             running: widget
