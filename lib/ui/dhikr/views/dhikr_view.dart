@@ -10,44 +10,58 @@ class DhikrView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedDate = viewModel.selectedDate.value;
-    return BaseScaffold(
-      safeArea: true,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.pushCreateDhikr();
-        },
-        heroTag: 'create_dhikr',
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      appBar: AppBar(title: const Text('Zikirlerim')),
-      body: Column(
-        children: [
-          DhikrDateSelector(viewModel: viewModel),
-          Expanded(
-            child: InfinityScrollableDhikrs(
-              fetchDhikrsViewModel: viewModel,
-              noItemsToShowWidget: selectedDate == DateTime.now()
-                  ? const Center(child: NoDhikrsToShow())
-                  : const Center(
-                      child: Text(
-                        'Bu tarih için zikir yok.',
-                        style: TextStyle(color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-              onFetch: () {
-                viewModel.fetchDhikrs.execute(selectedDate);
-              },
-              dhikrs: viewModel.dhikrs,
-              hasError: viewModel.fetchDhikrs.error,
-              isFetching: viewModel.fetchDhikrs.running,
-              isAllItemsFetched: viewModel.fetchDhikrs.completed,
-            ),
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    return ValueListenableBuilder<DateTime>(
+      valueListenable: viewModel.selectedDate,
+      builder: (context, selectedDate, _) {
+        final isTodaySelected = selectedDate == today;
+
+        return BaseScaffold(
+          safeArea: true,
+          floatingActionButton: isTodaySelected
+              ? FloatingActionButton(
+                  onPressed: () async {
+                    final result = await context.pushCreateDhikr<bool>();
+                    if (result == true) {
+                      viewModel.fetchDhikrs.execute(today);
+                    }
+                  },
+                  heroTag: 'create_dhikr',
+                  backgroundColor: AppColors.primary,
+                  child: const Icon(Icons.add, color: Colors.white),
+                )
+              : null,
+          appBar: AppBar(title: const Text('Zikirlerim')),
+          body: Column(
+            children: [
+              DhikrDateSelector(viewModel: viewModel),
+              Expanded(
+                child: InfinityScrollableDhikrs(
+                  fetchDhikrsViewModel: viewModel,
+                  noItemsToShowWidget: isTodaySelected
+                      ? const Center(child: NoDhikrsToShow())
+                      : const Center(
+                          child: Text(
+                            'Bu tarih için zikir yok.',
+                            style: TextStyle(color: Colors.grey),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                  onFetch: () {
+                    viewModel.fetchDhikrs.execute(selectedDate);
+                  },
+                  dhikrs: viewModel.dhikrs,
+                  hasError: viewModel.fetchDhikrs.error,
+                  isFetching: viewModel.fetchDhikrs.running,
+                  isAllItemsFetched: viewModel.fetchDhikrs.completed,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
