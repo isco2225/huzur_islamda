@@ -34,10 +34,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
       context,
       showSnackBar: true,
     );
-    _prayerTimesViewModel.getPrayerTimes.handleCompleted(
-      context,
-      successMessage: 'Namaz vakitleri başarıyla yüklendi',
-    );
     _editProfileViewModel = EditProfileViewModel(
       userRepository: context.read<UserRepository>(),
       authRepository: context.read<AuthRepository>(),
@@ -45,10 +41,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _placeSelectorViewModel.countrySelector.getCountries.handleError(
       context,
       showSnackBar: true,
-    );
-    _placeSelectorViewModel.countrySelector.getCountries.handleCompleted(
-      context,
-      successMessage: 'Ülkeler başarıyla yüklendi',
     );
     _editProfileViewModel.updateUserLocation.handleError(
       context,
