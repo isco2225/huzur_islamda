@@ -81,6 +81,24 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                               : TextAlign.left,
                         ),
                       ),
+                      ValueListenableBuilder(
+                        valueListenable: widget
+                            .editProfileViewModel
+                            .updateUserLocation
+                            .running,
+                        builder: (context, isRunning, _) {
+                          return IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: isRunning
+                                ? null
+                                : () {
+                                    if (context.mounted) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

@@ -175,6 +175,7 @@ class _PrayerViewState extends State<PrayerView> {
     if (context.mounted) {
       showDialog<void>(
         context: context,
+        barrierDismissible: false,
         builder: (context) => PlaceSelector(
           viewModel: widget.placeSelectorViewModel,
           editProfileViewModel: widget.editProfileViewModel,

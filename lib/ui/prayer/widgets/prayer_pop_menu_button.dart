@@ -26,6 +26,7 @@ class PrayerPopMenuButton extends StatelessWidget {
               if (context.mounted) {
                 showDialog<void>(
                   context: context,
+                  barrierDismissible: false,
                   builder: (context) => PlaceSelector(
                     viewModel: placeSelectorViewModel,
                     editProfileViewModel: editProfileViewModel,
