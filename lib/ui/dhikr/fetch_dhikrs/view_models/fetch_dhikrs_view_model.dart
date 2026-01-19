@@ -99,7 +99,7 @@ class FetchDhikrsViewModel {
           return Result.ok(null);
         }
         _log.fine('Dhikrs fetched successfully');
-        _dhikrs.value = dhikrs;
+        _dhikrs.value = dhikrs.reversed.toList();
         return Result.ok(null);
       case Error():
         _log.severe('Failed to fetch dhikrs: ${result.asError.error}');
