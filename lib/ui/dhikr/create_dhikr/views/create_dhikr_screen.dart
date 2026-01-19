@@ -18,6 +18,7 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
   @override
   void initState() {
     super.initState();
+
     _viewModel = CreateDhikrViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       userRepository: context.read<UserRepository>(),
@@ -27,7 +28,13 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
     _viewModel.createDhikr.handleCompleted(
       context,
       successMessage: 'Zikir oluşturuldu!',
-      popCount: 1,
+      popCount: 0,
+      onCompleted: (_) {
+        // return true to the parent screen for fetching dhikrs
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      },
     );
   }
 
