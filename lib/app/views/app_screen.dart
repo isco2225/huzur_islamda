@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../data/data.dart';
 import '../../domain/domain.dart';
 import '../app.dart';
-import '../view_models/app_view_model.dart';
 
 class AppScreen extends StatefulWidget {
   const AppScreen({
@@ -56,6 +55,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // App'i başlat
     _appViewModel.initApp.execute();
+    _appViewModel.initUser.execute();
   }
 
   @override
@@ -109,7 +109,15 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
             );
           }
           // Initialization tamamlandı, router'ı göster
-          return AppView(refreshListenable: widget.authRepository.auth);
+          // Router'ın tüm state değişikliklerini dinlemesi için
+          // auth, user ve appPreferences state'lerini birleştiriyoruz
+          return AppView(
+            refreshListenable: Listenable.merge([
+              widget.authRepository.auth,
+              widget.userRepository.currentUser,
+              widget.appRepository.appPreferences,
+            ]),
+          );
         },
       ),
     );

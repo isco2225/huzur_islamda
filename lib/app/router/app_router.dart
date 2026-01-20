@@ -119,12 +119,6 @@ final List<RouteBase> _routes = [
 
   // -------------------- USER ROUTES --------------------
   GoRoute(
-    path: AppRoutes.userInitialize,
-    name: 'user_initialize',
-    builder: (context, state) => const UserInitializeScreen(),
-  ),
-
-  GoRoute(
     path: AppRoutes.createProfile,
     name: 'create_profile',
     builder: (context, state) => const CreateUserProfileScreen(),
@@ -205,7 +199,6 @@ String? _redirect(BuildContext context, GoRouterState state) {
 
   // Routes that handle their own redirect logic
   final noRuleLocs = [
-    AppRoutes.userInitialize,
     AppRoutes.createProfile,
     AppRoutes.editProfile,
     AppRoutes.settings,
@@ -231,7 +224,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
       if (location == AppRoutes.emailVerification) return null;
       return AppRoutes.emailVerification;
     }
-    if (user.uid.isEmpty) return AppRoutes.userInitialize;
+    if (user.uid.isEmpty) return AppRoutes.signIn;
     if (!user.isRegistered) return AppRoutes.createProfile;
     return AppRoutes.flow;
   }
@@ -242,8 +235,8 @@ String? _redirect(BuildContext context, GoRouterState state) {
     return AppRoutes.emailVerification;
   }
   if (user.uid.isEmpty) {
-    if (location == AppRoutes.userInitialize) return null;
-    return AppRoutes.userInitialize;
+    if (location == AppRoutes.signIn) return null;
+    return AppRoutes.signIn;
   }
   if (!user.isRegistered) {
     if (location == AppRoutes.createProfile) return null;

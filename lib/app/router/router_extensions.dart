@@ -38,9 +38,6 @@ extension RouterExtensions on BuildContext {
   /// Navigate to profile screen
   void goToProfile() => go(AppRoutes.profile);
 
-  /// Navigate to user initialization screen
-  void goToUserInitialize() => go(AppRoutes.userInitialize);
-
   /// Navigate to create profile screen
   void goToCreateProfile() => go(AppRoutes.createProfile);
 

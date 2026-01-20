@@ -39,9 +39,6 @@ class AppRoutes {
 
   // -------------------- USER ROUTES --------------------
 
-  /// User initialization screen route
-  static const String userInitialize = '/user_initialize';
-
   /// Create profile screen route
   static const String createProfile = '/create_profile';
 

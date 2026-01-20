@@ -20,10 +20,7 @@ class AppViewModel {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     _authRepository.isSignedIn.addListener(_onAuthStateChanged);
-    updateIsOnboardingCompleted = Command0(
-      _updateIsOnboardingCompleted,
-      debugLabel: 'AppViewModel.updateIsOnboardingCompleted',
-    );
+    initUser = Command0(_initUser, debugLabel: 'AppViewModel.initUser');
   }
 
   // LOGGER
@@ -44,12 +41,13 @@ class AppViewModel {
 
   // COMMANDS
   late Command0<void> initApp;
-  late Command0<void> updateIsOnboardingCompleted;
+  late Command0<bool> initUser;
 
   // DISPOSE
   void dispose() {
     _authRepository.isSignedIn.removeListener(_onAuthStateChanged);
     initApp.dispose();
+    initUser.dispose();
     _log.fine('Disposed');
   }
 
@@ -74,6 +72,21 @@ class AppViewModel {
 
       // sync dhikrs
       await _dhikrUseCase.syncDhikrs();
+
+      // if user is signed in, initialize user
+      if (_authRepository.isSignedIn.value &&
+          _authRepository.auth.value.uid.isNotEmpty) {
+        _log.info('User is signed in, initializing user...');
+        final userInitResult = await _initUser();
+        switch (userInitResult) {
+          case Ok():
+            _log.info('User initialized successfully');
+          case Error():
+            _log.warning(
+              'Failed to initialize user: ${userInitResult.asError.error}',
+            );
+        }
+      }
 
       _log.info('App initialized successfully');
       return Result.ok(null);
@@ -101,23 +114,20 @@ class AppViewModel {
     }
   }
 
-  Future<Result<void>> _updateIsOnboardingCompleted() async {
-    try {
-      final result = await _appRepository.updateIsOnboardingCompleted(
-        isOnboardingCompleted: true,
-      );
-      switch (result) {
-        case Ok():
-          _log.info('Onboarding completed updated successfully');
-          return Result.ok(null);
-        case Error():
-          _log.severe(
-            'Failed to update onboarding completed: ${result.asError.error}',
-          );
-          return Result.error(result.asError.error);
-      }
-    } on Exception catch (exception) {
-      return Result.error(exception);
+  Future<Result<bool>> _initUser() async {
+    if (_authRepository.auth.value.uid.isEmpty) {
+      return Result.error(Exception('User not authenticated'));
+    }
+    final result = await _userRepository.initUser(
+      uid: _authRepository.auth.value.uid,
+    );
+    switch (result) {
+      case Ok():
+        _log.info('User initialized successfully');
+        return result;
+      case Error():
+        _log.warning('Failed to init user', result.error);
+        return result;
     }
   }
 }
