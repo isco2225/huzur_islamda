@@ -6,3 +6,4 @@ export 'places/places.dart';
 export 'post/post.dart';
 export 'user/user.dart';
 export 'prayer/prayer.dart';
+export 'app/app.dart';
