@@ -16,7 +16,6 @@ class DhikrDetailScreen extends StatefulWidget {
 
 class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
   late final DhikrDetailViewModel _viewModel;
-  late final DhikrViewModel _dhikrViewModel;
 
   @override
   void initState() {
@@ -24,9 +23,6 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel = DhikrDetailViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       dhikrId: widget.dhikrId,
-      dhikrUseCase: context.read<DhikrUseCase>(),
-    );
-    _dhikrViewModel = DhikrViewModel(
       dhikrUseCase: context.read<DhikrUseCase>(),
     );
 
@@ -39,28 +35,18 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     _viewModel.deleteDhikr.handleCompleted(
       context,
       successMessage: 'Zikir silindi',
-      popCount: 0,
-      onCompleted: (_) {
-        // return true to the parent screen for fetching dhikrs
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
-      },
+      popCount: 1,
     );
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
-    _dhikrViewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DhikrDetailView(
-      viewModel: _viewModel,
-      dhikrViewModel: _dhikrViewModel,
-    );
+    return DhikrDetailView(viewModel: _viewModel);
   }
 }

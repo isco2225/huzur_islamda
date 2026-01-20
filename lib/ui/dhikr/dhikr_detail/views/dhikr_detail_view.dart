@@ -5,14 +5,9 @@ import '../../../../app/app.dart';
 import '../../../ui.dart';
 
 class DhikrDetailView extends StatelessWidget {
-  const DhikrDetailView({
-    super.key,
-    required this.viewModel,
-    required this.dhikrViewModel,
-  });
+  const DhikrDetailView({super.key, required this.viewModel});
 
   final DhikrDetailViewModel viewModel;
-  final DhikrViewModel dhikrViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +47,7 @@ class DhikrDetailView extends StatelessWidget {
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
-                    dhikrViewModel.syncDhikrs.execute();
-                    // Zikir güncellenmiş olabilir, geri dönüldüğünde listeyi yenilemek için true döndür
-                    context.pop(true);
+                    context.pop();
                   },
                 ),
                 backgroundColor: AppColors.background,

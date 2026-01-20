@@ -61,13 +61,7 @@ class _InfinityScrollableDhikrsState extends State<InfinityScrollableDhikrs> {
           itemCount: dhikrs.length,
           itemBuilder: (context, index) {
             final dhikr = dhikrs[index];
-            return DhikrCard(
-              dhikr: dhikr,
-              onRefresh: () {
-                // Repository'den otomatik güncelleniyor, manuel fetch gerekmez
-                // Ancak refresh için boş bırakıyoruz
-              },
-            );
+            return DhikrCard(dhikr: dhikr);
           },
           isFetching: widget.isFetching.value,
           onFetchMore: () => widget.onFetch(),

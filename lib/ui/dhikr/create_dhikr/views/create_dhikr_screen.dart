@@ -28,13 +28,7 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
     _viewModel.createDhikr.handleCompleted(
       context,
       successMessage: 'Zikir oluşturuldu!',
-      popCount: 0,
-      onCompleted: (_) {
-        // return true to the parent screen for fetching dhikrs
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
-      },
+      popCount: 1,
     );
   }
 

@@ -5,8 +5,6 @@ import '../../../app/app.dart';
 import '../../../domain/dhikr/models/dhikr.dart';
 import '../../data.dart';
 
-/// Remote implementation of DhikrRepository
-///
 /// Handles both local (Hive) and remote (Firestore) operations
 class DhikrRepositoryRemote implements DhikrRepository {
   DhikrRepositoryRemote({
@@ -254,7 +252,6 @@ class DhikrRepositoryRemote implements DhikrRepository {
           return Result.ok(null);
         }
         _log.info('Found ${dhikrs.length} dhikrs to sync to locally');
-        // save to locally
         for (final dhikr in dhikrs) {
           await saveDhikrLocally(dhikr: dhikr.copyWith(isSynced: true));
         }
