@@ -16,8 +16,22 @@ class FetchDhikrsViewModel {
       debugLabel: 'fetchDhikrs',
     );
     _selectedDate = ValueNotifier<DateTime>(_getToday());
-    // İlk yüklemede bugünün zikirlerini çek
-    fetchDhikrs.execute(_selectedDate.value);
+
+    _dhikrRepository.dhikrsLocally.addListener(_updateDhikrsForSelectedDate);
+
+    _selectedDate.addListener(_updateDhikrsForSelectedDate);
+
+    _loadAllDhikrs();
+  }
+
+  void _loadAllDhikrs() async {
+    final result = await _dhikrRepository.loadAllDhikrsLocally();
+    switch (result) {
+      case Ok():
+        _log.info('All dhikrs loaded successfully');
+      case Error():
+        _log.severe('Failed to load all dhikrs: ${result.asError.error}');
+    }
   }
 
   // LOGGER
@@ -38,6 +52,8 @@ class FetchDhikrsViewModel {
 
   // DISPOSE
   void dispose() {
+    _dhikrRepository.dhikrsLocally.removeListener(_updateDhikrsForSelectedDate);
+    _selectedDate.removeListener(_updateDhikrsForSelectedDate);
     fetchDhikrs.dispose();
     _selectedDate.dispose();
     _dhikrs.dispose();
@@ -49,7 +65,7 @@ class FetchDhikrsViewModel {
     final currentDate = _selectedDate.value;
     final previousDate = currentDate.subtract(const Duration(days: 1));
     _selectedDate.value = previousDate;
-    fetchDhikrs.execute(previousDate);
+    // _onSelectedDateChanged otomatik olarak çağrılacak
   }
 
   void goToNextDay() {
@@ -59,14 +75,14 @@ class FetchDhikrsViewModel {
     // Geleceğe gidilemez, bugüne kadar gidilebilir
     if (!nextDate.isAfter(today)) {
       _selectedDate.value = nextDate;
-      fetchDhikrs.execute(nextDate);
+      // _onSelectedDateChanged otomatik olarak çağrılacak
     }
   }
 
   void goToToday() {
     final today = _getToday();
     _selectedDate.value = today;
-    fetchDhikrs.execute(today);
+    // _onSelectedDateChanged otomatik olarak çağrılacak
   }
 
   bool get canGoToNextDay {
@@ -79,6 +95,39 @@ class FetchDhikrsViewModel {
   DateTime _getToday() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day);
+  }
+
+  // Seçili tarihe göre zikirleri güncelle
+  void _updateDhikrsForSelectedDate() {
+    final selectedDate = _selectedDate.value;
+    final allDhikrs = _dhikrRepository.dhikrsLocally.value;
+
+    // Seçili tarihe göre filtrele
+    final normalizedDate = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+    );
+    final filteredDhikrs = allDhikrs.where((dhikr) {
+      final dhikrDate = DateTime(
+        dhikr.day.year,
+        dhikr.day.month,
+        dhikr.day.day,
+      );
+      return dhikrDate.year == normalizedDate.year &&
+          dhikrDate.month == normalizedDate.month &&
+          dhikrDate.day == normalizedDate.day;
+    }).toList();
+
+    if (filteredDhikrs.isEmpty) {
+      _dhikrs.value = null;
+    } else {
+      _dhikrs.value = filteredDhikrs.reversed.toList();
+    }
+
+    _log.fine(
+      'Updated dhikrs for date: $selectedDate, count: ${filteredDhikrs.length}',
+    );
   }
 
   // FUNCTIONS

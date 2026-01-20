@@ -64,10 +64,8 @@ class _InfinityScrollableDhikrsState extends State<InfinityScrollableDhikrs> {
             return DhikrCard(
               dhikr: dhikr,
               onRefresh: () {
-                // fetch the dhikrs for the selected date
-                final selectedDate =
-                    widget.fetchDhikrsViewModel.selectedDate.value;
-                widget.fetchDhikrsViewModel.fetchDhikrs.execute(selectedDate);
+                // Repository'den otomatik güncelleniyor, manuel fetch gerekmez
+                // Ancak refresh için boş bırakıyoruz
               },
             );
           },

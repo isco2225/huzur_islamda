@@ -9,6 +9,7 @@ import '../../../domain/dhikr/models/dhikr.dart';
 abstract class DhikrRepository {
   ValueListenable<List<Dhikr>> get dhikrsLocally;
   // Local operations (Hive)
+  Future<Result<void>> loadAllDhikrsLocally();
   Future<Result<Dhikr>> saveDhikrLocally({required Dhikr dhikr});
   Future<Result<Dhikr?>> getDhikrLocally({required String dhikrId});
   Future<Result<List<Dhikr>?>> getAllDhikrsByDateLocally({
@@ -25,11 +26,6 @@ abstract class DhikrRepository {
   Future<Result<void>> syncDhikrsToLocally({required String userId});
   // Remote operations (Firestore)
   Future<Result<void>> syncDhikrsToFirestore({required String userId});
-  Future<Result<void>> saveDhikrToFirestore({required Dhikr dhikr});
-  Future<Result<Dhikr?>> getDhikrFromFirestore({
-    required String dhikrId,
-    required String userId,
-  });
   Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore({
     required String userId,
   });

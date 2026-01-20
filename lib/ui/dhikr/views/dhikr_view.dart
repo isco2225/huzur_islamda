@@ -23,10 +23,9 @@ class DhikrView extends StatelessWidget {
           floatingActionButton: isTodaySelected
               ? FloatingActionButton(
                   onPressed: () async {
-                    final result = await context.pushCreateDhikr<bool>();
-                    if (result == true) {
-                      viewModel.fetchDhikrs.execute(today);
-                    }
+                    await context.pushCreateDhikr<bool>();
+                    // Zikir oluşturulduğunda repository otomatik güncellenecek
+                    // ve ViewModel otomatik olarak yeni listeyi gösterecek
                   },
                   heroTag: 'create_dhikr',
                   backgroundColor: AppColors.primary,

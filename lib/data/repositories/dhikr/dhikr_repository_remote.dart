@@ -26,6 +26,23 @@ class DhikrRepositoryRemote implements DhikrRepository {
   );
 
   @override
+  Future<Result<void>> loadAllDhikrsLocally() async {
+    _log.info('Loading all dhikrs from Hive');
+    final result = await _hiveService.getAll();
+    switch (result) {
+      case Ok():
+        final dhikrs = result.asOk.value;
+        _dhikrsLocally.value = []; // clear the list
+        _dhikrsLocally.value = dhikrs;
+        _log.info('Loaded ${dhikrs.length} dhikrs from Hive');
+        return Result.ok(null);
+      case Error():
+        _log.severe('Failed to load dhikrs from Hive: ${result.asError.error}');
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
   Future<Result<Dhikr>> saveDhikrLocally({required Dhikr dhikr}) async {
     _log.info('Saving dhikr locally: ${dhikr.id}');
     final result = await _hiveService.save(dhikr.id, dhikr);
@@ -45,9 +62,6 @@ class DhikrRepositoryRemote implements DhikrRepository {
     if (result is Error<Dhikr?>) {
       return Result.error(result.asError.error);
     }
-
-    // Sadece dhikr'ı döndür, listeye dokunma
-    // Liste güncellemeleri diğer fonksiyonlar tarafından yapılır
     return Result.ok(result.asOk.value);
   }
 
@@ -82,9 +96,6 @@ class DhikrRepositoryRemote implements DhikrRepository {
     final result = await _hiveService.delete(dhikrId);
     switch (result) {
       case Ok():
-        _dhikrsLocally.value = _dhikrsLocally.value
-            .where((d) => d.id != dhikrId)
-            .toList();
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -139,9 +150,8 @@ class DhikrRepositoryRemote implements DhikrRepository {
 
     switch (result) {
       case Ok():
-        _dhikrsLocally.value = _dhikrsLocally.value
-            .map((d) => d.id == dhikrId ? result.asOk.value : d)
-            .toList();
+        _dhikrsLocally.value.removeWhere((d) => d.id == dhikrId);
+        _dhikrsLocally.value = [..._dhikrsLocally.value, dhikr];
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -149,23 +159,6 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   // ========== REMOTE OPERATIONS (FIRESTORE) ==========
-
-  @override
-  Future<Result<void>> saveDhikrToFirestore({required Dhikr dhikr}) async {
-    _log.info('Saving dhikr to Firestore: ${dhikr.id}');
-    // TODO: Firestore implementation
-    return Result.error(Exception('Not implemented yet'));
-  }
-
-  @override
-  Future<Result<Dhikr?>> getDhikrFromFirestore({
-    required String dhikrId,
-    required String userId,
-  }) async {
-    _log.info('Getting dhikr from Firestore: $dhikrId');
-    // TODO: Firestore implementation
-    return Result.error(Exception('Not implemented yet'));
-  }
 
   @override
   Future<Result<List<Dhikr>>> getAllDhikrsFromFirestore({
@@ -193,6 +186,8 @@ class DhikrRepositoryRemote implements DhikrRepository {
     );
     switch (result) {
       case Ok():
+        _dhikrsLocally.value.removeWhere((d) => d.id == dhikrId);
+        _dhikrsLocally.value = [..._dhikrsLocally.value]; // update the list
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -263,6 +258,7 @@ class DhikrRepositoryRemote implements DhikrRepository {
         for (final dhikr in dhikrs) {
           await saveDhikrLocally(dhikr: dhikr.copyWith(isSynced: true));
         }
+
         _log.info('Successfully synced ${dhikrs.length} dhikrs to locally');
         return Result.ok(null);
       case Error():
