@@ -47,7 +47,7 @@ class DhikrCounterControls extends StatelessWidget {
                     return _CounterButton(
                       icon: Icons.remove,
                       label: 'Azalt',
-                      onPressed: dhikr.currentCount > 0 && !isRunning
+                      onPressed: canDecrement(dhikr) && !isRunning
                           ? onDecrement
                           : null,
                       isLoading: isRunning,
@@ -82,7 +82,7 @@ class DhikrCounterControls extends StatelessWidget {
                     return _CounterButton(
                       icon: Icons.add,
                       label: 'Artır',
-                      onPressed: !isRunning && !dhikr.isCompleted
+                      onPressed: canIncrement(dhikr) && !isRunning
                           ? onIncrement
                           : null,
                       isLoading: isRunning,
@@ -96,6 +96,14 @@ class DhikrCounterControls extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool canIncrement(Dhikr dhikr) {
+    return !dhikr.isCompleted && !dhikr.isExpired;
+  }
+
+  bool canDecrement(Dhikr dhikr) {
+    return dhikr.currentCount > 0 && !dhikr.isExpired && !dhikr.isCompleted;
   }
 }
 
