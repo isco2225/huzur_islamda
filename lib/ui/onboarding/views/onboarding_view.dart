@@ -4,7 +4,8 @@ import '../../../app/app.dart';
 import '../../ui.dart';
 
 class OnboardingView extends StatefulWidget {
-  const OnboardingView({super.key});
+  const OnboardingView({super.key, required this.viewModel});
+  final OnboardingViewModel viewModel;
 
   @override
   State<OnboardingView> createState() => _OnboardingViewState();
@@ -23,6 +24,8 @@ class _OnboardingViewState extends State<OnboardingView> {
         curve: Curves.easeInOut,
       );
     } else {
+      // update app preferences
+      widget.viewModel.updateIsOnboardingCompleted.execute();
       context.goToSignIn();
     }
   }

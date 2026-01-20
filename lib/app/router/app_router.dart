@@ -188,10 +188,12 @@ String? _redirect(BuildContext context, GoRouterState state) {
   final location = state.matchedLocation;
   final authRepository = context.read<AuthRepository>();
   final userRepository = context.read<UserRepository>();
+  final appRepository = context.read<AppRepository>();
 
   final isSignedIn = authRepository.auth.value.isSignedIn();
   final auth = authRepository.auth.value;
   final user = userRepository.currentUser.value;
+  final appPreferences = appRepository.appPreferences.value;
 
   // Auth screens
   final authLocs = [
@@ -212,9 +214,13 @@ String? _redirect(BuildContext context, GoRouterState state) {
   // Allow routes with no rules
   if (noRuleLocs.contains(location)) return null;
 
-  // Not signed in: allow auth screens, redirect others to sign in
+  // Not signed in: allow auth screens, redirect others to onboarding or sign in
   if (!isSignedIn) {
     if (authLocs.contains(location)) return null;
+    if (!appPreferences.isOnboardingCompleted &&
+        location != AppRoutes.onboarding) {
+      return AppRoutes.onboarding;
+    }
     return AppRoutes.signIn;
   }
 

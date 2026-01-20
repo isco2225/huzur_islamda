@@ -20,6 +20,10 @@ class AppViewModel {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     _authRepository.isSignedIn.addListener(_onAuthStateChanged);
+    updateIsOnboardingCompleted = Command0(
+      _updateIsOnboardingCompleted,
+      debugLabel: 'AppViewModel.updateIsOnboardingCompleted',
+    );
   }
 
   // LOGGER
@@ -35,9 +39,12 @@ class AppViewModel {
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
   ValueListenable<bool> get isSignedIn => _authRepository.isSignedIn;
+  ValueListenable<AppPreferences> get appPreferences =>
+      _appRepository.appPreferences;
 
   // COMMANDS
   late Command0<void> initApp;
+  late Command0<void> updateIsOnboardingCompleted;
 
   // DISPOSE
   void dispose() {
@@ -80,6 +87,26 @@ class AppViewModel {
       // Kullanıcı çıkış yaptı, user bilgilerini temizle
       _log.info('User signed out, wiping user data');
       _userRepository.wipeUser();
+    }
+  }
+
+  Future<Result<void>> _updateIsOnboardingCompleted() async {
+    try {
+      final result = await _appRepository.updateIsOnboardingCompleted(
+        isOnboardingCompleted: true,
+      );
+      switch (result) {
+        case Ok():
+          _log.info('Onboarding completed updated successfully');
+          return Result.ok(null);
+        case Error():
+          _log.severe(
+            'Failed to update onboarding completed: ${result.asError.error}',
+          );
+          return Result.error(result.asError.error);
+      }
+    } on Exception catch (exception) {
+      return Result.error(exception);
     }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:huzur_islamda/ui/onboarding/views/onboarding_view.dart';
+import 'package:provider/provider.dart';
+
+import '../../../data/data.dart';
+import '../../ui.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -9,8 +12,17 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  late final OnboardingViewModel _onboardingViewModel;
+  @override
+  void initState() {
+    super.initState();
+    _onboardingViewModel = OnboardingViewModel(
+      appRepository: context.read<AppRepository>(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const OnboardingView();
+    return OnboardingView(viewModel: _onboardingViewModel);
   }
 }
