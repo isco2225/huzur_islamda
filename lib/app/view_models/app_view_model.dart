@@ -7,11 +7,13 @@ import '../../domain/domain.dart';
 
 class AppViewModel {
   AppViewModel({
+    required AppRepository appRepository,
     required AuthRepository authRepository,
     required UserRepository userRepository,
     required HiveRepository hiveRepository,
     required DhikrUseCase dhikrUseCase,
-  }) : _authRepository = authRepository,
+  }) : _appRepository = appRepository,
+       _authRepository = authRepository,
        _userRepository = userRepository,
        _hiveRepository = hiveRepository,
        _dhikrUseCase = dhikrUseCase {
@@ -24,6 +26,7 @@ class AppViewModel {
   final _log = Logger('AppViewModel');
 
   // REPOSITORIES & USE CASES
+  final AppRepository _appRepository;
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
   final HiveRepository _hiveRepository;

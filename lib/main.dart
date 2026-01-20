@@ -57,6 +57,9 @@ void main() async {
         firestorePostService: FirestorePostService(),
       ),
       dhikrRepository: dhikrRepository,
+      appRepository: AppRepositoryRemote(
+        sharedPreferencesService: SharedPreferencesService(),
+      ),
       dhikrUseCase: DhikrUseCase(
         dhikrRepository: dhikrRepository,
         connectivityUseCase: connectivityUseCase,

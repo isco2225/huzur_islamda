@@ -16,6 +16,7 @@ class AppScreen extends StatefulWidget {
     required this.dhikrRepository,
     required this.dhikrUseCase,
     required this.placesRepository,
+    required this.appRepository,
     required this.connectivityUseCase,
     required this.prayerRepository,
     required this.prayerTimeUseCase,
@@ -25,6 +26,7 @@ class AppScreen extends StatefulWidget {
   final UserRepository userRepository;
   final PostRepository postRepository;
   final DhikrRepository dhikrRepository;
+  final AppRepository appRepository;
   final DhikrUseCase dhikrUseCase;
   final PlacesRepository placesRepository;
   final ConnectivityUseCase connectivityUseCase;
@@ -42,6 +44,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _appViewModel = AppViewModel(
+      appRepository: widget.appRepository,
       authRepository: widget.authRepository,
       userRepository: widget.userRepository,
       hiveRepository: HiveRepositoryRemote(
@@ -84,6 +87,7 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
         ),
         Provider(create: (_) => widget.authRepository),
         Provider(create: (_) => widget.userRepository),
+        Provider(create: (_) => widget.appRepository),
         Provider(create: (_) => widget.postRepository),
         Provider(create: (_) => widget.dhikrRepository),
         Provider(create: (_) => widget.dhikrUseCase),
