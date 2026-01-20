@@ -43,11 +43,19 @@ class AppRepositoryRemote implements AppRepository {
   Future<Result<void>> updateIsOnboardingCompleted({
     required bool isOnboardingCompleted,
   }) async {
-    return _updateAppPreferences(
+    final result = await _updateAppPreferences(
       _appPreferences.value.copyWith(
         isOnboardingCompleted: isOnboardingCompleted,
       ),
     );
+    switch (result) {
+      case Ok():
+        print('updateIsOnboardingCompleted: ok');
+        return Result.ok(null);
+      case Error():
+        print('updateIsOnboardingCompleted: error');
+        return Result.error(result.asError.error);
+    }
   }
 
   Future<Result<void>> _updateAppPreferences(

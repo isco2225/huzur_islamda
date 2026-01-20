@@ -43,6 +43,7 @@ class SharedPreferencesService {
         _log.warning('Failed to save');
         return Result.error(Exception());
       }
+      _log.info('Saved JSON to SharedPreferences: $key');
       return Result.ok(null);
     } on Exception catch (e) {
       _log.warning('Failed to save', e);

@@ -22,6 +22,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   @override
+  void dispose() {
+    _onboardingViewModel.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return OnboardingView(viewModel: _onboardingViewModel);
   }

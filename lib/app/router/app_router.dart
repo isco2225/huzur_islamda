@@ -216,11 +216,12 @@ String? _redirect(BuildContext context, GoRouterState state) {
 
   // Not signed in: allow auth screens, redirect others to onboarding or sign in
   if (!isSignedIn) {
-    if (authLocs.contains(location)) return null;
-    if (!appPreferences.isOnboardingCompleted &&
-        location != AppRoutes.onboarding) {
-      return AppRoutes.onboarding;
+    if (!appPreferences.isOnboardingCompleted) {
+      if (location != AppRoutes.onboarding) return AppRoutes.onboarding;
+    } else if (location == AppRoutes.onboarding) {
+      return AppRoutes.signIn;
     }
+    if (authLocs.contains(location)) return null;
     return AppRoutes.signIn;
   }
 

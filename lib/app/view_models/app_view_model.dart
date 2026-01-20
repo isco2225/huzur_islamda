@@ -61,6 +61,17 @@ class AppViewModel {
       // initialize hive
       await _hiveRepository.initializeHive();
 
+      // load app preferences
+      final preferencesResult = await _appRepository.getPreferences();
+      switch (preferencesResult) {
+        case Ok():
+          _log.info('App preferences loaded successfully');
+        case Error():
+          _log.warning(
+            'Failed to load app preferences: ${preferencesResult.asError.error}',
+          );
+      }
+
       // sync dhikrs
       await _dhikrUseCase.syncDhikrs();
 
