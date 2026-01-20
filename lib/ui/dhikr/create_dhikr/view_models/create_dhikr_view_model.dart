@@ -14,7 +14,7 @@ class CreateDhikrViewModel {
        _userRepository = userRepository,
        _dhikrUseCase = dhikrUseCase {
     // DEFINE COMMANDS
-    createDhikr = Command1<Dhikr, ({String name, int targetCount})>(
+    createDhikr = Command1<void, ({String name, int targetCount})>(
       _createDhikr,
       debugLabel: 'createDhikr',
     );
@@ -37,7 +37,7 @@ class CreateDhikrViewModel {
   final ValueNotifier<int> targetCount = ValueNotifier<int>(33);
 
   // COMMANDS
-  late final Command1<Dhikr, ({String name, int targetCount})> createDhikr;
+  late final Command1<void, ({String name, int targetCount})> createDhikr;
 
   // DISPOSE
   void dispose() {
@@ -46,7 +46,7 @@ class CreateDhikrViewModel {
   }
 
   // FUNCTIONS
-  Future<Result<Dhikr>> _createDhikr(
+  Future<Result<void>> _createDhikr(
     ({String name, int targetCount}) params,
   ) async {
     try {
@@ -73,7 +73,7 @@ class CreateDhikrViewModel {
         ),
       );
 
-      if (result is Error<Dhikr>) {
+      if (result is Error<void>) {
         _log.warning('Create dhikr failed: ${result.error}');
       } else {
         final syncResult = await _dhikrUseCase.syncDhikrs();
@@ -83,7 +83,7 @@ class CreateDhikrViewModel {
           case Error():
             _log.warning('Failed to sync dhikr: ${syncResult.error}');
         }
-        _log.info('Dhikr created successfully: ${result.asOk.value.id}');
+        _log.info('Dhikr created successfully');
       }
 
       return result;

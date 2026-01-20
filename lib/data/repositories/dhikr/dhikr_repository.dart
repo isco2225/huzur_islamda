@@ -10,7 +10,7 @@ abstract class DhikrRepository {
   ValueListenable<List<Dhikr>> get dhikrsLocally;
   // Local operations (Hive)
   Future<Result<void>> loadAllDhikrsLocally();
-  Future<Result<Dhikr>> saveDhikrLocally({required Dhikr dhikr});
+  Future<Result<void>> saveDhikrLocally({required Dhikr dhikr});
   Future<Result<Dhikr?>> getDhikrLocally({required String dhikrId});
   Future<Result<List<Dhikr>?>> getAllDhikrsByDateLocally({
     required DateTime date,
