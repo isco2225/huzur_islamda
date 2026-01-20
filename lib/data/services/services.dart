@@ -6,3 +6,4 @@ export 'hive_service.dart';
 export 'firestore_post_service.dart';
 export 'place_selector_service.dart';
 export 'prayer_service.dart';
+export 'shared_preferences_sevice.dart';
