@@ -55,12 +55,6 @@ class DhikrDateSelector extends StatelessWidget {
         final canGoNext = viewModel.canGoToNextDay;
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            border: Border(
-              bottom: BorderSide(color: AppColors.border, width: 1),
-            ),
-          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
