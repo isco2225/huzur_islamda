@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/data.dart';
@@ -19,6 +18,11 @@ class AppScreen extends StatefulWidget {
     required this.connectivityUseCase,
     required this.prayerRepository,
     required this.prayerTimeUseCase,
+    required this.notificationRepository,
+    required this.requestPermissionUseCase,
+    required this.getPermissionStatesUseCase,
+    required this.schedulePrayerNotificationsUseCase,
+    required this.notificationService,
     required this.hiveDhikr,
   });
   final AuthRepository authRepository;
@@ -31,12 +35,17 @@ class AppScreen extends StatefulWidget {
   final ConnectivityUseCase connectivityUseCase;
   final PrayerRepository prayerRepository;
   final PrayerTimeUseCase prayerTimeUseCase;
+  final NotificationRepository notificationRepository;
+  final RequestPermissionUseCase requestPermissionUseCase;
+  final GetPermissionStatesUseCase getPermissionStatesUseCase;
+  final SchedulePrayerNotificationsUseCase schedulePrayerNotificationsUseCase;
+  final NotificationService notificationService;
   final HiveService hiveDhikr;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
 
-class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
+class _AppScreenState extends State<AppScreen> {
   late final AppViewModel _appViewModel;
 
   @override
@@ -51,26 +60,16 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
         hiveService: widget.hiveDhikr,
       ),
       dhikrUseCase: widget.dhikrUseCase,
+      prayerTimeUseCase: widget.prayerTimeUseCase,
     );
-    WidgetsBinding.instance.addObserver(this);
     // App'i başlat
     _appViewModel.initApp.execute();
     _appViewModel.initUser.execute();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.detached) {
-      // Uygulama tamamen kapanıyor - tüm Hive box'larını kapat
-      Hive.close();
-    }
-  }
-
-  @override
   void dispose() {
     _appViewModel.dispose();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -94,9 +93,14 @@ class _AppScreenState extends State<AppScreen> with WidgetsBindingObserver {
         Provider(create: (_) => widget.placesRepository),
         Provider(create: (_) => widget.prayerRepository),
         Provider(create: (_) => widget.prayerTimeUseCase),
+        Provider(create: (_) => widget.notificationRepository),
+        Provider(create: (_) => widget.notificationService),
 
         // use cases
         Provider(create: (_) => widget.connectivityUseCase, lazy: true),
+        Provider(create: (_) => widget.requestPermissionUseCase),
+        Provider(create: (_) => widget.getPermissionStatesUseCase),
+        Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

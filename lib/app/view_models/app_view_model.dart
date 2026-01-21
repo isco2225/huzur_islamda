@@ -12,6 +12,7 @@ class AppViewModel {
     required UserRepository userRepository,
     required HiveRepository hiveRepository,
     required DhikrUseCase dhikrUseCase,
+    required PrayerTimeUseCase prayerTimeUseCase,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
@@ -130,4 +131,22 @@ class AppViewModel {
         return result;
     }
   }
+
+  // Future<void> _cancelNotifications() async {
+  //   try {
+  //     _log.info('Cancelling prayer notifications...');
+  //     final result = await _schedulePrayerNotificationsUseCase.cancelAll();
+  //     switch (result) {
+  //       case Ok():
+  //         _log.info('Prayer notifications cancelled successfully');
+  //         break;
+  //       case Error():
+  //         _log.warning(
+  //           'Failed to cancel notifications: ${result.asError.error}',
+  //         );
+  //     }
+  //   } catch (e) {
+  //     _log.severe('Exception cancelling notifications: $e');
+  //   }
+  // }
 }

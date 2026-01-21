@@ -40,7 +40,7 @@ class SettingsView extends StatelessWidget {
                       title: 'Bildirimler',
                       subtitle: 'Bildirim ayarlarını yönet',
                       valueListenable: viewModel.isNotificationsEnabled,
-                      onChanged: viewModel.toggleNotifications,
+                      onChanged: viewModel.toggleNotificationsFunction,
                     ),
                     SettingsDivider(),
                     SwitchableSettingTile(
@@ -48,7 +48,7 @@ class SettingsView extends StatelessWidget {
                       title: 'Titreşim',
                       subtitle: 'Bildirimlerde titreşimi kullan',
                       valueListenable: viewModel.isVibrationEnabled,
-                      onChanged: viewModel.toggleVibration,
+                      onChanged: viewModel.toggleVibrationFunction,
                     ),
                   ],
                 ),

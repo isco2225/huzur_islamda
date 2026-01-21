@@ -40,6 +40,40 @@ class AppRepositoryRemote implements AppRepository {
   }
 
   @override
+  Future<Result<void>> updateIsVibrationEnabled({
+    required bool isVibrationEnabled,
+  }) async {
+    final result = await _updateAppPreferences(
+      _appPreferences.value.copyWith(
+        isVibrationEnabled: isVibrationEnabled,
+      ),
+    );
+    switch (result) {
+      case Ok():
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
+  Future<Result<void>> updateIsNotificationsEnabled({
+    required bool isNotificationsEnabled,
+  }) async {
+    final result = await _updateAppPreferences(
+      _appPreferences.value.copyWith(
+        isNotificationsEnabled: isNotificationsEnabled,
+      ),
+    );
+    switch (result) {
+      case Ok():
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
   Future<Result<void>> updateIsOnboardingCompleted({
     required bool isOnboardingCompleted,
   }) async {

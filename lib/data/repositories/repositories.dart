@@ -6,3 +6,4 @@ export 'places/places.dart';
 export 'prayer/prayer.dart';
 export 'hive/hive.dart';
 export 'app/app.dart';
+export 'notification/notification.dart';

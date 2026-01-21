@@ -26,6 +26,20 @@ void main() async {
 
   // Services
   final prayerService = PrayerService();
+  final notificationService = NotificationService();
+
+  // Initialize notification service
+  final notificationInitResult = await notificationService.initialize();
+  switch (notificationInitResult) {
+    case Ok():
+      debugPrint('Notification service initialized successfully');
+      break;
+    case Error():
+      debugPrint(
+        'Failed to initialize notification service: ${notificationInitResult.asError.error}',
+      );
+      break;
+  }
 
   // Repositories
   final authRepository = AuthRepositoryRemote(
@@ -39,12 +53,23 @@ void main() async {
     hiveService: hivePrayer,
     prayerService: prayerService,
   );
+  final notificationRepository = NotificationRepositoryRemote(
+    notificationService: notificationService,
+  );
 
   // Use Cases
   final connectivityUseCase = ConnectivityUseCase();
   final prayerTimeUseCase = PrayerTimeUseCase(
     prayerRepository: prayerRepository,
     connectivityUseCase: connectivityUseCase,
+  );
+  final requestPermissionUseCase =
+      RequestPermissionUseCase.withPermissionHandler();
+  final getPermissionStatesUseCase =
+      GetPermissionStatesUseCase.withPermissionHandler();
+  final schedulePrayerNotificationsUseCase = SchedulePrayerNotificationsUseCase(
+    prayerRepository: prayerRepository,
+    notificationRepository: notificationRepository,
   );
 
   runApp(
@@ -71,6 +96,11 @@ void main() async {
       connectivityUseCase: connectivityUseCase,
       prayerRepository: prayerRepository,
       prayerTimeUseCase: prayerTimeUseCase,
+      notificationRepository: notificationRepository,
+      requestPermissionUseCase: requestPermissionUseCase,
+      getPermissionStatesUseCase: getPermissionStatesUseCase,
+      schedulePrayerNotificationsUseCase: schedulePrayerNotificationsUseCase,
+      notificationService: notificationService,
       hiveDhikr: hiveDhikr,
     ),
   );

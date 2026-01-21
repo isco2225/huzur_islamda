@@ -46,16 +46,16 @@ class RequestPermissionUseCase {
     required Permission permission,
     required int? androidVersionSdkNumber,
   }) async {
-    log.info('Request Started.');
+    log.info('Request Permission Started.');
     try {
       final geoLocation = await _request(
         permission: permission,
         androidVersionSdkNumber: androidVersionSdkNumber,
       );
-      log.fine('Successful.');
+      log.info('Request Successful.');
       return Result.ok(geoLocation);
     } on Exception catch (error) {
-      log.severe('Request Error.', error);
+      log.severe('Request Permission Error.', error);
       return Result.error(error);
     }
   }
