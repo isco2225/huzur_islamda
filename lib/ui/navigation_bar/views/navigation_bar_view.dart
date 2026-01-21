@@ -32,14 +32,14 @@ class NavigationBarView extends StatelessWidget {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.menu_book_rounded),
-            selectedIcon: Icon(Icons.menu_book),
+            icon: Icon(Icons.my_library_books_outlined),
+            selectedIcon: Icon(Icons.my_library_books),
             label: 'Akış',
           ),
           NavigationDestination(
             icon: Icon(Icons.smart_toy_outlined),
             selectedIcon: Icon(Icons.smart_toy),
-            label: 'Assistant',
+            label: 'Asistan',
           ),
           NavigationDestination(
             icon: Icon(Icons.mosque_outlined),
@@ -47,8 +47,8 @@ class NavigationBarView extends StatelessWidget {
             label: 'Vakitler',
           ),
           NavigationDestination(
-            icon: Icon(Icons.favorite_outline),
-            selectedIcon: Icon(Icons.favorite),
+            icon: Icon(Icons.auto_awesome_outlined),
+            selectedIcon: Icon(Icons.auto_awesome),
             label: 'Zikir',
           ),
           NavigationDestination(
