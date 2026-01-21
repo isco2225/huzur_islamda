@@ -71,13 +71,13 @@ final List<RouteBase> _routes = [
         ],
       ),
 
-      // Search Tab
+      // Assistant Tab
       StatefulShellBranch(
         routes: [
           GoRoute(
-            path: AppRoutes.search,
-            name: 'search',
-            builder: (context, state) => const SearchScreen(),
+            path: AppRoutes.assistant,
+            name: 'assistant',
+            builder: (context, state) => const AssistantScreen(),
           ),
         ],
       ),

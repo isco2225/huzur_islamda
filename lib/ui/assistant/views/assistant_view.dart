@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../ui.dart';
 
-class SearchView extends StatelessWidget {
-  const SearchView({super.key, required this.viewModel});
+class AssistantView extends StatelessWidget {
+  const AssistantView({super.key, required this.viewModel});
 
-  final SearchViewModel viewModel;
+  final AssistantViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class SearchView extends StatelessWidget {
       safeArea: true,
       body: Center(
         child: Text(
-          'Search',
+          'Assistant',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

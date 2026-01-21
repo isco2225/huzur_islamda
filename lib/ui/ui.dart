@@ -4,6 +4,6 @@ export 'flow/flow.dart';
 export 'navigation_bar/navigation_bar.dart';
 export 'onboarding/onboarding.dart';
 export 'prayer/prayer.dart';
-export 'search/search.dart';
+export 'assistant/assistant.dart';
 export 'settings/settings.dart';
 export 'user/user.dart';

@@ -25,8 +25,8 @@ class AppRoutes {
   /// Flow (home) screen route
   static const String flow = '/flow';
 
-  /// Search screen route
-  static const String search = '/search';
+  /// Assistant screen route
+  static const String assistant = '/assistant';
 
   /// Prayer screen route
   static const String prayer = '/prayer';

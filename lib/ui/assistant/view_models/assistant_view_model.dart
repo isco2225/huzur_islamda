@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 
-class SearchViewModel {
-  SearchViewModel() {
+class AssistantViewModel {
+  AssistantViewModel() {
     // DEFINE COMMANDS
     // TODO: Add commands here
 
@@ -9,7 +9,7 @@ class SearchViewModel {
   }
 
   // LOGGER
-  final _log = Logger('SearchViewModel');
+  final _log = Logger('AssistantViewModel');
 
   // REPOSITORIES & USE CASES
   // TODO: Add repositories and use cases here

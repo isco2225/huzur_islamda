@@ -26,8 +26,8 @@ extension RouterExtensions on BuildContext {
   /// Navigate to flow (home) screen
   void goToFlow() => go(AppRoutes.flow);
 
-  /// Navigate to search screen
-  void goToSearch() => go(AppRoutes.search);
+  /// Navigate to assistant screen
+  void goToAssistant() => go(AppRoutes.assistant);
 
   /// Navigate to prayer screen
   void goToPrayer() => go(AppRoutes.prayer);

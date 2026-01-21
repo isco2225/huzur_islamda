@@ -37,9 +37,9 @@ class NavigationBarView extends StatelessWidget {
             label: 'Akış',
           ),
           NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search),
-            label: 'Ara',
+            icon: Icon(Icons.smart_toy_outlined),
+            selectedIcon: Icon(Icons.smart_toy),
+            label: 'Assistant',
           ),
           NavigationDestination(
             icon: Icon(Icons.mosque_outlined),
