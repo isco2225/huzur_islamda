@@ -1,4 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Android 13+ (API 33+) için bildirim izni -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Android 12+ (API 31+) için exact alarms izni -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- Android 12+ için alternatif exact alarms izni (USE_EXACT_ALARM daha kısıtlayıcı) -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" android:minSdkVersion="33"/>
+    <!-- Boot completed için (bildirimlerin cihaz yeniden başlatıldıktan sonra çalışması için) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Battery optimization'dan muafiyet için (Samsung cihazlar için önemli) -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    
     <application
         android:label="huzur_islamda"
         android:name="${applicationName}"

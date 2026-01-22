@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logging/logging.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -77,20 +78,29 @@ class NotificationService {
 
   /// Android için bildirim kanalı oluşturur
   Future<void> _createNotificationChannel() async {
-    const androidChannel = AndroidNotificationChannel(
+    final androidChannel = AndroidNotificationChannel(
       'prayer_times_channel', // id
       'Namaz Vakitleri', // name
       description: 'Namaz vakitleri bildirimleri için kanal',
       importance: Importance.high,
       playSound: true,
       enableVibration: true,
+      showBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFFFFC107), // Amber renk (ARGB: 255, 255, 193, 7)
     );
 
-    await _notificationsPlugin
+    final androidImplementation = _notificationsPlugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(androidChannel);
+        >();
+
+    if (androidImplementation != null) {
+      // Kanal zaten varsa bile yeniden oluştur (Samsung cihazlarda önemli)
+      await androidImplementation.deleteNotificationChannel(androidChannel.id);
+      await androidImplementation.createNotificationChannel(androidChannel);
+      _log.info('Notification channel created/updated: ${androidChannel.id}');
+    }
   }
 
   /// Bildirim tıklandığında çağrılır
@@ -223,7 +233,7 @@ class NotificationService {
       );
 
       // Android notification details
-      const androidDetails = AndroidNotificationDetails(
+      final androidDetails = AndroidNotificationDetails(
         'prayer_times_channel',
         'Namaz Vakitleri',
         channelDescription: 'Namaz vakitleri bildirimleri için kanal',
@@ -231,6 +241,22 @@ class NotificationService {
         priority: Priority.high,
         playSound: true,
         enableVibration: true,
+        showWhen: true,
+        enableLights: true,
+        ledColor: const Color(
+          0xFFFFC107,
+        ), // Amber renk (ARGB: 255, 255, 193, 7)
+        styleInformation: const BigTextStyleInformation(''),
+        category: AndroidNotificationCategory.alarm,
+        visibility: NotificationVisibility.public,
+        ongoing: false,
+        autoCancel: true,
+        showProgress: false,
+        maxProgress: 0,
+        indeterminate: false,
+        onlyAlertOnce: false,
+        channelShowBadge: true,
+        ticker: '',
       );
 
       // iOS notification details
@@ -241,7 +267,7 @@ class NotificationService {
       );
 
       // Notification details
-      const notificationDetails = NotificationDetails(
+      final notificationDetails = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
       );
@@ -319,6 +345,77 @@ class NotificationService {
     } catch (e) {
       _log.severe('Error getting pending notifications: $e');
       return Result.error(Exception('Planlanmış bildirimler alınamadı: $e'));
+    }
+  }
+
+  /// Test için her 10 dakikada bir bildirim planlar
+  /// [count] kaç tane bildirim planlanacağını belirler (varsayılan: 5)
+  /// Test bildirimleri ID'leri 9999'dan başlar (9999, 9998, 9997...)
+  Future<Result<void>> scheduleTestNotifications({
+    int count = 5,
+  }) async {
+    try {
+      _log.info('Scheduling $count test notifications (every 10 minutes)...');
+
+      if (!_isInitialized) {
+        final initResult = await initialize();
+        switch (initResult) {
+          case Ok():
+            break;
+          case Error():
+            return Result.error(Exception('Bildirim servisi başlatılamadı'));
+        }
+      }
+
+      final now = DateTime.now();
+      final testNotificationIds = <int>[];
+
+      // Her 10 dakikada bir bildirim planla
+      for (int i = 0; i < count; i++) {
+        final notificationId = 9999 - i; // Test ID'leri: 9999, 9998, 9997...
+        final scheduledTime = now.add(Duration(minutes: (i + 1) * 10));
+
+        final result = await scheduleNotification(
+          id: notificationId,
+          title: 'Test Bildirimi ${i + 1}',
+          body: 'Bu bir test bildirimi. Zaman: ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
+          scheduledDate: scheduledTime,
+        );
+
+        switch (result) {
+          case Ok():
+            testNotificationIds.add(notificationId);
+            _log.info(
+              'Test notification $notificationId scheduled for ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
+            );
+            break;
+          case Error():
+            _log.warning(
+              'Failed to schedule test notification $notificationId: ${result.asError.error}',
+            );
+            break;
+        }
+      }
+
+      _log.info(
+        'Successfully scheduled ${testNotificationIds.length} test notifications',
+      );
+      return Result.ok(null);
+    } catch (e) {
+      _log.severe('Error scheduling test notifications: $e');
+      return Result.error(Exception('Test bildirimleri planlanamadı: $e'));
+    }
+  }
+
+  /// Test bildirimlerini iptal eder (ID'leri 9999'dan başlar)
+  Future<Result<void>> cancelTestNotifications({int count = 5}) async {
+    try {
+      _log.info('Cancelling test notifications...');
+      final testIds = List.generate(count, (i) => 9999 - i);
+      return await cancelOldPrayerNotifications(testIds);
+    } catch (e) {
+      _log.severe('Error cancelling test notifications: $e');
+      return Result.error(Exception('Test bildirimleri iptal edilemedi: $e'));
     }
   }
 }

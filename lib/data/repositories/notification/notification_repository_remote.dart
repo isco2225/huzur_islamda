@@ -3,7 +3,6 @@ import 'package:logging/logging.dart';
 import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 import '../../data.dart';
-import 'notification_repository.dart';
 
 class NotificationRepositoryRemote implements NotificationRepository {
   NotificationRepositoryRemote({
@@ -58,7 +57,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
     required String dateKey,
   }) async {
     try {
-      // Geçmiş vakitler için bildirim planlanmaz
+      // Skip notifications for past prayer times
       if (prayerTime.isBefore(DateTime.now())) {
         _log.info(
           'Skipping notification for past prayer time: $prayerName at $prayerTime',
@@ -66,7 +65,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
         return Result.ok(null);
       }
 
-      // Prayer name'den prayer type'a çevir
+      // Convert prayer name to prayer type
       String prayerType = '';
       switch (prayerName) {
         case 'İmsak':
@@ -126,11 +125,14 @@ class NotificationRepositoryRemote implements NotificationRepository {
       _log.info('Cancelling all prayer notifications...');
 
       // Tüm planlanmış bildirimleri al
-      final pendingResult = await _notificationService.getPendingNotifications();
+      final pendingResult = await _notificationService
+          .getPendingNotifications();
       switch (pendingResult) {
         case Ok():
           final pendingNotifications = pendingResult.asOk.value;
-          _log.info('Found ${pendingNotifications.length} pending notifications');
+          _log.info(
+            'Found ${pendingNotifications.length} pending notifications',
+          );
 
           // Sadece namaz bildirimlerini iptal et (ID aralığı 1000-9999)
           final idsToCancel = <int>[];
@@ -141,12 +143,13 @@ class NotificationRepositoryRemote implements NotificationRepository {
           }
 
           if (idsToCancel.isNotEmpty) {
-            final cancelResult = await _notificationService.cancelOldPrayerNotifications(
-              idsToCancel,
-            );
+            final cancelResult = await _notificationService
+                .cancelOldPrayerNotifications(idsToCancel);
             switch (cancelResult) {
               case Ok():
-                _log.info('Cancelled ${idsToCancel.length} prayer notifications');
+                _log.info(
+                  'Cancelled ${idsToCancel.length} prayer notifications',
+                );
                 return Result.ok(null);
               case Error():
                 _log.warning(
