@@ -46,6 +46,7 @@ class DhikrProgressIndicator extends StatelessWidget {
                 width: 200,
                 height: 200,
                 child: CircularProgressIndicator(
+                  strokeCap: StrokeCap.round,
                   value: progress,
                   strokeWidth: 12,
                   backgroundColor: Colors.transparent,
@@ -59,7 +60,7 @@ class DhikrProgressIndicator extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${(progress * 100).toStringAsFixed(0)}%',
+                    '$currentCount',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isCompleted
@@ -70,7 +71,7 @@ class DhikrProgressIndicator extends StatelessWidget {
                   if (!isCompleted) ...[
                     SizedBox(height: context.spacingSmall),
                     Text(
-                      '$remainingCount kalan',
+                      '$remainingCount kaldı',
                       style: Theme.of(
                         context,
                       ).textTheme.bodyMedium?.copyWith(color: Colors.grey),

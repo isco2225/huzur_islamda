@@ -23,20 +23,13 @@ class DhikrCounterControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: AppColors.background,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: EdgeInsets.all(context.horizontalPadding),
         child: Column(
           children: [
-            Text(
-              dhikr.name,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: context.spacingLarge),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -46,49 +39,21 @@ class DhikrCounterControls extends StatelessWidget {
                   builder: (context, isRunning, child) {
                     return _CounterButton(
                       icon: Icons.remove,
-                      label: 'Azalt',
                       onPressed: canDecrement(dhikr) && !isRunning
                           ? onDecrement
                           : null,
-                      isLoading: isRunning,
                       color: AppColors.error,
+                      size: 60,
                     );
                   },
-                ),
-
-                // Current Count Display
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    dhikr.currentCount.toString(),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
                 ),
 
                 // Increment Button
-                ValueListenableBuilder(
-                  valueListenable: incrementRunning,
-                  builder: (context, isRunning, child) {
-                    return _CounterButton(
-                      icon: Icons.add,
-                      label: 'Artır',
-                      onPressed: canIncrement(dhikr) && !isRunning
-                          ? onIncrement
-                          : null,
-                      isLoading: isRunning,
-                      color: AppColors.success,
-                    );
-                  },
+                _CounterButton(
+                  size: 100,
+                  icon: Icons.add,
+                  onPressed: canIncrement(dhikr) ? onIncrement : null,
+                  color: AppColors.success,
                 ),
               ],
             ),
@@ -110,25 +75,23 @@ class DhikrCounterControls extends StatelessWidget {
 class _CounterButton extends StatelessWidget {
   const _CounterButton({
     required this.icon,
-    required this.label,
     required this.onPressed,
-    required this.isLoading,
     required this.color,
+    required this.size,
   });
 
   final IconData icon;
-  final String label;
   final VoidCallback? onPressed;
-  final bool isLoading;
   final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          width: 64,
-          height: 64,
+          width: size,
+          height: size,
           child: ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
@@ -138,24 +101,8 @@ class _CounterButton extends StatelessWidget {
               padding: EdgeInsets.zero,
               elevation: onPressed == null ? 0 : 4,
             ),
-            child: isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Icon(icon, size: 32),
+            child: Icon(icon, size: size / 2),
           ),
-        ),
-        SizedBox(height: context.spacingSmall),
-        Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
         ),
       ],
     );

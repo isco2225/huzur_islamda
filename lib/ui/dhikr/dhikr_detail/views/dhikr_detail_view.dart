@@ -67,34 +67,46 @@ class DhikrDetailView extends StatelessWidget {
               ),
               backgroundColor: AppColors.background,
               safeArea: true,
-              body: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(vertical: 200),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Progress Indicator
-                    DhikrProgressIndicator(
-                      currentCount: dhikr.currentCount,
-                      targetCount: dhikr.targetCount,
-                      progress: viewModel.progress,
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Name
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 100.0),
+                    child: Center(
+                      child: Text(
+                        dhikr.name,
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.italic,
+                              color: AppColors.success,
+                            ),
+                      ),
                     ),
-                    SizedBox(height: context.spacingExtraLarge),
-                    // Completion Status
-                    if (dhikr.isCompleted) ...[
-                      DhikrCompletionBadge(),
-                      SizedBox(height: context.spacingLarge),
-                    ],
-                    // Counter Controls
-                    DhikrCounterControls(
-                      dhikr: dhikr,
-                      onIncrement: () => viewModel.incrementCount.execute(),
-                      onDecrement: () => viewModel.decrementCount.execute(),
-                      incrementRunning: viewModel.incrementCount.running,
-                      decrementRunning: viewModel.decrementCount.running,
-                    ),
+                  ),
+                  // Progress Indicator
+                  DhikrProgressIndicator(
+                    currentCount: dhikr.currentCount,
+                    targetCount: dhikr.targetCount,
+                    progress: viewModel.progress,
+                  ),
+                  SizedBox(height: context.spacingExtraLarge),
+                  // Completion Status
+                  if (dhikr.isCompleted) ...[
+                    DhikrCompletionBadge(),
+                    SizedBox(height: context.spacingLarge),
                   ],
-                ),
+                  // Counter Controls
+                  DhikrCounterControls(
+                    dhikr: dhikr,
+                    onIncrement: () => viewModel.incrementCount.execute(),
+                    onDecrement: () => viewModel.decrementCount.execute(),
+                    incrementRunning: viewModel.incrementCount.running,
+                    decrementRunning: viewModel.decrementCount.running,
+                  ),
+                ],
               ),
             );
           },
