@@ -18,26 +18,29 @@ class PrayerTimesAdapter extends TypeAdapter<PrayerTimes> {
     };
     return PrayerTimes(
       fajr: fields[0] as DateTime,
-      dhuhr: fields[1] as DateTime,
-      asr: fields[2] as DateTime,
-      maghrib: fields[3] as DateTime,
-      isha: fields[4] as DateTime,
+      sunrise: fields[1] as DateTime,
+      dhuhr: fields[2] as DateTime,
+      asr: fields[3] as DateTime,
+      maghrib: fields[4] as DateTime,
+      isha: fields[5] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, PrayerTimes obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.fajr)
       ..writeByte(1)
-      ..write(obj.dhuhr)
+      ..write(obj.sunrise)
       ..writeByte(2)
-      ..write(obj.asr)
+      ..write(obj.dhuhr)
       ..writeByte(3)
-      ..write(obj.maghrib)
+      ..write(obj.asr)
       ..writeByte(4)
+      ..write(obj.maghrib)
+      ..writeByte(5)
       ..write(obj.isha);
   }
 

@@ -47,6 +47,12 @@ class _PrayerTimesListState extends State<PrayerTimesList> {
         ),
         _buildDivider(),
         PrayerTimeDisplayer(
+          name: 'Güneş',
+          time: _formatTime(widget.prayerTimes.sunrise),
+          isHighlighted: currentPrayerTime == 'Güneş',
+        ),
+        _buildDivider(),
+        PrayerTimeDisplayer(
           name: 'Öğle',
           time: _formatTime(widget.prayerTimes.dhuhr),
           isHighlighted: currentPrayerTime == 'Öğle',

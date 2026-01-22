@@ -2,18 +2,17 @@ import '../../../app/app.dart';
 import '../../../domain/domain.dart';
 
 abstract class NotificationRepository {
-  /// Namaz vakti bildirimi planlar
   Future<Result<void>> schedulePrayerTimeNotification({
     required String prayerName,
     required DateTime prayerTime,
     required String dateKey, // Format: "YYYY-MM-DD"
   });
 
-  /// Tüm namaz bildirimlerini iptal eder
+  /// Cancel all prayer notifications
   Future<Result<void>> cancelAllPrayerNotifications();
 
-  /// Tüm namaz bildirimlerini yeniden planlar
-  /// Önce tüm bildirimleri iptal eder, sonra yeni vakitler için planlar
+  /// Reschedule all prayer notifications
+  /// First cancel all notifications, then schedule new times
   Future<Result<void>> rescheduleAllPrayerNotifications({
     required PrayerTimes prayerTimes,
     required String dateKey, // Format: "YYYY-MM-DD"

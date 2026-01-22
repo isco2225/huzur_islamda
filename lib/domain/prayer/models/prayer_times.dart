@@ -9,35 +9,35 @@ class PrayerTimes {
   final DateTime fajr;
 
   @HiveField(1)
-  final DateTime dhuhr;
+  final DateTime sunrise;
 
   @HiveField(2)
-  final DateTime asr;
+  final DateTime dhuhr;
 
   @HiveField(3)
-  final DateTime maghrib;
+  final DateTime asr;
 
   @HiveField(4)
+  final DateTime maghrib;
+
+  @HiveField(5)
   final DateTime isha;
 
   const PrayerTimes({
     required this.fajr,
+    required this.sunrise,
     required this.dhuhr,
     required this.asr,
     required this.maghrib,
     required this.isha,
   });
 
-  /// API'den gelen JSON formatını parse eder
-  /// API formatı: { "imsak": "06:15", "ogle": "12:30", ... }
-  /// date parametresi ile saat bilgisi DateTime'a çevrilir
   factory PrayerTimes.fromApiJson(Map<String, Object?> json, DateTime date) {
     DateTime parseTime(String? timeString) {
       if (timeString == null || timeString.isEmpty) {
         return date;
       }
 
-      // "06:15" formatındaki string'i parse et
       final parts = timeString.split(':');
       if (parts.length != 2) {
         return date;
@@ -50,8 +50,8 @@ class PrayerTimes {
     }
 
     return PrayerTimes(
-      // API'deki isimler: imsak=fajr, ogle=dhuhr, ikindi=asr, aksam=maghrib, yatsi=isha
       fajr: parseTime(json['imsak'] as String?),
+      sunrise: parseTime(json['gunes'] as String?),
       dhuhr: parseTime(json['ogle'] as String?),
       asr: parseTime(json['ikindi'] as String?),
       maghrib: parseTime(json['aksam'] as String?),
@@ -59,7 +59,6 @@ class PrayerTimes {
     );
   }
 
-  /// Standart JSON formatını parse eder (DateTime string formatında)
   factory PrayerTimes.fromJson(Map<String, Object?> json) {
     DateTime parseDateTime(dynamic value) {
       if (value == null) return DateTime.now();
@@ -70,6 +69,7 @@ class PrayerTimes {
 
     return PrayerTimes(
       fajr: parseDateTime(json['fajr'] ?? json['Fajr']),
+      sunrise: parseDateTime(json['sunrise'] ?? json['Sunrise']),
       dhuhr: parseDateTime(json['dhuhr'] ?? json['Dhuhr']),
       asr: parseDateTime(json['asr'] ?? json['Asr']),
       maghrib: parseDateTime(json['maghrib'] ?? json['Maghrib']),
@@ -80,6 +80,7 @@ class PrayerTimes {
   Map<String, dynamic> toJson() {
     return {
       'fajr': fajr.toIso8601String(),
+      'sunrise': sunrise.toIso8601String(),
       'dhuhr': dhuhr.toIso8601String(),
       'asr': asr.toIso8601String(),
       'maghrib': maghrib.toIso8601String(),
@@ -89,6 +90,7 @@ class PrayerTimes {
 
   PrayerTimes copyWith({
     DateTime? fajr,
+    DateTime? sunrise,
     DateTime? dhuhr,
     DateTime? asr,
     DateTime? maghrib,
@@ -96,6 +98,7 @@ class PrayerTimes {
   }) {
     return PrayerTimes(
       fajr: fajr ?? this.fajr,
+      sunrise: sunrise ?? this.sunrise,
       dhuhr: dhuhr ?? this.dhuhr,
       asr: asr ?? this.asr,
       maghrib: maghrib ?? this.maghrib,
@@ -107,10 +110,7 @@ class PrayerTimes {
   List<({String name, DateTime time})> get allPrayerTimes {
     return [
       (name: 'İmsak', time: fajr),
-      (
-        name: 'Güneş',
-        time: dhuhr,
-      ), // Not: Güneş vakti için ayrı field yok, dhuhr kullanılıyor
+      (name: 'Güneş', time: sunrise),
       (name: 'Öğle', time: dhuhr),
       (name: 'İkindi', time: asr),
       (name: 'Akşam', time: maghrib),
@@ -166,8 +166,13 @@ class PrayerTimes {
     // İmsak (fajr) -> Öğle (dhuhr) -> İkindi (asr) -> Akşam (maghrib) -> Yatsı (isha)
 
     // İmsak ile Öğle arası -> İmsak
-    if (now.isAfter(fajr) && now.isBefore(dhuhr)) {
+    if (now.isAfter(fajr) && now.isBefore(sunrise)) {
       return 'İmsak';
+    }
+
+    // Öğle ile İkindi arası -> Öğle
+    if (now.isAfter(sunrise) && now.isBefore(dhuhr)) {
+      return 'Güneş';
     }
 
     // Öğle ile İkindi arası -> Öğle
@@ -199,6 +204,9 @@ class PrayerTimes {
     if (now.hour == fajr.hour && now.minute == fajr.minute) {
       return 'İmsak';
     }
+    if (now.hour == sunrise.hour && now.minute == sunrise.minute) {
+      return 'Güneş';
+    }
     if (now.hour == dhuhr.hour && now.minute == dhuhr.minute) {
       return 'Öğle';
     }
@@ -211,7 +219,6 @@ class PrayerTimes {
     if (now.hour == isha.hour && now.minute == isha.minute) {
       return 'Yatsı';
     }
-
     return null;
   }
 }
