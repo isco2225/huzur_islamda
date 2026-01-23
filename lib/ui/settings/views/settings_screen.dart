@@ -30,18 +30,20 @@ class _SettingsScreenState extends State<SettingsScreen>
           .read<SchedulePrayerNotificationsUseCase>(),
       notificationService: context.read<NotificationService>(),
     );
+    print(_viewModel.isNotificationsEnabled.value);
+    print(_viewModel.isVibrationEnabled.value);
     _logOutViewModel = LogOutViewModel(
       authRepository: context.read<AuthRepository>(),
     );
     _viewModel.toggleNotifications.handleError(context, showSnackBar: true);
-    _viewModel.toggleNotifications.handleCompleted(
+    _viewModel.toggleNotifications.handleCompleted(context);
+    _viewModel.scheduleTestNotifications.handleError(
       context,
-      successMessage: 'Bildirim ayarı güncellendi',
+      showSnackBar: true,
     );
-    _viewModel.scheduleTestNotifications.handleError(context, showSnackBar: true);
     _viewModel.scheduleTestNotifications.handleCompleted(
       context,
-      successMessage: 'Test bildirimleri planlandı (her 10 dakikada bir)',
+      successMessage: 'Test bildirimleri planlandı (her 5 dakikada bir)',
     );
     _viewModel.cancelTestNotifications.handleError(context, showSnackBar: true);
     _viewModel.cancelTestNotifications.handleCompleted(
@@ -54,13 +56,11 @@ class _SettingsScreenState extends State<SettingsScreen>
       successMessage: 'Çıkış yapıldı!',
     );
 
-    // Dialog göstermek için listener ekle
     _viewModel.showOpenSettingsDialog.addListener(_onShowOpenSettingsDialog);
   }
 
   void _onShowOpenSettingsDialog() {
     if (_viewModel.showOpenSettingsDialog.value && mounted) {
-      // Dialog'u göster
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           showDialog(
@@ -68,7 +68,6 @@ class _SettingsScreenState extends State<SettingsScreen>
             barrierDismissible: true,
             builder: (context) => const OpenSettingsDialog(),
           ).then((_) {
-            // Dialog kapandığında state'i sıfırla
             _viewModel.showOpenSettingsDialog.value = false;
           });
         }
@@ -77,19 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    // Uygulama geri geldiğinde (resumed) izin durumunu kontrol et
-    // Kullanıcı ayarlardan izin verdikten sonra uygulama geri geldiğinde
-    // izin durumunu senkronize et
-    if (state == AppLifecycleState.resumed) {
-      _viewModel.checkAndSyncPermissionStatus();
-    }
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _viewModel.showOpenSettingsDialog.removeListener(_onShowOpenSettingsDialog);
     _viewModel.dispose();
     _logOutViewModel.logOut.dispose();

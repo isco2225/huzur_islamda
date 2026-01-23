@@ -16,64 +16,17 @@ class SchedulePrayerNotificationsUseCase {
   final NotificationRepository _notificationRepository;
   final Logger _log;
 
-  /// Bugünün namaz vakitleri için bildirim planlar
-  Future<Result<void>> scheduleForToday({
-    required String districtId,
-    required String city,
-    required String country,
-  }) async {
-    try {
-      _log.info('Scheduling notifications for today');
-
-      // Bugünün namaz vakitlerini al
-      final now = DateTime.now();
-      final localResult = await _prayerRepository.getPrayerTimesLocally(
-        districtId: districtId,
-        city: city,
-        country: country,
-        date: now,
-      );
-
-      switch (localResult) {
-        case Ok():
-          final prayer = localResult.asOk.value;
-          if (prayer == null) {
-            _log.warning('No prayer times found locally for today');
-            return Result.error(Exception('Namaz vakitleri bulunamadı'));
-          }
-
-          final todayTimes = prayer.getTodayPrayerTimes();
-          if (todayTimes == null) {
-            _log.warning('Today prayer times not found');
-            return Result.error(
-              Exception('Bugünün namaz vakitleri bulunamadı'),
-            );
-          }
-
-          final dateKey = Prayer.formatDate(now);
-          return await _notificationRepository.rescheduleAllPrayerNotifications(
-            prayerTimes: todayTimes,
-            dateKey: dateKey,
-          );
-        case Error():
-          _log.severe(
-            'Error getting prayer times locally: ${localResult.asError.error}',
-          );
-          return Result.error(localResult.asError.error);
-      }
-    } catch (e) {
-      _log.severe('Exception scheduling notifications for today: $e');
-      return Result.error(Exception('Bugünün bildirimleri planlanamadı: $e'));
-    }
-  }
-
   /// Bir haftalık bildirim planlar
   /// Önce tüm eski namaz bildirimlerini iptal eder, sonra önümüzdeki 7 gün (bugün dahil) için yeni bildirimleri planlar
-  Future<Result<void>> scheduleForWeek({
+  Future<Result<bool>> scheduleForWeek({
     required String districtId,
     required String city,
     required String country,
   }) async {
+    if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
+      print('Lokasyon bilgileri eksik');
+      return Result.ok(false);
+    }
     try {
       _log.info('Scheduling notifications for week (7 days including today)');
 
@@ -92,12 +45,10 @@ class SchedulePrayerNotificationsUseCase {
         // Devam et, yeni bildirimleri planlamaya çalış
       }
 
-      final now = DateTime.now();
       final localResult = await _prayerRepository.getPrayerTimesLocally(
         districtId: districtId,
         city: city,
         country: country,
-        date: now,
       );
 
       switch (localResult) {
@@ -108,6 +59,7 @@ class SchedulePrayerNotificationsUseCase {
             return Result.error(Exception('Namaz vakitleri bulunamadı'));
           }
 
+          final now = DateTime.now();
           // Bugünden itibaren 7 gün için bildirim planla (bugün dahil)
           int scheduledDays = 0;
           int totalNotifications = 0;
@@ -115,7 +67,6 @@ class SchedulePrayerNotificationsUseCase {
             final targetDate = DateTime(now.year, now.month, now.day + i);
             final dateKey = Prayer.formatDate(targetDate);
             final prayerTimes = prayer.getPrayerTimesForDate(dateKey);
-
             if (prayerTimes != null) {
               // Her namaz vakti için bildirim planla
               final prayers = [
@@ -166,7 +117,7 @@ class SchedulePrayerNotificationsUseCase {
           _log.info(
             'Scheduled $totalNotifications notifications for $scheduledDays days',
           );
-          return Result.ok(null);
+          return Result.ok(true);
         case Error():
           _log.severe(
             'Error getting prayer times locally: ${localResult.asError.error}',
@@ -176,91 +127,6 @@ class SchedulePrayerNotificationsUseCase {
     } catch (e) {
       _log.severe('Exception scheduling notifications for week: $e');
       return Result.error(Exception('Haftalık bildirimler planlanamadı: $e'));
-    }
-  }
-
-  /// Bir aylık bildirim planlar
-  Future<Result<void>> scheduleForMonth({
-    required String districtId,
-    required String city,
-    required String country,
-  }) async {
-    try {
-      _log.info('Scheduling notifications for month');
-
-      final now = DateTime.now();
-      final localResult = await _prayerRepository.getPrayerTimesLocally(
-        districtId: districtId,
-        city: city,
-        country: country,
-        date: now,
-      );
-
-      switch (localResult) {
-        case Ok():
-          final prayer = localResult.asOk.value;
-          if (prayer == null) {
-            _log.warning('No prayer times found locally');
-            return Result.error(Exception('Namaz vakitleri bulunamadı'));
-          }
-
-          // Bugünden itibaren 30 gün için bildirim planla
-          int scheduledDays = 0;
-          for (int i = 0; i < 30; i++) {
-            final targetDate = DateTime(now.year, now.month, now.day + i);
-            final dateKey = Prayer.formatDate(targetDate);
-            final prayerTimes = prayer.getPrayerTimesForDate(dateKey);
-
-            if (prayerTimes != null) {
-              final scheduleResult = await _notificationRepository
-                  .rescheduleAllPrayerNotifications(
-                    prayerTimes: prayerTimes,
-                    dateKey: dateKey,
-                  );
-              switch (scheduleResult) {
-                case Ok():
-                  scheduledDays++;
-                  break;
-                case Error():
-                  _log.warning(
-                    'Failed to schedule notifications for $dateKey: ${scheduleResult.asError.error}',
-                  );
-              }
-            }
-          }
-
-          _log.info('Scheduled notifications for $scheduledDays days');
-          return Result.ok(null);
-        case Error():
-          _log.severe(
-            'Error getting prayer times locally: ${localResult.asError.error}',
-          );
-          return Result.error(localResult.asError.error);
-      }
-    } catch (e) {
-      _log.severe('Exception scheduling notifications for month: $e');
-      return Result.error(Exception('Aylık bildirimler planlanamadı: $e'));
-    }
-  }
-
-  /// Tüm bildirimleri yeniden planlar (namaz vakitleri güncellendiğinde)
-  /// Haftalık planlama yapar (7 gün)
-  Future<Result<void>> rescheduleAll({
-    required String districtId,
-    required String city,
-    required String country,
-  }) async {
-    try {
-      _log.info('Rescheduling all prayer notifications (weekly)');
-      // scheduleForWeek zaten önce iptal ediyor, sonra planlıyor
-      return await scheduleForWeek(
-        districtId: districtId,
-        city: city,
-        country: country,
-      );
-    } catch (e) {
-      _log.severe('Exception rescheduling all notifications: $e');
-      return Result.error(Exception('Bildirimler yeniden planlanamadı: $e'));
     }
   }
 

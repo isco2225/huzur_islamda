@@ -44,9 +44,7 @@ class AppRepositoryRemote implements AppRepository {
     required bool isVibrationEnabled,
   }) async {
     final result = await _updateAppPreferences(
-      _appPreferences.value.copyWith(
-        isVibrationEnabled: isVibrationEnabled,
-      ),
+      _appPreferences.value.copyWith(isVibrationEnabled: isVibrationEnabled),
     );
     switch (result) {
       case Ok():

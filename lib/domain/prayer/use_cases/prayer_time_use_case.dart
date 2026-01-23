@@ -38,14 +38,11 @@ class PrayerTimeUseCase {
         'Getting prayer times for district: $districtId, city: $city, country: $country',
       );
 
-      final now = DateTime.now();
-
       // 1. Önce Hive'dan kontrol et
       final localResult = await _prayerRepository.getPrayerTimesLocally(
         districtId: districtId,
         city: city,
         country: country,
-        date: now,
       );
 
       switch (localResult) {
