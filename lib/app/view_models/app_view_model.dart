@@ -124,6 +124,9 @@ class AppViewModel {
     );
     switch (result) {
       case Ok():
+        if (result.asOk.value == false) {
+          return Result.error(Exception('User not registered'));
+        }
         _log.info('User initialized successfully');
         return result;
       case Error():

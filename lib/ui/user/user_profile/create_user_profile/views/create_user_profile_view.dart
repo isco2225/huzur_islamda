@@ -98,9 +98,9 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TitleText(title: 'Aramıza Katıl'),
+              const TitleText(title: 'Son Adım!'),
               const SubtitleText(
-                text: 'Bilgilerinizi girerek kaydınızı tamamlayın.',
+                text: 'istenen bilgileri girerek kaydınızı tamamlayın.',
               ),
               Padding(
                 padding: EdgeInsets.only(top: context.isSmallScreen ? 40 : 60),
@@ -133,6 +133,7 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
                           padding: EdgeInsets.only(
                             top: context.isSmallScreen ? 6 : 8,
                           ),
+                          // TODO(Omran): change to gender selector.
                           child: MaritalStatusSelector(
                             selectedStatus: _selectedMaritalStatus,
                             onStatusChanged: (status) {
@@ -160,36 +161,6 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
                   ),
                 ),
               ),
-              SizedBox(height: context.isSmallScreen ? 32 : 40),
-              Center(
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      color: Colors.grey.shade800,
-                      fontSize: context.responsiveFontSize(14),
-                    ),
-                    children: [
-                      const TextSpan(text: 'Zaten hesabın var mı? '),
-                      WidgetSpan(
-                        child: GestureDetector(
-                          onTap: () {
-                            //const SignInRoute().go(context);
-                          },
-                          child: Text(
-                            'Profil oluştur',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: context.responsiveFontSize(14),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: context.isSmallScreen ? 12 : 16),
             ],
           ),
         ),
