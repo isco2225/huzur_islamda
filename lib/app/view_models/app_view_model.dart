@@ -13,11 +13,13 @@ class AppViewModel {
     required HiveRepository hiveRepository,
     required DhikrUseCase dhikrUseCase,
     required PrayerTimeUseCase prayerTimeUseCase,
+    required SyncPermissionUseCase syncPermissionUseCase,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
        _hiveRepository = hiveRepository,
-       _dhikrUseCase = dhikrUseCase {
+       _dhikrUseCase = dhikrUseCase,
+       _syncPermissionUseCase = syncPermissionUseCase {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     _authRepository.isSignedIn.addListener(_onAuthStateChanged);
@@ -33,6 +35,7 @@ class AppViewModel {
   final UserRepository _userRepository;
   final HiveRepository _hiveRepository;
   final DhikrUseCase _dhikrUseCase;
+  final SyncPermissionUseCase _syncPermissionUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -64,7 +67,10 @@ class AppViewModel {
       final preferencesResult = await _appRepository.getPreferences();
       switch (preferencesResult) {
         case Ok():
+          print('preferencesResult: ${preferencesResult.value.toJson()}');
           _log.info('App preferences loaded successfully');
+          await _syncPermissionUseCase.syncNotificationPermissionState();
+          return Result.ok(null);
         case Error():
           _log.warning(
             'Failed to load app preferences: ${preferencesResult.asError.error}',
