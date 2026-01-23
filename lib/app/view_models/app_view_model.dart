@@ -59,6 +59,20 @@ class AppViewModel {
   Future<Result<void>> _initApp() async {
     try {
       _log.info('Initializing app...');
+      // if user is signed in, initialize user
+      if (_authRepository.isSignedIn.value &&
+          _authRepository.auth.value.uid.isNotEmpty) {
+        _log.info('User is signed in, initializing user...');
+        final userInitResult = await _initUser();
+        switch (userInitResult) {
+          case Ok():
+            _log.info('User initialized successfully');
+          case Error():
+            _log.warning(
+              'Failed to initialize user: ${userInitResult.asError.error}',
+            );
+        }
+      }
 
       // initialize hive
       await _hiveRepository.initializeHive();
@@ -79,21 +93,6 @@ class AppViewModel {
 
       // sync dhikrs
       await _dhikrUseCase.syncDhikrs();
-
-      // if user is signed in, initialize user
-      if (_authRepository.isSignedIn.value &&
-          _authRepository.auth.value.uid.isNotEmpty) {
-        _log.info('User is signed in, initializing user...');
-        final userInitResult = await _initUser();
-        switch (userInitResult) {
-          case Ok():
-            _log.info('User initialized successfully');
-          case Error():
-            _log.warning(
-              'Failed to initialize user: ${userInitResult.asError.error}',
-            );
-        }
-      }
 
       _log.info('App initialized successfully');
       return Result.ok(null);

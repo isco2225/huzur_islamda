@@ -224,7 +224,9 @@ String? _redirect(BuildContext context, GoRouterState state) {
       if (location == AppRoutes.emailVerification) return null;
       return AppRoutes.emailVerification;
     }
-    if (user.uid.isEmpty) return AppRoutes.signIn;
+    if (user.uid.isEmpty) {
+      return AppRoutes.signIn;
+    }
     if (!user.isRegistered) return AppRoutes.createProfile;
     return AppRoutes.flow;
   }
