@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../data/data.dart';
+import '../../../../../domain/domain.dart';
 import '../edit_profile.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -20,6 +21,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _viewModel = EditProfileViewModel(
       userRepository: context.read<UserRepository>(),
       authRepository: context.read<AuthRepository>(),
+      appRepository: context.read<AppRepository>(),
+      schedulePrayerNotificationsUseCase: context
+          .read<SchedulePrayerNotificationsUseCase>(),
     );
 
     // Error handling

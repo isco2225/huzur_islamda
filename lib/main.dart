@@ -71,7 +71,9 @@ void main() async {
     prayerRepository: prayerRepository,
     notificationRepository: notificationRepository,
   );
-
+  final appRepository = AppRepositoryRemote(
+    sharedPreferencesService: SharedPreferencesService(),
+  );
   runApp(
     AppScreen(
       authRepository: authRepository,
@@ -82,9 +84,7 @@ void main() async {
         firestorePostService: FirestorePostService(),
       ),
       dhikrRepository: dhikrRepository,
-      appRepository: AppRepositoryRemote(
-        sharedPreferencesService: SharedPreferencesService(),
-      ),
+      appRepository: appRepository,
       dhikrUseCase: DhikrUseCase(
         dhikrRepository: dhikrRepository,
         connectivityUseCase: connectivityUseCase,
@@ -102,6 +102,12 @@ void main() async {
       schedulePrayerNotificationsUseCase: schedulePrayerNotificationsUseCase,
       notificationService: notificationService,
       hiveDhikr: hiveDhikr,
+      syncPermissionUseCase: SyncPermissionUseCase(
+        getPermissionStatesUseCase: getPermissionStatesUseCase,
+        requestPermissionUseCase: requestPermissionUseCase,
+        appRepository: appRepository,
+        notificationService: notificationService,
+      ),
     ),
   );
 }

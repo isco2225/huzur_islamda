@@ -32,15 +32,11 @@ class PrayerRepositoryRemote implements PrayerRepository {
     required String districtId,
     required String city,
     required String country,
-    required DateTime date,
   }) async {
     try {
-      _log.info(
-        'Getting prayer times locally for district: $districtId, date: $date',
-      );
-
-      final year = date.year;
-      final key = _generateKey(year, districtId);
+      _log.info('Getting prayer times locally for district: $districtId');
+      final now = DateTime.now();
+      final key = _generateKey(now.year, districtId);
 
       final result = await _hiveService.getById(key);
 

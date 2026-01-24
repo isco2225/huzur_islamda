@@ -7,7 +7,6 @@ abstract class PrayerRepository {
     required String districtId,
     required String city,
     required String country,
-    required DateTime date,
   });
   Future<Result<void>> savePrayerTimesLocally({required Prayer prayer});
 

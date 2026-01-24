@@ -1,7 +1,6 @@
 import 'package:logging/logging.dart';
 
 import '../../../app/app.dart';
-import '../../../domain/domain.dart';
 import '../../data.dart';
 
 class NotificationRepositoryRemote implements NotificationRepository {
@@ -66,28 +65,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
       }
 
       // Convert prayer name to prayer type
-      String prayerType = '';
-      switch (prayerName) {
-        case 'İmsak':
-          prayerType = 'fajr';
-          break;
-        case 'Öğle':
-          prayerType = 'dhuhr';
-          break;
-        case 'İkindi':
-          prayerType = 'asr';
-          break;
-        case 'Akşam':
-          prayerType = 'maghrib';
-          break;
-        case 'Yatsı':
-          prayerType = 'isha';
-          break;
-        default:
-          _log.warning('Unknown prayer name: $prayerName');
-          return Result.error(Exception('Bilinmeyen namaz adı: $prayerName'));
-      }
-
+      final prayerType = _getPrayerName(prayerName);
       final notificationId = _generateNotificationId(prayerType, dateKey);
       final title = '$prayerName Vakti';
       final body = '$prayerName vakti geldi';
@@ -170,62 +148,6 @@ class NotificationRepositoryRemote implements NotificationRepository {
     } catch (e) {
       _log.severe('Error cancelling all prayer notifications: $e');
       return Result.error(Exception('Namaz bildirimleri iptal edilemedi: $e'));
-    }
-  }
-
-  @override
-  Future<Result<void>> rescheduleAllPrayerNotifications({
-    required PrayerTimes prayerTimes,
-    required String dateKey,
-  }) async {
-    try {
-      _log.info('Rescheduling all prayer notifications for date: $dateKey');
-
-      // Önce tüm eski bildirimleri iptal et
-      final cancelResult = await cancelAllPrayerNotifications();
-      switch (cancelResult) {
-        case Ok():
-          break;
-        case Error():
-          _log.warning(
-            'Failed to cancel old notifications, continuing anyway: ${cancelResult.asError.error}',
-          );
-      }
-
-      // Yeni vakitler için bildirimleri planla
-      final prayers = [
-        (name: 'İmsak', time: prayerTimes.fajr),
-        (name: 'Öğle', time: prayerTimes.dhuhr),
-        (name: 'İkindi', time: prayerTimes.asr),
-        (name: 'Akşam', time: prayerTimes.maghrib),
-        (name: 'Yatsı', time: prayerTimes.isha),
-      ];
-
-      int scheduledCount = 0;
-      for (final prayer in prayers) {
-        final scheduleResult = await schedulePrayerTimeNotification(
-          prayerName: prayer.name,
-          prayerTime: prayer.time,
-          dateKey: dateKey,
-        );
-        switch (scheduleResult) {
-          case Ok():
-            scheduledCount++;
-            break;
-          case Error():
-            _log.warning(
-              'Failed to schedule notification for ${prayer.name}: ${scheduleResult.asError.error}',
-            );
-        }
-      }
-
-      _log.info('Rescheduled $scheduledCount prayer notifications');
-      return Result.ok(null);
-    } catch (e) {
-      _log.severe('Error rescheduling prayer notifications: $e');
-      return Result.error(
-        Exception('Namaz bildirimleri yeniden planlanamadı: $e'),
-      );
     }
   }
 }

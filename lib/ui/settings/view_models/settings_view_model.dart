@@ -22,11 +22,21 @@ class SettingsViewModel {
        _userRepository = userRepository,
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
        _notificationService = notificationService,
-       _log = Logger('SettingsViewModel') {
+       _log = Logger('SettingsViewModel'),
+       isNotificationsEnabled = ValueNotifier<bool>(
+         appRepository.appPreferences.value.isNotificationsEnabled,
+       ),
+       isVibrationEnabled = ValueNotifier<bool>(
+         appRepository.appPreferences.value.isVibrationEnabled,
+       ) {
     // DEFINE COMMANDS
     toggleNotifications = Command1(
       _toggleNotifications,
       debugLabel: 'SettingsViewModel.toggleNotifications',
+    );
+    toggleVibration = Command1(
+      _toggleVibration,
+      debugLabel: 'SettingsViewModel.toggleVibration',
     );
     scheduleTestNotifications = Command0(
       _scheduleTestNotifications,
@@ -36,11 +46,6 @@ class SettingsViewModel {
       _cancelTestNotifications,
       debugLabel: 'SettingsViewModel.cancelTestNotifications',
     );
-
-    // DEFINE LISTENERS
-    // AppPreferences'ten isNotificationsEnabled ve isVibrationEnabled değerlerini al
-    _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
-    _onAppPreferencesChanged();
   }
 
   /// İzin durumunu kontrol eder ve AppPreferences ile senkronize eder
@@ -59,13 +64,9 @@ class SettingsViewModel {
       switch (statusResult) {
         case Ok():
           final permissionStates = statusResult.asOk.value;
-          final permissionState = permissionStates.notification;
           final currentPreference =
               _appRepository.appPreferences.value.isNotificationsEnabled;
-
-          // Eğer izin verilmişse ve AppPreferences'te false ise, true yap
-          // Bu durum kullanıcı ayarlardan izin verdikten sonra uygulama geri geldiğinde olur
-          if (permissionState == PermissionState.granted &&
+          if (permissionStates.notification == PermissionState.granted &&
               !currentPreference) {
             _log.info(
               'Permission granted but preference is false, updating preference...',
@@ -73,12 +74,8 @@ class SettingsViewModel {
             await _appRepository.updateIsNotificationsEnabled(
               isNotificationsEnabled: true,
             );
-            // Bildirimleri planla
             await _scheduleNotifications();
           }
-          // İzin verilmemişse AppPreferences'i değiştirme
-          // Kullanıcı switch'i açmışsa ama izin vermemişse, switch açık kalmalı
-          // Kullanıcı izin verdiğinde otomatik olarak güncellenecek
           break;
         case Error():
           _log.warning(
@@ -99,16 +96,15 @@ class SettingsViewModel {
   final Logger _log;
 
   // STATE
-  ValueListenable<bool> get isNotificationsEnabled => _isNotificationsEnabled;
-  final ValueNotifier<bool> _isNotificationsEnabled = ValueNotifier<bool>(
-    false,
-  );
-  ValueListenable<bool> get isVibrationEnabled => _isVibrationEnabled;
-  final ValueNotifier<bool> _isVibrationEnabled = ValueNotifier<bool>(false);
+
+  final ValueNotifier<bool> isNotificationsEnabled;
+  final ValueNotifier<bool> isVibrationEnabled;
+
   final ValueNotifier<bool> showOpenSettingsDialog = ValueNotifier<bool>(false);
 
   // COMMANDS
   late Command1<void, bool> toggleNotifications;
+  late Command1<void, bool> toggleVibration;
   late Command0<void> scheduleTestNotifications;
   late Command0<void> cancelTestNotifications;
 
@@ -116,227 +112,215 @@ class SettingsViewModel {
   Future<Result<void>> _toggleNotifications(bool value) async {
     try {
       _log.info('Toggling notifications: $value');
+
+      // Eğer açılıyorsa, önce izin kontrolü yap
       if (value) {
-        if (Platform.isIOS) {
-          _log.info('Checking notification permission status for iOS...');
-          final statusResult = await _getPermissionStatesUseCase.get(
-            androidVersionSdkNumber: null,
-          );
-          switch (statusResult) {
-            case Ok():
-              final permissionStates = statusResult.asOk.value;
-              final permissionState = permissionStates.notification;
+        final permissionResult = Platform.isIOS
+            ? await _requestNotificationPermissionIOS()
+            : await _requestNotificationPermissionAndroid();
 
-              // Eğer zaten izin verilmişse, direkt devam et
-              if (permissionState == PermissionState.granted) {
-                _log.info('Notification permission already granted on iOS');
-                break;
-              }
-
-              // Eğer kalıcı olarak reddedilmişse, ayarlara yönlendiren dialog göster
-              if (permissionState == PermissionState.permanentlyDenied) {
-                _log.warning(
-                  'Notification permission permanently denied on iOS',
-                );
-                // Dialog göstermek için state'i güncelle
-                showOpenSettingsDialog.value = true;
-                return Result.error(
-                  Exception(
-                    'Bildirim izni kalıcı olarak reddedilmiş. Lütfen ayarlardan izin verin.',
-                  ),
-                );
-              }
-              // İzin istenebilir durumda, flutter_local_notifications ile iste
-              _log.info('Requesting notification permission for iOS...');
-              final iosPermissionResult = await _notificationService
-                  .requestPermission();
-              switch (iosPermissionResult) {
-                case Ok():
-                  final granted = iosPermissionResult.asOk.value;
-                  if (!granted) {
-                    _log.warning('Notification permission denied on iOS');
-                    return Result.error(
-                      Exception(
-                        'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
-                      ),
-                    );
-                  }
-                  _log.info('Notification permission granted on iOS');
-                  break;
-                case Error():
-                  _log.severe(
-                    'Error requesting notification permission on iOS: ${iosPermissionResult.asError.error}',
-                  );
-                  final retryResult = await _requestPermissionUseCase.request(
-                    permission: Permission.notification,
-                    androidVersionSdkNumber: null,
-                  );
-                  switch (retryResult) {
-                    case Ok():
-                      if (retryResult.asOk.value == PermissionState.granted) {
-                        _log.info(
-                          'Notification permission granted via permission_handler',
-                        );
-                        break;
-                      } else {
-                        return Result.error(
-                          Exception(
-                            'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
-                          ),
-                        );
-                      }
-                    case Error():
-                      return Result.error(
-                        Exception(
-                          'Bildirim izni alınamadı: ${retryResult.asError.error}',
-                        ),
-                      );
-                  }
-              }
-              break;
-            case Error():
-              _log.severe(
-                'Error checking notification permission status: ${statusResult.asError.error}',
-              );
-              // Hata olsa bile izin istemeyi dene
-              _log.info('Attempting to request permission anyway...');
-              final iosPermissionResult = await _notificationService
-                  .requestPermission();
-              switch (iosPermissionResult) {
-                case Ok():
-                  final granted = iosPermissionResult.asOk.value;
-                  if (!granted) {
-                    return Result.error(
-                      Exception(
-                        'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
-                      ),
-                    );
-                  }
-                  break;
-                case Error():
-                  return Result.error(
-                    Exception(
-                      'Bildirim izni alınamadı: ${iosPermissionResult.asError.error}',
-                    ),
-                  );
-              }
-          }
-        } else {
-          // Android için önce mevcut izin durumunu kontrol et
-          _log.info('Checking notification permission status for Android...');
-          final androidInfo = await _getAndroidVersion();
-
-          // Önce mevcut izin durumunu kontrol et (sadece kontrol, izin isteme)
-          final statusResult = await _getPermissionStatesUseCase.get(
-            androidVersionSdkNumber: androidInfo,
-          );
-
-          switch (statusResult) {
-            case Ok():
-              final permissionStates = statusResult.asOk.value;
-              final permissionState = permissionStates.notification;
-
-              // Eğer zaten izin verilmişse, direkt devam et
-              if (permissionState == PermissionState.granted) {
-                _log.info('Notification permission already granted on Android');
-                break;
-              }
-
-              // Eğer kalıcı olarak reddedilmişse, ayarlara yönlendiren dialog göster
-              if (permissionState == PermissionState.permanentlyDenied) {
-                _log.warning(
-                  'Notification permission permanently denied on Android',
-                );
-                // Dialog göstermek için state'i güncelle
-                showOpenSettingsDialog.value = true;
-                return Result.error(
-                  Exception(
-                    'Bildirim izni kalıcı olarak reddedilmiş. Lütfen ayarlardan izin verin.',
-                  ),
-                );
-              }
-
-              // İzin istenebilir durumda, izin iste
-              _log.info('Requesting notification permission for Android...');
-              final permissionResult = await _requestPermissionUseCase.request(
-                permission: Permission.notification,
-                androidVersionSdkNumber: androidInfo,
-              );
-
-              switch (permissionResult) {
-                case Ok():
-                  final requestedState = permissionResult.asOk.value;
-                  if (requestedState != PermissionState.granted) {
-                    _log.warning(
-                      'Notification permission not granted on Android',
-                    );
-                    return Result.error(
-                      Exception(
-                        'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
-                      ),
-                    );
-                  }
-                  _log.info('Notification permission granted on Android');
-                  break;
-                case Error():
-                  _log.severe(
-                    'Error requesting notification permission on Android: ${permissionResult.asError.error}',
-                  );
-                  return Result.error(
-                    Exception(
-                      'Bildirim izni alınamadı: ${permissionResult.asError.error}',
-                    ),
-                  );
-              }
-              break;
-            case Error():
-              _log.severe(
-                'Error checking notification permission status on Android: ${statusResult.asError.error}',
-              );
-              return Result.error(
-                Exception(
-                  'Bildirim izni durumu kontrol edilemedi: ${statusResult.asError.error}',
-                ),
-              );
-          }
+        switch (permissionResult) {
+          case Ok():
+            await _scheduleNotifications();
+            break;
+          case Error():
+            return permissionResult;
         }
       }
 
-      // Repository'yi güncelle
-      final updateResult = await _appRepository.updateIsNotificationsEnabled(
-        isNotificationsEnabled: value,
-      );
-
-      switch (updateResult) {
-        case Ok():
-          // Bildirimleri planla veya iptal et
-          if (value) {
-            await _scheduleNotifications();
-          } else {
-            await _cancelNotifications();
-          }
-          return Result.ok(null);
-        case Error():
-          _log.severe(
-            'Error updating notification preference: ${updateResult.asError.error}',
-          );
-          return updateResult;
-      }
+      // Repository'yi güncelle ve bildirimleri planla/iptal et
+      return await _updateNotificationPreference(value);
     } catch (e) {
       _log.severe('Exception toggling notifications: $e');
       return Result.error(Exception('Bildirim ayarı güncellenemedi: $e'));
     }
   }
 
-  void toggleNotificationsFunction(bool value) {
-    toggleNotifications.execute(value);
+  /// iOS için bildirim izni ister
+  Future<Result<void>> _requestNotificationPermissionIOS() async {
+    _log.info('Checking notification permission status for iOS...');
+
+    final statusResult = await _getPermissionStatesUseCase.get(
+      androidVersionSdkNumber: null,
+    );
+
+    switch (statusResult) {
+      case Ok():
+        final permissionState = statusResult.asOk.value.notification;
+        return _handlePermissionState(permissionState, isIOS: true);
+      case Error():
+        _log.warning(
+          'Error checking permission status, attempting request anyway: ${statusResult.asError.error}',
+        );
+        return await _requestIOSPermissionWithFallback();
+    }
   }
 
-  void toggleVibrationFunction(bool value) {
-    toggleVibration(value);
+  /// Android için bildirim izni ister
+  Future<Result<void>> _requestNotificationPermissionAndroid() async {
+    _log.info('Checking notification permission status for Android...');
+
+    final statusResult = await _getPermissionStatesUseCase.get(
+      androidVersionSdkNumber: null,
+    );
+
+    switch (statusResult) {
+      case Ok():
+        final permissionState = statusResult.asOk.value.notification;
+        return _handlePermissionState(permissionState, isIOS: false);
+      case Error():
+        _log.severe(
+          'Error checking notification status on Android: ${statusResult.asError.error}',
+        );
+        return Result.error(
+          Exception(
+            'Bildirim izni durumu kontrol edilemedi: ${statusResult.asError.error}',
+          ),
+        );
+    }
   }
 
-  Future<void> toggleVibration(bool value) async {
+  /// Permission state'e göre uygun aksiyonu alır
+  Future<Result<void>> _handlePermissionState(
+    PermissionState permissionState, {
+    required bool isIOS,
+  }) async {
+    // Zaten izin verilmişse, direkt başarı dön
+    if (permissionState == PermissionState.granted) {
+      _log.info(
+        'Notification permission already granted on ${isIOS ? 'iOS' : 'Android'}',
+      );
+      return Result.ok(null);
+    }
+
+    // Kalıcı olarak reddedilmişse, ayarlara yönlendir
+    if (permissionState == PermissionState.permanentlyDenied) {
+      _log.warning(
+        'Notification permission permanently denied on ${isIOS ? 'iOS' : 'Android'}',
+      );
+      showOpenSettingsDialog.value = true;
+      return Result.error(
+        Exception(
+          'Bildirim izni kalıcı olarak reddedilmiş. Lütfen ayarlardan izin verin.',
+        ),
+      );
+    }
+
+    // İzin istenebilir durumda, izin iste
+    _log.info(
+      'Requesting notification permission for ${isIOS ? 'iOS' : 'Android'}...',
+    );
+
+    if (isIOS) {
+      return await _requestIOSPermissionWithFallback();
+    } else {
+      return await _requestAndroidPermission();
+    }
+  }
+
+  /// iOS için izin ister (flutter_local_notifications ile, fallback: permission_handler)
+  Future<Result<void>> _requestIOSPermissionWithFallback() async {
+    final iosPermissionResult = await _notificationService.requestPermission();
+
+    switch (iosPermissionResult) {
+      case Ok():
+        final granted = iosPermissionResult.asOk.value;
+        if (!granted) {
+          _log.warning('Notification permission denied on iOS');
+          return Result.error(
+            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+          );
+        }
+        _log.info('Notification permission granted on iOS');
+        return Result.ok(null);
+      case Error():
+        _log.warning(
+          'flutter_local_notifications failed, trying permission_handler: ${iosPermissionResult.asError.error}',
+        );
+        return await _requestIOSPermissionWithHandler();
+    }
+  }
+
+  /// iOS için permission_handler ile izin ister
+  Future<Result<void>> _requestIOSPermissionWithHandler() async {
+    final retryResult = await _requestPermissionUseCase.request(
+      permission: Permission.notification,
+      androidVersionSdkNumber: null,
+    );
+
+    switch (retryResult) {
+      case Ok():
+        if (retryResult.asOk.value == PermissionState.granted) {
+          _log.info('Notification permission granted via permission_handler');
+          return Result.ok(null);
+        } else {
+          return Result.error(
+            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+          );
+        }
+      case Error():
+        return Result.error(
+          Exception('Bildirim izni alınamadı: ${retryResult.asError.error}'),
+        );
+    }
+  }
+
+  /// Android için permission_handler ile izin ister
+  Future<Result<void>> _requestAndroidPermission() async {
+    final permissionResult = await _requestPermissionUseCase.request(
+      permission: Permission.notification,
+      androidVersionSdkNumber: null,
+    );
+
+    switch (permissionResult) {
+      case Ok():
+        final requestedState = permissionResult.asOk.value;
+        if (requestedState != PermissionState.granted) {
+          _log.warning('Notification permission not granted on Android');
+          return Result.error(
+            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+          );
+        }
+        _log.info('Notification permission granted on Android');
+        return Result.ok(null);
+      case Error():
+        _log.severe(
+          'Error requesting notification permission on Android: ${permissionResult.asError.error}',
+        );
+        return Result.error(
+          Exception(
+            'Bildirim izni alınamadı: ${permissionResult.asError.error}',
+          ),
+        );
+    }
+  }
+
+  /// Bildirim tercihini günceller ve bildirimleri planlar/iptal eder
+  Future<Result<void>> _updateNotificationPreference(bool value) async {
+    final updateResult = await _appRepository.updateIsNotificationsEnabled(
+      isNotificationsEnabled: value,
+    );
+
+    switch (updateResult) {
+      case Ok():
+        // Bildirimleri planla veya iptal et
+        if (value) {
+          isNotificationsEnabled.value = value;
+          await _scheduleNotifications();
+        } else {
+          await _cancelNotifications();
+        }
+        isNotificationsEnabled.value = value;
+        return Result.ok(null);
+      case Error():
+        _log.severe(
+          'Error updating notification preference: ${updateResult.asError.error}',
+        );
+        return updateResult;
+    }
+  }
+
+  Future<Result<void>> _toggleVibration(bool value) async {
     try {
       _log.info('Toggling vibration: $value');
 
@@ -348,22 +332,30 @@ class SettingsViewModel {
       switch (updateResult) {
         case Ok():
           _log.info('Vibration preference updated successfully');
-          break;
+          isVibrationEnabled.value = value;
+          final updateResult = await _appRepository.updateIsVibrationEnabled(
+            isVibrationEnabled: value,
+          );
+          switch (updateResult) {
+            case Ok():
+              return updateResult;
+            case Error():
+              return updateResult;
+          }
         case Error():
           _log.severe(
             'Error updating vibration preference: ${updateResult.asError.error}',
           );
+          return Result.error(
+            Exception(
+              'Titreşim ayarı güncellenemedi: ${updateResult.asError.error}',
+            ),
+          );
       }
     } catch (e) {
       _log.severe('Exception toggling vibration: $e');
+      return Result.error(Exception('Titreşim ayarı güncellenemedi: $e'));
     }
-  }
-
-  /// AppPreferences değiştiğinde çağrılır
-  void _onAppPreferencesChanged() {
-    final preferences = _appRepository.appPreferences.value;
-    _isNotificationsEnabled.value = preferences.isNotificationsEnabled;
-    _isVibrationEnabled.value = preferences.isVibrationEnabled;
   }
 
   /// Bildirimleri planlar
@@ -379,7 +371,6 @@ class SettingsViewModel {
         _log.warning('User location not set, cannot schedule notifications');
         return;
       }
-
       _log.info('Scheduling prayer notifications for week...');
       final result = await _schedulePrayerNotificationsUseCase.scheduleForWeek(
         districtId: user.districtId!,
@@ -389,6 +380,9 @@ class SettingsViewModel {
 
       switch (result) {
         case Ok():
+          result.asOk.value == true
+              ? _log.info('Prayer notifications scheduled successfully')
+              : _log.warning('Failed to schedule notifications');
           _log.info('Prayer notifications scheduled successfully');
           break;
         case Error():
@@ -418,13 +412,6 @@ class SettingsViewModel {
     } catch (e) {
       _log.severe('Exception cancelling notifications: $e');
     }
-  }
-
-  /// Android SDK version'ı alır (permission_handler için)
-  Future<int?> _getAndroidVersion() async {
-    // permission_handler paketi otomatik olarak Android version'ı alır
-    // Bu yüzden null döndürebiliriz, permission_handler kendi içinde kontrol eder
-    return null;
   }
 
   /// Test için her 10 dakikada bir bildirim planlar
@@ -475,12 +462,10 @@ class SettingsViewModel {
 
   // DISPOSE
   void dispose() {
-    _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
     toggleNotifications.dispose();
+    toggleVibration.dispose();
     scheduleTestNotifications.dispose();
     cancelTestNotifications.dispose();
-    _isNotificationsEnabled.dispose();
-    _isVibrationEnabled.dispose();
     showOpenSettingsDialog.dispose();
   }
 }

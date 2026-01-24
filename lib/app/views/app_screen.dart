@@ -24,6 +24,7 @@ class AppScreen extends StatefulWidget {
     required this.schedulePrayerNotificationsUseCase,
     required this.notificationService,
     required this.hiveDhikr,
+    required this.syncPermissionUseCase,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -41,6 +42,7 @@ class AppScreen extends StatefulWidget {
   final SchedulePrayerNotificationsUseCase schedulePrayerNotificationsUseCase;
   final NotificationService notificationService;
   final HiveService hiveDhikr;
+  final SyncPermissionUseCase syncPermissionUseCase;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -61,6 +63,7 @@ class _AppScreenState extends State<AppScreen> {
       ),
       dhikrUseCase: widget.dhikrUseCase,
       prayerTimeUseCase: widget.prayerTimeUseCase,
+      syncPermissionUseCase: widget.syncPermissionUseCase,
     );
     // App'i başlat
     _appViewModel.initApp.execute();
@@ -89,18 +92,19 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.appRepository),
         Provider(create: (_) => widget.postRepository),
         Provider(create: (_) => widget.dhikrRepository),
-        Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.placesRepository),
         Provider(create: (_) => widget.prayerRepository),
-        Provider(create: (_) => widget.prayerTimeUseCase),
         Provider(create: (_) => widget.notificationRepository),
         Provider(create: (_) => widget.notificationService),
 
         // use cases
+        Provider(create: (_) => widget.dhikrUseCase),
+        Provider(create: (_) => widget.prayerTimeUseCase),
         Provider(create: (_) => widget.connectivityUseCase, lazy: true),
         Provider(create: (_) => widget.requestPermissionUseCase),
         Provider(create: (_) => widget.getPermissionStatesUseCase),
         Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
+        Provider(create: (_) => widget.syncPermissionUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

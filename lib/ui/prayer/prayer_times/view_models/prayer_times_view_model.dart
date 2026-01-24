@@ -22,9 +22,7 @@ class PrayerTimesViewModel {
 
   // REPOSITORIES & USE CASES
   final PrayerTimeUseCase _prayerTimeUseCase;
-
   // STATE (ValueNotifiers)
-  /// Bugünün namaz vakitleri
   ValueListenable<PrayerTimes?> get prayerTimes => _prayerTimes;
   final ValueNotifier<PrayerTimes?> _prayerTimes = ValueNotifier<PrayerTimes?>(
     null,
@@ -58,11 +56,9 @@ class PrayerTimesViewModel {
 
     switch (result) {
       case Ok():
-        // Use case'den dönen PrayerTimes'ı state'e set et
         _prayerTimes.value = result.asOk.value;
         return Result.ok(null);
       case Error():
-        // Hata durumunda state'i temizle
         _prayerTimes.value = null;
         return Result.error(result.asError.error);
     }

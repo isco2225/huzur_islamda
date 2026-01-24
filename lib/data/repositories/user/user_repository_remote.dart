@@ -64,7 +64,25 @@ class UserRepositoryRemote extends UserRepository {
       switch (result) {
         case Ok():
           if (result.asOk.value == null) {
-            _currentUser.value = User.empty();
+            // Firestore'da kullanıcı bulunamadı, ancak Firebase Auth'da giriş yapmış
+            // Bu durumda uid'yi dolu tutarak bir User objesi oluşturuyoruz
+            // Böylece router doğru şekilde createProfile'e yönlendirebilir
+            // Email boş bırakılabilir çünkü router'da email kontrolü yok, sadece uid kontrolü var
+            _currentUser.value = User(
+              uid: uid,
+              email: '',
+              name: '',
+              surname: '',
+              dateOfBirth: '',
+              maritalStatus: '',
+              emailVerified: false,
+              createdAt: null,
+              updatedAt: null,
+              isRegistered: false,
+              country: null,
+              city: null,
+              districtId: null,
+            );
             return Result.ok(false);
           } else {
             _currentUser.value = result.asOk.value!;
