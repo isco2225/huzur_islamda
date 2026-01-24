@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
@@ -8,12 +7,13 @@ import '../../ui.dart';
 class PrayerView extends StatefulWidget {
   const PrayerView({
     super.key,
+    required this.prayerViewModel,
     required this.prayerTimesViewModel,
     required this.placeSelectorViewModel,
     required this.editProfileViewModel,
     required this.user,
   });
-
+  final PrayerViewModel prayerViewModel;
   final PrayerTimesViewModel prayerTimesViewModel;
   final PlaceSelectorViewModel placeSelectorViewModel;
   final EditProfileViewModel editProfileViewModel;
@@ -71,6 +71,15 @@ class _PrayerViewState extends State<PrayerView> {
         backgroundColor: AppColors.background,
         elevation: 0,
         actions: [
+          ValueListenableBuilder(
+            valueListenable: widget.prayerViewModel.isNotificationsEnabled,
+            builder: (BuildContext context, value, _) {
+              if (!value) {
+                return const NoNotificationPermissionInformation();
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           PrayerPopMenuButton(
             placeSelectorViewModel: widget.placeSelectorViewModel,
             editProfileViewModel: widget.editProfileViewModel,
@@ -185,5 +194,53 @@ class _PrayerViewState extends State<PrayerView> {
         ),
       );
     }
+  }
+}
+
+class NoNotificationPermissionInformation extends StatelessWidget {
+  const NoNotificationPermissionInformation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        if (context.mounted) {
+          showDialog<void>(
+            context: context,
+            builder: (context) => const GoToSettingsDialog(),
+          );
+        }
+      },
+      icon: Icon(Icons.info_outline, color: AppColors.error),
+    );
+  }
+}
+
+class GoToSettingsDialog extends StatelessWidget {
+  const GoToSettingsDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Bildirimleri Aç'),
+      content: Text(
+        'Ezan vaktinde bildirim almak için, ayarlardan bildirimleri açınız.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('İptal'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            context.pushSettings();
+          },
+          child: Text('Ayarlara Git'),
+        ),
+      ],
+    );
   }
 }
