@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:huzur_islamda/ui/settings/widgets/navigatable_setting_tile.dart';
 
 import '../../../../app/app.dart';
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class SettingsView extends StatelessWidget {
@@ -50,8 +51,13 @@ class SettingsView extends StatelessWidget {
                       title: 'Titreşim',
                       subtitle: 'Bildirimlerde titreşimi kullan',
                       valueListenable: viewModel.isVibrationEnabled,
-                      onChanged: (value) =>
-                          viewModel.toggleVibration.execute(value),
+                      onChanged: (value) {
+                        if (value) {
+                          VibrationUseCase.vibrateLight(context);
+                          viewModel.toggleVibration.execute(value);
+                        }
+                        viewModel.toggleVibration.execute(value);
+                      },
                     ),
                   ],
                 ),
