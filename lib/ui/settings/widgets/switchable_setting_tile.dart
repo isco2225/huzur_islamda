@@ -17,14 +17,13 @@ class SwitchableSettingTile extends StatelessWidget {
   final String subtitle;
   final ValueListenable<bool> valueListenable;
   final ValueChanged<bool> onChanged;
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return ValueListenableBuilder<bool>(
       valueListenable: valueListenable,
-      builder: (context, value, child) {
+      builder: (context, value, _) {
         return Padding(
           padding: EdgeInsets.symmetric(
             vertical: context.isSmallScreen ? 10 : 12,

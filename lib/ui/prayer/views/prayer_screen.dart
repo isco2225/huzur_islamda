@@ -13,7 +13,6 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  late final PrayerViewModel _prayerViewModel;
   late final PrayerTimesViewModel _prayerTimesViewModel;
   late final PlaceSelectorViewModel _placeSelectorViewModel;
   late final EditProfileViewModel _editProfileViewModel;
@@ -21,15 +20,13 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   void initState() {
     super.initState();
-    _prayerViewModel = PrayerViewModel(
-      appRepository: context.read<AppRepository>(),
-    );
     _fetchUserViewModel = FetchUserViewModel(
       userRepository: context.read<UserRepository>(),
       authRepository: context.read<AuthRepository>(),
     );
     _prayerTimesViewModel = PrayerTimesViewModel(
       prayerTimeUseCase: context.read<PrayerTimeUseCase>(),
+      appRepository: context.read<AppRepository>(),
     );
     _placeSelectorViewModel = PlaceSelectorViewModel(
       placesRepository: context.read<PlacesRepository>(),
@@ -71,7 +68,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   void dispose() {
-    _prayerViewModel.dispose();
     _prayerTimesViewModel.dispose();
     _placeSelectorViewModel.dispose();
     _editProfileViewModel.dispose();
@@ -82,7 +78,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   Widget build(BuildContext context) {
     return PrayerView(
-      prayerViewModel: _prayerViewModel,
       user: _fetchUserViewModel.currentUser.value,
       prayerTimesViewModel: _prayerTimesViewModel,
       placeSelectorViewModel: _placeSelectorViewModel,

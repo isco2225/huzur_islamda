@@ -30,8 +30,6 @@ class _SettingsScreenState extends State<SettingsScreen>
           .read<SchedulePrayerNotificationsUseCase>(),
       notificationService: context.read<NotificationService>(),
     );
-    print(_viewModel.isNotificationsEnabled.value);
-    print(_viewModel.isVibrationEnabled.value);
     _logOutViewModel = LogOutViewModel(
       authRepository: context.read<AuthRepository>(),
     );
