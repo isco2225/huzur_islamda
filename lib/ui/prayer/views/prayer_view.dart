@@ -75,7 +75,7 @@ class _PrayerViewState extends State<PrayerView> {
             valueListenable: widget.prayerViewModel.isNotificationsEnabled,
             builder: (BuildContext context, value, _) {
               if (!value) {
-                return const NoNotificationPermissionInformation();
+                return NoNotificationPermissionInformation();
               }
               return const SizedBox.shrink();
             },
@@ -199,7 +199,6 @@ class _PrayerViewState extends State<PrayerView> {
 
 class NoNotificationPermissionInformation extends StatelessWidget {
   const NoNotificationPermissionInformation({super.key});
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -207,7 +206,32 @@ class NoNotificationPermissionInformation extends StatelessWidget {
         if (context.mounted) {
           showDialog<void>(
             context: context,
-            builder: (context) => const GoToSettingsDialog(),
+            builder: (context) => CustomDialog(
+              title: 'Bildirimleri Aç',
+              content:
+                  'Ezan vaktinde bildirim almak için, ayarlardan bildirimleri açınız.',
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'İptal',
+                    style: TextStyle(color: AppColors.error),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.pushSettings();
+                  },
+                  child: Text(
+                    'Ayarlara Git',
+                    style: TextStyle(color: AppColors.hadisColor),
+                  ),
+                ),
+              ],
+            ),
           );
         }
       },
