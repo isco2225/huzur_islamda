@@ -84,7 +84,6 @@ class AppViewModel {
           print('preferencesResult: ${preferencesResult.value.toJson()}');
           _log.info('App preferences loaded successfully');
           await _syncPermissionUseCase.syncNotificationPermissionState();
-          return Result.ok(null);
         case Error():
           _log.warning(
             'Failed to load app preferences: ${preferencesResult.asError.error}',
