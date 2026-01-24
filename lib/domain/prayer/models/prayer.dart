@@ -37,12 +37,6 @@ class Prayer {
   @HiveField(8)
   final Map<String, PrayerTimes> prayerTimes;
 
-  @HiveField(9)
-  final DateTime createdAt;
-
-  @HiveField(10)
-  final DateTime lastUpdatedAt;
-
   const Prayer({
     required this.id,
     required this.userId,
@@ -53,18 +47,9 @@ class Prayer {
     this.latitude,
     this.longitude,
     required this.prayerTimes,
-    required this.createdAt,
-    required this.lastUpdatedAt,
   });
 
   factory Prayer.fromJson(Map<String, Object?> json) {
-    DateTime parseDateTime(dynamic value) {
-      if (value == null) return DateTime.now();
-      if (value is String) return DateTime.parse(value);
-      if (value is DateTime) return value;
-      return DateTime.now();
-    }
-
     // PrayerTimes map'ini parse et
     Map<String, PrayerTimes> parsePrayerTimes(dynamic value) {
       if (value == null) return {};
@@ -92,10 +77,6 @@ class Prayer {
       prayerTimes: parsePrayerTimes(
         json['prayerTimes'] ?? json['prayer_times'],
       ),
-      createdAt: parseDateTime(json['createdAt'] ?? json['created_at']),
-      lastUpdatedAt: parseDateTime(
-        json['lastUpdatedAt'] ?? json['last_updated_at'],
-      ),
     );
   }
 
@@ -114,7 +95,6 @@ class Prayer {
     final data = apiResponse['data'] as List<dynamic>? ?? [];
 
     final year = (meta?['year'] as num?)?.toInt() ?? DateTime.now().year;
-    final generatedAt = meta?['generated_at'] as String?;
 
     // API'den gelen verileri tarih bazlı map'e çevir
     final Map<String, PrayerTimes> prayerTimesMap = {};
@@ -135,11 +115,6 @@ class Prayer {
       prayerTimesMap[dateKey] = PrayerTimes.fromApiJson(times, date);
     }
 
-    final now = DateTime.now();
-    final createdAt = generatedAt != null
-        ? DateTime.tryParse(generatedAt) ?? now
-        : now;
-
     return Prayer(
       id: 'prayer_${year}_$districtId',
       userId: userId,
@@ -150,8 +125,6 @@ class Prayer {
       latitude: latitude,
       longitude: longitude,
       prayerTimes: prayerTimesMap,
-      createdAt: createdAt,
-      lastUpdatedAt: createdAt,
     );
   }
 
@@ -193,8 +166,6 @@ class Prayer {
       'latitude': latitude,
       'longitude': longitude,
       'prayerTimes': prayerTimesJson,
-      'createdAt': createdAt.toIso8601String(),
-      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -208,8 +179,6 @@ class Prayer {
     double? latitude,
     double? longitude,
     Map<String, PrayerTimes>? prayerTimes,
-    DateTime? createdAt,
-    DateTime? lastUpdatedAt,
   }) {
     return Prayer(
       id: id ?? this.id,
@@ -221,8 +190,6 @@ class Prayer {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       prayerTimes: prayerTimes ?? this.prayerTimes,
-      createdAt: createdAt ?? this.createdAt,
-      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 }

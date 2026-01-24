@@ -26,15 +26,13 @@ class PrayerAdapter extends TypeAdapter<Prayer> {
       latitude: fields[6] as double?,
       longitude: fields[7] as double?,
       prayerTimes: (fields[8] as Map).cast<String, PrayerTimes>(),
-      createdAt: fields[9] as DateTime,
-      lastUpdatedAt: fields[10] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Prayer obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -52,11 +50,7 @@ class PrayerAdapter extends TypeAdapter<Prayer> {
       ..writeByte(7)
       ..write(obj.longitude)
       ..writeByte(8)
-      ..write(obj.prayerTimes)
-      ..writeByte(9)
-      ..write(obj.createdAt)
-      ..writeByte(10)
-      ..write(obj.lastUpdatedAt);
+      ..write(obj.prayerTimes);
   }
 
   @override
