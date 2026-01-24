@@ -7,11 +7,13 @@ import '../../ui.dart';
 class PrayerView extends StatefulWidget {
   const PrayerView({
     super.key,
+    required this.prayerViewModel,
     required this.prayerTimesViewModel,
     required this.placeSelectorViewModel,
     required this.editProfileViewModel,
     required this.user,
   });
+  final PrayerViewModel prayerViewModel;
   final PrayerTimesViewModel prayerTimesViewModel;
   final PlaceSelectorViewModel placeSelectorViewModel;
   final EditProfileViewModel editProfileViewModel;
@@ -70,7 +72,7 @@ class _PrayerViewState extends State<PrayerView> {
         elevation: 0,
         actions: [
           ValueListenableBuilder(
-            valueListenable: widget.prayerTimesViewModel.isNotificationsEnabled,
+            valueListenable: widget.prayerViewModel.isNotificationsEnabled,
             builder: (BuildContext context, value, _) {
               if (!value) {
                 return NoNotificationPermissionInformation();

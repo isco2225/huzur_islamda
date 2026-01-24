@@ -9,7 +9,15 @@ class EditProfileViewModel {
   EditProfileViewModel({
     required UserRepository userRepository,
     required AuthRepository authRepository,
-  }) : _userRepository = userRepository {
+    required AppRepository appRepository,
+    required SchedulePrayerNotificationsUseCase
+    schedulePrayerNotificationsUseCase,
+  }) : _userRepository = userRepository,
+       _appRepository = appRepository,
+       _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
+       _isNotificationsEnabled = ValueNotifier<bool>(
+         appRepository.appPreferences.value.isNotificationsEnabled,
+       ) {
     // DEFINE COMMANDS
     updateProfile = Command1(
       _updateProfile,
@@ -20,6 +28,7 @@ class EditProfileViewModel {
       debugLabel: 'EditProfileViewModel.updateUserLocation',
     );
     // DEFINE LISTENERS
+    _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
   }
 
   // LOGGER
@@ -27,7 +36,8 @@ class EditProfileViewModel {
 
   // REPOSITORIES & USE CASES
   final UserRepository _userRepository;
-
+  final AppRepository _appRepository;
+  final SchedulePrayerNotificationsUseCase _schedulePrayerNotificationsUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
 
@@ -39,6 +49,8 @@ class EditProfileViewModel {
       ValueNotifier<String>(currentUser.value.dateOfBirth);
   ValueListenable<String> get currentUserMaritalStatus =>
       ValueNotifier<String>(currentUser.value.maritalStatus);
+
+  final ValueNotifier<bool> _isNotificationsEnabled;
 
   // COMMANDS
   late Command1<
@@ -59,6 +71,8 @@ class EditProfileViewModel {
   void dispose() {
     updateProfile.dispose();
     updateUserLocation.dispose();
+    _isNotificationsEnabled.dispose();
+    _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
     _log.fine('EditProfileViewModel Disposed');
   }
 
@@ -108,11 +122,34 @@ class EditProfileViewModel {
     );
     switch (result) {
       case Ok():
+        if (_isNotificationsEnabled.value) {
+          final scheduleResult = await _schedulePrayerNotificationsUseCase
+              .scheduleForWeek(
+                districtId: arguments.districtId,
+                city: arguments.city,
+                country: arguments.country,
+              );
+          switch (scheduleResult) {
+            case Ok():
+              _log.info('Prayer notifications scheduled successfully');
+              break;
+            case Error():
+              _log.warning(
+                'Failed to schedule prayer notifications',
+                scheduleResult.error,
+              );
+          }
+        }
         _log.info('User location updated successfully');
         return result;
       case Error():
         _log.warning('Failed to update user location', result.error);
         return result;
     }
+  }
+
+  void _onAppPreferencesChanged() {
+    _isNotificationsEnabled.value =
+        _appRepository.appPreferences.value.isNotificationsEnabled;
   }
 }

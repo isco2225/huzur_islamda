@@ -24,13 +24,10 @@ class SchedulePrayerNotificationsUseCase {
     required String country,
   }) async {
     if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
-      print('Lokasyon bilgileri eksik');
       return Result.ok(false);
     }
     try {
       _log.info('Scheduling notifications for week (7 days including today)');
-
-      // Önce tüm eski namaz bildirimlerini iptal et
       _log.info('Cancelling all old prayer notifications...');
       final cancelResult = await _notificationRepository
           .cancelAllPrayerNotifications();
@@ -42,7 +39,6 @@ class SchedulePrayerNotificationsUseCase {
           _log.warning(
             'Failed to cancel old notifications, continuing anyway: ${cancelResult.asError.error}',
           );
-        // Devam et, yeni bildirimleri planlamaya çalış
       }
 
       final localResult = await _prayerRepository.getPrayerTimesLocally(
@@ -60,7 +56,7 @@ class SchedulePrayerNotificationsUseCase {
           }
 
           final now = DateTime.now();
-          // Bugünden itibaren 7 gün için bildirim planla (bugün dahil)
+          // schedule for next 7 days
           int scheduledDays = 0;
           int totalNotifications = 0;
           for (int i = 0; i < 7; i++) {
@@ -68,7 +64,7 @@ class SchedulePrayerNotificationsUseCase {
             final dateKey = Prayer.formatDate(targetDate);
             final prayerTimes = prayer.getPrayerTimesForDate(dateKey);
             if (prayerTimes != null) {
-              // Her namaz vakti için bildirim planla
+              // schedule for each prayer time
               final prayers = [
                 (name: 'İmsak', time: prayerTimes.fajr),
                 (name: 'Öğle', time: prayerTimes.dhuhr),
@@ -79,7 +75,7 @@ class SchedulePrayerNotificationsUseCase {
 
               int dayNotifications = 0;
               for (final prayerItem in prayers) {
-                // Geçmiş vakitler için bildirim planlanmaz
+                // skip past prayer times
                 if (prayerItem.time.isAfter(now) ||
                     (prayerItem.time.year == now.year &&
                         prayerItem.time.month == now.month &&
@@ -130,7 +126,7 @@ class SchedulePrayerNotificationsUseCase {
     }
   }
 
-  /// Tüm namaz bildirimlerini iptal eder
+  /// cancel all prayer notifications
   Future<Result<void>> cancelAll() async {
     try {
       _log.info('Cancelling all prayer notifications');

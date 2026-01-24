@@ -2,18 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
-import '../../../../data/data.dart';
 import '../../../../domain/domain.dart';
 
 class PrayerTimesViewModel {
-  PrayerTimesViewModel({
-    required PrayerTimeUseCase prayerTimeUseCase,
-    required AppRepository appRepository,
-  }) : _prayerTimeUseCase = prayerTimeUseCase,
-       _appRepository = appRepository,
-       _isNotificationsEnabled = ValueNotifier<bool>(
-         appRepository.appPreferences.value.isNotificationsEnabled,
-       ) {
+  PrayerTimesViewModel({required PrayerTimeUseCase prayerTimeUseCase})
+    : _prayerTimeUseCase = prayerTimeUseCase {
     // DEFINE COMMANDS
     getPrayerTimes =
         Command1<
@@ -22,7 +15,6 @@ class PrayerTimesViewModel {
         >(_getPrayerTimes, debugLabel: 'getPrayerTimes');
 
     // DEFINE LISTENERS
-    _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
   }
 
   // LOGGER
@@ -30,14 +22,11 @@ class PrayerTimesViewModel {
 
   // REPOSITORIES & USE CASES
   final PrayerTimeUseCase _prayerTimeUseCase;
-  final AppRepository _appRepository;
   // STATE (ValueNotifiers)
   ValueListenable<PrayerTimes?> get prayerTimes => _prayerTimes;
   final ValueNotifier<PrayerTimes?> _prayerTimes = ValueNotifier<PrayerTimes?>(
     null,
   );
-  ValueListenable<bool> get isNotificationsEnabled => _isNotificationsEnabled;
-  final ValueNotifier<bool> _isNotificationsEnabled;
 
   // COMMANDS
   late final Command1<
@@ -50,8 +39,6 @@ class PrayerTimesViewModel {
   void dispose() {
     getPrayerTimes.dispose();
     _prayerTimes.dispose();
-    _isNotificationsEnabled.dispose();
-    _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
     _log.fine('PrayerTimesViewModel Disposed');
   }
 
@@ -72,14 +59,8 @@ class PrayerTimesViewModel {
         _prayerTimes.value = result.asOk.value;
         return Result.ok(null);
       case Error():
-        // Hata durumunda state'i temizle
         _prayerTimes.value = null;
         return Result.error(result.asError.error);
     }
-  }
-
-  void _onAppPreferencesChanged() {
-    _isNotificationsEnabled.value =
-        _appRepository.appPreferences.value.isNotificationsEnabled;
   }
 }
