@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logging/logging.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../app/app.dart';
 
@@ -246,6 +246,10 @@ class NotificationService {
         ledColor: const Color(
           0xFFFFC107,
         ), // Amber renk (ARGB: 255, 255, 193, 7)
+        ledOnMs:
+            1000, // LED'in yanık kalacağı süre (ms) - Android Oreo öncesi için gerekli
+        ledOffMs:
+            500, // LED'in sönük kalacağı süre (ms) - Android Oreo öncesi için gerekli
         styleInformation: const BigTextStyleInformation(''),
         category: AndroidNotificationCategory.alarm,
         visibility: NotificationVisibility.public,
@@ -348,14 +352,12 @@ class NotificationService {
     }
   }
 
-  /// Test için her 10 dakikada bir bildirim planlar
+  /// Test için her 5 dakikada bir bildirim planlar
   /// [count] kaç tane bildirim planlanacağını belirler (varsayılan: 5)
   /// Test bildirimleri ID'leri 9999'dan başlar (9999, 9998, 9997...)
-  Future<Result<void>> scheduleTestNotifications({
-    int count = 5,
-  }) async {
+  Future<Result<void>> scheduleTestNotifications({int count = 5}) async {
     try {
-      _log.info('Scheduling $count test notifications (every 10 minutes)...');
+      _log.info('Scheduling $count test notifications (every 5 minutes)...');
 
       if (!_isInitialized) {
         final initResult = await initialize();
@@ -370,15 +372,16 @@ class NotificationService {
       final now = DateTime.now();
       final testNotificationIds = <int>[];
 
-      // Her 10 dakikada bir bildirim planla
+      // Her 5 dakikada bir bildirim planla
       for (int i = 0; i < count; i++) {
         final notificationId = 9999 - i; // Test ID'leri: 9999, 9998, 9997...
-        final scheduledTime = now.add(Duration(minutes: (i + 1) * 10));
+        final scheduledTime = now.add(Duration(minutes: (i + 1) * 5));
 
         final result = await scheduleNotification(
           id: notificationId,
           title: 'Test Bildirimi ${i + 1}',
-          body: 'Bu bir test bildirimi. Zaman: ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
+          body:
+              'Bu bir test bildirimi. Zaman: ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
           scheduledDate: scheduledTime,
         );
 
