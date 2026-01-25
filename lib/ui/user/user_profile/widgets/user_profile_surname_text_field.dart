@@ -24,9 +24,10 @@ class UserProfileSurnameTextField extends StatelessWidget {
           valueListenable: _displayError,
           builder: (context, displayError, _) {
             return AppTextField(
-              'Soyisim',
+              '',
               hideText: '',
               showText: '',
+
               textEditingController: _surname,
               textCapitalization: TextCapitalization.words,
               errorText: displayError

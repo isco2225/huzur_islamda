@@ -24,7 +24,7 @@ class UserProfileNameTextField extends StatelessWidget {
           valueListenable: _displayError,
           builder: (context, displayError, _) {
             return AppTextField(
-              'İsim',
+              '',
               hideText: '',
               showText: '',
               textEditingController: _name,

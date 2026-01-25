@@ -66,7 +66,7 @@ class DateOfBirthTextField extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.grey.shade300,
-          labelText: 'GG/AA/YYYY',
+          labelText: '',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
           suffixIcon: const Icon(Icons.calendar_today, size: 20),
         ),
