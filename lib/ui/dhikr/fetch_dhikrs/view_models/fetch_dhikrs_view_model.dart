@@ -122,7 +122,8 @@ class FetchDhikrsViewModel {
     if (filteredDhikrs.isEmpty) {
       _dhikrs.value = null;
     } else {
-      _dhikrs.value = filteredDhikrs.reversed.toList();
+      filteredDhikrs.sort((a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt));
+      _dhikrs.value = filteredDhikrs;
     }
 
     _log.fine(
@@ -148,7 +149,8 @@ class FetchDhikrsViewModel {
           return Result.ok(null);
         }
         _log.fine('Dhikrs fetched successfully');
-        _dhikrs.value = dhikrs.reversed.toList();
+        dhikrs.sort((a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt));
+        _dhikrs.value = dhikrs;
         return Result.ok(null);
       case Error():
         _log.severe('Failed to fetch dhikrs: ${result.asError.error}');
