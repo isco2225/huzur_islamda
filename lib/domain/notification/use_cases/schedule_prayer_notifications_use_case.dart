@@ -79,12 +79,7 @@ class SchedulePrayerNotificationsUseCase {
               int dayNotifications = 0;
               for (final prayerItem in prayers) {
                 // skip past prayer times
-                if (prayerItem.time.isAfter(now) ||
-                    (prayerItem.time.year == now.year &&
-                        prayerItem.time.month == now.month &&
-                        prayerItem.time.day == now.day &&
-                        prayerItem.time.hour == now.hour &&
-                        prayerItem.time.minute == now.minute)) {
+                if (prayerItem.time.isAfter(now)) {
                   final scheduleResult = await _notificationRepository
                       .schedulePrayerTimeNotification(
                         prayerName: prayerItem.name,

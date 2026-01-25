@@ -330,15 +330,7 @@ class SettingsViewModel {
         case Ok():
           _log.info('Vibration preference updated successfully');
           isVibrationEnabled.value = value;
-          final updateResult = await _appRepository.updateIsVibrationEnabled(
-            isVibrationEnabled: value,
-          );
-          switch (updateResult) {
-            case Ok():
-              return updateResult;
-            case Error():
-              return updateResult;
-          }
+          return updateResult;
         case Error():
           _log.severe(
             'Error updating vibration preference: ${updateResult.asError.error}',
@@ -367,7 +359,6 @@ class SettingsViewModel {
           result.asOk.value == true
               ? _log.info('Prayer notifications scheduled successfully')
               : _log.warning('Failed to schedule notifications');
-          _log.info('Prayer notifications scheduled successfully');
           break;
         case Error():
           _log.warning(
