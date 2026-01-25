@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../app/app.dart';
@@ -8,22 +9,24 @@ class SchedulePrayerNotificationsUseCase {
   SchedulePrayerNotificationsUseCase({
     required PrayerRepository prayerRepository,
     required NotificationRepository notificationRepository,
+    required UserRepository userRepository,
   }) : _prayerRepository = prayerRepository,
        _notificationRepository = notificationRepository,
+       _userRepository = userRepository,
        _log = Logger('SchedulePrayerNotificationsUseCase');
 
   final PrayerRepository _prayerRepository;
   final NotificationRepository _notificationRepository;
+  final UserRepository _userRepository;
+  ValueListenable<User> get currentUser => _userRepository.currentUser;
   final Logger _log;
 
   /// Bir haftalık bildirim planlar
   /// Önce tüm eski namaz bildirimlerini iptal eder, sonra önümüzdeki 7 gün (bugün dahil) için yeni bildirimleri planlar
-  Future<Result<bool>> scheduleForWeek({
-    required String districtId,
-    required String city,
-    required String country,
-  }) async {
-    if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
+  Future<Result<bool>> scheduleForWeek() async {
+    if (currentUser.value.districtId!.isEmpty ||
+        currentUser.value.city!.isEmpty ||
+        currentUser.value.country!.isEmpty) {
       return Result.ok(false);
     }
     try {
@@ -42,9 +45,9 @@ class SchedulePrayerNotificationsUseCase {
       }
 
       final localResult = await _prayerRepository.getPrayerTimesLocally(
-        districtId: districtId,
-        city: city,
-        country: country,
+        districtId: currentUser.value.districtId!,
+        city: currentUser.value.city!,
+        country: currentUser.value.country!,
       );
 
       switch (localResult) {

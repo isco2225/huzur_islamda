@@ -56,6 +56,9 @@ void main() async {
   final notificationRepository = NotificationRepositoryRemote(
     notificationService: notificationService,
   );
+  final userRepository = UserRepositoryRemote(
+    firestoreUserService: FirestoreUserService(),
+  );
 
   // Use Cases
   final connectivityUseCase = ConnectivityUseCase();
@@ -70,12 +73,10 @@ void main() async {
   final schedulePrayerNotificationsUseCase = SchedulePrayerNotificationsUseCase(
     prayerRepository: prayerRepository,
     notificationRepository: notificationRepository,
+    userRepository: userRepository,
   );
   final appRepository = AppRepositoryRemote(
     sharedPreferencesService: SharedPreferencesService(),
-  );
-  final userRepository = UserRepositoryRemote(
-    firestoreUserService: FirestoreUserService(),
   );
   final wipeDataUseCase = WipeDataUseCase(
     dhikrRepository: dhikrRepository,

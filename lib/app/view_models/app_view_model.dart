@@ -15,13 +15,17 @@ class AppViewModel {
     required PrayerTimeUseCase prayerTimeUseCase,
     required SyncPermissionUseCase syncPermissionUseCase,
     required WipeDataUseCase wipeDataUseCase,
+    required SchedulePrayerNotificationsUseCase
+    schedulePrayerNotificationsUseCase,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
        _hiveRepository = hiveRepository,
        _dhikrUseCase = dhikrUseCase,
        _syncPermissionUseCase = syncPermissionUseCase,
-       _wipeDataUseCase = wipeDataUseCase {
+       _wipeDataUseCase = wipeDataUseCase,
+       _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
+       _prayerTimeUseCase = prayerTimeUseCase {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     initUser = Command0(_initUser, debugLabel: 'AppViewModel.initUser');
@@ -40,6 +44,8 @@ class AppViewModel {
   final DhikrUseCase _dhikrUseCase;
   final SyncPermissionUseCase _syncPermissionUseCase;
   final WipeDataUseCase _wipeDataUseCase;
+  final SchedulePrayerNotificationsUseCase _schedulePrayerNotificationsUseCase;
+  final PrayerTimeUseCase _prayerTimeUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -65,39 +71,70 @@ class AppViewModel {
   Future<Result<void>> _initApp() async {
     try {
       _log.info('Initializing app...');
+      // load app preferences
+      final preferencesResult = await _appRepository.getPreferences();
+      switch (preferencesResult) {
+        case Ok():
+          _log.info('App preferences loaded successfully');
+          await _syncPermissionUseCase.syncNotificationPermissionState();
+          break;
+        case Error():
+          _log.warning(
+            'Failed to load app preferences: ${preferencesResult.asError.error}',
+          );
+          return preferencesResult;
+      }
+      // initialize hive
+      await _hiveRepository.initializeHive();
+      // sync dhikrs
+      await _dhikrUseCase.syncDhikrs();
       // if user is signed in, initialize user
+      bool userInitialized = false;
       if (_authRepository.isSignedIn.value &&
           _authRepository.auth.value.uid.isNotEmpty) {
         _log.info('User is signed in, initializing user...');
         final userInitResult = await _initUser();
         switch (userInitResult) {
           case Ok():
-            _log.info('User initialized successfully');
+            if (userInitResult.asOk.value == false) {
+              _log.info('User not registered yet');
+              userInitialized = userInitResult.asOk.value;
+              break;
+            }
+            userInitialized = userInitResult.asOk.value;
+            break;
           case Error():
+            userInitialized = false;
             _log.warning(
               'Failed to initialize user: ${userInitResult.asError.error}',
             );
         }
       }
-
-      // initialize hive
-      await _hiveRepository.initializeHive();
-
-      // load app preferences
-      final preferencesResult = await _appRepository.getPreferences();
-      switch (preferencesResult) {
-        case Ok():
-          print('preferencesResult: ${preferencesResult.value.toJson()}');
-          _log.info('App preferences loaded successfully');
-          await _syncPermissionUseCase.syncNotificationPermissionState();
-        case Error():
-          _log.warning(
-            'Failed to load app preferences: ${preferencesResult.asError.error}',
+      if (userInitialized && currentUser.value.isRegistered) {
+        if (currentUser.value.districtId!.isNotEmpty &&
+            currentUser.value.city!.isNotEmpty &&
+            currentUser.value.country!.isNotEmpty) {
+          // local prayer times.
+          final prayerTimesResult = await _prayerTimeUseCase.getPrayerTimes(
+            districtId: currentUser.value.districtId!,
+            city: currentUser.value.city!,
+            country: currentUser.value.country!,
+            userId: currentUser.value.uid,
           );
+          switch (prayerTimesResult) {
+            case Ok():
+              if (prayerTimesResult.asOk.value != null &&
+                  appPreferences.value.isNotificationsEnabled) {
+                _log.info('Prayer times loaded successfully');
+                await _schedulePrayerNotificationsUseCase.scheduleForWeek();
+              }
+            case Error():
+              _log.warning(
+                'Failed to load prayer times: ${prayerTimesResult.asError.error}',
+              );
+          }
+        }
       }
-
-      // sync dhikrs
-      await _dhikrUseCase.syncDhikrs();
       _log.info('App initialized successfully');
       return Result.ok(null);
     } catch (e) {
@@ -125,17 +162,7 @@ class AppViewModel {
     final result = await _userRepository.initUser(
       uid: _authRepository.auth.value.uid,
     );
-    switch (result) {
-      case Ok():
-        if (result.asOk.value == false) {
-          return Result.error(Exception('User not registered'));
-        }
-        _log.info('User initialized successfully');
-        return result;
-      case Error():
-        _log.warning('Failed to init user', result.error);
-        return result;
-    }
+    return result;
   }
 
   Future<Result<void>> _wipeData() async {

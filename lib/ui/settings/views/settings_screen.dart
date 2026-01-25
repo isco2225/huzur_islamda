@@ -25,7 +25,6 @@ class _SettingsScreenState extends State<SettingsScreen>
       appRepository: context.read<AppRepository>(),
       requestPermissionUseCase: context.read<RequestPermissionUseCase>(),
       getPermissionStatesUseCase: context.read<GetPermissionStatesUseCase>(),
-      userRepository: context.read<UserRepository>(),
       schedulePrayerNotificationsUseCase: context
           .read<SchedulePrayerNotificationsUseCase>(),
       notificationService: context.read<NotificationService>(),

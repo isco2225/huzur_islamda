@@ -124,11 +124,7 @@ class EditProfileViewModel {
       case Ok():
         if (_isNotificationsEnabled.value) {
           final scheduleResult = await _schedulePrayerNotificationsUseCase
-              .scheduleForWeek(
-                districtId: arguments.districtId,
-                city: arguments.city,
-                country: arguments.country,
-              );
+              .scheduleForWeek();
           switch (scheduleResult) {
             case Ok():
               _log.info('Prayer notifications scheduled successfully');

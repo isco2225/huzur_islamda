@@ -12,14 +12,12 @@ class SettingsViewModel {
     required AppRepository appRepository,
     required RequestPermissionUseCase requestPermissionUseCase,
     required GetPermissionStatesUseCase getPermissionStatesUseCase,
-    required UserRepository userRepository,
     required SchedulePrayerNotificationsUseCase
     schedulePrayerNotificationsUseCase,
     required NotificationService notificationService,
   }) : _appRepository = appRepository,
        _requestPermissionUseCase = requestPermissionUseCase,
        _getPermissionStatesUseCase = getPermissionStatesUseCase,
-       _userRepository = userRepository,
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
        _notificationService = notificationService,
        _log = Logger('SettingsViewModel'),
@@ -90,7 +88,6 @@ class SettingsViewModel {
   final AppRepository _appRepository;
   final RequestPermissionUseCase _requestPermissionUseCase;
   final GetPermissionStatesUseCase _getPermissionStatesUseCase;
-  final UserRepository _userRepository;
   final SchedulePrayerNotificationsUseCase _schedulePrayerNotificationsUseCase;
   final NotificationService _notificationService;
   final Logger _log;
@@ -361,22 +358,9 @@ class SettingsViewModel {
   /// Bildirimleri planlar
   Future<void> _scheduleNotifications() async {
     try {
-      final user = _userRepository.currentUser.value;
-      if (user.districtId == null ||
-          user.districtId!.isEmpty ||
-          user.city == null ||
-          user.city!.isEmpty ||
-          user.country == null ||
-          user.country!.isEmpty) {
-        _log.warning('User location not set, cannot schedule notifications');
-        return;
-      }
       _log.info('Scheduling prayer notifications for week...');
-      final result = await _schedulePrayerNotificationsUseCase.scheduleForWeek(
-        districtId: user.districtId!,
-        city: user.city!,
-        country: user.country!,
-      );
+      final result = await _schedulePrayerNotificationsUseCase
+          .scheduleForWeek();
 
       switch (result) {
         case Ok():

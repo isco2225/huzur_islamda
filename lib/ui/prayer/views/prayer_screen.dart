@@ -71,11 +71,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
             userId: updatedUser.uid,
           ));
         }
-        await _prayerViewModel.schedulePrayerNotifications.execute((
-          districtId: updatedUser.districtId!,
-          city: updatedUser.city!,
-          country: updatedUser.country!,
-        ));
+        await _prayerViewModel.schedulePrayerNotifications.execute();
       },
     );
   }

@@ -67,6 +67,8 @@ class _AppScreenState extends State<AppScreen> {
       prayerTimeUseCase: widget.prayerTimeUseCase,
       syncPermissionUseCase: widget.syncPermissionUseCase,
       wipeDataUseCase: widget.wipeDataUseCase,
+      schedulePrayerNotificationsUseCase:
+          widget.schedulePrayerNotificationsUseCase,
     );
     // App'i başlat
     _appViewModel.initApp.execute();

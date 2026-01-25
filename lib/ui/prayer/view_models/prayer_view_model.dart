@@ -16,7 +16,7 @@ class PrayerViewModel {
          appRepository.appPreferences.value.isNotificationsEnabled,
        ) {
     // DEFINE COMMANDS
-    schedulePrayerNotifications = Command1(
+    schedulePrayerNotifications = Command0(
       _schedulePrayerNotifications,
       debugLabel: 'PrayerViewModel.schedulePrayerNotifications',
     );
@@ -34,8 +34,7 @@ class PrayerViewModel {
   ValueListenable<bool> get isNotificationsEnabled => _isNotificationsEnabled;
   final ValueNotifier<bool> _isNotificationsEnabled;
   // COMMANDS
-  late Command1<void, ({String districtId, String city, String country})>
-  schedulePrayerNotifications;
+  late Command0<void> schedulePrayerNotifications;
 
   // DISPOSE
   void dispose() {
@@ -46,17 +45,11 @@ class PrayerViewModel {
   }
 
   // FUNCTIONS
-  Future<Result<void>> _schedulePrayerNotifications(
-    ({String districtId, String city, String country}) arguments,
-  ) async {
+  Future<Result<void>> _schedulePrayerNotifications() async {
     if (!_isNotificationsEnabled.value) {
       return Result.ok(null);
     }
-    final result = await _schedulePrayerNotificationsUseCase.scheduleForWeek(
-      districtId: arguments.districtId,
-      city: arguments.city,
-      country: arguments.country,
-    );
+    final result = await _schedulePrayerNotificationsUseCase.scheduleForWeek();
     return result;
   }
 

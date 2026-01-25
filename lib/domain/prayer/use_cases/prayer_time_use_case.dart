@@ -16,12 +16,12 @@ class PrayerTimeUseCase {
   final ConnectivityUseCase _connectivityUseCase;
   final Logger _log;
 
-  /// Namaz vakitlerini getirir (cache-first stratejisi)
-  ///
-  /// 1. Önce Hive'dan kontrol eder (o yıl için veri var mı?)
-  /// 2. Varsa ve güncel ise → Hive'dan getirir
-  /// 3. Yoksa veya eski ise → API'den çeker, eski vakitleri temizler, Hive'a kaydeder
-  /// 4. Bugünün vakitlerini döndürür
+  /// get prayer times.(cache-first)
+  /// 1. check if the prayer times are in the local storage.
+  /// 2. if they are, return them.
+  /// 3. if they are not, check if the internet connection is available.
+  /// 4. if available, fetch the prayer times from the remote and save them to local.
+  /// 5. return them.
   Future<Result<PrayerTimes?>> getPrayerTimes({
     required String districtId,
     required String city,
@@ -29,7 +29,6 @@ class PrayerTimeUseCase {
     required String userId,
   }) async {
     try {
-      // Boş parametre kontrolü
       if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
         _log.warning('Empty parameters provided for prayer times');
         return Result.error(Exception('Lütfen konum bilgilerini seçiniz'));
@@ -37,19 +36,15 @@ class PrayerTimeUseCase {
       _log.info(
         'Getting prayer times for district: $districtId, city: $city, country: $country',
       );
-
-      // 1. Önce Hive'dan kontrol et
       final localResult = await _prayerRepository.getPrayerTimesLocally(
         districtId: districtId,
         city: city,
         country: country,
       );
-
       switch (localResult) {
         case Ok():
           final prayer = localResult.asOk.value;
           if (prayer != null) {
-            // Hive'da güncel veri var, bugünün vakitlerini döndür
             final todayTimes = prayer.getTodayPrayerTimes();
             if (todayTimes != null) {
               _log.info('Found prayer times in local storage');
@@ -57,17 +52,14 @@ class PrayerTimeUseCase {
             }
             _log.info('Prayer times found but today\'s times are missing');
           }
-          // Hive'da yok veya eski yıl, API'den çek
           break;
         case Error():
           _log.warning(
             'Error getting prayer times locally: ${localResult.asError.error}',
           );
-          // Hive hatası, API'den çek
           break;
       }
 
-      // 2. İnternet bağlantısını kontrol et
       final connectivityResult = await _connectivityUseCase.connectionType();
       switch (connectivityResult) {
         case Ok():
@@ -85,7 +77,6 @@ class PrayerTimeUseCase {
           break;
       }
 
-      // 3. API'den yıllık veriyi çek
       _log.info('Fetching prayer times from API...');
       final remoteResult = await _prayerRepository.getPrayerTimesFromRemote(
         districtId: districtId,
@@ -98,7 +89,6 @@ class PrayerTimeUseCase {
         case Ok():
           final prayer = remoteResult.asOk.value;
           if (prayer != null) {
-            // 4. Eski vakitleri temizle (farklı districtId'ye sahip olanlar)
             final clearResult = await _prayerRepository.clearOldPrayerTimes(
               currentDistrictId: districtId,
               userId: userId,
@@ -112,15 +102,12 @@ class PrayerTimeUseCase {
                 _log.warning(
                   'Error clearing old prayer times: ${clearResult.asError.error}',
                 );
-                // Hata olsa bile devam et
                 break;
             }
 
-            // 5. Hive'a kaydet
             final saveResult = await _prayerRepository.savePrayerTimesLocally(
               prayer: prayer,
             );
-
             switch (saveResult) {
               case Ok():
                 _log.info('Prayer times saved to local storage');
@@ -129,11 +116,9 @@ class PrayerTimeUseCase {
                 _log.warning(
                   'Error saving prayer times locally: ${saveResult.asError.error}',
                 );
-                // Hata olsa bile devam et
                 break;
             }
 
-            // 6. Bugünün vakitlerini döndür
             final todayTimes = prayer.getTodayPrayerTimes();
             if (todayTimes != null) {
               _log.info('Successfully fetched prayer times from API');
