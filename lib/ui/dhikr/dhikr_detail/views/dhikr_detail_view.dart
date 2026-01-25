@@ -13,6 +13,7 @@ class DhikrDetailView extends StatelessWidget {
   // Callback to trigger animation - better than GlobalKey
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return ListenableBuilder(
       listenable: Listenable.merge([
         viewModel.loadDhikr.running,
@@ -71,7 +72,6 @@ class DhikrDetailView extends StatelessWidget {
               safeArea: true,
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Name
                   Padding(
@@ -97,7 +97,10 @@ class DhikrDetailView extends StatelessWidget {
                   SizedBox(height: context.spacingExtraLarge),
                   // Completion Status
                   if (dhikr.isCompleted) ...[
-                    DhikrCompletionBadge(),
+                    DhikrCompletionBadge(
+                      responsiveWidth: responsive.screenWidth * 0.8,
+                      dhikr: dhikr,
+                    ),
                     SizedBox(height: context.spacingLarge),
                   ],
                   // Counter Controls
@@ -107,7 +110,10 @@ class DhikrDetailView extends StatelessWidget {
                       VibrationUseCase.vibrateLight(context);
                       viewModel.incrementCount.execute();
                     },
-                    onDecrement: () => viewModel.decrementCount.execute(),
+                    onDecrement: () {
+                      VibrationUseCase.vibrateMedium(context);
+                      viewModel.decrementCount.execute();
+                    },
                     incrementRunning: viewModel.incrementCount.running,
                     decrementRunning: viewModel.decrementCount.running,
                   ),

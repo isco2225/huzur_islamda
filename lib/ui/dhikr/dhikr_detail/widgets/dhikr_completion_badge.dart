@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
+import '../../../../domain/domain.dart';
 
 class DhikrCompletionBadge extends StatelessWidget {
-  const DhikrCompletionBadge({super.key});
+  const DhikrCompletionBadge({
+    super.key,
+    required this.responsiveWidth,
+    required this.dhikr,
+  });
+
+  final double responsiveWidth;
+  final Dhikr dhikr;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(context.horizontalPadding),
+      width: responsiveWidth,
+      padding: EdgeInsets.all(context.horizontalPadding * 0.5),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.success, AppColors.success.withValues(alpha: 0.8)],
+          colors: dhikr.isCompleted
+              ? [AppColors.success, AppColors.success.withValues(alpha: 0.8)]
+              : [AppColors.error, AppColors.error.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(context.spacingMedium),
         boxShadow: [
           BoxShadow(
             color: AppColors.success.withValues(alpha: 0.3),
@@ -27,25 +38,19 @@ class DhikrCompletionBadge extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle, color: Colors.white, size: 32),
+          Icon(
+            dhikr.isCompleted ? Icons.check_circle : Icons.cancel,
+            color: Colors.white,
+            size: 32,
+          ),
           SizedBox(width: context.spacingMedium),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Tebrikler!',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Zikrinizi tamamladınız',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
-                ),
-              ),
-            ],
+          Text(
+            dhikr.isCompleted
+                ? 'Tamamladınız, Tebrikler!'
+                : 'Zikir Tamamlanamadı!',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
           ),
         ],
       ),
