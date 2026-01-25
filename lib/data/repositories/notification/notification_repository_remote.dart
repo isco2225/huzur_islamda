@@ -31,21 +31,21 @@ class NotificationRepositoryRemote implements NotificationRepository {
     return baseId + dateHash;
   }
 
-  /// Namaz tipi string'ini prayer name'e çevirir
-  String _getPrayerName(String prayerType) {
-    switch (prayerType) {
-      case 'fajr':
-        return 'İmsak';
-      case 'dhuhr':
-        return 'Öğle';
-      case 'asr':
-        return 'İkindi';
-      case 'maghrib':
-        return 'Akşam';
-      case 'isha':
-        return 'Yatsı';
+  /// Prayer name'i namaz tipi string'ine çevirir
+  String _getPrayerType(String prayerName) {
+    switch (prayerName) {
+      case 'İmsak':
+        return 'fajr';
+      case 'Öğle':
+        return 'dhuhr';
+      case 'İkindi':
+        return 'asr';
+      case 'Akşam':
+        return 'maghrib';
+      case 'Yatsı':
+        return 'isha';
       default:
-        return prayerType;
+        return prayerName.toLowerCase();
     }
   }
 
@@ -65,7 +65,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
       }
 
       // Convert prayer name to prayer type
-      final prayerType = _getPrayerName(prayerName);
+      final prayerType = _getPrayerType(prayerName);
       final notificationId = _generateNotificationId(prayerType, dateKey);
       final title = '$prayerName Vakti';
       final body = '$prayerName vakti geldi';
@@ -101,8 +101,6 @@ class NotificationRepositoryRemote implements NotificationRepository {
   Future<Result<void>> cancelAllPrayerNotifications() async {
     try {
       _log.info('Cancelling all prayer notifications...');
-
-      // Tüm planlanmış bildirimleri al
       final pendingResult = await _notificationService
           .getPendingNotifications();
       switch (pendingResult) {

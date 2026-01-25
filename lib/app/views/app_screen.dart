@@ -25,6 +25,7 @@ class AppScreen extends StatefulWidget {
     required this.notificationService,
     required this.hiveDhikr,
     required this.syncPermissionUseCase,
+    required this.wipeDataUseCase,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -43,6 +44,7 @@ class AppScreen extends StatefulWidget {
   final NotificationService notificationService;
   final HiveService hiveDhikr;
   final SyncPermissionUseCase syncPermissionUseCase;
+  final WipeDataUseCase wipeDataUseCase;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -64,6 +66,7 @@ class _AppScreenState extends State<AppScreen> {
       dhikrUseCase: widget.dhikrUseCase,
       prayerTimeUseCase: widget.prayerTimeUseCase,
       syncPermissionUseCase: widget.syncPermissionUseCase,
+      wipeDataUseCase: widget.wipeDataUseCase,
     );
     // App'i başlat
     _appViewModel.initApp.execute();
@@ -105,6 +108,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.getPermissionStatesUseCase),
         Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
         Provider(create: (_) => widget.syncPermissionUseCase),
+        Provider(create: (_) => widget.wipeDataUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

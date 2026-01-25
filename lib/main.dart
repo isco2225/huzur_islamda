@@ -74,12 +74,19 @@ void main() async {
   final appRepository = AppRepositoryRemote(
     sharedPreferencesService: SharedPreferencesService(),
   );
+  final userRepository = UserRepositoryRemote(
+    firestoreUserService: FirestoreUserService(),
+  );
+  final wipeDataUseCase = WipeDataUseCase(
+    dhikrRepository: dhikrRepository,
+    prayerRepository: prayerRepository,
+    userRepository: userRepository,
+    notificationRepository: notificationRepository,
+  );
   runApp(
     AppScreen(
       authRepository: authRepository,
-      userRepository: UserRepositoryRemote(
-        firestoreUserService: FirestoreUserService(),
-      ),
+      userRepository: userRepository,
       postRepository: PostRepositoryRemote(
         firestorePostService: FirestorePostService(),
       ),
@@ -108,6 +115,7 @@ void main() async {
         appRepository: appRepository,
         notificationService: notificationService,
       ),
+      wipeDataUseCase: wipeDataUseCase,
     ),
   );
 }

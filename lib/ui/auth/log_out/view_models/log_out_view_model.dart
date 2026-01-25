@@ -30,10 +30,13 @@ class LogOutViewModel {
   // FUNCTIONS
   Future<Result<void>> _logOut() async {
     final result = await _authRepository.signOut();
-    _log.info('Log out result: $result');
-    if (result is Error<void>) {
-      _log.warning('Failed to log out: ${result.asError.error}');
+    switch (result) {
+      case Ok():
+        _log.info('Logged out successfully');
+        return Result.ok(null);
+      case Error():
+        _log.warning('Failed to log out: ${result.asError.error}');
+        return result;
     }
-    return result;
   }
 }

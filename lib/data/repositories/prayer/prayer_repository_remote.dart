@@ -151,6 +151,27 @@ class PrayerRepositoryRemote implements PrayerRepository {
     }
   }
 
+  @override
+  Future<Result<void>> clearAllPrayerTimesLocally() async {
+    try {
+      _log.info('Clearing all prayer times locally');
+      final result = await _hiveService.clear();
+      switch (result) {
+        case Ok():
+          _log.info('Successfully cleared all prayer times locally');
+          return Result.ok(null);
+        case Error():
+          _log.severe('Error clearing prayer times: ${result.asError.error}');
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      _log.severe('Exception clearing prayer times: $e');
+      return Result.error(
+        Exception('Failed to clear prayer times locally: $e'),
+      );
+    }
+  }
+
   // ========== REMOTE OPERATIONS (API) ==========
 
   @override

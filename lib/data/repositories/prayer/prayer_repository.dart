@@ -10,12 +10,12 @@ abstract class PrayerRepository {
   });
   Future<Result<void>> savePrayerTimesLocally({required Prayer prayer});
 
-  /// Kullanıcının seçtiği yeni konum için eski vakitleri temizler
-  /// Sadece farklı districtId'ye sahip vakitleri siler
   Future<Result<void>> clearOldPrayerTimes({
     required String currentDistrictId,
     required String userId,
   });
+
+  Future<Result<void>> clearAllPrayerTimesLocally();
 
   // Remote operations
   Future<Result<Prayer?>> getPrayerTimesFromRemote({

@@ -14,16 +14,19 @@ class AppViewModel {
     required DhikrUseCase dhikrUseCase,
     required PrayerTimeUseCase prayerTimeUseCase,
     required SyncPermissionUseCase syncPermissionUseCase,
+    required WipeDataUseCase wipeDataUseCase,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
        _hiveRepository = hiveRepository,
        _dhikrUseCase = dhikrUseCase,
-       _syncPermissionUseCase = syncPermissionUseCase {
+       _syncPermissionUseCase = syncPermissionUseCase,
+       _wipeDataUseCase = wipeDataUseCase {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
-    _authRepository.isSignedIn.addListener(_onAuthStateChanged);
     initUser = Command0(_initUser, debugLabel: 'AppViewModel.initUser');
+    wipeData = Command0(_wipeData, debugLabel: 'AppViewModel.wipeData');
+    _authRepository.isSignedIn.addListener(_onAuthStateChanged);
   }
 
   // LOGGER
@@ -36,6 +39,7 @@ class AppViewModel {
   final HiveRepository _hiveRepository;
   final DhikrUseCase _dhikrUseCase;
   final SyncPermissionUseCase _syncPermissionUseCase;
+  final WipeDataUseCase _wipeDataUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -46,12 +50,14 @@ class AppViewModel {
   // COMMANDS
   late Command0<void> initApp;
   late Command0<bool> initUser;
+  late Command0<void> wipeData;
 
   // DISPOSE
   void dispose() {
     _authRepository.isSignedIn.removeListener(_onAuthStateChanged);
     initApp.dispose();
     initUser.dispose();
+    wipeData.dispose();
     _log.fine('Disposed');
   }
 
@@ -92,7 +98,6 @@ class AppViewModel {
 
       // sync dhikrs
       await _dhikrUseCase.syncDhikrs();
-
       _log.info('App initialized successfully');
       return Result.ok(null);
     } catch (e) {
@@ -105,17 +110,11 @@ class AppViewModel {
     final isSignedIn = _authRepository.isSignedIn.value;
 
     if (isSignedIn) {
-      // Kullanıcı giriş yaptı
-      // User data yükleme işlemi router redirect mantığı tarafından
-      // UserInitializeRoute'a yönlendirilerek yapılıyor
-      // Bu yüzden burada tekrar yüklemeye gerek yok
-      // Command pattern kullanarak state tracking ve hata yönetimi yapılır
       initApp.execute();
       _log.info('User signed in, router will handle user initialization');
     } else {
-      // Kullanıcı çıkış yaptı, user bilgilerini temizle
-      _log.info('User signed out, wiping user data');
-      _userRepository.wipeUser();
+      _log.info('User signed out, wiping all data');
+      wipeData.execute();
     }
   }
 
@@ -139,21 +138,21 @@ class AppViewModel {
     }
   }
 
-  // Future<void> _cancelNotifications() async {
-  //   try {
-  //     _log.info('Cancelling prayer notifications...');
-  //     final result = await _schedulePrayerNotificationsUseCase.cancelAll();
-  //     switch (result) {
-  //       case Ok():
-  //         _log.info('Prayer notifications cancelled successfully');
-  //         break;
-  //       case Error():
-  //         _log.warning(
-  //           'Failed to cancel notifications: ${result.asError.error}',
-  //         );
-  //     }
-  //   } catch (e) {
-  //     _log.severe('Exception cancelling notifications: $e');
-  //   }
-  // }
+  Future<Result<void>> _wipeData() async {
+    try {
+      _log.info('Wiping user data...');
+      final result = await _wipeDataUseCase.wipeData();
+      switch (result) {
+        case Ok():
+          _log.info('User data wiped successfully');
+          return result;
+        case Error():
+          _log.severe('Failed to wipe user data: ${result.asError.error}');
+          return result;
+      }
+    } catch (e) {
+      _log.severe('Exception wiping user data: $e');
+      return Result.error(Exception('Veri temizlenirken hata oluştu: $e'));
+    }
+  }
 }
