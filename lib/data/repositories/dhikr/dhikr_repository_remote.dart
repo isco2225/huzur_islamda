@@ -262,4 +262,55 @@ class DhikrRepositoryRemote implements DhikrRepository {
         return Result.error(firestoreResult.asError.error);
     }
   }
+
+  @override
+  Future<Result<List<Dhikr>>> getDhikrsByGroupId({
+    required String groupId,
+  }) async {
+    _log.info('Getting dhikrs by groupId: $groupId');
+    final result = await _hiveService.getWithFilter(
+      (dhikr) => dhikr.groupId == groupId,
+    );
+    switch (result) {
+      case Ok():
+        final dhikrs = result.asOk.value;
+        if (dhikrs == null) {
+          _log.info('No dhikrs found for groupId: $groupId');
+          return Result.ok([]);
+        }
+        // Sort by name to ensure consistent order (Subhanallah, Elhamdulillah, Allahu Ekber)
+        _log.info('Found ${dhikrs.length} dhikrs for groupId: $groupId');
+        return Result.ok(dhikrs.reversed.toList());
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
+
+  @override
+  Future<Result<void>> createDhikrsForPrayer({
+    required List<Dhikr> dhikrs,
+  }) async {
+    _log.info('Creating ${dhikrs.length} dhikrs for prayer');
+    try {
+      for (final dhikr in dhikrs) {
+        final saveResult = await saveDhikrLocally(dhikr: dhikr);
+        switch (saveResult) {
+          case Ok():
+            _log.info('Saved dhikr: ${dhikr.name}');
+          case Error():
+            _log.severe(
+              'Failed to save dhikr: ${dhikr.name}, error: ${saveResult.asError.error}',
+            );
+            return Result.error(
+              Exception('Failed to save dhikr: ${dhikr.name}'),
+            );
+        }
+      }
+      _log.info('Successfully created ${dhikrs.length} dhikrs for prayer');
+      return Result.ok(null);
+    } catch (e) {
+      _log.severe('Failed to create dhikrs for prayer: $e');
+      return Result.error(Exception('Failed to create dhikrs for prayer: $e'));
+    }
+  }
 }

@@ -20,7 +20,10 @@ class CreateDhikrViewModel {
       _createDhikr,
       debugLabel: 'createDhikr',
     );
-
+    createDhikrsForPrayer = Command0<String>(
+      _createDhikrsForPrayer,
+      debugLabel: 'createDhikrsForPrayer',
+    );
     // DEFINE LISTENERS
   }
 
@@ -41,11 +44,13 @@ class CreateDhikrViewModel {
 
   // COMMANDS
   late final Command1<void, ({String name, int targetCount})> createDhikr;
+  late final Command0<String> createDhikrsForPrayer;
 
   // DISPOSE
   void dispose() {
     createDhikr.dispose();
     targetCount.dispose();
+    createDhikrsForPrayer.dispose();
   }
 
   // FUNCTIONS
@@ -100,5 +105,90 @@ class CreateDhikrViewModel {
   /// UI layer'dan context alır ve use case üzerinden ad gösterir
   Future<void> showInterstitialAd() async {
     await _showAdUseCase.showInterstitialAd();
+  }
+
+  Future<Result<String>> _createDhikrsForPrayer() async {
+    try {
+      final userId = currentUser.value.uid;
+      if (userId.isEmpty) {
+        _log.warning('User ID is empty, cannot create prayer dhikrs');
+        return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+      }
+
+      // Generate unique group ID
+      final currentDate = DateTime.now();
+      final groupId = 'prayer_dhikr_${currentDate.microsecondsSinceEpoch}';
+
+      // Create 3 dhikrs for prayer
+      final dhikrs = [
+        Dhikr(
+          id: '${groupId}_subhanallah',
+          userId: userId,
+          name: PrayerDhikrConstants.subhanallahName,
+          targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
+          currentCount: 0,
+          day: currentDate,
+          isCompleted: false,
+          createdAt: currentDate,
+          lastUpdatedAt: currentDate,
+          isSynced: false,
+          isDeleted: false,
+          groupId: groupId,
+        ),
+        Dhikr(
+          id: '${groupId}_elhamdulillah',
+          userId: userId,
+          name: PrayerDhikrConstants.elhamdulillahName,
+          targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
+          currentCount: 0,
+          day: currentDate,
+          isCompleted: false,
+          createdAt: currentDate,
+          lastUpdatedAt: currentDate,
+          isSynced: false,
+          isDeleted: false,
+          groupId: groupId,
+        ),
+        Dhikr(
+          id: '${groupId}_allahu_ekber',
+          userId: userId,
+          name: PrayerDhikrConstants.allahuEkberName,
+          targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
+          currentCount: 0,
+          day: currentDate,
+          isCompleted: false,
+          createdAt: currentDate,
+          lastUpdatedAt: currentDate,
+          isSynced: false,
+          isDeleted: false,
+          groupId: groupId,
+        ),
+      ];
+
+      final result = await _dhikrRepository.createDhikrsForPrayer(
+        dhikrs: dhikrs,
+      );
+      switch (result) {
+        case Ok():
+          // Sync dhikrs to Firestore
+          final syncResult = await _dhikrUseCase.syncDhikrs();
+          switch (syncResult) {
+            case Ok():
+              _log.info('Prayer dhikrs synced successfully');
+            case Error():
+              _log.warning('Failed to sync prayer dhikrs: ${syncResult.error}');
+          }
+          _log.info(
+            'Prayer dhikrs created successfully with groupId: $groupId',
+          );
+          return Result.ok(groupId);
+        case Error():
+          _log.severe('Failed to create prayer dhikrs: ${result.error}');
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      _log.severe('Failed to create dhikrs for prayer: $e');
+      return Result.error(Exception('Failed to create dhikrs for prayer: $e'));
+    }
   }
 }

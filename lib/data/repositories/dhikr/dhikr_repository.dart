@@ -22,6 +22,9 @@ abstract class DhikrRepository {
     required String dhikrId,
     required Dhikr dhikr,
   });
+  Future<Result<void>> createDhikrsForPrayer({required List<Dhikr> dhikrs});
+
+  Future<Result<List<Dhikr>>> getDhikrsByGroupId({required String groupId});
 
   Future<Result<void>> syncDhikrsToLocally({required String userId});
   // Remote operations (Firestore)

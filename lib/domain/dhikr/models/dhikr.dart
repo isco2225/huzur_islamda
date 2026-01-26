@@ -40,6 +40,9 @@ class Dhikr {
   @HiveField(10)
   final bool isDeleted;
 
+  @HiveField(11)
+  final String? groupId;
+
   const Dhikr({
     required this.id,
     required this.userId,
@@ -52,6 +55,7 @@ class Dhikr {
     required this.lastUpdatedAt,
     this.isSynced = false,
     this.isDeleted = false,
+    this.groupId,
   });
 
   factory Dhikr.fromJson(Map<String, Object?> json) {
@@ -74,6 +78,7 @@ class Dhikr {
       lastUpdatedAt: parseDateTime(json['lastUpdatedAt']),
       isSynced: json['isSynced'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
+      groupId: json['groupId'] as String? ?? '',
     );
   }
 
@@ -97,6 +102,7 @@ class Dhikr {
       'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
       'isSynced': isSynced,
       'isDeleted': isDeleted,
+      'groupId': groupId,
     };
   }
 
@@ -112,6 +118,7 @@ class Dhikr {
     DateTime? lastUpdatedAt,
     bool? isSynced,
     bool? isDeleted,
+    String? groupId,
   }) {
     return Dhikr(
       id: id ?? this.id,
@@ -125,6 +132,7 @@ class Dhikr {
       lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
       isSynced: isSynced ?? this.isSynced,
       isDeleted: isDeleted ?? this.isDeleted,
+      groupId: groupId ?? this.groupId,
     );
   }
 }
