@@ -27,6 +27,7 @@ void main() async {
   // Services
   final prayerService = PrayerService();
   final notificationService = NotificationService();
+  final admobService = AdMobService();
 
   // Initialize notification service
   final notificationInitResult = await notificationService.initialize();
@@ -37,6 +38,19 @@ void main() async {
     case Error():
       debugPrint(
         'Failed to initialize notification service: ${notificationInitResult.asError.error}',
+      );
+      break;
+  }
+
+  // Initialize AdMob service
+  final admobInitResult = await admobService.initialize();
+  switch (admobInitResult) {
+    case Ok():
+      debugPrint('AdMob service initialized successfully');
+      break;
+    case Error():
+      debugPrint(
+        'Failed to initialize AdMob service: ${admobInitResult.asError.error}',
       );
       break;
   }
@@ -109,6 +123,7 @@ void main() async {
       getPermissionStatesUseCase: getPermissionStatesUseCase,
       schedulePrayerNotificationsUseCase: schedulePrayerNotificationsUseCase,
       notificationService: notificationService,
+      admobService: admobService,
       hiveDhikr: hiveDhikr,
       syncPermissionUseCase: SyncPermissionUseCase(
         getPermissionStatesUseCase: getPermissionStatesUseCase,

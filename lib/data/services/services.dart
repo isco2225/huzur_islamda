@@ -8,3 +8,4 @@ export 'place_selector_service.dart';
 export 'prayer_service.dart';
 export 'shared_preferences_sevice.dart';
 export 'notification_service.dart';
+export 'admob_service.dart';
