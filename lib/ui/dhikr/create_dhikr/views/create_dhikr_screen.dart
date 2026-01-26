@@ -23,12 +23,16 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
       dhikrRepository: context.read<DhikrRepository>(),
       userRepository: context.read<UserRepository>(),
       dhikrUseCase: context.read<DhikrUseCase>(),
+      showAdUseCase: context.read<ShowAdUseCase>(),
     );
     _viewModel.createDhikr.handleError(context);
     _viewModel.createDhikr.handleCompleted(
       context,
-      successMessage: 'Zikir oluşturuldu!',
       popCount: 1,
+      successMessage: 'Zikir oluşturuldu!',
+      onCompleted: (_) {
+        _viewModel.showInterstitialAd();
+      },
     );
   }
 

@@ -24,6 +24,7 @@ class AppScreen extends StatefulWidget {
     required this.schedulePrayerNotificationsUseCase,
     required this.notificationService,
     required this.admobService,
+    required this.showAdUseCase,
     required this.hiveDhikr,
     required this.syncPermissionUseCase,
     required this.wipeDataUseCase,
@@ -44,6 +45,7 @@ class AppScreen extends StatefulWidget {
   final SchedulePrayerNotificationsUseCase schedulePrayerNotificationsUseCase;
   final NotificationService notificationService;
   final AdMobService admobService;
+  final ShowAdUseCase showAdUseCase;
   final HiveService hiveDhikr;
   final SyncPermissionUseCase syncPermissionUseCase;
   final WipeDataUseCase wipeDataUseCase;
@@ -114,6 +116,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
         Provider(create: (_) => widget.syncPermissionUseCase),
         Provider(create: (_) => widget.wipeDataUseCase),
+        Provider(create: (_) => widget.showAdUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

@@ -1,3 +1,4 @@
+export 'advert/advert.dart';
 export 'app/app.dart';
 export 'auth/auth.dart';
 export 'connectivity/connectivity.dart';

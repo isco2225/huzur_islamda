@@ -98,6 +98,7 @@ void main() async {
     userRepository: userRepository,
     notificationRepository: notificationRepository,
   );
+  final showAdUseCase = ShowAdUseCase(admobService: admobService);
   runApp(
     AppScreen(
       authRepository: authRepository,
@@ -124,6 +125,7 @@ void main() async {
       schedulePrayerNotificationsUseCase: schedulePrayerNotificationsUseCase,
       notificationService: notificationService,
       admobService: admobService,
+      showAdUseCase: showAdUseCase,
       hiveDhikr: hiveDhikr,
       syncPermissionUseCase: SyncPermissionUseCase(
         getPermissionStatesUseCase: getPermissionStatesUseCase,

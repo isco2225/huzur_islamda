@@ -10,9 +10,11 @@ class CreateDhikrViewModel {
     required DhikrRepository dhikrRepository,
     required UserRepository userRepository,
     required DhikrUseCase dhikrUseCase,
+    required ShowAdUseCase showAdUseCase,
   }) : _dhikrRepository = dhikrRepository,
        _userRepository = userRepository,
-       _dhikrUseCase = dhikrUseCase {
+       _dhikrUseCase = dhikrUseCase,
+       _showAdUseCase = showAdUseCase {
     // DEFINE COMMANDS
     createDhikr = Command1<void, ({String name, int targetCount})>(
       _createDhikr,
@@ -29,6 +31,7 @@ class CreateDhikrViewModel {
   final DhikrRepository _dhikrRepository;
   final UserRepository _userRepository;
   final DhikrUseCase _dhikrUseCase;
+  final ShowAdUseCase _showAdUseCase;
 
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
@@ -91,5 +94,11 @@ class CreateDhikrViewModel {
       _log.severe('Failed to create dhikr: $e');
       return Result.error(Exception('Failed to create dhikr: $e'));
     }
+  }
+
+  /// Interstitial ad gösterir
+  /// UI layer'dan context alır ve use case üzerinden ad gösterir
+  Future<void> showInterstitialAd() async {
+    await _showAdUseCase.showInterstitialAd();
   }
 }
