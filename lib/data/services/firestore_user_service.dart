@@ -77,6 +77,31 @@ class FirestoreUserService {
     }
   }
 
+  Future<Result<List<String>?>> getFavoritedPostIds({
+    required String uid,
+  }) async {
+    try {
+      final doc = await _firestore
+          .collection(_collectionName)
+          .doc(uid)
+          .collection('favorites')
+          .get();
+      if (doc.docs.isEmpty) {
+        return Result.ok(null);
+      }
+      final favoritedPostIds = doc.docs
+          .map((doc) => doc.data()['postId'] as String? ?? '')
+          .toList();
+      return Result.ok(favoritedPostIds);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to get favorited post ids: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to get favorited post ids: $e'));
+    }
+  }
+
   /// Kullanıcı bilgilerini güncelle
   Future<Result<User?>> updateUser({
     required String uid,

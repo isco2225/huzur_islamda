@@ -32,6 +32,9 @@ abstract class UserRepository {
     String? maritalStatus,
   });
 
+  /// Kullanıcının favori post'larının ids'ini getir
+  Future<Result<List<String>?>> getFavoritedPostIds({required String uid});
+
   /// Kullanıcı bilgilerini Firestore'dan getir
   Future<Result<bool>> fetchAuthenticatedUser({required String uid});
 

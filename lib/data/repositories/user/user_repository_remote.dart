@@ -232,4 +232,21 @@ class UserRepositoryRemote extends UserRepository {
       return Result.error(Exception('Failed to update user location: $e'));
     }
   }
+
+  @override
+  Future<Result<List<String>?>> getFavoritedPostIds({
+    required String uid,
+  }) async {
+    try {
+      final result = await _firestoreUserService.getFavoritedPostIds(uid: uid);
+      switch (result) {
+        case Ok():
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to get favorited post ids: $e'));
+    }
+  }
 }

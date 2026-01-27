@@ -33,7 +33,6 @@ class FetchPostsViewModel {
   // FUNCTIONS
   Future<Result<void>> _fetchPosts() async {
     final previousLength = posts.value.length;
-
     final result = await _postRepository.fetchPosts();
     switch (result) {
       case Ok():
