@@ -22,7 +22,11 @@ class FlowView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.article_outlined, size: 64, color: Colors.grey[400]),
+                    Icon(
+                      Icons.article_outlined,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Henüz gönderi yok.',
@@ -37,7 +41,7 @@ class FlowView extends StatelessWidget {
               posts: viewModel.posts,
               hasError: viewModel.fetchPosts.error,
               isFetching: viewModel.fetchPosts.running,
-              isAllItemsFetched: viewModel.fetchPosts.completed,
+              isAllItemsFetched: viewModel.isAllItemsFetched,
             ),
           ),
           const BannerAdWidget(),

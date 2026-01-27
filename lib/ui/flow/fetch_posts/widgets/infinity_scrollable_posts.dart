@@ -37,9 +37,15 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<Post>>(
-      valueListenable: widget.posts,
-      builder: (context, posts, _) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        widget.posts,
+        widget.hasError,
+        widget.isFetching,
+        widget.isAllItemsFetched,
+      ]),
+      builder: (context, _) {
+        final posts = widget.posts.value;
         return InfinityScrollable.listView(
           scrollController: null,
           bottomPadding: 8,
@@ -56,7 +62,15 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
             ),
           ),
           fetchMoreFailureWidget: Column(
-            children: [Text('Gönderiler yüklenemedi. Tekrar deneyiniz.')],
+            children: [
+              Text('Gönderiler yüklenemedi. Tekrar deneyiniz.'),
+              AppButton(
+                onPressed: () =>
+                    widget.fetchPostsViewModel.fetchPosts.execute(),
+                text: 'Tekrar Dene',
+                running: widget.fetchPostsViewModel.fetchPosts.running,
+              ),
+            ],
           ),
           itemCount: posts.length,
           itemBuilder: (context, index) {

@@ -18,6 +18,9 @@ class FetchPostsViewModel {
   final PostRepository _postRepository;
   // DOMAIN
   ValueListenable<List<Post>> get posts => _postRepository.posts;
+  // STATE
+  ValueListenable<bool> get isAllItemsFetched => _isAllItemsFetched;
+  final ValueNotifier<bool> _isAllItemsFetched = ValueNotifier<bool>(false);
   // COMMANDS
   late Command0<void> fetchPosts;
 
@@ -29,10 +32,17 @@ class FetchPostsViewModel {
 
   // FUNCTIONS
   Future<Result<void>> _fetchPosts() async {
+    final previousLength = posts.value.length;
+
     final result = await _postRepository.fetchPosts();
     switch (result) {
       case Ok():
+        final currentLength = posts.value.length;
+        if (currentLength == previousLength && currentLength > 0) {
+          _isAllItemsFetched.value = true;
+        }
         _log.fine('Posts fetched successfully');
+        print(posts.value.length);
         return Result.ok(null);
       case Error():
         _log.severe('Failed to fetch posts: ${result.asError.error}');

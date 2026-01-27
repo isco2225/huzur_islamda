@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../app/app.dart';
@@ -9,6 +10,8 @@ class PostRepositoryRemote extends PostRepository {
     : _firestorePostService = firestorePostService;
 
   final FirestorePostService _firestorePostService;
+  DocumentSnapshot? _lastFetchedPostDoc;
+  bool _hasMore = true;
 
   @override
   ValueListenable<List<Post>> get posts => _posts;
@@ -42,12 +45,30 @@ class PostRepositoryRemote extends PostRepository {
 
   @override
   Future<Result<List<Post>>> fetchPosts() async {
+    if (!_hasMore) {
+      // Zaten tüm postlar çekildi
+      return Result.ok(_posts.value);
+    }
+
     try {
-      final result = await _firestorePostService.fetchPosts();
+      final result = await _firestorePostService.fetchPosts(
+        lastFetchedPost: _lastFetchedPostDoc,
+      );
       switch (result) {
         case Ok():
-          _posts.value = result.asOk.value;
-          return Result.ok(result.asOk.value);
+          final snapshot = result.asOk.value;
+          final docs = snapshot.docs;
+          final newPosts = docs
+              .map((doc) => Post.fromJson(doc.data()))
+              .toList();
+          if (newPosts.isEmpty) {
+            _hasMore = false;
+            return Result.ok(_posts.value);
+          }
+          final allPosts = <Post>[..._posts.value, ...newPosts];
+          _posts.value = allPosts;
+          _lastFetchedPostDoc = docs.last;
+          return Result.ok(allPosts);
         case Error():
           return Result.error(result.asError.error);
       }
