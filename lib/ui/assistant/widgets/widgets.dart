@@ -1,2 +1,5 @@
 // Feature-specific widgets for Assistant
-// TODO: Add widgets here
+
+export 'chat_bubble.dart';
+export 'chat_input_bar.dart';
+
