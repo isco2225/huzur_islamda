@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:huzur_islamda/firebase_options.dart';
 import 'package:logging/logging.dart';
 
@@ -20,6 +21,7 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  await dotenv.load();
   // Hive Services
   final hiveDhikr = HiveService<Dhikr>(Dhikr.boxName);
   final hivePrayer = HiveService<Prayer>(Prayer.boxName);
@@ -99,8 +101,13 @@ void main() async {
     notificationRepository: notificationRepository,
   );
   final showAdUseCase = ShowAdUseCase(admobService: admobService);
+  final assistantService = AssistantService();
   runApp(
     AppScreen(
+      assistantRepository: AssistantRepositoryRemote(
+        assistantService: assistantService,
+      ),
+      assistantService: assistantService,
       authRepository: authRepository,
       userRepository: userRepository,
       postRepository: PostRepositoryRemote(

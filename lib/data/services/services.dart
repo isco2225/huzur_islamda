@@ -9,3 +9,4 @@ export 'prayer_service.dart';
 export 'shared_preferences_sevice.dart';
 export 'notification_service.dart';
 export 'admob_service.dart';
+export 'assistant_service.dart';

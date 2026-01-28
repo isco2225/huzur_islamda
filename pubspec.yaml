@@ -32,6 +32,9 @@ dependencies:
   #Shimmer effect
   shimmer: ^3.0.0
 
+  #Environment
+  flutter_dotenv: ^6.0.0
+
   #Firebase
   firebase_core: ^4.2.0
   firebase_auth: ^6.1.1
@@ -84,3 +87,4 @@ flutter:
     - assets/animations/
     - assets/icons/
     - assets/data/places/
+    - .env

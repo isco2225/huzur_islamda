@@ -28,6 +28,8 @@ class AppScreen extends StatefulWidget {
     required this.hiveDhikr,
     required this.syncPermissionUseCase,
     required this.wipeDataUseCase,
+    required this.assistantRepository,
+    required this.assistantService,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -49,6 +51,9 @@ class AppScreen extends StatefulWidget {
   final HiveService hiveDhikr;
   final SyncPermissionUseCase syncPermissionUseCase;
   final WipeDataUseCase wipeDataUseCase;
+  final AssistantRepository assistantRepository;
+  final AssistantService assistantService;
+
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -104,9 +109,10 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.placesRepository),
         Provider(create: (_) => widget.prayerRepository),
         Provider(create: (_) => widget.notificationRepository),
+        Provider(create: (_) => widget.assistantRepository),
         Provider(create: (_) => widget.notificationService),
         Provider(create: (_) => widget.admobService),
-
+        Provider(create: (_) => widget.assistantService),
         // use cases
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.prayerTimeUseCase),

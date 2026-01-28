@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../ui.dart';
+import '../../../data/data.dart';
 
 class AssistantScreen extends StatefulWidget {
   const AssistantScreen({super.key});
@@ -15,7 +17,10 @@ class _AssistantScreenState extends State<AssistantScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = AssistantViewModel();
+    _viewModel = AssistantViewModel(
+      assistantRepository: context.read<AssistantRepository>(),
+      userRepository: context.read<UserRepository>(),
+    );
   }
 
   @override

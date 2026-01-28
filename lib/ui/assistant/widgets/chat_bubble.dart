@@ -8,19 +8,22 @@ class ChatBubble extends StatelessWidget {
     required this.text,
     required this.isUser,
     this.timeLabel,
+    this.isThinking = false,
   });
 
   final String text;
   final bool isUser;
   final String? timeLabel;
+  final bool isThinking;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     final alignment = isUser ? Alignment.centerRight : Alignment.centerLeft;
-    final crossAxisAlignment =
-        isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final crossAxisAlignment = isUser
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start;
 
     final bubbleColor = isUser
         ? AppColors.primary
@@ -38,9 +41,7 @@ class ChatBubble extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 320,
-        ),
+        constraints: const BoxConstraints(maxWidth: 320),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -59,13 +60,16 @@ class ChatBubble extends StatelessWidget {
             crossAxisAlignment: crossAxisAlignment,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                text,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: textColor,
-                  height: 1.4,
+              if (isThinking && !isUser)
+                const _TypingDots()
+              else
+                Text(
+                  text,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: textColor,
+                    height: 1.4,
+                  ),
                 ),
-              ),
               if (timeLabel != null) ...[
                 const SizedBox(height: 4),
                 Text(
@@ -84,3 +88,48 @@ class ChatBubble extends StatelessWidget {
   }
 }
 
+class _TypingDots extends StatefulWidget {
+  const _TypingDots();
+
+  @override
+  State<_TypingDots> createState() => _TypingDotsState();
+}
+
+class _TypingDotsState extends State<_TypingDots>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<int> _dotCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+    _dotCount = IntTween(begin: 1, end: 3).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AnimatedBuilder(
+      animation: _dotCount,
+      builder: (context, _) {
+        final dots = '.' * _dotCount.value;
+        return Text(
+          dots,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        );
+      },
+    );
+  }
+}

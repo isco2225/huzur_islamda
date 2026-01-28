@@ -43,7 +43,7 @@ class AssistantView extends StatelessWidget {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),
-                  child: ValueListenableBuilder<List<AssistantMessage>>(
+                  child: ValueListenableBuilder(
                     valueListenable: viewModel.messages,
                     builder: (context, messages, _) {
                       if (messages.isEmpty) {
@@ -52,25 +52,46 @@ class AssistantView extends StatelessWidget {
                         );
                       }
 
-                      final reversed = messages.reversed.toList();
+                      return ValueListenableBuilder<bool>(
+                        valueListenable: viewModel.sendMessage.running,
+                        builder: (context, isRunning, __) {
+                          final reversed = messages.reversed.toList();
+                          final itemCount = isRunning
+                              ? reversed.length + 1
+                              : reversed.length;
 
-                      return ListView.separated(
-                        reverse: true,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: responsive.horizontalPadding,
-                          vertical: responsive.verticalPadding,
-                        ),
-                        itemBuilder: (context, index) {
-                          final message = reversed[index];
-                          return ChatBubble(
-                            text: message.text,
-                            isUser: message.isUser,
-                            timeLabel: message.timeLabel,
+                          return ListView.separated(
+                            reverse: true,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsive.horizontalPadding,
+                              vertical: responsive.verticalPadding,
+                            ),
+                            itemBuilder: (context, index) {
+                              // reverse: true olduğu için index 0 en altta.
+                              final isTypingItem = isRunning && index == 0;
+
+                              if (isTypingItem) {
+                                return const ChatBubble(
+                                  text: '',
+                                  isUser: false,
+                                  timeLabel: null,
+                                  isThinking: true,
+                                );
+                              }
+
+                              final message =
+                                  reversed[isRunning ? index - 1 : index];
+                              return ChatBubble(
+                                text: message.text,
+                                isUser: message.isUser,
+                                timeLabel: message.timeLabel,
+                              );
+                            },
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 2),
+                            itemCount: itemCount,
                           );
                         },
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 2),
-                        itemCount: reversed.length,
                       );
                     },
                   ),
@@ -78,9 +99,7 @@ class AssistantView extends StatelessWidget {
               ),
             ),
           ),
-          ChatInputBar(
-            onSend: viewModel.sendUserMessage,
-          ),
+          ChatInputBar(onSend: viewModel.sendMessage.execute),
         ],
       ),
     );
@@ -88,9 +107,7 @@ class AssistantView extends StatelessWidget {
 }
 
 class _EmptyChatPlaceholder extends StatelessWidget {
-  const _EmptyChatPlaceholder({
-    required this.responsivePadding,
-  });
+  const _EmptyChatPlaceholder({required this.responsivePadding});
 
   final double responsivePadding;
 
@@ -152,11 +169,8 @@ class _SuggestionChip extends StatelessWidget {
       side: BorderSide(color: Colors.grey.shade300),
       label: Text(
         label,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: Colors.grey[800],
-        ),
+        style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[800]),
       ),
     );
   }
 }
-
