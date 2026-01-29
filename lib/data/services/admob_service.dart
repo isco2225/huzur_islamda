@@ -133,12 +133,15 @@ class AdMobService {
     void Function()? onAdFailedToShow,
     void Function()? onAdFailedToLoad,
   }) async {
+    Timer? disposeFallbackTimer;
     try {
       final loadResult = await loadInterstitialAd(
         onAdDismissed: () {
+          disposeFallbackTimer?.cancel();
           onAdDismissed?.call();
         },
         onAdFailedToShow: () {
+          disposeFallbackTimer?.cancel();
           onAdFailedToShow?.call();
         },
       );
@@ -148,7 +151,7 @@ class AdMobService {
           final interstitialAd = loadResult.asOk.value;
           try {
             interstitialAd.show();
-            Timer(const Duration(minutes: 2), () {
+            disposeFallbackTimer = Timer(const Duration(minutes: 2), () {
               try {
                 interstitialAd.dispose();
                 _log.warning(
