@@ -34,6 +34,7 @@ class DhikrView extends StatelessWidget {
           body: Column(
             children: [
               DhikrDateSelector(viewModel: viewModel),
+              GroupDhikrsCard(),
               Expanded(
                 child: InfinityScrollableDhikrs(
                   fetchDhikrsViewModel: viewModel,
