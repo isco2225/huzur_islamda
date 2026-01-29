@@ -63,12 +63,14 @@ class ChatBubble extends StatelessWidget {
               if (isThinking && !isUser)
                 const _TypingDots()
               else
-                Text(
+                _buildStyledText(
                   text,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: textColor,
-                    height: 1.4,
-                  ),
+                  theme.textTheme.bodyMedium?.copyWith(
+                        color: textColor,
+                        height: 1.4,
+                      ) ??
+                      TextStyle(color: textColor, height: 1.4),
+                  textColor,
                 ),
               if (timeLabel != null) ...[
                 const SizedBox(height: 4),
@@ -85,6 +87,80 @@ class ChatBubble extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildStyledText(String text, TextStyle baseStyle, Color normalColor) {
+    final spans = <TextSpan>[];
+    final regex = RegExp(r'\*\*(.*?)\*\*');
+    int lastEnd = 0;
+
+    // Tüm **...** pattern'lerini bul
+    final matches = regex.allMatches(text);
+
+    for (final match in matches) {
+      // **...** öncesindeki normal metin
+      if (match.start > lastEnd) {
+        final normalText = text.substring(lastEnd, match.start);
+        if (normalText.isNotEmpty) {
+          spans.add(
+            TextSpan(
+              text: normalText,
+              style: baseStyle.copyWith(
+                color: normalColor,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          );
+        }
+      }
+
+      // **...** içindeki kalın metin (match.group(1) → ** olmadan içerik)
+      final boldText = match.group(1) ?? '';
+      if (boldText.isNotEmpty) {
+        spans.add(
+          TextSpan(
+            text: boldText,
+            style: baseStyle.copyWith(
+              color: normalColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        );
+      }
+
+      lastEnd = match.end;
+    }
+
+    // Son **...** sonrasındaki normal metin
+    if (lastEnd < text.length) {
+      final remainingText = text.substring(lastEnd);
+      if (remainingText.isNotEmpty) {
+        spans.add(
+          TextSpan(
+            text: remainingText,
+            style: baseStyle.copyWith(
+              color: normalColor,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        );
+      }
+    }
+
+    // Eğer hiç **...** yoksa, tüm metni normal göster
+    if (spans.isEmpty) {
+      spans.add(
+        TextSpan(
+          text: text,
+          style: baseStyle.copyWith(
+            color: normalColor,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      );
+    }
+
+    return RichText(text: TextSpan(children: spans));
   }
 }
 

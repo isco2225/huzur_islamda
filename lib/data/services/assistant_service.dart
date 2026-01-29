@@ -11,7 +11,6 @@ class AssistantService {
 
   final Logger _log;
 
-  // Gemini API base URL and model.
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1/models';
   static const String _model = 'gemini-2.5-flash';
@@ -46,10 +45,11 @@ class AssistantService {
           'text':
               'Kullanıcı adı: $senderName\nYaş: $senderAge\nCinsiyet: $senderGender\n'
               'Sen İslami içerik ve ibadetler konusunda yardımcı olan bir asistansın. '
-              'Yanıtlarını kısa, anlaşılır ve Türkçe ver.',
+              'Her yanıtında kullanıcın ismini yazmak zorunda değilsin! Yanıtlarını kısa, anlaşılır ve Türkçe ver. kaynak belirtebildiğin yerlerde belirt.',
         },
-        if (historyText != null) {'text': 'Önceki mesajlar:\n$historyText'},
-        {'text': 'Yeni mesaj:\n$message'},
+        if (historyText != null)
+          {'text': 'Kullanıcı ile son konuşmanız:\n$historyText'},
+        {'text': 'Kullanıcının yeni mesajı:\n$message'},
       ];
 
       final body = jsonEncode(<String, dynamic>{
@@ -74,7 +74,7 @@ class AssistantService {
           'Gemini API error: ${response.statusCode} - ${response.body}',
         );
         return Result.error(
-          Exception('Gemini isteği başarısız: ${response.statusCode}'),
+          Exception('Asistan yanıtı alınamadı: ${response.statusCode}'),
         );
       }
 
@@ -90,6 +90,19 @@ class AssistantService {
       final content =
           candidates.first['content'] as Map<String, dynamic>? ?? const {};
       final parts = content['parts'] as List<dynamic>? ?? const [];
+
+      // token usage logging(only for debug)
+      // TODO: remove this after debugging
+      final usageMetadata =
+          data['usageMetadata'] as Map<String, dynamic>? ?? const {};
+      if (usageMetadata.isNotEmpty) {
+        final promptTokens = usageMetadata['promptTokenCount'];
+        final candidatesTokens = usageMetadata['candidatesTokenCount'];
+        final totalTokens = usageMetadata['totalTokenCount'];
+        _log.info(
+          'Gemini token kullanımı - prompt: $promptTokens, cevap: $candidatesTokens, toplam: $totalTokens',
+        );
+      }
 
       final String? text = parts.isNotEmpty
           ? parts.first['text'] as String?
