@@ -18,7 +18,7 @@ class DhikrView extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    return ValueListenableBuilder<DateTime>(
+    return ValueListenableBuilder(
       valueListenable: viewModel.selectedDate,
       builder: (context, selectedDate, _) {
         final isTodaySelected = selectedDate == today;
@@ -58,83 +58,95 @@ class DhikrView extends StatelessWidget {
               DhikrDateSelector(viewModel: viewModel),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: viewModel.groupDhikrs,
-                  builder: (context, groupDhikrs, _) {
-                    if (groupDhikrs == null || groupDhikrs.isEmpty) {
-                      // Grup zikirleri yoksa sadece normal zikirleri göster
-                      return InfinityScrollableDhikrs(
-                        fetchDhikrsViewModel: viewModel,
-                        noItemsToShowWidget: isTodaySelected
-                            ? const Center(child: NoDhikrsToShow())
-                            : const Center(
-                                child: Text(
-                                  'Bu tarih için zikir yok.',
-                                  style: TextStyle(color: Colors.grey),
-                                  textAlign: TextAlign.center,
+                  valueListenable: viewModel.isInitialLoading,
+                  builder: (context, isInitialLoading, _) {
+                    if (isInitialLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ValueListenableBuilder(
+                      valueListenable: viewModel.groupDhikrs,
+                      builder: (context, groupDhikrs, _) {
+                        if (groupDhikrs == null || groupDhikrs.isEmpty) {
+                          return InfinityScrollableDhikrs(
+                            fetchDhikrsViewModel: viewModel,
+                            noItemsToShowWidget: isTodaySelected
+                                ? const Center(child: NoDhikrsToShow())
+                                : const Center(
+                                    child: Text(
+                                      'Bu tarih için zikir yok.',
+                                      style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                            onFetch: () {
+                              viewModel.fetchDhikrs.execute(selectedDate);
+                            },
+                            dhikrs: viewModel.dhikrs,
+                            hasError: viewModel.fetchDhikrs.error,
+                            isFetching: viewModel.fetchDhikrs.running,
+                            isAllItemsFetched: viewModel.fetchDhikrs.completed,
+                          );
+                        }
+                        // Grup zikirleri varsa sekmeleri göster
+                        return DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            children: [
+                              TabBar(
+                                labelColor: AppColors.primary,
+                                unselectedLabelColor: Colors.grey[600],
+                                indicatorColor: AppColors.primary,
+                                indicatorWeight: 2,
+                                indicatorSize: TabBarIndicatorSize.label,
+                                dividerColor: Colors.transparent,
+                                tabs: const [
+                                  Tab(text: 'Zikirler'),
+                                  Tab(text: 'Gruplar'),
+                                ],
+                              ),
+                              Expanded(
+                                child: TabBarView(
+                                  children: [
+                                    // Zikirler sekmesi
+                                    InfinityScrollableDhikrs(
+                                      fetchDhikrsViewModel: viewModel,
+                                      noItemsToShowWidget: isTodaySelected
+                                          ? const Center(
+                                              child: NoDhikrsToShow(),
+                                            )
+                                          : const Center(
+                                              child: Text(
+                                                'Bu tarih için zikir yok.',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                      onFetch: () {
+                                        viewModel.fetchDhikrs.execute(
+                                          selectedDate,
+                                        );
+                                      },
+                                      dhikrs: viewModel.dhikrs,
+                                      hasError: viewModel.fetchDhikrs.error,
+                                      isFetching: viewModel.fetchDhikrs.running,
+                                      isAllItemsFetched:
+                                          viewModel.fetchDhikrs.completed,
+                                    ),
+                                    // Gruplar sekmesi
+                                    SingleChildScrollView(
+                                      child: GroupDhikrsCard(
+                                        viewModel: viewModel,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                        onFetch: () {
-                          viewModel.fetchDhikrs.execute(selectedDate);
-                        },
-                        dhikrs: viewModel.dhikrs,
-                        hasError: viewModel.fetchDhikrs.error,
-                        isFetching: viewModel.fetchDhikrs.running,
-                        isAllItemsFetched: viewModel.fetchDhikrs.completed,
-                      );
-                    }
-
-                    // Grup zikirleri varsa sekmeleri göster
-                    return DefaultTabController(
-                      length: 2,
-                      child: Column(
-                        children: [
-                          TabBar(
-                            labelColor: AppColors.primary,
-                            unselectedLabelColor: Colors.grey[600],
-                            indicatorColor: AppColors.primary,
-                            indicatorWeight: 2,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            dividerColor: Colors.transparent,
-                            tabs: const [
-                              Tab(text: 'Zikirler'),
-                              Tab(text: 'Gruplar'),
                             ],
                           ),
-                          Expanded(
-                            child: TabBarView(
-                              children: [
-                                // Zikirler sekmesi
-                                InfinityScrollableDhikrs(
-                                  fetchDhikrsViewModel: viewModel,
-                                  noItemsToShowWidget: isTodaySelected
-                                      ? const Center(child: NoDhikrsToShow())
-                                      : const Center(
-                                          child: Text(
-                                            'Bu tarih için zikir yok.',
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                  onFetch: () {
-                                    viewModel.fetchDhikrs.execute(selectedDate);
-                                  },
-                                  dhikrs: viewModel.dhikrs,
-                                  hasError: viewModel.fetchDhikrs.error,
-                                  isFetching: viewModel.fetchDhikrs.running,
-                                  isAllItemsFetched:
-                                      viewModel.fetchDhikrs.completed,
-                                ),
-                                // Gruplar sekmesi
-                                SingleChildScrollView(
-                                  child: GroupDhikrsCard(viewModel: viewModel),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
                 ),

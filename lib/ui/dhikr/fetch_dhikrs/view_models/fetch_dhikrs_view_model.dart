@@ -54,6 +54,10 @@ class FetchDhikrsViewModel {
   ValueListenable<DateTime> get selectedDate => _selectedDate;
   late final ValueNotifier<DateTime> _selectedDate;
 
+  /// İlk yükleme durumu. İlk yükleme tamamlanana kadar true kalır.
+  ValueListenable<bool> get isInitialLoading => _isInitialLoading;
+  final ValueNotifier<bool> _isInitialLoading = ValueNotifier<bool>(true);
+
   // COMMANDS
   late Command1<void, DateTime> fetchDhikrs;
 
@@ -65,6 +69,7 @@ class FetchDhikrsViewModel {
     _selectedDate.dispose();
     _dhikrs.dispose();
     _groupDhikrs.dispose();
+    _isInitialLoading.dispose();
     _log.fine('Disposed');
   }
 
@@ -107,6 +112,10 @@ class FetchDhikrsViewModel {
 
   // Seçili tarihe göre zikirleri güncelle
   void _updateDhikrsForSelectedDate() {
+    if (_isInitialLoading.value) {
+      _isInitialLoading.value = false;
+    }
+
     final selectedDate = _selectedDate.value;
     final allDhikrs = _dhikrRepository.dhikrsLocally.value;
 
