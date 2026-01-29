@@ -11,12 +11,7 @@ class CreateUserProfileViewModel {
     createUserProfile =
         Command1<
           void,
-          ({
-            String name,
-            String surname,
-            String dateOfBirth,
-            String maritalStatus,
-          })
+          ({String name, String surname, String dateOfBirth, String gender})
         >(_createUserProfile, debugLabel: 'createUserProfile');
 
     // DEFINE LISTENERS
@@ -32,7 +27,7 @@ class CreateUserProfileViewModel {
   // COMMANDS
   late final Command1<
     void,
-    ({String name, String surname, String dateOfBirth, String maritalStatus})
+    ({String name, String surname, String dateOfBirth, String gender})
   >
   createUserProfile;
 
@@ -43,14 +38,13 @@ class CreateUserProfileViewModel {
 
   // FUNCTIONS
   Future<Result<void>> _createUserProfile(
-    ({String name, String surname, String dateOfBirth, String maritalStatus})
-    commands,
+    ({String name, String surname, String dateOfBirth, String gender}) commands,
   ) async {
     final result = await _createUserProfileUseCase.execute(
       name: commands.name,
       surname: commands.surname,
       dateOfBirth: commands.dateOfBirth,
-      maritalStatus: commands.maritalStatus,
+      gender: commands.gender,
     );
     _log.info('Create profile result: $result');
     return result;

@@ -14,7 +14,7 @@ class CreateUserProfileUseCase {
     required String name,
     required String surname,
     required String dateOfBirth,
-    required String maritalStatus,
+    required String gender,
   }) async {
     try {
       final result = await _userRepository.createUser(
@@ -23,7 +23,7 @@ class CreateUserProfileUseCase {
         name: name,
         surname: surname,
         dateOfBirth: dateOfBirth,
-        maritalStatus: maritalStatus,
+        gender: gender,
       );
       switch (result) {
         case Ok():

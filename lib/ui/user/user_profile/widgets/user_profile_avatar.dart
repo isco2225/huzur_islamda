@@ -9,8 +9,7 @@ class UserProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ///TODO: We will check user gender.
-    final bool isMale = user.maritalStatus == 'erkek';
+    final bool isMale = user.gender == 'Erkek';
     return Container(
       width: context.isSmallScreen ? 60 : 80,
       height: context.isSmallScreen ? 60 : 80,

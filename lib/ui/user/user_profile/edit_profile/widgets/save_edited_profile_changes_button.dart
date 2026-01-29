@@ -12,22 +12,22 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
     required this.running,
     required this.displayNameError,
     required this.displaySurnameError,
-    required this.displayMaritalStatusError,
+    required this.displayGenderError,
     required this.nameController,
     required this.surnameController,
     required this.dateOfBirthController,
-    required this.selectedMaritalStatus,
+    required this.selectedGender,
   });
 
   final EditProfileViewModel viewModel;
   final ValueListenable<bool> running;
   final ValueNotifier<bool> displayNameError;
   final ValueNotifier<bool> displaySurnameError;
-  final ValueNotifier<bool> displayMaritalStatusError;
+  final ValueNotifier<bool> displayGenderError;
   final TextEditingController nameController;
   final TextEditingController surnameController;
   final TextEditingController dateOfBirthController;
-  final String selectedMaritalStatus;
+  final String selectedGender;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
             name: nameController.text.trim(),
             surname: surnameController.text.trim(),
             dateOfBirth: dateOfBirthController.text,
-            maritalStatus: selectedMaritalStatus,
+            gender: selectedGender,
           ));
         },
         text: 'Değişiklikleri Kaydet',
@@ -60,17 +60,12 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
     final isDateOfBirthValid = DateOfBirthValueObject.dirty(
       dateOfBirthController.text,
     ).isValid;
-    final isMaritalStatusValid = MaritalStatusValueObject.dirty(
-      selectedMaritalStatus,
-    ).isValid;
+    final isGenderValid = GenderValueObject.dirty(selectedGender).isValid;
 
     displayNameError.value = !isNameValid;
     displaySurnameError.value = !isSurnameValid;
-    displayMaritalStatusError.value = !isMaritalStatusValid;
+    displayGenderError.value = !isGenderValid;
 
-    return isNameValid &&
-        isSurnameValid &&
-        isDateOfBirthValid &&
-        isMaritalStatusValid;
+    return isNameValid && isSurnameValid && isDateOfBirthValid && isGenderValid;
   }
 }

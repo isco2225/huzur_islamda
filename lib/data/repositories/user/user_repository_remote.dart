@@ -22,16 +22,14 @@ class UserRepositoryRemote extends UserRepository {
     required String name,
     required String surname,
     required String dateOfBirth,
-    required String maritalStatus,
+    required String gender,
   }) async {
     if (name.isEmpty ||
         surname.isEmpty ||
         dateOfBirth.isEmpty ||
-        maritalStatus.isEmpty) {
+        gender.isEmpty) {
       return Result.error(
-        Exception(
-          'Name, surname, date of birth and marital status are required',
-        ),
+        Exception('Name, surname, date of birth and gender are required'),
       );
     }
     try {
@@ -41,7 +39,7 @@ class UserRepositoryRemote extends UserRepository {
         name: name,
         surname: surname,
         dateOfBirth: dateOfBirth,
-        maritalStatus: maritalStatus,
+        gender: gender,
       );
       switch (result) {
         case Ok():
@@ -74,7 +72,7 @@ class UserRepositoryRemote extends UserRepository {
               name: '',
               surname: '',
               dateOfBirth: '',
-              maritalStatus: '',
+              gender: '',
               emailVerified: false,
               createdAt: null,
               updatedAt: null,
@@ -126,7 +124,7 @@ class UserRepositoryRemote extends UserRepository {
     String? name,
     String? surname,
     String? dateOfBirth,
-    String? maritalStatus,
+    String? gender,
   }) async {
     try {
       final result = await _firestoreUserService.updateUser(
@@ -134,7 +132,7 @@ class UserRepositoryRemote extends UserRepository {
         name: name,
         surname: surname,
         dateOfBirth: dateOfBirth,
-        maritalStatus: maritalStatus,
+        gender: gender,
       );
       switch (result) {
         case Ok():
@@ -142,7 +140,7 @@ class UserRepositoryRemote extends UserRepository {
             name: name ?? _currentUser.value.name,
             surname: surname ?? _currentUser.value.surname,
             dateOfBirth: dateOfBirth ?? _currentUser.value.dateOfBirth,
-            maritalStatus: maritalStatus ?? _currentUser.value.maritalStatus,
+            gender: gender ?? _currentUser.value.gender,
           );
           return Result.ok(null);
         case Error():

@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../../../domain/domain.dart';
 
-class MaritalStatusSelector extends StatelessWidget {
-  const MaritalStatusSelector({
+class GenderSelector extends StatelessWidget {
+  const GenderSelector({
     super.key,
-    String? selectedStatus,
-    ValueChanged<String>? onStatusChanged,
+    String? selectedGender,
+    ValueChanged<String>? onGenderChanged,
     required ValueNotifier<bool> displayError,
-  }) : _selectedStatus = selectedStatus,
-       _onStatusChanged = onStatusChanged,
+  }) : _selectedGender = selectedGender,
+       _onGenderChanged = onGenderChanged,
        _displayError = displayError;
 
-  final String? _selectedStatus;
-  final ValueChanged<String>? _onStatusChanged;
+  final String? _selectedGender;
+  final ValueChanged<String>? _onGenderChanged;
   final ValueNotifier<bool> _displayError;
 
   @override
@@ -22,7 +22,7 @@ class MaritalStatusSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TextFieldTitle(text: 'Evlilik Durumu'),
+        const TextFieldTitle(text: 'Cinsiyet'),
         const SizedBox(height: 8),
         ValueListenableBuilder<bool>(
           valueListenable: _displayError,
@@ -34,33 +34,33 @@ class MaritalStatusSelector extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _StatusButton(
-                        text: 'Evli',
-                        isSelected: _selectedStatus == 'Evli',
+                        text: 'Erkek',
+                        isSelected: _selectedGender == 'Erkek',
                         onTap: () {
-                          _onStatusChanged?.call('Evli');
+                          _onGenderChanged?.call('Erkek');
                         },
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatusButton(
-                        text: 'Bekar',
-                        isSelected: _selectedStatus == 'Bekar',
+                        text: 'Kadın',
+                        isSelected: _selectedGender == 'Kadın',
                         onTap: () {
-                          _onStatusChanged?.call('Bekar');
+                          _onGenderChanged?.call('Kadın');
                         },
                       ),
                     ),
                   ],
                 ),
                 if (displayError &&
-                    (_selectedStatus == null || _selectedStatus.isEmpty))
+                    (_selectedGender == null || _selectedGender.isEmpty))
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 16),
                     child: Text(
                       context.voFailureToUserFriendlyMessage(
-                            MaritalStatusValueObject.dirty(
-                              _selectedStatus ?? '',
+                            GenderValueObject.dirty(
+                              _selectedGender ?? '',
                             ).error,
                           ) ??
                           '',

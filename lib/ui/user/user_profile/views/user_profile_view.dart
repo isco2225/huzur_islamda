@@ -70,8 +70,8 @@ class UserProfileView extends StatelessWidget {
                   SizedBox(height: context.spacingExtraSmall),
                   UserProfileInfoCard(
                     icon: Icons.favorite_outline,
-                    label: 'Medeni Durum',
-                    value: user.maritalStatus,
+                    label: 'Cinsiyet',
+                    value: user.gender,
                   ),
                   SizedBox(height: context.spacingSmall),
                   // Edit Profile Button

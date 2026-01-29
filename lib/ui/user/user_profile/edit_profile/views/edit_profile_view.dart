@@ -15,8 +15,8 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _nameController;
   late final TextEditingController _surnameController;
   late final TextEditingController _dateOfBirthController;
-  late String _selectedMaritalStatus;
-  final ValueNotifier<bool> _displayMaritalStatusError = ValueNotifier(false);
+  late String _selectedGender;
+  final ValueNotifier<bool> _displayGenderError = ValueNotifier(false);
   final ValueNotifier<bool> _displayNameError = ValueNotifier(false);
   final ValueNotifier<bool> _displaySurnameError = ValueNotifier(false);
   @override
@@ -31,7 +31,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _dateOfBirthController = TextEditingController(
       text: widget.viewModel.currentUserDateOfBirth.value,
     );
-    _selectedMaritalStatus = widget.viewModel.currentUserMaritalStatus.value;
+    _selectedGender = widget.viewModel.currentUserGender.value;
   }
 
   @override
@@ -39,7 +39,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _nameController.dispose();
     _surnameController.dispose();
     _dateOfBirthController.dispose();
-    _displayMaritalStatusError.dispose();
+    _displayGenderError.dispose();
     super.dispose();
   }
 
@@ -94,7 +94,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 listenable: Listenable.merge([
                   _displayNameError,
                   _displaySurnameError,
-                  _displayMaritalStatusError,
+                  _displayGenderError,
                 ]),
                 builder: (context, child) {
                   return Column(
@@ -114,14 +114,14 @@ class _EditProfileViewState extends State<EditProfileView> {
                         onTap: _selectDate,
                       ),
                       SizedBox(height: context.isSmallScreen ? 16 : 20),
-                      MaritalStatusSelector(
-                        selectedStatus: _selectedMaritalStatus,
-                        onStatusChanged: (status) {
+                      GenderSelector(
+                        selectedGender: _selectedGender,
+                        onGenderChanged: (gender) {
                           setState(() {
-                            _selectedMaritalStatus = status;
+                            _selectedGender = gender;
                           });
                         },
-                        displayError: _displayMaritalStatusError,
+                        displayError: _displayGenderError,
                       ),
                     ],
                   );
@@ -136,11 +136,11 @@ class _EditProfileViewState extends State<EditProfileView> {
                   running: widget.viewModel.updateProfile.running,
                   displayNameError: _displayNameError,
                   displaySurnameError: _displaySurnameError,
-                  displayMaritalStatusError: _displayMaritalStatusError,
+                  displayGenderError: _displayGenderError,
                   nameController: _nameController,
                   surnameController: _surnameController,
                   dateOfBirthController: _dateOfBirthController,
-                  selectedMaritalStatus: _selectedMaritalStatus,
+                  selectedGender: _selectedGender,
                 ),
               ),
             ],

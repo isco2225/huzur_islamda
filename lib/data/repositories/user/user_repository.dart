@@ -14,7 +14,7 @@ abstract class UserRepository {
     required String name,
     required String surname,
     required String dateOfBirth,
-    required String maritalStatus,
+    required String gender,
   });
 
   /// Kullanıcının email doğrulama durumunu güncelle
@@ -29,7 +29,7 @@ abstract class UserRepository {
     String? name,
     String? surname,
     String? dateOfBirth,
-    String? maritalStatus,
+    String? gender,
   });
 
   /// Kullanıcının favori post'larının ids'ini getir

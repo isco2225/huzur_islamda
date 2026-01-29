@@ -92,9 +92,6 @@ extension ExceptionLocalizationExtension on BuildContext {
       GenderValueObjectFailure() => switch (fail) {
         GenderEmpty() => 'Cinsiyet boş olamaz',
       },
-      MaritalStatusValueObjectFailure() => switch (fail) {
-        MaritalStatusEmpty() => 'Evlilik durumu boş olamaz',
-      },
       NameValueObjectFailure() => switch (fail) {
         NameEmpty() => 'Ad boş olamaz',
         NameTooLong() => 'Ad çok uzun',

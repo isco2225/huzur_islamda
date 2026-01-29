@@ -16,13 +16,13 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _dateOfBirthController = TextEditingController();
-  String? _selectedMaritalStatus;
+  String? _selectedGender;
 
   // Value Object Error Display Notifiers
   final ValueNotifier<bool> _displayNameError = ValueNotifier(false);
   final ValueNotifier<bool> _displaySurnameError = ValueNotifier(false);
   final ValueNotifier<bool> _displayDateOfBirthError = ValueNotifier(false);
-  final ValueNotifier<bool> _displayMaritalStatusError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayGenderError = ValueNotifier(false);
 
   @override
   void dispose() {
@@ -32,7 +32,7 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
     _displayNameError.dispose();
     _displaySurnameError.dispose();
     _displayDateOfBirthError.dispose();
-    _displayMaritalStatusError.dispose();
+    _displayGenderError.dispose();
     super.dispose();
   }
 
@@ -58,7 +58,7 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
       name: _nameController.text.trim(),
       surname: _surnameController.text.trim(),
       dateOfBirth: _dateOfBirthController.text,
-      maritalStatus: _selectedMaritalStatus ?? '',
+      gender: _selectedGender ?? '',
     ));
   }
 
@@ -72,19 +72,16 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
     final isDateOfBirthValid = DateOfBirthValueObject.dirty(
       _dateOfBirthController.text,
     ).isValid;
-    final isMaritalStatusValid = MaritalStatusValueObject.dirty(
-      _selectedMaritalStatus ?? '',
+    final isGenderValid = GenderValueObject.dirty(
+      _selectedGender ?? '',
     ).isValid;
 
     _displayNameError.value = !isNameValid;
     _displaySurnameError.value = !isSurnameValid;
     _displayDateOfBirthError.value = !isDateOfBirthValid;
-    _displayMaritalStatusError.value = !isMaritalStatusValid;
+    _displayGenderError.value = !isGenderValid;
 
-    return isNameValid &&
-        isSurnameValid &&
-        isDateOfBirthValid &&
-        isMaritalStatusValid;
+    return isNameValid && isSurnameValid && isDateOfBirthValid && isGenderValid;
   }
 
   @override
@@ -109,7 +106,7 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
                     _displayNameError,
                     _displaySurnameError,
                     _displayDateOfBirthError,
-                    _displayMaritalStatusError,
+                    _displayGenderError,
                   ]),
                   builder: (context, child) {
                     return Column(
@@ -133,15 +130,14 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
                           padding: EdgeInsets.only(
                             top: context.isSmallScreen ? 6 : 8,
                           ),
-                          // TODO(Omran): change to gender selector.
-                          child: MaritalStatusSelector(
-                            selectedStatus: _selectedMaritalStatus,
-                            onStatusChanged: (status) {
+                          child: GenderSelector(
+                            selectedGender: _selectedGender,
+                            onGenderChanged: (gender) {
                               setState(() {
-                                _selectedMaritalStatus = status;
+                                _selectedGender = gender;
                               });
                             },
-                            displayError: _displayMaritalStatusError,
+                            displayError: _displayGenderError,
                           ),
                         ),
                       ],

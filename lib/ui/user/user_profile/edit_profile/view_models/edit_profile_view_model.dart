@@ -47,20 +47,15 @@ class EditProfileViewModel {
       ValueNotifier<String>(currentUser.value.surname);
   ValueListenable<String> get currentUserDateOfBirth =>
       ValueNotifier<String>(currentUser.value.dateOfBirth);
-  ValueListenable<String> get currentUserMaritalStatus =>
-      ValueNotifier<String>(currentUser.value.maritalStatus);
+  ValueListenable<String> get currentUserGender =>
+      ValueNotifier<String>(currentUser.value.gender);
 
   final ValueNotifier<bool> _isNotificationsEnabled;
 
   // COMMANDS
   late Command1<
     void,
-    ({
-      String? name,
-      String? surname,
-      String? dateOfBirth,
-      String? maritalStatus,
-    })
+    ({String? name, String? surname, String? dateOfBirth, String? gender})
   >
   updateProfile;
 
@@ -78,19 +73,14 @@ class EditProfileViewModel {
 
   // FUNCTIONS
   Future<Result<void>> _updateProfile(
-    ({
-      String? name,
-      String? surname,
-      String? dateOfBirth,
-      String? maritalStatus,
-    })
+    ({String? name, String? surname, String? dateOfBirth, String? gender})
     arguments,
   ) async {
     // check if no changes are made
     if (arguments.name == currentUser.value.name &&
         arguments.surname == currentUser.value.surname &&
         arguments.dateOfBirth == currentUser.value.dateOfBirth &&
-        arguments.maritalStatus == currentUser.value.maritalStatus) {
+        arguments.gender == currentUser.value.gender) {
       return Result.ok(null);
     }
     final result = await _userRepository.updateUser(
@@ -98,7 +88,7 @@ class EditProfileViewModel {
       name: arguments.name,
       surname: arguments.surname,
       dateOfBirth: arguments.dateOfBirth,
-      maritalStatus: arguments.maritalStatus,
+      gender: arguments.gender,
     );
 
     switch (result) {

@@ -14,7 +14,7 @@ class FirestoreUserService {
     required String name,
     required String surname,
     required String dateOfBirth,
-    required String maritalStatus,
+    required String gender,
   }) async {
     try {
       final userData = {
@@ -23,7 +23,7 @@ class FirestoreUserService {
         'name': name,
         'surname': surname,
         'dateOfBirth': dateOfBirth,
-        'maritalStatus': maritalStatus,
+        'gender': gender,
         'emailVerified': true,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
@@ -108,7 +108,7 @@ class FirestoreUserService {
     String? name,
     String? surname,
     String? dateOfBirth,
-    String? maritalStatus,
+    String? gender,
   }) async {
     try {
       final updateData = <String, dynamic>{
@@ -118,7 +118,7 @@ class FirestoreUserService {
       if (name != null) updateData['name'] = name;
       if (surname != null) updateData['surname'] = surname;
       if (dateOfBirth != null) updateData['dateOfBirth'] = dateOfBirth;
-      if (maritalStatus != null) updateData['maritalStatus'] = maritalStatus;
+      if (gender != null) updateData['gender'] = gender;
 
       await _firestore.collection(_collectionName).doc(uid).update(updateData);
       final doc = await _firestore.collection(_collectionName).doc(uid).get();
