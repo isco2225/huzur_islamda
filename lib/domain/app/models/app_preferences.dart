@@ -8,14 +8,14 @@ class AppPreferences {
     required this.isOnboardingCompleted,
   });
   factory AppPreferences.empty() => const AppPreferences(
-    isVibrationEnabled: false,
+    isVibrationEnabled: true,
     isNotificationsEnabled: false,
     isOnboardingCompleted: false,
   );
 
   factory AppPreferences.fromJson(Map<String, Object?> json) {
     return AppPreferences(
-      isVibrationEnabled: json['isVibrationEnabled'] as bool? ?? false,
+      isVibrationEnabled: json['isVibrationEnabled'] as bool? ?? true,
       isNotificationsEnabled: json['isNotificationsEnabled'] as bool? ?? false,
       isOnboardingCompleted: json['isOnboardingCompleted'] as bool? ?? false,
     );
