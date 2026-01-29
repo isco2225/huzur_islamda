@@ -44,6 +44,13 @@ class FetchDhikrsViewModel {
   // DOMAIN
   ValueListenable<List<Dhikr>?> get dhikrs => _dhikrs;
   final ValueNotifier<List<Dhikr>?> _dhikrs = ValueNotifier<List<Dhikr>?>(null);
+
+  /// Seçili tarihteki grup zikirleri.
+  ///
+  /// Aynı `groupId`'ye sahip zikirler bir `GroupDhikrData` içinde gruplanır.
+  ValueListenable<List<GroupDhikrData>?> get groupDhikrs => _groupDhikrs;
+  final ValueNotifier<List<GroupDhikrData>?> _groupDhikrs =
+      ValueNotifier<List<GroupDhikrData>?>(null);
   ValueListenable<DateTime> get selectedDate => _selectedDate;
   late final ValueNotifier<DateTime> _selectedDate;
 
@@ -57,6 +64,7 @@ class FetchDhikrsViewModel {
     fetchDhikrs.dispose();
     _selectedDate.dispose();
     _dhikrs.dispose();
+    _groupDhikrs.dispose();
     _log.fine('Disposed');
   }
 
@@ -121,9 +129,45 @@ class FetchDhikrsViewModel {
 
     if (filteredDhikrs.isEmpty) {
       _dhikrs.value = null;
+      _groupDhikrs.value = null;
     } else {
-      filteredDhikrs.sort((a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt));
-      _dhikrs.value = filteredDhikrs;
+      // Grup zikirlerini oluştur (groupId'ye göre grupla)
+      final groupMap = <String, List<Dhikr>>{};
+      final nonGroupDhikrs = <Dhikr>[];
+
+      for (final dhikr in filteredDhikrs) {
+        final groupId = dhikr.groupId ?? '';
+        if (groupId.isEmpty) {
+          // groupId yoksa normal zikir listesine ekle
+          nonGroupDhikrs.add(dhikr);
+        } else {
+          // groupId varsa grup haritasına ekle
+          groupMap.putIfAbsent(groupId, () => <Dhikr>[]).add(dhikr);
+        }
+      }
+
+      // Normal zikirleri sırala ve ayarla (groupId'si olmayanlar)
+      nonGroupDhikrs.sort((a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt));
+      _dhikrs.value = nonGroupDhikrs.isEmpty ? null : nonGroupDhikrs;
+
+      if (groupMap.isEmpty) {
+        _groupDhikrs.value = null;
+      } else {
+        final groups = <GroupDhikrData>[];
+
+        for (final entry in groupMap.entries) {
+          final groupId = entry.key;
+          final dhikrsInGroup = List<Dhikr>.from(entry.value);
+          groups.add(
+            GroupDhikrData(
+              groupId: groupId,
+              dhikrs: dhikrsInGroup,
+              groupName: 'Namaz Tesbihatı',
+            ),
+          );
+        }
+        _groupDhikrs.value = groups;
+      }
     }
 
     _log.fine(
@@ -149,8 +193,16 @@ class FetchDhikrsViewModel {
           return Result.ok(null);
         }
         _log.fine('Dhikrs fetched successfully');
-        dhikrs.sort((a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt));
-        _dhikrs.value = dhikrs;
+
+        // groupId'si olmayan zikirleri filtrele
+        final nonGroupDhikrs = dhikrs
+            .where((dhikr) => dhikr.groupId == null || dhikr.groupId!.isEmpty)
+            .toList();
+
+        nonGroupDhikrs.sort(
+          (a, b) => b.lastUpdatedAt.compareTo(a.lastUpdatedAt),
+        );
+        _dhikrs.value = nonGroupDhikrs.isEmpty ? null : nonGroupDhikrs;
         return Result.ok(null);
       case Error():
         _log.severe('Failed to fetch dhikrs: ${result.asError.error}');
