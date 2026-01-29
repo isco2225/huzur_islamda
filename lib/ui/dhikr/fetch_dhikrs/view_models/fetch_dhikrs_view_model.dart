@@ -9,11 +9,17 @@ class FetchDhikrsViewModel {
   FetchDhikrsViewModel({
     required DhikrRepository dhikrRepository,
     required UserRepository userRepository,
+    required DhikrUseCase dhikrUseCase,
   }) : _dhikrRepository = dhikrRepository,
+       _dhikrUseCase = dhikrUseCase,
        _userRepository = userRepository {
     fetchDhikrs = Command1<void, DateTime>(
       _fetchDhikrs,
       debugLabel: 'fetchDhikrs',
+    );
+    deleteGroup = Command1<void, List<String>>(
+      _deleteGroup,
+      debugLabel: 'deleteGroup',
     );
     _selectedDate = ValueNotifier<DateTime>(_getToday());
 
@@ -40,7 +46,7 @@ class FetchDhikrsViewModel {
   // REPOSITORIES & USE CASES
   final DhikrRepository _dhikrRepository;
   final UserRepository _userRepository;
-
+  final DhikrUseCase _dhikrUseCase;
   // DOMAIN
   ValueListenable<List<Dhikr>?> get dhikrs => _dhikrs;
   final ValueNotifier<List<Dhikr>?> _dhikrs = ValueNotifier<List<Dhikr>?>(null);
@@ -60,12 +66,14 @@ class FetchDhikrsViewModel {
 
   // COMMANDS
   late Command1<void, DateTime> fetchDhikrs;
+  late Command1<void, List<String>> deleteGroup;
 
   // DISPOSE
   void dispose() {
     _dhikrRepository.dhikrsLocally.removeListener(_updateDhikrsForSelectedDate);
     _selectedDate.removeListener(_updateDhikrsForSelectedDate);
     fetchDhikrs.dispose();
+    deleteGroup.dispose();
     _selectedDate.dispose();
     _dhikrs.dispose();
     _groupDhikrs.dispose();
@@ -216,6 +224,16 @@ class FetchDhikrsViewModel {
       case Error():
         _log.severe('Failed to fetch dhikrs: ${result.asError.error}');
         _dhikrs.value = null;
+        return Result.error(result.asError.error);
+    }
+  }
+
+  Future<Result<void>> _deleteGroup(List<String> groupIds) async {
+    final result = await _dhikrUseCase.deleteGroup(groupIds: groupIds);
+    switch (result) {
+      case Ok():
+        return Result.ok(null);
+      case Error():
         return Result.error(result.asError.error);
     }
   }

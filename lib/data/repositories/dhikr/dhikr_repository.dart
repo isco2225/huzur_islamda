@@ -16,6 +16,7 @@ abstract class DhikrRepository {
     required DateTime date,
   });
   Future<Result<void>> deleteDhikrLocally({required String dhikrId});
+
   Future<Result<int>> getDhikrsCountLocally();
   Future<Result<void>> clearAllDhikrsLocally();
   Future<Result<void>> updateDhikrLocally({

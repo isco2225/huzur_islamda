@@ -32,6 +32,8 @@ class GroupDhikrsCard extends StatelessWidget {
             final borderColor = _getBorderColor(group.isCompleted);
             final totalDhikrs = group.totalCount;
             final completedDhikrs = group.completedCount;
+            // Bu grubun dhikr ID'lerini al
+            final dhikrIds = group.dhikrs.map((dhikr) => dhikr.id).toList();
 
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -63,14 +65,18 @@ class GroupDhikrsCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Durum gösterimi
-                      Text(
-                        group.isCompleted ? 'Tamamlandı!' : 'Devam Et',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: group.isCompleted
-                              ? AppColors.primary
-                              : AppColors.info,
-                        ),
+                      // add pop menu to group
+                      PopupMenuButton(
+                        icon: Icon(Icons.more_vert, size: 20),
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            onTap: () {
+                              print('delete group');
+                              viewModel.deleteGroup.execute(dhikrIds);
+                            },
+                            child: Text('Grubu Sil'),
+                          ),
+                        ],
                       ),
                     ],
                   ),

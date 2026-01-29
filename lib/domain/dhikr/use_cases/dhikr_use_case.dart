@@ -168,6 +168,23 @@ class DhikrUseCase {
     }
   }
 
+  Future<Result<void>> deleteGroup({required List<String> groupIds}) async {
+    if (groupIds.isEmpty) {
+      _log.warning('No group IDs provided, cannot delete group');
+      return Result.error(Exception('No group IDs provided'));
+    }
+    for (final groupId in groupIds) {
+      final result = await deleteDhikr(dhikrId: groupId);
+      switch (result) {
+        case Ok():
+          continue;
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    }
+    return Result.ok(null);
+  }
+
   Future<void> _updateDeviceHasConnection() async {
     final result = await _connectivityUseCase.connectionType();
     switch (result) {

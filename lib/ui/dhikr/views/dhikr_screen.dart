@@ -27,8 +27,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
     _viewModel = FetchDhikrsViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
       userRepository: context.read<UserRepository>(),
+      dhikrUseCase: context.read<DhikrUseCase>(),
     );
     _viewModel.fetchDhikrs.handleError(context, showSnackBar: true);
+    _viewModel.deleteGroup.handleError(context, showSnackBar: true);
     _createDhikrViewModel.createDhikrsForPrayer.handleError(
       context,
       showSnackBar: true,

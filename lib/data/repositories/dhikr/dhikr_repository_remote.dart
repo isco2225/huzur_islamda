@@ -94,6 +94,9 @@ class DhikrRepositoryRemote implements DhikrRepository {
     final result = await _hiveService.delete(dhikrId);
     switch (result) {
       case Ok():
+        _dhikrsLocally.value = _dhikrsLocally.value
+            .where((d) => d.id != dhikrId)
+            .toList();
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -182,14 +185,7 @@ class DhikrRepositoryRemote implements DhikrRepository {
       userId: userId,
       dhikrId: dhikrId,
     );
-    switch (result) {
-      case Ok():
-        _dhikrsLocally.value.removeWhere((d) => d.id == dhikrId);
-        _dhikrsLocally.value = [..._dhikrsLocally.value]; // update the list
-        return Result.ok(null);
-      case Error():
-        return Result.error(result.asError.error);
-    }
+    return result;
   }
 
   // ========== SYNC OPERATIONS ==========
