@@ -256,22 +256,27 @@ class UserRepositoryRemote extends UserRepository {
     required String uid,
     required bool hasSupported,
     required DateTime lastSupportedAt,
-    required String supportPackage,
+    required SupportPackage supportPackage,
   }) async {
     try {
       final result = await _firestoreUserService.updateUserSupport(
         uid: uid,
         hasSupported: hasSupported,
         lastSupportedAt: lastSupportedAt,
-        supportPackage: supportPackage,
+        supportPackage: supportPackage.value,
       );
       switch (result) {
         case Ok():
-          _currentUser.value = _currentUser.value.copyWith(
-            hasSupported: hasSupported,
-            lastSupportedAt: lastSupportedAt,
-            supportPackage: supportPackage,
-          );
+          final updatedUser = result.asOk.value;
+          if (updatedUser != null) {
+            _currentUser.value = updatedUser;
+          } else {
+            _currentUser.value = _currentUser.value.copyWith(
+              hasSupported: hasSupported,
+              lastSupportedAt: lastSupportedAt,
+              supportPackage: supportPackage,
+            );
+          }
           return Result.ok(null);
         case Error():
           return Result.error(result.asError.error);

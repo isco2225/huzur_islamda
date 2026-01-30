@@ -1,3 +1,5 @@
+import '../../domain.dart';
+
 class User {
   final String uid;
   final String email;
@@ -17,7 +19,7 @@ class User {
   // support features
   final bool hasSupported;
   final DateTime? lastSupportedAt;
-  final String? supportPackage;
+  final SupportPackage? supportPackage;
   const User({
     required this.uid,
     required this.email,
@@ -65,7 +67,9 @@ class User {
       districtId: json['districtId'] as String? ?? '',
       hasSupported: json['hasSupported'] as bool? ?? false,
       lastSupportedAt: parseDateTime(json['lastSupportedAt']),
-      supportPackage: json['supportPackage'] as String?,
+      supportPackage: SupportPackage.fromString(
+        json['supportPackage'] as String?,
+      ),
     );
   }
 
@@ -105,7 +109,7 @@ class User {
       'districtId': districtId,
       'hasSupported': hasSupported,
       'lastSupportedAt': lastSupportedAt?.toIso8601String(),
-      'supportPackage': supportPackage,
+      'supportPackage': supportPackage?.value,
     };
   }
 
@@ -125,7 +129,7 @@ class User {
     String? districtId,
     bool? hasSupported,
     DateTime? lastSupportedAt,
-    String? supportPackage,
+    SupportPackage? supportPackage,
   }) {
     return User(
       uid: uid ?? this.uid,

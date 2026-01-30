@@ -8,5 +8,6 @@ export 'permission/permission.dart';
 export 'places/places.dart';
 export 'post/post.dart';
 export 'prayer/prayer.dart';
+export 'purchase/purchase.dart';
 export 'user/user.dart';
 export 'vibration/vibration.dart';

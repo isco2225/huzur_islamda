@@ -57,6 +57,6 @@ abstract class UserRepository {
     required String uid,
     required bool hasSupported,
     required DateTime lastSupportedAt,
-    required String supportPackage,
+    required SupportPackage supportPackage,
   });
 }
