@@ -31,6 +31,9 @@ class FirestoreUserService {
         'country': '',
         'city': '',
         'districtId': '',
+        'hasSupported': false,
+        'lastSupportedAt': null,
+        'supportPackage': null,
       };
 
       await _firestore.collection(_collectionName).doc(uid).set(userData);
@@ -206,6 +209,37 @@ class FirestoreUserService {
     }
   }
 
+  Future<Result<User?>> updateUserSupport({
+    required String uid,
+    required bool hasSupported,
+    required DateTime lastSupportedAt,
+    required String supportPackage,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'hasSupported': hasSupported,
+        'lastSupportedAt': Timestamp.fromDate(lastSupportedAt),
+        'supportPackage': supportPackage,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+      await _firestore.collection(_collectionName).doc(uid).update(updateData);
+      final doc = await _firestore.collection(_collectionName).doc(uid).get();
+      final data = doc.data();
+      if (data != null) {
+        final cleanData = _convertTimestampsToDateTime(data);
+        final user = User.fromJson(cleanData);
+        return Result.ok(user);
+      }
+      return Result.ok(null);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to update user support: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to update user support: $e'));
+    }
+  }
+
   /// Firestore'dan gelen Timestamp'leri DateTime'a dönüştürür
   Map<String, dynamic> _convertTimestampsToDateTime(Map<String, dynamic> data) {
     final cleanData = Map<String, dynamic>.from(data);
@@ -216,6 +250,11 @@ class FirestoreUserService {
     }
     if (cleanData['updatedAt'] is Timestamp) {
       cleanData['updatedAt'] = (cleanData['updatedAt'] as Timestamp)
+          .toDate()
+          .toIso8601String();
+    }
+    if (cleanData['lastSupportedAt'] is Timestamp) {
+      cleanData['lastSupportedAt'] = (cleanData['lastSupportedAt'] as Timestamp)
           .toDate()
           .toIso8601String();
     }

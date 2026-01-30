@@ -5,7 +5,6 @@ class User {
   final String surname;
   final String dateOfBirth;
   final String gender;
-  //final String gender;
   //final double? latitude;
   //final double? longitude;
   final bool emailVerified;
@@ -15,6 +14,10 @@ class User {
   final String? country;
   final String? city;
   final String? districtId;
+  // support features
+  final bool hasSupported;
+  final DateTime? lastSupportedAt;
+  final String? supportPackage;
   const User({
     required this.uid,
     required this.email,
@@ -25,13 +28,13 @@ class User {
     required this.emailVerified,
     required this.createdAt,
     required this.updatedAt,
-
-    /// If this value is false then [User] is not registered yet.
     required this.isRegistered,
-
     required this.country,
     required this.city,
     required this.districtId,
+    required this.hasSupported,
+    this.lastSupportedAt,
+    this.supportPackage,
   });
 
   factory User.fromJson(Map<String, Object?> json) {
@@ -60,6 +63,9 @@ class User {
       country: json['country'] as String? ?? '',
       city: json['city'] as String? ?? '',
       districtId: json['districtId'] as String? ?? '',
+      hasSupported: json['hasSupported'] as bool? ?? false,
+      lastSupportedAt: parseDateTime(json['lastSupportedAt']),
+      supportPackage: json['supportPackage'] as String?,
     );
   }
 
@@ -77,6 +83,9 @@ class User {
     country: '',
     city: '',
     districtId: '',
+    hasSupported: false,
+    lastSupportedAt: null,
+    supportPackage: null,
   );
 
   Map<String, dynamic> toJson() {
@@ -94,6 +103,9 @@ class User {
       'country': country,
       'city': city,
       'districtId': districtId,
+      'hasSupported': hasSupported,
+      'lastSupportedAt': lastSupportedAt?.toIso8601String(),
+      'supportPackage': supportPackage,
     };
   }
 
@@ -111,6 +123,9 @@ class User {
     String? country,
     String? city,
     String? districtId,
+    bool? hasSupported,
+    DateTime? lastSupportedAt,
+    String? supportPackage,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -126,6 +141,9 @@ class User {
       country: country ?? this.country,
       city: city ?? this.city,
       districtId: districtId ?? this.districtId,
+      hasSupported: hasSupported ?? this.hasSupported,
+      lastSupportedAt: lastSupportedAt ?? this.lastSupportedAt,
+      supportPackage: supportPackage ?? this.supportPackage,
     );
   }
 

@@ -80,6 +80,9 @@ class UserRepositoryRemote extends UserRepository {
               country: null,
               city: null,
               districtId: null,
+              hasSupported: false,
+              lastSupportedAt: null,
+              supportPackage: null,
             );
             return Result.ok(false);
           } else {
@@ -245,6 +248,36 @@ class UserRepositoryRemote extends UserRepository {
       }
     } catch (e) {
       return Result.error(Exception('Failed to get favorited post ids: $e'));
+    }
+  }
+
+  @override
+  Future<Result<void>> updateUserSupport({
+    required String uid,
+    required bool hasSupported,
+    required DateTime lastSupportedAt,
+    required String supportPackage,
+  }) async {
+    try {
+      final result = await _firestoreUserService.updateUserSupport(
+        uid: uid,
+        hasSupported: hasSupported,
+        lastSupportedAt: lastSupportedAt,
+        supportPackage: supportPackage,
+      );
+      switch (result) {
+        case Ok():
+          _currentUser.value = _currentUser.value.copyWith(
+            hasSupported: hasSupported,
+            lastSupportedAt: lastSupportedAt,
+            supportPackage: supportPackage,
+          );
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to update user support: $e'));
     }
   }
 }

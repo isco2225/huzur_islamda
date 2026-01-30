@@ -52,4 +52,11 @@ abstract class UserRepository {
     required String city,
     required String districtId,
   });
+
+  Future<Result<void>> updateUserSupport({
+    required String uid,
+    required bool hasSupported,
+    required DateTime lastSupportedAt,
+    required String supportPackage,
+  });
 }
