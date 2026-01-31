@@ -6,9 +6,14 @@ import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class DhikrDetailScreen extends StatefulWidget {
-  const DhikrDetailScreen({super.key, required this.dhikrId});
+  const DhikrDetailScreen({
+    super.key,
+    required this.initialDhikrId,
+    this.groupDhikrIds,
+  });
 
-  final String dhikrId;
+  final String initialDhikrId;
+  final List<String>? groupDhikrIds;
 
   @override
   State<DhikrDetailScreen> createState() => _DhikrDetailScreenState();
@@ -22,7 +27,8 @@ class _DhikrDetailScreenState extends State<DhikrDetailScreen> {
     super.initState();
     _viewModel = DhikrDetailViewModel(
       dhikrRepository: context.read<DhikrRepository>(),
-      dhikrId: widget.dhikrId,
+      initialDhikrId: widget.initialDhikrId,
+      groupDhikrIds: widget.groupDhikrIds,
       dhikrUseCase: context.read<DhikrUseCase>(),
     );
 

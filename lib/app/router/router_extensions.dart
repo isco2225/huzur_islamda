@@ -72,7 +72,22 @@ extension RouterExtensions on BuildContext {
   Future<T?> pushPostDetail<T extends Object?>(Post post) =>
       push<T>(AppRoutes.postDetail, extra: post);
 
-  /// Push dhikr detail screen
-  Future<T?> pushToDhikrDetail<T extends Object?>(String dhikrId) =>
-      push<T>(AppRoutes.dhikrDetail, extra: dhikrId);
+  /// Push dhikr detail screen (single dhikr).
+  Future<T?> pushToDhikrDetail<T extends Object?>(String dhikrId) => push<T>(
+    AppRoutes.dhikrDetail,
+    extra: DhikrDetailParams(initialDhikrId: dhikrId, groupDhikrIds: null),
+  );
+
+  /// Push dhikr detail screen for a group.
+  Future<T?> pushToDhikrDetailForGroup<T extends Object?>(
+    List<String> dhikrIds,
+  ) => dhikrIds.isEmpty
+      ? Future<T?>.value(null)
+      : push<T>(
+          AppRoutes.dhikrDetail,
+          extra: DhikrDetailParams(
+            initialDhikrId: dhikrIds.first,
+            groupDhikrIds: dhikrIds,
+          ),
+        );
 }

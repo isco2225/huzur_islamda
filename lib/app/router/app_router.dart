@@ -159,11 +159,14 @@ final List<RouteBase> _routes = [
     path: AppRoutes.dhikrDetail,
     name: 'dhikr_detail',
     builder: (context, state) {
-      final dhikrId = state.extra as String?;
-      if (dhikrId == null || dhikrId.isEmpty) {
+      final params = state.extra as DhikrDetailParams?;
+      if (params == null || params.initialDhikrId.isEmpty) {
         return const Scaffold(body: Center(child: Text('Zikir bulunamadı')));
       }
-      return DhikrDetailScreen(dhikrId: dhikrId);
+      return DhikrDetailScreen(
+        initialDhikrId: params.initialDhikrId,
+        groupDhikrIds: params.groupDhikrIds,
+      );
     },
   ),
 ];

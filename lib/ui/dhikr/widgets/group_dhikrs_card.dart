@@ -35,68 +35,72 @@ class GroupDhikrsCard extends StatelessWidget {
             // Bu grubun dhikr ID'lerini al
             final dhikrIds = group.dhikrs.map((dhikr) => dhikr.id).toList();
 
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: borderColor, width: 2.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Başlık ve durum
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          group.groupName,
-                          style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+            return GestureDetector(
+              onTap: () {
+                context.pushToDhikrDetailForGroup(dhikrIds);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: borderColor, width: 2.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Başlık ve durum
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            group.groupName,
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                      // add pop menu to group
-                      PopupMenuButton(
-                        icon: Icon(Icons.more_vert, size: 20),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            onTap: () {
-                              print('delete group');
-                              viewModel.deleteGroup.execute(dhikrIds);
-                            },
-                            child: Text('Grubu Sil'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  // Grup toplam ilerleme
-                  Text(
-                    '$completedDhikrs / $totalDhikrs tamamlandı',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[700],
+                        // add pop menu to group
+                        PopupMenuButton(
+                          icon: Icon(Icons.more_vert, size: 20),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              onTap: () {
+                                viewModel.deleteGroup.execute(dhikrIds);
+                              },
+                              child: Text('Grubu Sil'),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Grup içindeki zikirler
-                  ...group.dhikrs.map(
-                    (dhikr) => _GroupDhikrItemWidget(
-                      dhikr: dhikr,
-                      textTheme: textTheme,
+                    const SizedBox(height: 4),
+                    // Grup toplam ilerleme
+                    Text(
+                      '$completedDhikrs / $totalDhikrs tamamlandı',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[700],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    // Grup içindeki zikirler
+                    ...group.dhikrs.map(
+                      (dhikr) => _GroupDhikrItemWidget(
+                        dhikr: dhikr,
+                        textTheme: textTheme,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }).toList(),

@@ -10,7 +10,6 @@ class DhikrDetailView extends StatelessWidget {
 
   final DhikrDetailViewModel viewModel;
 
-  // Callback to trigger animation - better than GlobalKey
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;

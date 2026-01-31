@@ -9,10 +9,13 @@ class DhikrDetailViewModel {
   DhikrDetailViewModel({
     required DhikrRepository dhikrRepository,
     required DhikrUseCase dhikrUseCase,
-    required String dhikrId,
+    required String initialDhikrId,
+    List<String>? groupDhikrIds, // if null, that means single dhikr mode
   }) : _dhikrRepository = dhikrRepository,
-       _dhikrId = dhikrId,
        _dhikrUseCase = dhikrUseCase,
+       _initialDhikrId = initialDhikrId,
+       _groupDhikrIds = groupDhikrIds,
+       _currentDhikrId = initialDhikrId,
        _log = Logger('DhikrDetailViewModel') {
     // Commands
     loadDhikr = Command0<void>(_loadDhikr, debugLabel: 'loadDhikr');
@@ -27,14 +30,17 @@ class DhikrDetailViewModel {
     deleteDhikr = Command0<void>(_deleteDhikr, debugLabel: 'deleteDhikr');
     resetCount = Command0<void>(_resetCount, debugLabel: 'resetCount');
 
-    // Load dhikr on initialization
     loadDhikr.execute();
   }
 
   final DhikrRepository _dhikrRepository;
-  final String _dhikrId;
-  final Logger _log;
   final DhikrUseCase _dhikrUseCase;
+  final String _initialDhikrId;
+  final List<String>? _groupDhikrIds;
+  final Logger _log;
+
+  /// Currently displayed dhikr id (changes in group mode when advancing).
+  String _currentDhikrId;
   // State
   final ValueNotifier<Dhikr?> _currentDhikr = ValueNotifier<Dhikr?>(null);
   ValueListenable<Dhikr?> get currentDhikr => _currentDhikr;
@@ -62,13 +68,38 @@ class DhikrDetailViewModel {
 
   // Functions
   Future<Result<void>> _loadDhikr() async {
-    _log.info('Loading dhikr: $_dhikrId');
+    // In group mode, on first load resolve to first incomplete dhikr
+    final groupIds = _groupDhikrIds;
+    if (groupIds != null &&
+        groupIds.isNotEmpty &&
+        _currentDhikrId == _initialDhikrId) {
+      var foundFirstIncomplete = false;
+      for (final id in groupIds) {
+        final r = await _dhikrRepository.getDhikrLocally(dhikrId: id);
+        switch (r) {
+          case Ok():
+            final d = r.asOk.value;
+            if (d != null && d.currentCount < d.targetCount) {
+              _currentDhikrId = id;
+              foundFirstIncomplete = true;
+              break;
+            }
+          case Error():
+            break;
+        }
+        if (foundFirstIncomplete) break;
+      }
+    }
 
-    final result = await _dhikrRepository.getDhikrLocally(dhikrId: _dhikrId);
+    _log.info('Loading dhikr: $_currentDhikrId');
+
+    final result = await _dhikrRepository.getDhikrLocally(
+      dhikrId: _currentDhikrId,
+    );
     switch (result) {
       case Ok():
         _currentDhikr.value = result.asOk.value;
-        _log.info('Dhikr loaded successfully: $_dhikrId');
+        _log.info('Dhikr loaded successfully: $_currentDhikrId');
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -81,7 +112,7 @@ class DhikrDetailViewModel {
       return Result.error(Exception('Zikir yüklenmedi'));
     }
 
-    _log.info('Incrementing count for dhikr: $_dhikrId');
+    _log.info('Incrementing count for dhikr: $_currentDhikrId');
 
     final updatedDhikr = dhikr.copyWith(
       currentCount: dhikr.currentCount + 1,
@@ -91,13 +122,42 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      dhikrId: _dhikrId,
+      dhikrId: _currentDhikrId,
       dhikr: updatedDhikr,
     );
     switch (result) {
       case Ok():
         _currentDhikr.value = updatedDhikr;
-        _log.info('Dhikr updated successfully: $_dhikrId');
+        _log.info('Dhikr updated successfully: $_currentDhikrId');
+        // In group mode, when current dhikr just completed, advance to next incomplete
+        final groupIds = _groupDhikrIds;
+        if (updatedDhikr.currentCount >= updatedDhikr.targetCount &&
+            groupIds != null &&
+            groupIds.isNotEmpty) {
+          final currentIndex = groupIds.indexWhere(
+            (id) => id == _currentDhikrId,
+          );
+          if (currentIndex >= 0 && currentIndex < groupIds.length - 1) {
+            final nextIds = groupIds.sublist(currentIndex + 1);
+            for (final id in nextIds) {
+              final nextResult = await _dhikrRepository.getDhikrLocally(
+                dhikrId: id,
+              );
+              switch (nextResult) {
+                case Ok():
+                  final nextDhikr = nextResult.asOk.value;
+                  if (nextDhikr != null &&
+                      nextDhikr.currentCount < nextDhikr.targetCount) {
+                    _currentDhikrId = id;
+                    await _loadDhikr();
+                    return Result.ok(null);
+                  }
+                case Error():
+                  break;
+              }
+            }
+          }
+        }
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -114,7 +174,7 @@ class DhikrDetailViewModel {
       return Result.error(Exception('Sayı 0\'dan küçük olamaz'));
     }
 
-    _log.info('Decrementing count for dhikr: $_dhikrId');
+    _log.info('Decrementing count for dhikr: $_currentDhikrId');
 
     final newCount = dhikr.currentCount - 1;
     final updatedDhikr = dhikr.copyWith(
@@ -125,14 +185,14 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      dhikrId: _dhikrId,
+      dhikrId: _currentDhikrId,
       dhikr: updatedDhikr,
     );
 
     switch (result) {
       case Ok():
         _currentDhikr.value = updatedDhikr;
-        _log.info('Dhikr updated successfully: $_dhikrId');
+        _log.info('Dhikr updated successfully: $_currentDhikrId');
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -145,7 +205,7 @@ class DhikrDetailViewModel {
       return Result.error(Exception('Zikir yüklenmedi'));
     }
 
-    _log.info('Resetting count for dhikr: $_dhikrId');
+    _log.info('Resetting count for dhikr: $_currentDhikrId');
 
     final updatedDhikr = dhikr.copyWith(
       currentCount: 0,
@@ -155,13 +215,13 @@ class DhikrDetailViewModel {
     );
 
     final result = await _dhikrRepository.updateDhikrLocally(
-      dhikrId: _dhikrId,
+      dhikrId: _currentDhikrId,
       dhikr: updatedDhikr,
     );
     switch (result) {
       case Ok():
         _currentDhikr.value = updatedDhikr;
-        _log.info('Dhikr updated successfully: $_dhikrId');
+        _log.info('Dhikr updated successfully: $_currentDhikrId');
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -169,13 +229,13 @@ class DhikrDetailViewModel {
   }
 
   Future<Result<void>> _deleteDhikr() async {
-    _log.info('Deleting dhikr: $_dhikrId');
+    _log.info('Deleting dhikr: $_currentDhikrId');
 
-    final result = await _dhikrUseCase.deleteDhikr(dhikrId: _dhikrId);
+    final result = await _dhikrUseCase.deleteDhikr(dhikrId: _currentDhikrId);
     switch (result) {
       case Ok():
         _currentDhikr.value = null;
-        _log.info('Dhikr deleted successfully: $_dhikrId');
+        _log.info('Dhikr deleted successfully: $_currentDhikrId');
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
