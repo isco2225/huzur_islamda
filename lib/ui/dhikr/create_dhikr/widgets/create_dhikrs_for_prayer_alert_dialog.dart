@@ -56,9 +56,11 @@ class CreateDhikrsForPrayerAlertDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
           },
-          child: Text('İptal', style: TextStyle(color: Colors.grey[700])),
+          child: Text('iptal', style: TextStyle(color: Colors.grey[700])),
         ),
         ValueListenableBuilder<bool>(
           valueListenable: createDhikrViewModel.createDhikrsForPrayer.running,

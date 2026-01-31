@@ -42,6 +42,7 @@ class DhikrView extends StatelessWidget {
                   ? DhikrPopMenuButton(
                       onCreateDhikrsForPrayerTapped: () {
                         showDialog(
+                          barrierDismissible: false,
                           context: context,
                           builder: (dialogContext) =>
                               CreateDhikrsForPrayerAlertDialog(
