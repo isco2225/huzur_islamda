@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../ui.dart';
 
-class DhikrView extends StatelessWidget {
+class DhikrView extends StatefulWidget {
   const DhikrView({
     super.key,
     required this.viewModel,
@@ -14,18 +14,33 @@ class DhikrView extends StatelessWidget {
   final CreateDhikrViewModel createDhikrViewModel;
 
   @override
+  State<DhikrView> createState() => _DhikrViewState();
+}
+
+class _DhikrViewState extends State<DhikrView> {
+  ValueNotifier<bool> isOnGroupTap = ValueNotifier<bool>(false);
+  @override
+  void dispose() {
+    isOnGroupTap.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    return ValueListenableBuilder(
-      valueListenable: viewModel.selectedDate,
-      builder: (context, selectedDate, _) {
-        final isTodaySelected = selectedDate == today;
-
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        widget.viewModel.selectedDate,
+        isOnGroupTap,
+      ]),
+      builder: (context, _) {
+        final isTodaySelected = widget.viewModel.selectedDate.value == today;
+        final selectedDate = widget.viewModel.selectedDate.value;
         return BaseScaffold(
           safeArea: true,
-          floatingActionButton: isTodaySelected
+          floatingActionButton: isTodaySelected && !isOnGroupTap.value
               ? FloatingActionButton(
                   onPressed: () {
                     context.pushCreateDhikr();
@@ -46,7 +61,8 @@ class DhikrView extends StatelessWidget {
                           context: context,
                           builder: (dialogContext) =>
                               CreateDhikrsForPrayerAlertDialog(
-                                createDhikrViewModel: createDhikrViewModel,
+                                createDhikrViewModel:
+                                    widget.createDhikrViewModel,
                               ),
                         );
                       },
@@ -56,20 +72,20 @@ class DhikrView extends StatelessWidget {
           ),
           body: Column(
             children: [
-              DhikrDateSelector(viewModel: viewModel),
+              DhikrDateSelector(viewModel: widget.viewModel),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: viewModel.isInitialLoading,
+                  valueListenable: widget.viewModel.isInitialLoading,
                   builder: (context, isInitialLoading, _) {
                     if (isInitialLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return ValueListenableBuilder(
-                      valueListenable: viewModel.groupDhikrs,
+                      valueListenable: widget.viewModel.groupDhikrs,
                       builder: (context, groupDhikrs, _) {
                         if (groupDhikrs == null || groupDhikrs.isEmpty) {
                           return InfinityScrollableDhikrs(
-                            fetchDhikrsViewModel: viewModel,
+                            fetchDhikrsViewModel: widget.viewModel,
                             noItemsToShowWidget: isTodaySelected
                                 ? const Center(child: NoDhikrsToShow())
                                 : const Center(
@@ -80,12 +96,15 @@ class DhikrView extends StatelessWidget {
                                     ),
                                   ),
                             onFetch: () {
-                              viewModel.fetchDhikrs.execute(selectedDate);
+                              widget.viewModel.fetchDhikrs.execute(
+                                selectedDate,
+                              );
                             },
-                            dhikrs: viewModel.dhikrs,
-                            hasError: viewModel.fetchDhikrs.error,
-                            isFetching: viewModel.fetchDhikrs.running,
-                            isAllItemsFetched: viewModel.fetchDhikrs.completed,
+                            dhikrs: widget.viewModel.dhikrs,
+                            hasError: widget.viewModel.fetchDhikrs.error,
+                            isFetching: widget.viewModel.fetchDhikrs.running,
+                            isAllItemsFetched:
+                                widget.viewModel.fetchDhikrs.completed,
                           );
                         }
                         // Grup zikirleri varsa sekmeleri göster
@@ -100,6 +119,9 @@ class DhikrView extends StatelessWidget {
                                 indicatorWeight: 2,
                                 indicatorSize: TabBarIndicatorSize.label,
                                 dividerColor: Colors.transparent,
+                                onTap: (index) {
+                                  isOnGroupTap.value = index == 1;
+                                },
                                 tabs: const [
                                   Tab(text: 'Zikirler'),
                                   Tab(text: 'Gruplar'),
@@ -110,7 +132,7 @@ class DhikrView extends StatelessWidget {
                                   children: [
                                     // Zikirler sekmesi
                                     InfinityScrollableDhikrs(
-                                      fetchDhikrsViewModel: viewModel,
+                                      fetchDhikrsViewModel: widget.viewModel,
                                       noItemsToShowWidget: isTodaySelected
                                           ? const Center(
                                               child: NoDhikrsToShow(),
@@ -125,20 +147,24 @@ class DhikrView extends StatelessWidget {
                                               ),
                                             ),
                                       onFetch: () {
-                                        viewModel.fetchDhikrs.execute(
+                                        widget.viewModel.fetchDhikrs.execute(
                                           selectedDate,
                                         );
                                       },
-                                      dhikrs: viewModel.dhikrs,
-                                      hasError: viewModel.fetchDhikrs.error,
-                                      isFetching: viewModel.fetchDhikrs.running,
-                                      isAllItemsFetched:
-                                          viewModel.fetchDhikrs.completed,
+                                      dhikrs: widget.viewModel.dhikrs,
+                                      hasError:
+                                          widget.viewModel.fetchDhikrs.error,
+                                      isFetching:
+                                          widget.viewModel.fetchDhikrs.running,
+                                      isAllItemsFetched: widget
+                                          .viewModel
+                                          .fetchDhikrs
+                                          .completed,
                                     ),
                                     // Gruplar sekmesi
                                     SingleChildScrollView(
                                       child: GroupDhikrsCard(
-                                        viewModel: viewModel,
+                                        viewModel: widget.viewModel,
                                       ),
                                     ),
                                   ],
