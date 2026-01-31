@@ -29,7 +29,7 @@ class DhikrPopMenuButton extends StatelessWidget {
         ),
         PopupMenuItem(
           onTap: () {
-            print('Ruh haline göre zikir oluştur');
+            context.pushCreateDhikrByMood();
           },
           value: 'create_dhikr_by_mood',
           child: Row(

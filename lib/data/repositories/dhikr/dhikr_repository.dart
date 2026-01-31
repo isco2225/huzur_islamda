@@ -23,7 +23,7 @@ abstract class DhikrRepository {
     required String dhikrId,
     required Dhikr dhikr,
   });
-  Future<Result<void>> createDhikrsForPrayer({required List<Dhikr> dhikrs});
+  Future<Result<void>> createGroupDhikrs({required List<Dhikr> dhikrs});
 
   Future<Result<List<Dhikr>>> getDhikrsByGroupId({required String groupId});
 

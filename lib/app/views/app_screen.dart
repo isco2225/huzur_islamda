@@ -113,6 +113,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.notificationService),
         Provider(create: (_) => widget.admobService),
         Provider(create: (_) => widget.assistantService),
+        Provider(create: (_) => DhikrMoodService()),
         // use cases
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.prayerTimeUseCase),

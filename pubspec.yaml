@@ -87,4 +87,5 @@ flutter:
     - assets/animations/
     - assets/icons/
     - assets/data/places/
+    - assets/data/dhikrs/
     - .env

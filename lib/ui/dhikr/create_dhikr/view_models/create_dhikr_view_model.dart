@@ -132,6 +132,7 @@ class CreateDhikrViewModel {
           isSynced: false,
           isDeleted: false,
           groupId: groupId,
+          groupDisplayName: 'Namaz Tesbihatı',
         ),
         Dhikr(
           id: '${groupId}_elhamdulillah',
@@ -146,8 +147,8 @@ class CreateDhikrViewModel {
           isSynced: false,
           isDeleted: false,
           groupId: groupId,
+          groupDisplayName: 'Namaz Tesbihatı',
         ),
-
         Dhikr(
           id: '${groupId}_allahu_ekber',
           userId: userId,
@@ -161,11 +162,10 @@ class CreateDhikrViewModel {
           isSynced: false,
           isDeleted: false,
           groupId: groupId,
+          groupDisplayName: 'Namaz Tesbihatı',
         ),
       ];
-      final result = await _dhikrRepository.createDhikrsForPrayer(
-        dhikrs: dhikrs,
-      );
+      final result = await _dhikrRepository.createGroupDhikrs(dhikrs: dhikrs);
       switch (result) {
         case Ok():
           // Sync dhikrs to Firestore

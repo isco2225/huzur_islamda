@@ -43,6 +43,18 @@ class Dhikr {
   @HiveField(11)
   final String? groupId;
 
+  @HiveField(12)
+  final String? groupDisplayName;
+
+  @HiveField(13)
+  final String? arabic;
+
+  @HiveField(14)
+  final String? meaning;
+
+  @HiveField(15)
+  final String? benefit;
+
   const Dhikr({
     required this.id,
     required this.userId,
@@ -56,6 +68,10 @@ class Dhikr {
     this.isSynced = false,
     this.isDeleted = false,
     this.groupId,
+    this.groupDisplayName,
+    this.arabic,
+    this.meaning,
+    this.benefit,
   });
 
   factory Dhikr.fromJson(Map<String, Object?> json) {
@@ -79,6 +95,10 @@ class Dhikr {
       isSynced: json['isSynced'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
       groupId: json['groupId'] as String? ?? '',
+      groupDisplayName: json['groupDisplayName'] as String?,
+      arabic: json['arabic'] as String?,
+      meaning: json['meaning'] as String?,
+      benefit: json['benefit'] as String?,
     );
   }
 
@@ -103,6 +123,10 @@ class Dhikr {
       'isSynced': isSynced,
       'isDeleted': isDeleted,
       'groupId': groupId,
+      'groupDisplayName': groupDisplayName,
+      'arabic': arabic,
+      'meaning': meaning,
+      'benefit': benefit,
     };
   }
 
@@ -119,6 +143,10 @@ class Dhikr {
     bool? isSynced,
     bool? isDeleted,
     String? groupId,
+    String? groupDisplayName,
+    String? arabic,
+    String? meaning,
+    String? benefit,
   }) {
     return Dhikr(
       id: id ?? this.id,
@@ -133,6 +161,10 @@ class Dhikr {
       isSynced: isSynced ?? this.isSynced,
       isDeleted: isDeleted ?? this.isDeleted,
       groupId: groupId ?? this.groupId,
+      groupDisplayName: groupDisplayName ?? this.groupDisplayName,
+      arabic: arabic ?? this.arabic,
+      meaning: meaning ?? this.meaning,
+      benefit: benefit ?? this.benefit,
     );
   }
 }

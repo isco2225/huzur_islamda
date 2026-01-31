@@ -63,6 +63,10 @@ extension RouterExtensions on BuildContext {
   Future<T?> pushCreateDhikr<T extends Object?>() =>
       push<T>(AppRoutes.createDhikr);
 
+  /// Push create dhikr by mood screen
+  Future<T?> pushCreateDhikrByMood<T extends Object?>() =>
+      push<T>(AppRoutes.createDhikrByMood);
+
   // -------------------- SPECIAL ROUTES WITH PARAMETERS --------------------
 
   /// Navigate to post detail screen

@@ -29,13 +29,17 @@ class DhikrAdapter extends TypeAdapter<Dhikr> {
       isSynced: fields[9] as bool,
       isDeleted: fields[10] as bool,
       groupId: fields[11] as String?,
+      groupDisplayName: fields[12] as String?,
+      arabic: fields[13] as String?,
+      meaning: fields[14] as String?,
+      benefit: fields[15] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Dhikr obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +63,15 @@ class DhikrAdapter extends TypeAdapter<Dhikr> {
       ..writeByte(10)
       ..write(obj.isDeleted)
       ..writeByte(11)
-      ..write(obj.groupId);
+      ..write(obj.groupId)
+      ..writeByte(12)
+      ..write(obj.groupDisplayName)
+      ..writeByte(13)
+      ..write(obj.arabic)
+      ..writeByte(14)
+      ..write(obj.meaning)
+      ..writeByte(15)
+      ..write(obj.benefit);
   }
 
   @override

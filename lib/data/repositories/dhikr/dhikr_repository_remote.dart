@@ -283,10 +283,8 @@ class DhikrRepositoryRemote implements DhikrRepository {
   }
 
   @override
-  Future<Result<void>> createDhikrsForPrayer({
-    required List<Dhikr> dhikrs,
-  }) async {
-    _log.info('Creating ${dhikrs.length} dhikrs for prayer');
+  Future<Result<void>> createGroupDhikrs({required List<Dhikr> dhikrs}) async {
+    _log.info('Creating ${dhikrs.length} dhikrs for group');
     try {
       for (final dhikr in dhikrs) {
         final saveResult = await saveDhikrLocally(dhikr: dhikr);
@@ -302,11 +300,11 @@ class DhikrRepositoryRemote implements DhikrRepository {
             );
         }
       }
-      _log.info('Successfully created ${dhikrs.length} dhikrs for prayer');
+      _log.info('Successfully created ${dhikrs.length} dhikrs for group');
       return Result.ok(null);
     } catch (e) {
-      _log.severe('Failed to create dhikrs for prayer: $e');
-      return Result.error(Exception('Failed to create dhikrs for prayer: $e'));
+      _log.severe('Failed to create dhikrs for group: $e');
+      return Result.error(Exception('Failed to create dhikrs for group: $e'));
     }
   }
 }

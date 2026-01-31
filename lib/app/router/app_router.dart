@@ -156,6 +156,12 @@ final List<RouteBase> _routes = [
   ),
 
   GoRoute(
+    path: AppRoutes.createDhikrByMood,
+    name: 'create_dhikr_by_mood',
+    builder: (context, state) => const MoodSelectScreen(),
+  ),
+
+  GoRoute(
     path: AppRoutes.dhikrDetail,
     name: 'dhikr_detail',
     builder: (context, state) {

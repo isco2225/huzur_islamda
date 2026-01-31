@@ -191,7 +191,7 @@ class FetchDhikrsViewModel {
             GroupDhikrData(
               groupId: groupId,
               dhikrs: dhikrsInGroup,
-              groupName: 'Namaz Tesbihatı',
+              groupName: dhikrsInGroup.first.groupDisplayName ?? 'Namaz Tesbihatı',
             ),
           );
         }
