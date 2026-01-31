@@ -175,6 +175,18 @@ class FetchDhikrsViewModel {
         for (final entry in groupMap.entries) {
           final groupId = entry.key;
           final dhikrsInGroup = List<Dhikr>.from(entry.value);
+          // Namaz tesbihatı sırası: Subhanallah, Elhamdulillah, Allahu Ekber
+          dhikrsInGroup.sort((a, b) {
+            final indexA = PrayerDhikrConstants.prayerDhikrNames.indexOf(
+              a.name,
+            );
+            final indexB = PrayerDhikrConstants.prayerDhikrNames.indexOf(
+              b.name,
+            );
+            final orderA = indexA >= 0 ? indexA : 999;
+            final orderB = indexB >= 0 ? indexB : 999;
+            return orderA.compareTo(orderB);
+          });
           groups.add(
             GroupDhikrData(
               groupId: groupId,

@@ -120,9 +120,9 @@ class CreateDhikrViewModel {
       final groupId = 'prayer_dhikr_${currentDate.microsecondsSinceEpoch}';
       final dhikrs = [
         Dhikr(
-          id: '${groupId}_allahu_ekber',
+          id: '${groupId}_subhanallah',
           userId: userId,
-          name: PrayerDhikrConstants.allahuEkberName,
+          name: PrayerDhikrConstants.subhanallahName,
           targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
           currentCount: 0,
           day: currentDate,
@@ -147,10 +147,11 @@ class CreateDhikrViewModel {
           isDeleted: false,
           groupId: groupId,
         ),
+
         Dhikr(
-          id: '${groupId}_subhanallah',
+          id: '${groupId}_allahu_ekber',
           userId: userId,
-          name: PrayerDhikrConstants.subhanallahName,
+          name: PrayerDhikrConstants.allahuEkberName,
           targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
           currentCount: 0,
           day: currentDate,
