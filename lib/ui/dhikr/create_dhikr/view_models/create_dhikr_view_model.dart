@@ -118,13 +118,11 @@ class CreateDhikrViewModel {
       // Generate unique group ID
       final currentDate = DateTime.now();
       final groupId = 'prayer_dhikr_${currentDate.microsecondsSinceEpoch}';
-
-      // Create 3 dhikrs for prayer
       final dhikrs = [
         Dhikr(
-          id: '${groupId}_subhanallah',
+          id: '${groupId}_allahu_ekber',
           userId: userId,
-          name: PrayerDhikrConstants.subhanallahName,
+          name: PrayerDhikrConstants.allahuEkberName,
           targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
           currentCount: 0,
           day: currentDate,
@@ -150,9 +148,9 @@ class CreateDhikrViewModel {
           groupId: groupId,
         ),
         Dhikr(
-          id: '${groupId}_allahu_ekber',
+          id: '${groupId}_subhanallah',
           userId: userId,
-          name: PrayerDhikrConstants.allahuEkberName,
+          name: PrayerDhikrConstants.subhanallahName,
           targetCount: PrayerDhikrConstants.prayerDhikrTargetCount,
           currentCount: 0,
           day: currentDate,
@@ -164,7 +162,6 @@ class CreateDhikrViewModel {
           groupId: groupId,
         ),
       ];
-
       final result = await _dhikrRepository.createDhikrsForPrayer(
         dhikrs: dhikrs,
       );
