@@ -20,7 +20,7 @@ class CreateDhikrViewModel {
       _createDhikr,
       debugLabel: 'createDhikr',
     );
-    createDhikrsForPrayer = Command0<String>(
+    createDhikrsForPrayer = Command0<List<String>>(
       _createDhikrsForPrayer,
       debugLabel: 'createDhikrsForPrayer',
     );
@@ -44,7 +44,7 @@ class CreateDhikrViewModel {
 
   // COMMANDS
   late final Command1<void, ({String name, int targetCount})> createDhikr;
-  late final Command0<String> createDhikrsForPrayer;
+  late final Command0<List<String>> createDhikrsForPrayer;
 
   // DISPOSE
   void dispose() {
@@ -107,7 +107,7 @@ class CreateDhikrViewModel {
     await _showAdUseCase.showInterstitialAd();
   }
 
-  Future<Result<String>> _createDhikrsForPrayer() async {
+  Future<Result<List<String>>> _createDhikrsForPrayer() async {
     try {
       final userId = currentUser.value.uid;
       if (userId.isEmpty) {
@@ -179,7 +179,8 @@ class CreateDhikrViewModel {
           _log.info(
             'Prayer dhikrs created successfully with groupId: $groupId',
           );
-          return Result.ok(groupId);
+          final dhikrIds = dhikrs.map((d) => d.id).toList();
+          return Result.ok(dhikrIds);
         case Error():
           _log.severe('Failed to create prayer dhikrs: ${result.error}');
           return Result.error(result.asError.error);

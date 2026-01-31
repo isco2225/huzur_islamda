@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/app.dart';
 import '../../../data/data.dart';
 import '../../../domain/domain.dart';
 import '../../ui.dart';
@@ -39,8 +40,10 @@ class _DhikrScreenState extends State<DhikrScreen> {
       context,
       successMessage: 'Zikirler oluşturuldu!',
       popCount: 1,
-      onCompleted: (_) {
-        // TODO: go to created dhikrs detail screen
+      onCompleted: (dhikrIds) {
+        if (dhikrIds.isNotEmpty && context.mounted) {
+          context.pushToDhikrDetailForGroup(dhikrIds);
+        }
       },
     );
   }
