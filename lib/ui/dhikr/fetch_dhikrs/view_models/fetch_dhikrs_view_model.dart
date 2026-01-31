@@ -195,7 +195,7 @@ class FetchDhikrsViewModel {
             ),
           );
         }
-        _groupDhikrs.value = groups;
+        _groupDhikrs.value = groups.reversed.toList();
       }
     }
 
