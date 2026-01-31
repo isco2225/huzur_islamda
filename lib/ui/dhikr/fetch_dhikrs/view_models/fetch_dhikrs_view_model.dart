@@ -191,11 +191,19 @@ class FetchDhikrsViewModel {
             GroupDhikrData(
               groupId: groupId,
               dhikrs: dhikrsInGroup,
-              groupName: dhikrsInGroup.first.groupDisplayName ?? 'Namaz Tesbihatı',
+              groupName:
+                  dhikrsInGroup.first.groupDisplayName ?? 'Namaz Tesbihatı',
             ),
           );
         }
-        _groupDhikrs.value = groups.reversed.toList();
+        final groupWithCreatedAt = groups.map((g) {
+          final created = g.dhikrs
+              .map((d) => d.createdAt)
+              .reduce((x, y) => x.isBefore(y) ? x : y);
+          return (group: g, createdAt: created);
+        }).toList();
+        groupWithCreatedAt.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _groupDhikrs.value = groupWithCreatedAt.map((e) => e.group).toList();
       }
     }
 
