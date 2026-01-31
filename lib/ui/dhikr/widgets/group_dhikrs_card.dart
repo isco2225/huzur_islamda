@@ -70,17 +70,19 @@ class GroupDhikrsCard extends StatelessWidget {
                           ),
                         ),
                         // add pop menu to group
-                        PopupMenuButton(
-                          icon: Icon(Icons.more_vert, size: 20),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              onTap: () {
-                                viewModel.deleteGroup.execute(dhikrIds);
-                              },
-                              child: Text('Grubu Sil'),
-                            ),
-                          ],
-                        ),
+                        viewModel.deleteGroup.running.value
+                            ? const CircularProgressIndicator.adaptive()
+                            : PopupMenuButton(
+                                icon: Icon(Icons.more_vert, size: 20),
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    onTap: () {
+                                      viewModel.deleteGroup.execute(dhikrIds);
+                                    },
+                                    child: Text('Grubu Sil'),
+                                  ),
+                                ],
+                              ),
                       ],
                     ),
                     const SizedBox(height: 4),
