@@ -106,7 +106,11 @@ class DhikrDetailView extends StatelessWidget {
                   DhikrCounterControls(
                     dhikr: dhikr,
                     onIncrement: () {
-                      VibrationUseCase.vibrateLight(context);
+                      if (dhikr.currentCount == dhikr.targetCount - 1) {
+                        VibrationUseCase.vibrateHigh(context);
+                      } else {
+                        VibrationUseCase.vibrateLight(context);
+                      }
                       viewModel.incrementCount.execute();
                     },
                     onDecrement: () {
