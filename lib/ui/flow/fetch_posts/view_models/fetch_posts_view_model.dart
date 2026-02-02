@@ -41,7 +41,6 @@ class FetchPostsViewModel {
           _isAllItemsFetched.value = true;
         }
         _log.fine('Posts fetched successfully');
-        print(posts.value.length);
         return Result.ok(null);
       case Error():
         _log.severe('Failed to fetch posts: ${result.asError.error}');

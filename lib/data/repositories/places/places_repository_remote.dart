@@ -20,7 +20,6 @@ class PlacesRepositoryRemote extends PlacesRepository {
   Future<Result<void>> getCountries() async {
     try {
       if (_countries.value.isNotEmpty) {
-        print('Countries fetched from cache');
         return Result.ok(null);
       }
       final result = await _placeSelectorService.getCountries();

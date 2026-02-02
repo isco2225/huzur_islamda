@@ -23,7 +23,6 @@ class PrayerService {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
         _log.info('Successfully fetched prayer times');
-        print(jsonData);
         return Result.ok(jsonData);
       } else {
         _log.severe(

@@ -24,7 +24,6 @@ class AssistantService {
     List<String>? previousMessages,
   }) async {
     try {
-      print(previousMessages);
       final uri = Uri.parse('$_baseUrl/$_model:generateContent');
       if (_apiKey == null) {
         return Result.error(

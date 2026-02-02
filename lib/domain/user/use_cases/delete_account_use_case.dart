@@ -1,10 +1,5 @@
 
 
-/// Kullanıcı hesabını silen UseCase
-///
-/// İki repository'yi koordine eder:
-/// 1. UserRepository: Firestore'dan kullanıcıyı siler
-/// 2. AuthRepository: Firebase Auth'dan kullanıcıyı siler ve sign out yapar
 /*class DeleteAccountUseCase {
   DeleteAccountUseCase({
     required AuthRepository authRepository,

@@ -86,9 +86,6 @@ class FirebaseAuthService {
       if (user == null) {
         return Result.error(Exception('Failed to sign in with Google'));
       }
-      print('user.email: ${user.email}');
-      print('user.providerData.first.email: ${user.providerData.first.email}');
-      print('user.emailVerified: ${user.emailVerified}');
       return Result.ok(
         Auth(
           uid: user.uid,

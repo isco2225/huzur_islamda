@@ -144,7 +144,6 @@ class FirestoreUserService {
     try {
       final doc = await _firestore.collection(_collectionName).doc(uid).get();
       if (!doc.exists) {
-        print('User not found on firestore');
         return Result.ok(null);
       }
       final data = doc.data()!;

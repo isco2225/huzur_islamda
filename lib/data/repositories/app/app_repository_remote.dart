@@ -82,10 +82,8 @@ class AppRepositoryRemote implements AppRepository {
     );
     switch (result) {
       case Ok():
-        print('updateIsOnboardingCompleted: ok');
         return Result.ok(null);
       case Error():
-        print('updateIsOnboardingCompleted: error');
         return Result.error(result.asError.error);
     }
   }
