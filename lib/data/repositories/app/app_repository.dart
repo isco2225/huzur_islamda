@@ -19,4 +19,5 @@ abstract class AppRepository {
   Future<Result<void>> updateAssistantDailyLimit({
     required int updatedDailyLimit,
   });
+  Future<Result<void>> resetAssistantDailyLimit();
 }

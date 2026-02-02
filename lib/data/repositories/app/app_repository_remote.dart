@@ -124,4 +124,18 @@ class AppRepositoryRemote implements AppRepository {
         return Result.error(result.asError.error);
     }
   }
+
+  @override
+  Future<Result<void>> resetAssistantDailyLimit() async {
+    final now = DateTime.now();
+    final today =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    final result = await _updateAppPreferences(
+      _appPreferences.value.copyWith(
+        assistantDailyLimit: 10,
+        lastLimitResetDate: today,
+      ),
+    );
+    return result;
+  }
 }

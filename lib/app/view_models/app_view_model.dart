@@ -76,6 +76,7 @@ class AppViewModel {
       switch (preferencesResult) {
         case Ok():
           _log.info('App preferences loaded successfully');
+          await _checkAssistantDailyLimit();
           await _syncPermissionUseCase.syncNotificationPermissionState();
           break;
         case Error():
@@ -180,6 +181,25 @@ class AppViewModel {
     } catch (e) {
       _log.severe('Exception wiping user data: $e');
       return Result.error(Exception('Veri temizlenirken hata oluştu: $e'));
+    }
+  }
+
+  Future<void> _checkAssistantDailyLimit() async {
+    final now = DateTime.now();
+    final today =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    final lastReset = _appRepository.appPreferences.value.lastLimitResetDate;
+    if (lastReset.isEmpty || lastReset != today) {
+      final resetResult = await _appRepository.resetAssistantDailyLimit();
+      switch (resetResult) {
+        case Ok():
+          _log.info('Assistant daily limit reset (new day)');
+          break;
+        case Error():
+          _log.warning(
+            'Failed to reset assistant daily limit: ${resetResult.asError.error}',
+          );
+      }
     }
   }
 }
