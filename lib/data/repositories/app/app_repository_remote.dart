@@ -109,4 +109,19 @@ class AppRepositoryRemote implements AppRepository {
       return Result.error(exception);
     }
   }
+
+  @override
+  Future<Result<void>> updateAssistantDailyLimit({
+    required int updatedDailyLimit,
+  }) async {
+    final result = await _updateAppPreferences(
+      _appPreferences.value.copyWith(assistantDailyLimit: updatedDailyLimit),
+    );
+    switch (result) {
+      case Ok():
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.asError.error);
+    }
+  }
 }

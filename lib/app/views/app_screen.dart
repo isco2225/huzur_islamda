@@ -33,6 +33,7 @@ class AppScreen extends StatefulWidget {
     required this.dhikrMoodService,
     required this.reportRepository,
     required this.reportService,
+    required this.assistantUseCase,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -59,6 +60,7 @@ class AppScreen extends StatefulWidget {
   final DhikrMoodService dhikrMoodService;
   final ReportRepository reportRepository;
   final ReportService reportService;
+  final AssistantUseCase assistantUseCase;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -131,6 +133,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.syncPermissionUseCase),
         Provider(create: (_) => widget.wipeDataUseCase),
         Provider(create: (_) => widget.showAdUseCase),
+        Provider(create: (_) => widget.assistantUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 import '../../../data/data.dart';
 
@@ -18,9 +19,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
   void initState() {
     super.initState();
     _viewModel = AssistantViewModel(
-      assistantRepository: context.read<AssistantRepository>(),
+      assistantUseCase: context.read<AssistantUseCase>(),
+      connectivityUseCase: context.read<ConnectivityUseCase>(),
       userRepository: context.read<UserRepository>(),
     );
+    _viewModel.sendMessage.handleError(context);
   }
 
   @override

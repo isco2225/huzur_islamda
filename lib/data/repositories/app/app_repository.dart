@@ -16,4 +16,7 @@ abstract class AppRepository {
   Future<Result<void>> updateIsOnboardingCompleted({
     required bool isOnboardingCompleted,
   });
+  Future<Result<void>> updateAssistantDailyLimit({
+    required int updatedDailyLimit,
+  });
 }

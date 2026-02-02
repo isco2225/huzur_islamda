@@ -11,3 +11,4 @@ export 'prayer/prayer.dart';
 export 'purchase/purchase.dart';
 export 'user/user.dart';
 export 'vibration/vibration.dart';
+export 'assistant/assistant.dart';
