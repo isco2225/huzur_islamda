@@ -102,6 +102,7 @@ void main() async {
   );
   final showAdUseCase = ShowAdUseCase(admobService: admobService);
   final assistantService = AssistantService();
+  final reportService = ReportService();
   runApp(
     AppScreen(
       assistantRepository: AssistantRepositoryRemote(
@@ -141,6 +142,9 @@ void main() async {
         notificationService: notificationService,
       ),
       wipeDataUseCase: wipeDataUseCase,
+      dhikrMoodService: DhikrMoodService(),
+      reportRepository: ReportRepositoryRemote(reportService: reportService),
+      reportService: reportService,
     ),
   );
 }

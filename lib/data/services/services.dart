@@ -11,3 +11,4 @@ export 'shared_preferences_sevice.dart';
 export 'notification_service.dart';
 export 'admob_service.dart';
 export 'assistant_service.dart';
+export 'report_service.dart';

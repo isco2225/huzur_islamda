@@ -30,6 +30,9 @@ class AppScreen extends StatefulWidget {
     required this.wipeDataUseCase,
     required this.assistantRepository,
     required this.assistantService,
+    required this.dhikrMoodService,
+    required this.reportRepository,
+    required this.reportService,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -53,7 +56,9 @@ class AppScreen extends StatefulWidget {
   final WipeDataUseCase wipeDataUseCase;
   final AssistantRepository assistantRepository;
   final AssistantService assistantService;
-
+  final DhikrMoodService dhikrMoodService;
+  final ReportRepository reportRepository;
+  final ReportService reportService;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -110,10 +115,12 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.prayerRepository),
         Provider(create: (_) => widget.notificationRepository),
         Provider(create: (_) => widget.assistantRepository),
+        Provider(create: (_) => widget.reportRepository),
         Provider(create: (_) => widget.notificationService),
         Provider(create: (_) => widget.admobService),
         Provider(create: (_) => widget.assistantService),
-        Provider(create: (_) => DhikrMoodService()),
+        Provider(create: (_) => widget.dhikrMoodService),
+        Provider(create: (_) => widget.reportService),
         // use cases
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.prayerTimeUseCase),
