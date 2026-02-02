@@ -5,9 +5,13 @@ import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class FlowCard extends StatelessWidget {
-  const FlowCard({super.key, required this.post});
+  const FlowCard({
+    super.key,
+    required this.post,
+    required this.postReportViewModel,
+  });
   final Post post;
-
+  final PostReportViewModel postReportViewModel;
   Color _getBorderColor(ContentType contentType) {
     switch (contentType) {
       case ContentType.dua:
@@ -67,7 +71,14 @@ class FlowCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        PopMenuButton(),
+                        PopMenuButton(
+                          onShareTapped: () {
+                            print('share');
+                          },
+                          onReportTapped: () {
+                            _showReportBottomSheet(context);
+                          },
+                        ),
                       ],
                     ),
                     SizedBox(height: responsive.spacingExtraSmall),
@@ -131,6 +142,22 @@ class FlowCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showReportBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return ReportPostBottomSheet(
+          post: post,
+          postReportViewModel: postReportViewModel,
+        );
+      },
     );
   }
 }

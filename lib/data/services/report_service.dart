@@ -20,7 +20,7 @@ class ReportService {
       };
       await _firestore
           .collection(_collectionName)
-          .doc(reportedPostId)
+          .doc(reportedPostId + reporterId)
           .set(reportData);
       return Result.ok(null);
     } on FirebaseException catch (e) {

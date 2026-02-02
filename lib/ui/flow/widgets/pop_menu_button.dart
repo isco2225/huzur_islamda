@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../app/app.dart';
 
 class PopMenuButton extends StatelessWidget {
-  const PopMenuButton({super.key});
+  const PopMenuButton({
+    super.key,
+    required this.onShareTapped,
+    required this.onReportTapped,
+  });
+  final Function() onShareTapped;
+  final Function() onReportTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,7 @@ class PopMenuButton extends StatelessWidget {
       itemBuilder: (context) => [
         PopupMenuItem(
           onTap: () {
-            print('share');
+            onShareTapped();
           },
           value: 'share',
           child: Row(
@@ -27,7 +33,7 @@ class PopMenuButton extends StatelessWidget {
         ),
         PopupMenuItem(
           onTap: () {
-            print('report');
+            onReportTapped();
           },
           value: 'report',
           child: Row(

@@ -12,15 +12,24 @@ class FlowScreen extends StatefulWidget {
 }
 
 class _FlowScreenState extends State<FlowScreen> {
-  late final FetchPostsViewModel _viewModel;
-
+  late final FetchPostsViewModel _fetchPostsViewModel;
+  late final PostReportViewModel _postReportViewModel;
   @override
   void initState() {
     super.initState();
-    _viewModel = FetchPostsViewModel(
+    _fetchPostsViewModel = FetchPostsViewModel(
       postRepository: context.read<PostRepository>(),
     );
-    _viewModel.fetchPosts.handleError(context, showSnackBar: true);
+    _postReportViewModel = PostReportViewModel(
+      reportRepository: context.read<ReportRepository>(),
+      userRepository: context.read<UserRepository>(),
+    );
+    _fetchPostsViewModel.fetchPosts.handleError(context, showSnackBar: true);
+    _postReportViewModel.reportPost.handleError(context, showSnackBar: true);
+    _postReportViewModel.reportPost.handleCompleted(
+      context,
+      successMessage: 'Şikayetiniz alındı!',
+    );
     // _viewModel.fetchPosts.handleCompleted(
     //   context,
     //   successMessage: 'Posts fetched successfully',
@@ -29,12 +38,16 @@ class _FlowScreenState extends State<FlowScreen> {
 
   @override
   void dispose() {
-    _viewModel.dispose();
+    _fetchPostsViewModel.dispose();
+    _postReportViewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlowView(viewModel: _viewModel);
+    return FlowView(
+      fetchPostsViewModel: _fetchPostsViewModel,
+      postReportViewModel: _postReportViewModel,
+    );
   }
 }

@@ -21,7 +21,7 @@ class PostDetailView extends StatelessWidget {
         title: const Text('Gönderi Detayı'),
         backgroundColor: AppColors.background,
         elevation: 0,
-        actions: const [PopMenuButton()],
+        actions: [PopMenuButton(onShareTapped: () {}, onReportTapped: () {})],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

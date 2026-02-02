@@ -4,10 +4,14 @@ import '../../../../app/app.dart';
 import '../../ui.dart';
 
 class FlowView extends StatelessWidget {
-  const FlowView({super.key, required this.viewModel});
+  const FlowView({
+    super.key,
+    required this.fetchPostsViewModel,
+    required this.postReportViewModel,
+  });
 
-  final FetchPostsViewModel viewModel;
-
+  final FetchPostsViewModel fetchPostsViewModel;
+  final PostReportViewModel postReportViewModel;
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
@@ -17,7 +21,8 @@ class FlowView extends StatelessWidget {
         children: [
           Expanded(
             child: InfinityScrollablePosts(
-              fetchPostsViewModel: viewModel,
+              fetchPostsViewModel: fetchPostsViewModel,
+              postReportViewModel: postReportViewModel,
               noItemsToShowWidget: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -37,11 +42,11 @@ class FlowView extends StatelessWidget {
                   ],
                 ),
               ),
-              onFetch: () => viewModel.fetchPosts.execute(),
-              posts: viewModel.posts,
-              hasError: viewModel.fetchPosts.error,
-              isFetching: viewModel.fetchPosts.running,
-              isAllItemsFetched: viewModel.isAllItemsFetched,
+              onFetch: () => fetchPostsViewModel.fetchPosts.execute(),
+              posts: fetchPostsViewModel.posts,
+              hasError: fetchPostsViewModel.fetchPosts.error,
+              isFetching: fetchPostsViewModel.fetchPosts.running,
+              isAllItemsFetched: fetchPostsViewModel.isAllItemsFetched,
             ),
           ),
           const BannerAdWidget(),
