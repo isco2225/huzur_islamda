@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Battery optimization'dan muafiyet için (Samsung cihazlar için önemli) -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <!-- vibration permission -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
     
     <application
         android:label="ibadet rehberim"

@@ -27,4 +27,11 @@ class VibrationUseCase {
     if (!appPreferences.value.isVibrationEnabled) return;
     await HapticFeedback.heavyImpact();
   }
+
+  static Future<void> selectionClick(BuildContext context) async {
+    final appRepository = context.read<AppRepository>();
+    final appPreferences = appRepository.appPreferences;
+    if (!appPreferences.value.isVibrationEnabled) return;
+    await HapticFeedback.selectionClick();
+  }
 }
