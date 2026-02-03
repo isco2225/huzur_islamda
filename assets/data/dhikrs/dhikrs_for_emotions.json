@@ -1,293 +1,438 @@
 {
-    "version": "1.0.0",
-    "moods": [
-      {
-        "id": "distressed",
-        "title": "Daralmış & Bunalmış",
-        "icon_asset": "assets/icons/mood_distressed.png",
-        "color_hex": "#607D8B",
-        "suggestions": [
-          {
-            "id": "ya_basit",
-            "arabic": "يَا بَاسِطُ",
-            "pronunciation": "Ya Bâsit",
-            "meaning": "Ruhları ve rızıkları genişleten, ferahlatan.",
-            "benefit": "Kalpteki sıkıntıyı genişletmek ve ferahlık vermek için okunur.",
-            "default_target": 33
-          },
-          {
-            "id": "yunus_duasi",
-            "arabic": "لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
-            "pronunciation": "La ilahe illa ente subhaneke inni kuntu minezzalimin",
-            "meaning": "Senden başka ilah yoktur, Sen münezzehsin, ben zalimlerden oldum.",
-            "benefit": "Karanlıklardan aydınlığa çıkmak ve gamdan kurtulmak için en etkili duadır.",
-            "default_target": 100
-          },
-          {
-            "id": "ya_fettah",
-            "arabic": "يَا فَتَّاحُ",
-            "pronunciation": "Ya Fettah",
-            "meaning": "Her türlü kapalı kapıları açan.",
-            "benefit": "Çözümsüz görünen sorunların düğümünü çözmek için okunur.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "anxious",
-        "title": "Kaygılı & Endişeli",
-        "icon_asset": "assets/icons/mood_anxious.png",
-        "color_hex": "#FF9800",
-        "suggestions": [
-          {
-            "id": "hasbunallah",
-            "arabic": "حَسْبُنَا اللّٰهُ وَنِعْمَ الْوَك۪يلُ",
-            "pronunciation": "Hasbunallahu ve ni'mel vekil",
-            "meaning": "Allah bize yeter, O ne güzel vekildir.",
-            "benefit": "Kontrol edemediğin durumları Allah'a bırakarak yükü hafifletir.",
-            "default_target": 100
-          },
-          {
-            "id": "ya_selam",
-            "arabic": "يَا سَلَامُ",
-            "pronunciation": "Ya Selâm",
-            "meaning": "Esenlik veren, tehlikelerden selamete çıkaran.",
-            "benefit": "Kalpteki korku ve paniği sakinleştirip huzur verir.",
-            "default_target": 33
-          },
-          {
-            "id": "la_havle",
-            "arabic": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-            "pronunciation": "La havle ve la kuvvete illa billah",
-            "meaning": "Güç ve kuvvet ancak Allah’tadır.",
-            "benefit": "İnsanın acizliğini kabul edip Allah'a güvenmesini sağlar.",
-            "default_target": 100
-          }
-        ]
-      },
-      {
-        "id": "lonely",
-        "title": "Yalnız & Kimsesiz",
-        "icon_asset": "assets/icons/mood_lonely.png",
-        "color_hex": "#9C27B0",
-        "suggestions": [
-          {
-            "id": "ya_vedud",
-            "arabic": "يَا وَدُودُ",
-            "pronunciation": "Ya Vedûd",
-            "meaning": "Çok seven ve çok sevilen.",
-            "benefit": "Allah’ın kuluna olan sevgisini hatırlatır, kalbe şifa olur.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_enis",
-            "arabic": "يَا أَنِيسُ",
-            "pronunciation": "Ya Enîs",
-            "meaning": "Dost, arkadaş, ünsiyet veren.",
-            "benefit": "Yalnızlık anında Allah'ın en yakın dost olduğunu hissettirir.",
-            "default_target": 33
-          },
-          {
-            "id": "zekeriya_duasi",
-            "arabic": "رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنتَ خَيْرُ الْوَارِثِينَ",
-            "pronunciation": "Rabbi la tezerni ferden ve ente hayrul varisin",
-            "meaning": "Rabbim beni tek başıma bırakma, Sen varislerin en hayırlısısın.",
-            "benefit": "Yalnızlıktan Allah’a sığınmak için okunan peygamber duasıdır.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "angry",
-        "title": "Öfkeli & Sinirli",
-        "icon_asset": "assets/icons/mood_angry.png",
-        "color_hex": "#F44336",
-        "suggestions": [
-          {
-            "id": "euzu_besmele",
-            "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-            "pronunciation": "Euzu billahi mineş-şeytanir-racim",
-            "meaning": "Kovulmuş şeytanın şerrinden Allah'a sığınırım.",
-            "benefit": "Öfke ateşini söndürmek için en etkili ilk çaredir.",
-            "default_target": 10
-          },
-          {
-            "id": "ya_halim",
-            "arabic": "يَا حَلِيمُ",
-            "pronunciation": "Ya Halîm",
-            "meaning": "Yumuşak davranan, cezada acele etmeyen.",
-            "benefit": "Sinirleri yatıştırmak ve sükunet bulmak için okunur.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_sabur",
-            "arabic": "يَا صَبُورُ",
-            "pronunciation": "Ya Sabûr",
-            "meaning": "Çok sabırlı olan.",
-            "benefit": "Zorluklar karşısında sabır gücünü artırmak için zikredilir.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "tired",
-        "title": "Yorgun & Tembel",
-        "icon_asset": "assets/icons/mood_tired.png",
-        "color_hex": "#795548",
-        "suggestions": [
-          {
-            "id": "ya_hayy_ya_kayyum",
-            "arabic": "يَا حَيُّ يَا قَيُّومُ",
-            "pronunciation": "Ya Hayy, Ya Kayyum",
-            "meaning": "Ey (ebedi) Hayat Sahibi, Ey her şeyi ayakta tutan.",
-            "benefit": "Manevi diriliş ve enerji kazanmak için okunur.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_kaviyy",
-            "arabic": "يَا قَوِيُّ",
-            "pronunciation": "Ya Kaviyy",
-            "meaning": "Pek kuvvetli, gücü her şeye yeten.",
-            "benefit": "Fiziksel ve ruhsal zayıflığı gidermek, güç kazanmak için.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "confused",
-        "title": "Kararsız & Şaşkın",
-        "icon_asset": "assets/icons/mood_confused.png",
-        "color_hex": "#9E9E9E",
-        "suggestions": [
-          {
-            "id": "ya_hadi",
-            "arabic": "يَا هَادِي",
-            "pronunciation": "Ya Hâdi",
-            "meaning": "Hidayet veren, doğru yolu gösteren.",
-            "benefit": "Zihni berraklaştırmak ve doğru kararı verebilmek için.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_resid",
-            "arabic": "يَا رَشِيدُ",
-            "pronunciation": "Ya Reşîd",
-            "meaning": "İşleri en doğru sonuca ulaştıran.",
-            "benefit": "İşlerin sonunun hayırlı olması ve yanlış yapmamak için.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "guilty",
-        "title": "Pişman & Suçlu",
-        "icon_asset": "assets/icons/mood_guilty.png",
-        "color_hex": "#673AB7",
-        "suggestions": [
-          {
-            "id": "estagfirullah",
-            "arabic": "أَسْتَغْفِرُ اللّٰهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ",
-            "pronunciation": "Estağfirullah el-Azim ve etubu ileyh",
-            "meaning": "Yüce Allah’tan bağışlanma diler ve O’na tövbe ederim.",
-            "benefit": "Kalpteki günah ağırlığını atmak ve manevi temizlik için.",
-            "default_target": 100
-          },
-          {
-            "id": "ya_gaffar",
-            "arabic": "يَا غَفَّارُ",
-            "pronunciation": "Ya Gaffâr",
-            "meaning": "Günahları tekrar tekrar, çokça bağışlayan.",
-            "benefit": "Allah'ın affediciliğini hatırlayarak ümitle dolmak için.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_afuvv",
-            "arabic": "يَا عَفُوُّ",
-            "pronunciation": "Ya Afuvv",
-            "meaning": "Affeden, günahları silip yok eden.",
-            "benefit": "Günahın hiç işlenmemiş gibi silinmesi niyetiyle okunur.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "financial_stress",
-        "title": "Geçim Kaygısı",
-        "icon_asset": "assets/icons/mood_financial.png",
-        "color_hex": "#4CAF50",
-        "suggestions": [
-          {
-            "id": "ya_rezzak",
-            "arabic": "يَا رَزَّاقُ",
-            "pronunciation": "Ya Rezzâk",
-            "meaning": "Bütün mahlukatın rızkını veren.",
-            "benefit": "Rızkın kefilinin Allah olduğunu hatırlatır, bereket getirir.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_vehhab",
-            "arabic": "يَا وَهَّابُ",
-            "pronunciation": "Ya Vehhâb",
-            "meaning": "Karşılıksız ve bolca veren.",
-            "benefit": "Umulmadık kapıların açılması için Allah'tan istenir.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "hopeless",
-        "title": "Umutsuz",
-        "icon_asset": "assets/icons/mood_hopeless.png",
-        "color_hex": "#37474F",
-        "suggestions": [
-          {
-            "id": "la_taknetu",
-            "arabic": "لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ",
-            "pronunciation": "La taknetû min rahmetillah",
-            "meaning": "Allah’ın rahmetinden ümidinizi kesmeyin.",
-            "benefit": "En büyük teselli kaynağıdır, ümitsizliği giderir.",
-            "default_target": 33
-          },
-          {
-            "id": "ya_mucib",
-            "arabic": "يَا مُجِيبُ",
-            "pronunciation": "Ya Mucîb",
-            "meaning": "Dualara icabet eden, karşılık veren.",
-            "benefit": "Allah'ın sesinizi duyduğunu bilmek güven verir.",
-            "default_target": 33
-          }
-        ]
-      },
-      {
-        "id": "happy",
-        "title": "Mutlu & Şükür Dolu",
-        "icon_asset": "assets/icons/mood_happy.png",
-        "color_hex": "#FFC107",
-        "suggestions": [
-          {
-            "id": "elhamdulillah",
-            "arabic": "الْحَمْدُ لِلَّهِ",
-            "pronunciation": "Elhamdülillah",
-            "meaning": "Hamd (övgü) Allah'adır.",
-            "benefit": "Mutluluğun ve nimetin artması şükürle mümkündür.",
-            "default_target": 100
-          },
-          {
-            "id": "subhanallah_bihamdihi",
-            "arabic": "سُبْحَانَ اللّٰهِ وَبِحَمْدِهِ",
-            "pronunciation": "Subhanallahi ve bihamdihi",
-            "meaning": "Allah’ı hamd ile tesbih ederim.",
-            "benefit": "Mutluluk anında Allah'ı yüceltmek manevi dereceyi artırır.",
-            "default_target": 100
-          },
-          {
-            "id": "ya_sekur",
-            "arabic": "يَا شَكُورُ",
-            "pronunciation": "Ya Şekûr",
-            "meaning": "Az amele çok sevap veren, şükrü kabul eden.",
-            "benefit": "Allah'ın kulunun mutluluğundan memnun olduğunu hissettirir.",
-            "default_target": 33
-          }
-        ]
-      }
-    ]
-  }
+  "version": "1.1.0",
+  "moods": [
+    {
+      "id": "distressed",
+      "title": "Daralmış & Bunalmış",
+      "color_hex": "#607D8B",
+      "suggestions": [
+        {
+          "id": "ya_basit",
+          "arabic": "يَا بَاسِطُ",
+          "pronunciation": "Ya Bâsit",
+          "meaning": "Ruhları ve rızıkları genişleten, ferahlatan.",
+          "benefit": "İç sıkıntısını gidermek, ruha genişlik ve ferahlık vermek için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "yunus_duasi",
+          "arabic": "لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
+          "pronunciation": "La ilahe illa ente subhaneke inni kuntu minezzalimin",
+          "meaning": "Senden başka ilah yoktur, Sen münezzehsin, ben zalimlerden oldum.",
+          "benefit": "Çaresiz anlarda ve karanlıktan aydınlığa çıkmak istendiğinde okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "insirah_suresi",
+          "arabic": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا",
+          "pronunciation": "Fe inne meal usri yusra",
+          "meaning": "Muhakkak ki zorlukla beraber bir kolaylık vardır.",
+          "benefit": "Göğüs daralmasına karşı kalbi genişletmek ve umudu tazelemek için okunur.",
+          "default_target": 7
+        }
+      ]
+    },
+    {
+      "id": "anxious",
+      "title": "Endişeli & Kaygılı",
+      "color_hex": "#9C27B0",
+      "suggestions": [
+        {
+          "id": "hasbunallah",
+          "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+          "pronunciation": "Hasbunallahu ve ni'mel vekil",
+          "meaning": "Allah bize yeter, O ne güzel vekildir.",
+          "benefit": "Gelecek korkusu ve belirsizlik durumunda Allah'a güvenmek için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_selam",
+          "arabic": "يَا سَلاَمُ",
+          "pronunciation": "Ya Selâm",
+          "meaning": "Esenlik veren, tehlikelerden selamete çıkaran.",
+          "benefit": "Panik ve korku anında sakinleşmek, selamete ermek için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "la_havle",
+          "arabic": "لاَ حَوْلَ وَلاَ قُوَّةَ اِلاَّ بِاللهِ",
+          "pronunciation": "La havle ve la kuvvete illa billah",
+          "meaning": "Güç ve kuvvet ancak Allah'tandır.",
+          "benefit": "Kendi gücünün yetmediği durumlarda yükü Allah'a bırakıp hafiflemek için okunur.",
+          "default_target": 100
+        }
+      ]
+    },
+    {
+      "id": "angry",
+      "title": "Öfkeli & Sinirli",
+      "color_hex": "#D32F2F",
+      "suggestions": [
+        {
+          "id": "ya_halim",
+          "arabic": "يَا حَلِيمُ",
+          "pronunciation": "Ya Halîm",
+          "meaning": "Yumuşak davranan, acele etmeyen.",
+          "benefit": "Öfke ateşini söndürmek, sinirleri yatıştırmak ve sükunet bulmak için okunur.",
+          "default_target": 88
+        },
+        {
+          "id": "euzu_besmele",
+          "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+          "pronunciation": "Euzü billahi mineş-şeytanir-racim",
+          "meaning": "Kovulmuş şeytandan Allah'a sığınırım.",
+          "benefit": "Öfke anında şeytanın vesvesesinden ve dürtülerinden kaçınmak için ilk çaredir.",
+          "default_target": 7
+        },
+        {
+          "id": "wal_kaziminal_gayz",
+          "arabic": "وَالْكَاظِمِينَ الْغَيْظَ وَالْعَافِينَ عَنِ النَّاسِ",
+          "pronunciation": "Vel kaziminel gayza vel afine anin nas",
+          "meaning": "O takva sahipleri ki, öfkelerini yutarlar ve insanları affederler.",
+          "benefit": "İntikam alma isteğini bastırmak ve affedici olabilmek için okunur.",
+          "default_target": 3
+        }
+      ]
+    },
+    {
+      "id": "insomnia",
+      "title": "Uykusuz & Huzursuz",
+      "color_hex": "#1A237E",
+      "suggestions": [
+        {
+          "id": "ya_bais",
+          "arabic": "يَا بَاعِثُ",
+          "pronunciation": "Ya Bâis",
+          "meaning": "Ölüleri dirilten, peygamberler gönderen, uykudan uyandıran.",
+          "benefit": "Elini göğsüne koyup okuyanın hikmet ve huzur bulması, uykuya rahat geçmesi için tavsiye edilir.",
+          "default_target": 100
+        },
+        {
+          "id": "uyku_duasi",
+          "arabic": "اللَّهُمَّ غَارَتِ النُّجُومُ وَهَدَأَتِ الْعُيُونُ",
+          "pronunciation": "Allahumme ğaratin nucum ve hedeetil uyun",
+          "meaning": "Allah'ım, yıldızlar battı, gözler sakinleşti (uyudu).",
+          "benefit": "Uykusu kaçanların huzurla uykuya dalabilmesi için Peygamber Efendimiz'in tavsiye ettiği duadır.",
+          "default_target": 3
+        }
+      ]
+    },
+    {
+      "id": "debt",
+      "title": "Borçlu & Maddi Sıkıntıda",
+      "color_hex": "#5D4037",
+      "suggestions": [
+        {
+          "id": "borc_duasi",
+          "arabic": "اللَّهُمَّ اكْفِنِي بِحَلاَلِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+          "pronunciation": "Allahummakfini bi helalike an haramike ve ağnini bi fazlike ammen sivak",
+          "meaning": "Allah'ım! Bana helâl rızık nasip ederek beni haramdan koru! Lütfunla beni Senden başkasına muhtaç etme!",
+          "benefit": "Borç yükünden kurtulmak ve maddi ferahlığa erişmek için çok etkili bir duadır.",
+          "default_target": 7
+        },
+        {
+          "id": "ya_mugni",
+          "arabic": "يَا مُغْنِي",
+          "pronunciation": "Ya Muğnî",
+          "meaning": "İstediğini zengin kılan, ihtiyaç gideren.",
+          "benefit": "Maddi darlık çekenlerin rızkının genişlemesi ve başkalarına muhtaç olmaması için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_gani",
+          "arabic": "يَا غَنِيُّ",
+          "pronunciation": "Ya Ganiyy",
+          "meaning": "Çok zengin, hiçbir şeye muhtaç olmayan.",
+          "benefit": "Manevi ve maddi zenginlik, kanaat sahibi olmak için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "sick",
+      "title": "Hasta & Şifa Arayan",
+      "color_hex": "#009688",
+      "suggestions": [
+        {
+          "id": "ya_safi",
+          "arabic": "يَا شَافِي",
+          "pronunciation": "Ya Şâfi",
+          "meaning": "Şifa veren, hastalıkları iyileştiren.",
+          "benefit": "Maddi ve manevi hastalıkların iyileşmesi, ağrıların dinmesi için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "sifa_duasi",
+          "arabic": "أَذْهِبِ الْبَأْسَ رَبَّ النَّاسِ أَشْفِ وَأَنْتَ الشَّافِي",
+          "pronunciation": "Ezhibil be'se Rabbin nasi eşfi ve ente'ş şafi",
+          "meaning": "Bu hastalığı gider ey insanların Rabbi! Şifa ver, çünkü şifa verici Sensin.",
+          "benefit": "Hasta olan kişiye veya ağrıyan yere el konularak okunur.",
+          "default_target": 7
+        },
+        {
+          "id": "ya_muhyi",
+          "arabic": "يَا مُحْيِي",
+          "pronunciation": "Ya Muhyî",
+          "meaning": "Can bağışlayan, hayat veren.",
+          "benefit": "Vücudun direncinin artması ve sağlığın tazelenmesi için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "envious_eye",
+      "title": "Nazara Gelmiş & Halsiz",
+      "color_hex": "#4A148C",
+      "suggestions": [
+        {
+          "id": "kalem_suresi",
+          "arabic": "وَإِن يَكَادُ الَّذِينَ كَفَرُوا لَيُزْلِقُونَكَ بِأَبْصَارِهِمْ",
+          "pronunciation": "Ve in yekadullezine keferu le yuzlikuneke bi ebsarihim...",
+          "meaning": "O inkar edenler, Kur'an'ı işittikleri zaman neredeyse seni gözleriyle devireceklerdi.",
+          "benefit": "Nazarın (göz değmesinin) etkisinden korunmak ve kurtulmak için en etkili ayetlerdendir.",
+          "default_target": 7
+        },
+        {
+          "id": "masallah",
+          "arabic": "مَا شَاءَ اللَّهُ لَا قُوَّةَ إِلَّا بِاللَّهِ",
+          "pronunciation": "Maşaallahu la kuvvete illa billah",
+          "meaning": "Allah'ın dilediği olur, kuvvet ancak Allah'tandır.",
+          "benefit": "Kişinin hem kendini hem sevdiklerini nazardan koruması için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "ya_hafiz",
+          "arabic": "يَا حَفِيظُ",
+          "pronunciation": "Ya Hafîz",
+          "meaning": "Koruyan, gözeten, muhafaza eden.",
+          "benefit": "Her türlü kazadan, beladan ve kötü enerjiden korunmak için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "lonely",
+      "title": "Yalnız & Kimsesiz",
+      "color_hex": "#3F51B5",
+      "suggestions": [
+        {
+          "id": "ya_vedud",
+          "arabic": "يَا وَدُودُ",
+          "pronunciation": "Ya Vedûd",
+          "meaning": "Seven ve sevilmeye layık olan.",
+          "benefit": "Yalnızlık hissini gidermek, Allah'ın sevgisini hissetmek ve insanlar tarafından sevilmek için.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_enis",
+          "arabic": "يَا أَنِيسُ",
+          "pronunciation": "Ya Enis",
+          "meaning": "Dost, yakın arkadaş.",
+          "benefit": "Kimsesizlik hissine kapılınca Allah'ın en yakın dost olduğunu hatırlamak için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "ya_mucib",
+          "arabic": "يَا مُجِيبُ",
+          "pronunciation": "Ya Mücib",
+          "meaning": "Duaları kabul eden.",
+          "benefit": "Sesinin duyulmadığını hissedenlerin dualarına icabet edildiğini bilmesi için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "distracted",
+      "title": "Odaklanamayan (Sınav/İş)",
+      "color_hex": "#FF9800",
+      "suggestions": [
+        {
+          "id": "rabbi_zidni",
+          "arabic": "رَبِّ زِدْنِي عِلْمًا",
+          "pronunciation": "Rabbi zidni ilma",
+          "meaning": "Rabbim, ilmimi artır.",
+          "benefit": "Zihin açıklığı, hafıza kuvveti ve öğrenme kolaylığı için (özellikle sınav öncesi) okunur.",
+          "default_target": 11
+        },
+        {
+          "id": "ya_alim",
+          "arabic": "يَا عَلِيمُ",
+          "pronunciation": "Ya Alîm",
+          "meaning": "Her şeyi hakkıyla bilen.",
+          "benefit": "Anlama kabiliyetini artırmak ve unutkanlığı gidermek için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "kalem_duasi",
+          "arabic": "ن ۚ وَالْقَلَمِ وَمَا يَسْطُرُونَ",
+          "pronunciation": "Nun, vel kalemi ve ma yesturun",
+          "meaning": "Nun. Kaleme ve satır satır yazdıklarına andolsun.",
+          "benefit": "İlim tahsil edenlerin ve yazı/fikir işiyle uğraşanların odaklanması için okunur.",
+          "default_target": 7
+        }
+      ]
+    },
+    {
+      "id": "impatient",
+      "title": "Sabırsız & Aceleci",
+      "color_hex": "#8D6E63",
+      "suggestions": [
+        {
+          "id": "ya_sabur",
+          "arabic": "يَا صَبُورُ",
+          "pronunciation": "Ya Sabûr",
+          "meaning": "Çok sabırlı.",
+          "benefit": "Zorluklara karşı dayanma gücü ve acelecilikten kurtulup sükunet bulmak için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "innallahe_maassabirin",
+          "arabic": "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+          "pronunciation": "İnnallahe meas sâbirîn",
+          "meaning": "Şüphesiz Allah sabredenlerle beraberdir.",
+          "benefit": "Beklenilen bir haber veya olay karşısında metaneti korumak için zikredilir.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "lazy",
+      "title": "Tembel & Ataletli",
+      "color_hex": "#795548",
+      "suggestions": [
+        {
+          "id": "ya_hayy_ya_kayyum",
+          "arabic": "يَا حَيُّ يَا قَيُّومُ",
+          "pronunciation": "Ya Hayyu Ya Kayyum",
+          "meaning": "Ey daima diri olan ve her şeyi ayakta tutan.",
+          "benefit": "Üzerindeki ağırlığı atmak, canlanmak ve enerji kazanmak için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_kaviyy",
+          "arabic": "يَا قَوِيُّ",
+          "pronunciation": "Ya Kaviyy",
+          "meaning": "Pek güçlü, kuvvetli.",
+          "benefit": "Bedensel ve zihinsel yorgunluğu gidermek, iradeyi çelikleştirmek için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "grateful",
+      "title": "Mutlu & Şükür Halinde",
+      "color_hex": "#4CAF50",
+      "suggestions": [
+        {
+          "id": "elhamdulillah",
+          "arabic": "الْحَمْدُ لِلَّهِ",
+          "pronunciation": "Elhamdülillah",
+          "meaning": "Hamd (övgü) Allah'a mahsustur.",
+          "benefit": "Nimetlerin artması ve şükrün edası için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_sekur",
+          "arabic": "يَا شَكُورُ",
+          "pronunciation": "Ya Şekûr",
+          "meaning": "Az amele çok sevap veren.",
+          "benefit": "Allah'ın verdiği nimetlerin farkına varmak ve bereketi artırmak için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "subhanallah",
+          "arabic": "سُبْحَانَ اللهِ",
+          "pronunciation": "Sübhanallah",
+          "meaning": "Allah noksan sıfatlardan münezzehtir.",
+          "benefit": "Güzellikler karşısında hayranlığı ifade etmek için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "regretful",
+      "title": "Pişman & Tövbekar",
+      "color_hex": "#006064",
+      "suggestions": [
+        {
+          "id": "estagfirullah",
+          "arabic": "أَسْتَغْفِرُ اللَّهَ",
+          "pronunciation": "Estağfirullah",
+          "meaning": "Allah'tan bağışlanma dilerim.",
+          "benefit": "Günahların ağırlığından kurtulmak ve manevi temizlik için okunur.",
+          "default_target": 100
+        },
+        {
+          "id": "seyyidul_istigfar",
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ",
+          "pronunciation": "Allahumme ente Rabbi la ilahe illa ente...",
+          "meaning": "Allah'ım sen benim Rabbimsin, Senden başka ilah yoktur...",
+          "benefit": "Tövbelerin en üstünüdür, samimiyetle okuyanın cenneti umulur.",
+          "default_target": 1
+        },
+        {
+          "id": "ya_affuv",
+          "arabic": "يَا عَفُوُّ",
+          "pronunciation": "Ya Afuww",
+          "meaning": "Affedici, günahları silip yok eden.",
+          "benefit": "Hataların izlerinin silinmesi ve vicdanın rahatlaması için okunur.",
+          "default_target": 33
+        }
+      ]
+    },
+    {
+      "id": "relationship",
+      "title": "Kırgın & Ailevi Sorunlu",
+      "color_hex": "#E91E63",
+      "suggestions": [
+        {
+          "id": "ya_cami",
+          "arabic": "يَا جَامِعُ",
+          "pronunciation": "Ya Câmi",
+          "meaning": "İstediğini istediği zaman, istediği yerde toplayan.",
+          "benefit": "Dağınık işleri toparlamak, küsleri barıştırmak ve aile birliğini sağlamak için okunur.",
+          "default_target": 33
+        },
+        {
+          "id": "ya_latif",
+          "arabic": "يَا لَطِيفُ",
+          "pronunciation": "Ya Latîf",
+          "meaning": "Lütuf ve ihsan sahibi, en ince işlerin bütün inceliklerini bilen.",
+          "benefit": "Katı kalpleri yumuşatmak, evdeki huzursuzluğu gidermek ve işleri yoluna koymak için.",
+          "default_target": 129
+        }
+      ]
+    },
+    {
+      "id": "weak_faith",
+      "title": "Manevi Boşlukta",
+      "color_hex": "#9E9E9E",
+      "suggestions": [
+        {
+          "id": "ya_allah",
+          "arabic": "يَا اَللَّهُ",
+          "pronunciation": "Ya Allah",
+          "meaning": "Eşi benzeri olmayan, bütün noksan sıfatlardan münezzeh.",
+          "benefit": "İmanı tazelemek, kalbi nurlandırmak ve şüphelerden arınmak için okunur.",
+          "default_target": 66
+        },
+        {
+          "id": "salavat",
+          "arabic": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
+          "pronunciation": "Allahümme salli ala Muhammedin ve ala ali Muhammed",
+          "meaning": "Allah'ım Muhammed'e ve Muhammed'in ailesine salat eyle.",
+          "benefit": "Peygamber Efendimiz ile manevi bağ kurmak ve duaların kabulü için.",
+          "default_target": 100
+        },
+        {
+          "id": "ya_nur",
+          "arabic": "يَا نُورُ",
+          "pronunciation": "Ya Nûr",
+          "meaning": "Alemleri nurlandıran.",
+          "benefit": "Kalp katılığını gidermek ve imanın tadını almak için okunur.",
+          "default_target": 33
+        }
+      ]
+    }
+  ]
+}
