@@ -38,7 +38,7 @@ class AppColors {
   // Content colors.
   static const Color duaColor = Color(0xFFE65100);
   static const Color hadisColor = Color(0xFF2E7D32);
-  static const Color ayetColor = Color(0xFF1565C0);
+  static const Color kuranColor = Color(0xFF1565C0);
 
   // Gender colors.
   static const Color maleColor = Colors.blueAccent;

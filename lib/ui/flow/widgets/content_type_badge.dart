@@ -13,8 +13,8 @@ class ContentTypeBadge extends StatelessWidget {
     switch (type) {
       case ContentType.hadis:
         return AppColors.hadisColor.withValues(alpha: 0.1);
-      case ContentType.ayet:
-        return AppColors.ayetColor.withValues(alpha: 0.1);
+      case ContentType.kuran:
+        return AppColors.kuranColor.withValues(alpha: 0.1);
       case ContentType.dua:
         return AppColors.duaColor.withValues(alpha: 0.1);
     }
@@ -24,8 +24,8 @@ class ContentTypeBadge extends StatelessWidget {
     switch (type) {
       case ContentType.hadis:
         return AppColors.hadisColor;
-      case ContentType.ayet:
-        return AppColors.ayetColor;
+      case ContentType.kuran:
+        return AppColors.kuranColor;
       case ContentType.dua:
         return AppColors.duaColor;
     }

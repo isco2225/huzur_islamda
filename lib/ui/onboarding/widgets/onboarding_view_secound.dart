@@ -18,10 +18,7 @@ class OnboardingViewSecound extends StatelessWidget {
         TitleText(title: 'Sizi Anlayan Bir Deneyim'),
         Padding(
           padding: EdgeInsets.all(responsive.spacingSmall),
-          child: SubtitleText(
-            text:
-                'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.',
-          ),
+          child: SubtitleText(text: AppStrings.onboardingText2),
         ),
       ],
     );

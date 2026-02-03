@@ -18,8 +18,8 @@ class FlowCard extends StatelessWidget {
         return AppColors.duaColor;
       case ContentType.hadis:
         return AppColors.hadisColor;
-      case ContentType.ayet:
-        return AppColors.ayetColor;
+      case ContentType.kuran:
+        return AppColors.kuranColor;
     }
   }
 

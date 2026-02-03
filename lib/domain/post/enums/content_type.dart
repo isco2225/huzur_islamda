@@ -1,1 +1,1 @@
-enum ContentType { hadis, ayet, dua }
+enum ContentType { hadis, kuran, dua }

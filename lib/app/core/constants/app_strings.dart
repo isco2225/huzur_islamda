@@ -22,5 +22,5 @@ class AppStrings {
       'Bu yolculuğunuzda size eşlik edecek manevi rehberiniz';
   static const String onboardingTitle2 = 'Sizi Anlayan Bir Deneyim';
   static const String onboardingText2 =
-      'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş ayet ve hadislerle sizin için hazırlanmıştır.';
+      'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş kuran ve hadislerle sizin için hazırlanmıştır.';
 }

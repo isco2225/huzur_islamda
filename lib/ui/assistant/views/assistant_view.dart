@@ -134,7 +134,7 @@ class _EmptyChatPlaceholder extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Sorularını, duaları, ayet ve hadisleri, ibadetle ilgili merak ettiklerini buradan sorabilirsin.',
+            'Sorularını, duaları, kuran ve hadisleri, ibadetle ilgili merak ettiklerini buradan sorabilirsin.',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.grey[700],
               height: 1.4,

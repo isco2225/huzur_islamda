@@ -57,6 +57,9 @@ class Post {
     if (value == null) return ContentType.dua;
     if (value is String) {
       try {
+        if (value == 'kuran') {
+          return ContentType.kuran;
+        }
         return ContentType.values.byName(value);
       } catch (_) {
         return ContentType.dua;
