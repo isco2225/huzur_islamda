@@ -91,6 +91,10 @@ void main() async {
     notificationRepository: notificationRepository,
     userRepository: userRepository,
   );
+  final scheduleDhikrReminderUseCase = ScheduleDhikrReminderUseCase(
+    notificationRepository: notificationRepository,
+    userRepository: userRepository,
+  );
   final appRepository = AppRepositoryRemote(
     sharedPreferencesService: SharedPreferencesService(),
   );
@@ -137,6 +141,7 @@ void main() async {
       requestPermissionUseCase: requestPermissionUseCase,
       getPermissionStatesUseCase: getPermissionStatesUseCase,
       schedulePrayerNotificationsUseCase: schedulePrayerNotificationsUseCase,
+      scheduleDhikrReminderUseCase: scheduleDhikrReminderUseCase,
       notificationService: notificationService,
       admobService: admobService,
       showAdUseCase: showAdUseCase,

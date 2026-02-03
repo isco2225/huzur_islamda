@@ -24,6 +24,8 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
       userRepository: context.read<UserRepository>(),
       dhikrUseCase: context.read<DhikrUseCase>(),
       showAdUseCase: context.read<ShowAdUseCase>(),
+      scheduleDhikrReminderUseCase: context
+          .read<ScheduleDhikrReminderUseCase>(),
     );
     _viewModel.createDhikr.handleError(context);
     _viewModel.createDhikr.handleCompleted(

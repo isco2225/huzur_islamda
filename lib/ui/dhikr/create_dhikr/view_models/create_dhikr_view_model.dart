@@ -11,10 +11,12 @@ class CreateDhikrViewModel {
     required UserRepository userRepository,
     required DhikrUseCase dhikrUseCase,
     required ShowAdUseCase showAdUseCase,
+    required ScheduleDhikrReminderUseCase scheduleDhikrReminderUseCase,
   }) : _dhikrRepository = dhikrRepository,
        _userRepository = userRepository,
        _dhikrUseCase = dhikrUseCase,
-       _showAdUseCase = showAdUseCase {
+       _showAdUseCase = showAdUseCase,
+       _scheduleDhikrReminderUseCase = scheduleDhikrReminderUseCase {
     // DEFINE COMMANDS
     createDhikr = Command1<void, ({String name, int targetCount})>(
       _createDhikr,
@@ -35,6 +37,7 @@ class CreateDhikrViewModel {
   final UserRepository _userRepository;
   final DhikrUseCase _dhikrUseCase;
   final ShowAdUseCase _showAdUseCase;
+  final ScheduleDhikrReminderUseCase _scheduleDhikrReminderUseCase;
 
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
@@ -84,6 +87,22 @@ class CreateDhikrViewModel {
       if (result is Error<void>) {
         _log.warning('Create dhikr failed: ${result.error}');
       } else {
+        // Dhikr reminder notification scheduled for the same day at 22:00
+        try {
+          final reminderResult = await _scheduleDhikrReminderUseCase
+              .scheduleForDay();
+          switch (reminderResult) {
+            case Ok():
+              _log.info('Dhikr reminder scheduled successfully');
+            case Error():
+              _log.warning(
+                'Failed to schedule dhikr reminder: ${reminderResult.asError.error}',
+              );
+          }
+        } catch (e) {
+          _log.warning('Exception while scheduling dhikr reminder: $e');
+        }
+
         final syncResult = await _dhikrUseCase.syncDhikrs();
         switch (syncResult) {
           case Ok():
@@ -179,6 +198,25 @@ class CreateDhikrViewModel {
           _log.info(
             'Prayer dhikrs created successfully with groupId: $groupId',
           );
+          // Aynı gün için zikir hatırlatma bildirimi planla (varsa öncekiyle aynı ID'yi kullanır)
+          try {
+            final reminderResult = await _scheduleDhikrReminderUseCase
+                .scheduleForDay();
+            switch (reminderResult) {
+              case Ok():
+                _log.info(
+                  'Dhikr reminder scheduled successfully (prayer dhikrs)',
+                );
+              case Error():
+                _log.warning(
+                  'Failed to schedule dhikr reminder for prayer dhikrs: ${reminderResult.asError.error}',
+                );
+            }
+          } catch (e) {
+            _log.warning(
+              'Exception while scheduling dhikr reminder for prayer dhikrs: $e',
+            );
+          }
           final dhikrIds = dhikrs.map((d) => d.id).toList();
           return Result.ok(dhikrIds);
         case Error():

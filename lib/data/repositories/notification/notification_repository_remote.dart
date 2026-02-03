@@ -49,6 +49,15 @@ class NotificationRepositoryRemote implements NotificationRepository {
     }
   }
 
+  /// Generate a notification ID for a dhikr reminder
+  int _generateDhikrReminderId(String userId, DateTime day) {
+    final dateKey =
+        '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+    final compositeKey = '$userId-$dateKey';
+    final hash = compositeKey.hashCode.abs() % 1000;
+    return 11000 + hash;
+  }
+
   @override
   Future<Result<void>> schedulePrayerTimeNotification({
     required String prayerName,
@@ -94,6 +103,74 @@ class NotificationRepositoryRemote implements NotificationRepository {
     } catch (e) {
       _log.severe('Error scheduling prayer notification: $e');
       return Result.error(Exception('Namaz bildirimi planlanamadı: $e'));
+    }
+  }
+
+  @override
+  Future<Result<void>> scheduleDhikrReminderNotification({
+    required String userId,
+    required DateTime day,
+  }) async {
+    try {
+      // Normalize the day (hour/minute/second is set to 0)
+      final normalizedDay = DateTime(day.year, day.month, day.day);
+      final now = DateTime.now();
+
+      // For past days, skip scheduling the notification
+      final today = DateTime(now.year, now.month, now.day);
+      if (normalizedDay.isBefore(today)) {
+        _log.info(
+          'Skipping dhikr reminder scheduling for past day: $normalizedDay',
+        );
+        return Result.ok(null);
+      }
+
+      // Target time: 22:00
+      final scheduledDate = DateTime(
+        normalizedDay.year,
+        normalizedDay.month,
+        normalizedDay.day,
+        22,
+      );
+
+      // If today's 22:00 has already passed, skip scheduling the notification
+      if (!scheduledDate.isAfter(now)) {
+        _log.info(
+          'Skipping dhikr reminder for today because 22:00 has already passed. Now: $now, target: $scheduledDate',
+        );
+        return Result.ok(null);
+      }
+
+      final notificationId = _generateDhikrReminderId(userId, normalizedDay);
+      const title = 'Zikir Hatırlatma';
+      const body = 'Bugünkü zikirlerini tamamlamayı unutma.';
+
+      _log.info(
+        'Scheduling dhikr reminder notification: id=$notificationId, day=$normalizedDay, dateTime=$scheduledDate',
+      );
+
+      final result = await _notificationService.scheduleNotification(
+        id: notificationId,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+      );
+
+      switch (result) {
+        case Ok():
+          _log.info('Dhikr reminder notification scheduled successfully');
+          return Result.ok(null);
+        case Error():
+          _log.severe(
+            'Failed to schedule dhikr reminder notification: ${result.asError.error}',
+          );
+          return result;
+      }
+    } catch (e) {
+      _log.severe('Error scheduling dhikr reminder notification: $e');
+      return Result.error(
+        Exception('Zikir hatırlatma bildirimi planlanamadı: $e'),
+      );
     }
   }
 

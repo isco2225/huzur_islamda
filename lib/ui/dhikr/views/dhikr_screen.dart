@@ -24,6 +24,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       userRepository: context.read<UserRepository>(),
       dhikrUseCase: context.read<DhikrUseCase>(),
       showAdUseCase: context.read<ShowAdUseCase>(),
+      scheduleDhikrReminderUseCase: context
+          .read<ScheduleDhikrReminderUseCase>(),
     );
     _viewModel = FetchDhikrsViewModel(
       dhikrRepository: context.read<DhikrRepository>(),

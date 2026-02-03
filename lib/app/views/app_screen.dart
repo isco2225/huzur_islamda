@@ -22,6 +22,7 @@ class AppScreen extends StatefulWidget {
     required this.requestPermissionUseCase,
     required this.getPermissionStatesUseCase,
     required this.schedulePrayerNotificationsUseCase,
+    required this.scheduleDhikrReminderUseCase,
     required this.notificationService,
     required this.admobService,
     required this.showAdUseCase,
@@ -49,6 +50,7 @@ class AppScreen extends StatefulWidget {
   final RequestPermissionUseCase requestPermissionUseCase;
   final GetPermissionStatesUseCase getPermissionStatesUseCase;
   final SchedulePrayerNotificationsUseCase schedulePrayerNotificationsUseCase;
+  final ScheduleDhikrReminderUseCase scheduleDhikrReminderUseCase;
   final NotificationService notificationService;
   final AdMobService admobService;
   final ShowAdUseCase showAdUseCase;
@@ -130,6 +132,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.requestPermissionUseCase),
         Provider(create: (_) => widget.getPermissionStatesUseCase),
         Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
+        Provider(create: (_) => widget.scheduleDhikrReminderUseCase),
         Provider(create: (_) => widget.syncPermissionUseCase),
         Provider(create: (_) => widget.wipeDataUseCase),
         Provider(create: (_) => widget.showAdUseCase),
