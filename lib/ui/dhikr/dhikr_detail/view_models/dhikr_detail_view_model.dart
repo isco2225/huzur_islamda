@@ -137,13 +137,9 @@ class DhikrDetailViewModel {
                 .cancelTodayDhikrReminderIfAllCompleted();
             switch (cancelResult) {
               case Ok():
-                _log.info(
-                  'Checked and possibly cancelled today\'s dhikr reminder after completion',
-                );
+                break;
               case Error():
-                _log.warning(
-                  'Failed to cancel today\'s dhikr reminder after completion: ${cancelResult.asError.error}',
-                );
+                break;
             }
           } catch (e) {
             _log.warning(

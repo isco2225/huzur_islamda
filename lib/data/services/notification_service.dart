@@ -316,7 +316,6 @@ class NotificationService {
         await _notificationsPlugin.cancel(id);
         _log.info('Notification cancelled successfully: id=$id');
       }
-      _log.info('All notifications cancelled successfully');
       return Result.ok(null);
     } catch (e) {
       _log.severe('Error cancelling notification: $e');
