@@ -10,9 +10,11 @@ class DhikrUseCase {
     required DhikrRepository dhikrRepository,
     required ConnectivityUseCase connectivityUseCase,
     required AuthRepository authRepository,
+    required NotificationRepository notificationRepository,
   }) : _dhikrRepository = dhikrRepository,
        _connectivityUseCase = connectivityUseCase,
-       _authRepository = authRepository;
+       _authRepository = authRepository,
+       _notificationRepository = notificationRepository;
 
   // LOGGER
   final _log = Logger('DhikrUseCase');
@@ -20,6 +22,7 @@ class DhikrUseCase {
   final DhikrRepository _dhikrRepository;
   final ConnectivityUseCase _connectivityUseCase;
   final AuthRepository _authRepository;
+  final NotificationRepository _notificationRepository;
 
   // DOMAIN
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -133,6 +136,77 @@ class DhikrUseCase {
       return Result.ok(null);
     }
     return Result.ok(null);
+  }
+
+  /// Eğer bugün için tamamlanmamış zikir kalmadıysa,
+  /// bugünkü zikir hatırlatma bildirimini iptal eder.
+  Future<Result<void>> cancelTodayDhikrReminderIfAllCompleted() async {
+    if (auth.value.uid.isEmpty) {
+      _log.warning('User ID is empty, cannot cancel dhikr reminder');
+      return Result.error(Exception('User ID is empty'));
+    }
+
+    try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      final dhikrsResult = await _dhikrRepository.getAllDhikrsByDateLocally(
+        date: today,
+      );
+
+      switch (dhikrsResult) {
+        case Ok():
+          final dhikrs = dhikrsResult.asOk.value ?? <Dhikr>[];
+
+          if (dhikrs.isEmpty) {
+            _log.info('No dhikrs found for today, skipping reminder cancel');
+            return Result.ok(null);
+          }
+
+          final hasIncompleteDhikr = dhikrs.any(
+            (d) =>
+                !d.isDeleted &&
+                !d.isCompleted &&
+                d.currentCount < d.targetCount,
+          );
+
+          if (hasIncompleteDhikr) {
+            _log.info(
+              'There are still incomplete dhikrs for today, keeping reminder notification',
+            );
+            return Result.ok(null);
+          }
+
+          _log.info(
+            'All dhikrs for today are completed, cancelling today\'s dhikr reminder',
+          );
+          final cancelResult = await _notificationRepository
+              .cancelTodayDhikrNotifications(userId: auth.value.uid);
+
+          switch (cancelResult) {
+            case Ok():
+              _log.info('Today\'s dhikr reminder cancelled successfully');
+              return Result.ok(null);
+            case Error():
+              _log.warning(
+                'Failed to cancel today\'s dhikr reminder: ${cancelResult.asError.error}',
+              );
+              return Result.error(cancelResult.asError.error);
+          }
+        case Error():
+          _log.warning(
+            'Failed to load today\'s dhikrs for reminder cancel: ${dhikrsResult.asError.error}',
+          );
+          return Result.error(dhikrsResult.asError.error);
+      }
+    } catch (e) {
+      _log.severe(
+        'Exception while cancelling today\'s dhikr reminder if all completed: $e',
+      );
+      return Result.error(
+        Exception('Zikir hatırlatma bildirimi iptal edilemedi: $e'),
+      );
+    }
   }
 
   Future<Result<void>> deleteDhikr({required String dhikrId}) async {

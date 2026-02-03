@@ -130,6 +130,7 @@ void main() async {
         dhikrRepository: dhikrRepository,
         connectivityUseCase: connectivityUseCase,
         authRepository: authRepository,
+        notificationRepository: notificationRepository,
       ),
       placesRepository: PlacesRepositoryRemote(
         placeSelectorService: PlaceSelectorService(),

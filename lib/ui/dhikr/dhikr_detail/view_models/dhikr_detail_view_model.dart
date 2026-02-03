@@ -129,6 +129,29 @@ class DhikrDetailViewModel {
       case Ok():
         _currentDhikr.value = updatedDhikr;
         _log.info('Dhikr updated successfully: $_currentDhikrId');
+
+        // if dhikr is completed, cancel today's dhikr reminder
+        if (updatedDhikr.isCompleted) {
+          try {
+            final cancelResult = await _dhikrUseCase
+                .cancelTodayDhikrReminderIfAllCompleted();
+            switch (cancelResult) {
+              case Ok():
+                _log.info(
+                  'Checked and possibly cancelled today\'s dhikr reminder after completion',
+                );
+              case Error():
+                _log.warning(
+                  'Failed to cancel today\'s dhikr reminder after completion: ${cancelResult.asError.error}',
+                );
+            }
+          } catch (e) {
+            _log.warning(
+              'Exception while cancelling today\'s dhikr reminder after completion: $e',
+            );
+          }
+        }
+
         // In group mode, when current dhikr just completed, advance to next incomplete
         final groupIds = _groupDhikrIds;
         if (updatedDhikr.currentCount >= updatedDhikr.targetCount &&
