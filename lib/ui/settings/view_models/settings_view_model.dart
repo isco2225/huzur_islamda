@@ -36,14 +36,6 @@ class SettingsViewModel {
       _toggleVibration,
       debugLabel: 'SettingsViewModel.toggleVibration',
     );
-    scheduleTestNotifications = Command0(
-      _scheduleTestNotifications,
-      debugLabel: 'SettingsViewModel.scheduleTestNotifications',
-    );
-    cancelTestNotifications = Command0(
-      _cancelTestNotifications,
-      debugLabel: 'SettingsViewModel.cancelTestNotifications',
-    );
   }
 
   /// İzin durumunu kontrol eder ve AppPreferences ile senkronize eder
@@ -102,8 +94,6 @@ class SettingsViewModel {
   // COMMANDS
   late Command1<void, bool> toggleNotifications;
   late Command1<void, bool> toggleVibration;
-  late Command0<void> scheduleTestNotifications;
-  late Command0<void> cancelTestNotifications;
 
   // ACTIONS
   Future<Result<void>> _toggleNotifications(bool value) async {
@@ -389,58 +379,10 @@ class SettingsViewModel {
     }
   }
 
-  /// Test için her 10 dakikada bir bildirim planlar
-  Future<Result<void>> _scheduleTestNotifications() async {
-    try {
-      _log.info('Scheduling test notifications...');
-      final result = await _notificationService.scheduleTestNotifications(
-        count: 5,
-      );
-      switch (result) {
-        case Ok():
-          _log.info('Test notifications scheduled successfully');
-          return Result.ok(null);
-        case Error():
-          _log.severe(
-            'Failed to schedule test notifications: ${result.asError.error}',
-          );
-          return result;
-      }
-    } catch (e) {
-      _log.severe('Exception scheduling test notifications: $e');
-      return Result.error(Exception('Test bildirimleri planlanamadı: $e'));
-    }
-  }
-
-  /// Test bildirimlerini iptal eder
-  Future<Result<void>> _cancelTestNotifications() async {
-    try {
-      _log.info('Cancelling test notifications...');
-      final result = await _notificationService.cancelTestNotifications(
-        count: 5,
-      );
-      switch (result) {
-        case Ok():
-          _log.info('Test notifications cancelled successfully');
-          return Result.ok(null);
-        case Error():
-          _log.severe(
-            'Failed to cancel test notifications: ${result.asError.error}',
-          );
-          return result;
-      }
-    } catch (e) {
-      _log.severe('Exception cancelling test notifications: $e');
-      return Result.error(Exception('Test bildirimleri iptal edilemedi: $e'));
-    }
-  }
-
   // DISPOSE
   void dispose() {
     toggleNotifications.dispose();
     toggleVibration.dispose();
-    scheduleTestNotifications.dispose();
-    cancelTestNotifications.dispose();
     showOpenSettingsDialog.dispose();
   }
 }

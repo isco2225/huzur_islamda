@@ -34,19 +34,6 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
     _viewModel.toggleNotifications.handleError(context, showSnackBar: true);
     _viewModel.toggleNotifications.handleCompleted(context);
-    _viewModel.scheduleTestNotifications.handleError(
-      context,
-      showSnackBar: true,
-    );
-    _viewModel.scheduleTestNotifications.handleCompleted(
-      context,
-      successMessage: 'Test bildirimleri planlandı (her 5 dakikada bir)',
-    );
-    _viewModel.cancelTestNotifications.handleError(context, showSnackBar: true);
-    _viewModel.cancelTestNotifications.handleCompleted(
-      context,
-      successMessage: 'Test bildirimleri iptal edildi',
-    );
     _logOutViewModel.logOut.handleError(context, showSnackBar: true);
     _logOutViewModel.logOut.handleCompleted(
       context,

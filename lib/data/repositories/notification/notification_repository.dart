@@ -15,4 +15,7 @@ abstract class NotificationRepository {
 
   /// Cancel all prayer notifications
   Future<Result<void>> cancelAllPrayerNotifications();
+
+  /// Cancel today's dhikr reminder notifications
+  Future<Result<void>> cancelTodayDhikrNotifications({required String userId});
 }

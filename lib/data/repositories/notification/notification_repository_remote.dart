@@ -50,7 +50,10 @@ class NotificationRepositoryRemote implements NotificationRepository {
   }
 
   /// Generate a notification ID for a dhikr reminder
-  int _generateDhikrReminderId(String userId, DateTime day) {
+  int _generateDhikrReminderId({
+    required String userId,
+    required DateTime day,
+  }) {
     final dateKey =
         '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     final compositeKey = '$userId-$dateKey';
@@ -141,7 +144,10 @@ class NotificationRepositoryRemote implements NotificationRepository {
         return Result.ok(null);
       }
 
-      final notificationId = _generateDhikrReminderId(userId, normalizedDay);
+      final notificationId = _generateDhikrReminderId(
+        userId: userId,
+        day: normalizedDay,
+      );
       const title = 'Zikir Hatırlatma';
       const body = 'Bugünkü zikirlerini tamamlamayı unutma.';
 
@@ -196,8 +202,9 @@ class NotificationRepositoryRemote implements NotificationRepository {
           }
 
           if (idsToCancel.isNotEmpty) {
-            final cancelResult = await _notificationService
-                .cancelOldPrayerNotifications(idsToCancel);
+            final cancelResult = await _notificationService.cancelNotifications(
+              ids: idsToCancel,
+            );
             switch (cancelResult) {
               case Ok():
                 _log.info(
@@ -223,6 +230,49 @@ class NotificationRepositoryRemote implements NotificationRepository {
     } catch (e) {
       _log.severe('Error cancelling all prayer notifications: $e');
       return Result.error(Exception('Namaz bildirimleri iptal edilemedi: $e'));
+    }
+  }
+
+  @override
+  Future<Result<void>> cancelTodayDhikrNotifications({
+    required String userId,
+  }) async {
+    try {
+      _log.info('Cancelling today\'s dhikr notifications...');
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final pendingResult = await _notificationService
+          .getPendingNotifications();
+      switch (pendingResult) {
+        case Ok():
+          final notificationId = _generateDhikrReminderId(
+            userId: userId,
+            day: today,
+          );
+          final cancelResult = await _notificationService.cancelNotifications(
+            ids: [notificationId],
+          );
+          switch (cancelResult) {
+            case Ok():
+              _log.info('Cancelled today\'s dhikr reminder notification');
+              return Result.ok(null);
+            case Error():
+              _log.warning(
+                'Failed to cancel today\'s dhikr reminder notification: ${cancelResult.asError.error}',
+              );
+              return Result.error(cancelResult.asError.error);
+          }
+        case Error():
+          _log.severe(
+            'Failed to get pending notifications: ${pendingResult.asError.error}',
+          );
+          return pendingResult;
+      }
+    } catch (e) {
+      _log.severe('Error cancelling all dhikr reminder notifications: $e');
+      return Result.error(
+        Exception('Zikir hatırlatma bildirimleri iptal edilemedi: $e'),
+      );
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:huzur_islamda/ui/settings/widgets/navigatable_setting_tile.dart';
 
@@ -79,33 +78,6 @@ class SettingsView extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Debug mode'da test butonları göster
-                if (kDebugMode) ...[
-                  SizedBox(height: context.spacingMedium),
-                  SettingsDisplayerCard(
-                    title: 'Test Bildirimleri',
-                    description: 'Bildirimleri test etmek için kullanın',
-                    children: [
-                      NavigatableSettingTile(
-                        icon: Icons.notification_add_rounded,
-                        title: 'Test Bildirimlerini Planla',
-                        subtitle: 'Her 10 dakikada bir 5 bildirim planla',
-                        onTap: () {
-                          viewModel.scheduleTestNotifications.execute();
-                        },
-                      ),
-                      SettingsDivider(),
-                      NavigatableSettingTile(
-                        icon: Icons.notifications_off_rounded,
-                        title: 'Test Bildirimlerini İptal Et',
-                        subtitle: 'Planlanmış test bildirimlerini iptal et',
-                        onTap: () {
-                          viewModel.cancelTestNotifications.execute();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),

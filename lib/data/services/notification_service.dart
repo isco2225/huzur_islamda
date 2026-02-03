@@ -308,7 +308,7 @@ class NotificationService {
   }
 
   /// Bildirimi iptal eder
-  Future<Result<void>> cancelOldPrayerNotifications(List<int> ids) async {
+  Future<Result<void>> cancelNotifications({required List<int> ids}) async {
     try {
       _log.info('Cancelling notifications: ids=$ids');
       for (final id in ids) {
@@ -349,76 +349,6 @@ class NotificationService {
     } catch (e) {
       _log.severe('Error getting pending notifications: $e');
       return Result.error(Exception('Planlanmış bildirimler alınamadı: $e'));
-    }
-  }
-
-  /// Test için her 5 dakikada bir bildirim planlar
-  /// [count] kaç tane bildirim planlanacağını belirler (varsayılan: 5)
-  /// Test bildirimleri ID'leri 9999'dan başlar (9999, 9998, 9997...)
-  Future<Result<void>> scheduleTestNotifications({int count = 5}) async {
-    try {
-      _log.info('Scheduling $count test notifications (every 5 minutes)...');
-
-      if (!_isInitialized) {
-        final initResult = await initialize();
-        switch (initResult) {
-          case Ok():
-            break;
-          case Error():
-            return Result.error(Exception('Bildirim servisi başlatılamadı'));
-        }
-      }
-
-      final now = DateTime.now();
-      final testNotificationIds = <int>[];
-
-      // Her 5 dakikada bir bildirim planla
-      for (int i = 0; i < count; i++) {
-        final notificationId = 9999 - i; // Test ID'leri: 9999, 9998, 9997...
-        final scheduledTime = now.add(Duration(minutes: (i + 1) * 5));
-
-        final result = await scheduleNotification(
-          id: notificationId,
-          title: 'Test Bildirimi ${i + 1}',
-          body:
-              'Bu bir test bildirimi. Zaman: ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
-          scheduledDate: scheduledTime,
-        );
-
-        switch (result) {
-          case Ok():
-            testNotificationIds.add(notificationId);
-            _log.info(
-              'Test notification $notificationId scheduled for ${scheduledTime.hour}:${scheduledTime.minute.toString().padLeft(2, '0')}',
-            );
-            break;
-          case Error():
-            _log.warning(
-              'Failed to schedule test notification $notificationId: ${result.asError.error}',
-            );
-            break;
-        }
-      }
-
-      _log.info(
-        'Successfully scheduled ${testNotificationIds.length} test notifications',
-      );
-      return Result.ok(null);
-    } catch (e) {
-      _log.severe('Error scheduling test notifications: $e');
-      return Result.error(Exception('Test bildirimleri planlanamadı: $e'));
-    }
-  }
-
-  /// Test bildirimlerini iptal eder (ID'leri 9999'dan başlar)
-  Future<Result<void>> cancelTestNotifications({int count = 5}) async {
-    try {
-      _log.info('Cancelling test notifications...');
-      final testIds = List.generate(count, (i) => 9999 - i);
-      return await cancelOldPrayerNotifications(testIds);
-    } catch (e) {
-      _log.severe('Error cancelling test notifications: $e');
-      return Result.error(Exception('Test bildirimleri iptal edilemedi: $e'));
     }
   }
 }
