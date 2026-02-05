@@ -29,7 +29,6 @@ class DhikrDetailView extends StatelessWidget {
             body: const Center(child: CircularProgressIndicator()),
           );
         }
-
         return ValueListenableBuilder(
           valueListenable: viewModel.currentDhikr,
           builder: (context, dhikr, child) {
@@ -55,13 +54,15 @@ class DhikrDetailView extends StatelessWidget {
                 backgroundColor: AppColors.background,
                 elevation: 0,
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      _showDhikrMeaningBottomSheet(context, dhikr);
-                    },
-                    icon: const Icon(Icons.info_outline),
-                    color: AppColors.success,
-                  ),
+                  if (dhikr.meaning != null) ...[
+                    IconButton(
+                      onPressed: () {
+                        _showDhikrMeaningBottomSheet(context, dhikr);
+                      },
+                      icon: const Icon(Icons.info_outline),
+                      color: AppColors.success,
+                    ),
+                  ],
                   DhikrDetailPopMenuButton(
                     onDeleteDhikrTapped: () {
                       _showDeleteConfirmation(context);
