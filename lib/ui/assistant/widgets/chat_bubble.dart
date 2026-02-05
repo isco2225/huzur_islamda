@@ -25,9 +25,9 @@ class ChatBubble extends StatelessWidget {
         ? CrossAxisAlignment.end
         : CrossAxisAlignment.start;
 
-    final bubbleColor = isUser ? AppColors.primary : Colors.grey.shade400;
+    final bubbleColor = !isUser ? AppColors.primary : Colors.grey.shade400;
 
-    final textColor = isUser ? Colors.white : Colors.black87;
+    final textColor = !isUser ? Colors.white : Colors.black87;
 
     final borderRadius = BorderRadius.only(
       topLeft: const Radius.circular(20),
@@ -75,7 +75,7 @@ class ChatBubble extends StatelessWidget {
                 Text(
                   timeLabel!,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: (isUser ? Colors.white70 : Colors.grey[600]),
+                    color: (!isUser ? Colors.white70 : Colors.grey[600]),
                     fontSize: 10,
                   ),
                 ),
