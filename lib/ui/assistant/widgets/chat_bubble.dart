@@ -25,9 +25,7 @@ class ChatBubble extends StatelessWidget {
         ? CrossAxisAlignment.end
         : CrossAxisAlignment.start;
 
-    final bubbleColor = isUser
-        ? AppColors.primary
-        : theme.colorScheme.surface.withValues(alpha: 0.98);
+    final bubbleColor = isUser ? AppColors.primary : Colors.grey.shade400;
 
     final textColor = isUser ? Colors.white : Colors.black87;
 
