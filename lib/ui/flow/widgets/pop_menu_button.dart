@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
+import '../../../domain/domain.dart';
+import '../../ui.dart';
 
 class PopMenuButton extends StatelessWidget {
   const PopMenuButton({
     super.key,
     required this.onShareTapped,
-    required this.onReportTapped,
+    required this.post,
+    required this.postReportViewModel,
   });
   final Function() onShareTapped;
-  final Function() onReportTapped;
-
+  final Post post;
+  final PostReportViewModel postReportViewModel;
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -33,7 +36,7 @@ class PopMenuButton extends StatelessWidget {
         ),
         PopupMenuItem(
           onTap: () {
-            onReportTapped();
+            _showReportBottomSheet(context);
           },
           value: 'report',
           child: Row(
@@ -45,6 +48,22 @@ class PopMenuButton extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showReportBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return ReportPostBottomSheet(
+          post: post,
+          postReportViewModel: postReportViewModel,
+        );
+      },
     );
   }
 }

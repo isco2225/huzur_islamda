@@ -75,9 +75,8 @@ class FlowCard extends StatelessWidget {
                           onShareTapped: () {
                             // TODO: Implement share functionality
                           },
-                          onReportTapped: () {
-                            _showReportBottomSheet(context);
-                          },
+                          post: post,
+                          postReportViewModel: postReportViewModel,
                         ),
                       ],
                     ),
@@ -142,22 +141,6 @@ class FlowCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _showReportBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) {
-        return ReportPostBottomSheet(
-          post: post,
-          postReportViewModel: postReportViewModel,
-        );
-      },
     );
   }
 }

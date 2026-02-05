@@ -5,10 +5,14 @@ import '../../../../domain/domain.dart';
 import '../../../ui.dart';
 
 class PostDetailView extends StatelessWidget {
-  const PostDetailView({super.key, required this.post});
+  const PostDetailView({
+    super.key,
+    required this.post,
+    required this.postReportViewModel,
+  });
 
   final Post post;
-
+  final PostReportViewModel postReportViewModel;
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -21,7 +25,13 @@ class PostDetailView extends StatelessWidget {
         title: const Text('Gönderi Detayı'),
         backgroundColor: AppColors.background,
         elevation: 0,
-        actions: [PopMenuButton(onShareTapped: () {}, onReportTapped: () {})],
+        actions: [
+          PopMenuButton(
+            onShareTapped: () {},
+            post: post,
+            postReportViewModel: postReportViewModel,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
