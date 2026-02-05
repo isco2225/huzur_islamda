@@ -47,7 +47,7 @@ class DhikrDetailView extends StatelessWidget {
               appBar: AppBar(
                 title: Text(dhikr.name),
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     context.pop();
                   },
@@ -55,6 +55,13 @@ class DhikrDetailView extends StatelessWidget {
                 backgroundColor: AppColors.background,
                 elevation: 0,
                 actions: [
+                  IconButton(
+                    onPressed: () {
+                      _showDhikrMeaningBottomSheet(context, dhikr);
+                    },
+                    icon: const Icon(Icons.info_outline),
+                    color: AppColors.success,
+                  ),
                   DhikrDetailPopMenuButton(
                     onDeleteDhikrTapped: () {
                       _showDeleteConfirmation(context);
@@ -137,6 +144,17 @@ class DhikrDetailView extends StatelessWidget {
             );
           },
         );
+      },
+    );
+  }
+
+  void _showDhikrMeaningBottomSheet(BuildContext context, Dhikr dhikr) {
+    showModalBottomSheet(
+      backgroundColor: AppColors.background,
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DhikrMeanBottomSheet(dhikr: dhikr);
       },
     );
   }
