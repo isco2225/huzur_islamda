@@ -26,11 +26,7 @@ class PostDetailView extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         actions: [
-          PopMenuButton(
-            onShareTapped: () {},
-            post: post,
-            postReportViewModel: postReportViewModel,
-          ),
+          PopMenuButton(post: post, postReportViewModel: postReportViewModel),
         ],
       ),
       floatingActionButton: FloatingActionButton(

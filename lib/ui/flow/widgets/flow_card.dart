@@ -72,9 +72,6 @@ class FlowCard extends StatelessWidget {
                           ),
                         ),
                         PopMenuButton(
-                          onShareTapped: () {
-                            // TODO: Implement share functionality
-                          },
                           post: post,
                           postReportViewModel: postReportViewModel,
                         ),

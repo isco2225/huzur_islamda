@@ -7,11 +7,9 @@ import '../../ui.dart';
 class PopMenuButton extends StatelessWidget {
   const PopMenuButton({
     super.key,
-    required this.onShareTapped,
     required this.post,
     required this.postReportViewModel,
   });
-  final Function() onShareTapped;
   final Post post;
   final PostReportViewModel postReportViewModel;
   @override
@@ -21,19 +19,6 @@ class PopMenuButton extends StatelessWidget {
       icon: Icon(Icons.more_vert, size: responsive.isSmallScreen ? 20.0 : 24.0),
 
       itemBuilder: (context) => [
-        PopupMenuItem(
-          onTap: () {
-            onShareTapped();
-          },
-          value: 'share',
-          child: Row(
-            children: [
-              Icon(Icons.share, size: 20),
-              SizedBox(width: 8),
-              Text('Paylaş'),
-            ],
-          ),
-        ),
         PopupMenuItem(
           onTap: () {
             _showReportBottomSheet(context);
@@ -59,9 +44,11 @@ class PopMenuButton extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (sheetContext) {
-        return ReportPostBottomSheet(
-          post: post,
-          postReportViewModel: postReportViewModel,
+        return SingleChildScrollView(
+          child: ReportPostBottomSheet(
+            post: post,
+            postReportViewModel: postReportViewModel,
+          ),
         );
       },
     );

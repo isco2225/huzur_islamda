@@ -84,12 +84,14 @@ class _ReportPostBottomSheetState extends State<ReportPostBottomSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ...reasons.map(
-                  (reason) => RadioListTile<String>(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(reason, style: textTheme.bodyMedium),
-                    value: reason,
-                  ),
+                  (reason) => _selectedReason != 'Diğer'
+                      ? RadioListTile<String>(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(reason, style: textTheme.bodyMedium),
+                          value: reason,
+                        )
+                      : SizedBox.shrink(),
                 ),
               ],
             ),
