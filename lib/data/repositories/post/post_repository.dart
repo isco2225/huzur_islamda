@@ -5,6 +5,8 @@ import '../../../domain/domain.dart';
 
 abstract class PostRepository {
   ValueListenable<List<Post>> get posts;
+  ValueListenable<List<String>> get savedPostIds;
+  ValueListenable<List<Post>> get savedPosts;
 
   /// Post oluştur
   Future<Result<Post>> createPost({
@@ -31,4 +33,16 @@ abstract class PostRepository {
 
   /// Post'u sil
   Future<Result<void>> deletePost({required String postId});
+
+  /// Post'u kaydet
+  Future<Result<void>> savePost({
+    required String userId,
+    required String postId,
+  });
+
+  /// Post'u kayıttan çıkar
+  Future<Result<void>> unsavePost({
+    required String userId,
+    required String postId,
+  });
 }

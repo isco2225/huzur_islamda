@@ -9,9 +9,11 @@ class FlowCard extends StatelessWidget {
     super.key,
     required this.post,
     required this.postReportViewModel,
+    required this.postSaveViewModel,
   });
   final Post post;
   final PostReportViewModel postReportViewModel;
+  final PostSaveViewModel postSaveViewModel;
   Color _getBorderColor(ContentType contentType) {
     switch (contentType) {
       case ContentType.dua:
@@ -131,7 +133,7 @@ class FlowCard extends StatelessWidget {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: SaveButton(isSaved: false),
+                  child: SaveButton(viewModel: postSaveViewModel, post: post),
                 ),
               ],
             ),

@@ -15,6 +15,7 @@ class InfinityScrollablePosts extends StatefulWidget {
     required this.isFetching,
     required this.isAllItemsFetched,
     required this.postReportViewModel,
+    required this.postSaveViewModel,
     super.key,
   });
   final FetchPostsViewModel fetchPostsViewModel;
@@ -25,6 +26,7 @@ class InfinityScrollablePosts extends StatefulWidget {
   final ValueListenable<bool> isFetching;
   final ValueListenable<bool> isAllItemsFetched;
   final PostReportViewModel postReportViewModel;
+  final PostSaveViewModel postSaveViewModel;
   @override
   State<InfinityScrollablePosts> createState() =>
       _InfinityScrollablePostsState();
@@ -81,6 +83,7 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
               child: FlowCard(
                 post: post,
                 postReportViewModel: widget.postReportViewModel,
+                postSaveViewModel: widget.postSaveViewModel,
               ),
             );
           },

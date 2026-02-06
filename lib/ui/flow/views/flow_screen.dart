@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/data.dart';
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 class FlowScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class FlowScreen extends StatefulWidget {
 class _FlowScreenState extends State<FlowScreen> {
   late final FetchPostsViewModel _fetchPostsViewModel;
   late final PostReportViewModel _postReportViewModel;
+  late final PostSaveViewModel _postSaveViewModel;
   @override
   void initState() {
     super.initState();
@@ -23,6 +25,17 @@ class _FlowScreenState extends State<FlowScreen> {
     _postReportViewModel = PostReportViewModel(
       reportRepository: context.read<ReportRepository>(),
       userRepository: context.read<UserRepository>(),
+    );
+    _postSaveViewModel = PostSaveViewModel(
+      postRepository: context.read<PostRepository>(),
+      userRepository: context.read<UserRepository>(),
+      connectivityUseCase: context.read<ConnectivityUseCase>(),
+    );
+    _postSaveViewModel.savePost.handleError(context, showSnackBar: true);
+    _postSaveViewModel.unsavePost.handleError(context, showSnackBar: true);
+    _postSaveViewModel.savePost.handleCompleted(
+      context,
+      successMessage: 'Gönderi kaydedildi!',
     );
     _fetchPostsViewModel.fetchPosts.handleError(context, showSnackBar: true);
     _postReportViewModel.reportPost.handleError(context, showSnackBar: true);
@@ -40,6 +53,7 @@ class _FlowScreenState extends State<FlowScreen> {
   void dispose() {
     _fetchPostsViewModel.dispose();
     _postReportViewModel.dispose();
+    _postSaveViewModel.dispose();
     super.dispose();
   }
 
@@ -48,6 +62,7 @@ class _FlowScreenState extends State<FlowScreen> {
     return FlowView(
       fetchPostsViewModel: _fetchPostsViewModel,
       postReportViewModel: _postReportViewModel,
+      postSaveViewModel: _postSaveViewModel,
     );
   }
 }

@@ -18,6 +18,16 @@ class PostRepositoryRemote extends PostRepository {
   final ValueNotifier<List<Post>> _posts = ValueNotifier<List<Post>>([]);
 
   @override
+  ValueListenable<List<String>> get savedPostIds => _savedPostIds;
+  final ValueNotifier<List<String>> _savedPostIds = ValueNotifier<List<String>>(
+    [],
+  );
+
+  @override
+  ValueListenable<List<Post>> get savedPosts => _savedPosts;
+  final ValueNotifier<List<Post>> _savedPosts = ValueNotifier<List<Post>>([]);
+
+  @override
   Future<Result<Post>> createPost({
     required String userId,
     required String title,
@@ -87,5 +97,54 @@ class PostRepositoryRemote extends PostRepository {
   Future<Result<void>> deletePost({required String postId}) {
     // TODO: implement deletePost
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> savePost({
+    required String userId,
+    required String postId,
+  }) async {
+    try {
+      final result = await _firestorePostService.savePost(
+        userId: userId,
+        postId: postId,
+      );
+      switch (result) {
+        case Ok():
+          _savedPostIds.value = [..._savedPostIds.value, postId];
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to save post: $e'));
+    }
+  }
+
+  @override
+  Future<Result<void>> unsavePost({
+    required String userId,
+    required String postId,
+  }) async {
+    try {
+      final result = await _firestorePostService.unsavePost(
+        userId: userId,
+        postId: postId,
+      );
+      switch (result) {
+        case Ok():
+          _savedPostIds.value = _savedPostIds.value
+              .where((id) => id != postId)
+              .toList();
+          _savedPosts.value = _savedPosts.value
+              .where((post) => post.id != postId)
+              .toList();
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to unsave post: $e'));
+    }
   }
 }

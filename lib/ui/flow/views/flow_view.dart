@@ -8,10 +8,12 @@ class FlowView extends StatelessWidget {
     super.key,
     required this.fetchPostsViewModel,
     required this.postReportViewModel,
+    required this.postSaveViewModel,
   });
 
   final FetchPostsViewModel fetchPostsViewModel;
   final PostReportViewModel postReportViewModel;
+  final PostSaveViewModel postSaveViewModel;
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
@@ -23,6 +25,7 @@ class FlowView extends StatelessWidget {
             child: InfinityScrollablePosts(
               fetchPostsViewModel: fetchPostsViewModel,
               postReportViewModel: postReportViewModel,
+              postSaveViewModel: postSaveViewModel,
               noItemsToShowWidget: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
