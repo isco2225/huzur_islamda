@@ -61,27 +61,49 @@ class PostRepositoryRemote extends PostRepository {
     }
 
     try {
-      final result = await _firestorePostService.fetchPosts(
-        lastFetchedPost: _lastFetchedPostDoc,
-      );
-      switch (result) {
-        case Ok():
-          final snapshot = result.asOk.value;
-          final docs = snapshot.docs;
-          final newPosts = docs
-              .map((doc) => Post.fromJson(doc.data()))
-              .toList();
-          if (newPosts.isEmpty) {
-            _hasMore = false;
-            return Result.ok(_posts.value);
-          }
-          final allPosts = <Post>[..._posts.value, ...newPosts];
-          _posts.value = allPosts;
-          _lastFetchedPostDoc = docs.last;
-          return Result.ok(allPosts);
-        case Error():
-          return Result.error(result.asError.error);
+      // Not: saved post'ları client-side filtreliyoruz.
+      // Bu yüzden ilk sayfa tamamen filtrelenirse "boş" görünmesin diye
+      // bir sonraki sayfayı çekmeye devam ediyoruz.
+      const targetNewItems = 3;
+      final collectedDocs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+      while (collectedDocs.length < targetNewItems && _hasMore) {
+        final result = await _firestorePostService.fetchPosts(
+          lastFetchedPost: _lastFetchedPostDoc,
+        );
+
+        switch (result) {
+          case Ok():
+            final snapshot = result.asOk.value;
+            final snapshotDocs = snapshot.docs;
+
+            if (snapshotDocs.isEmpty) {
+              _hasMore = false;
+              break;
+            }
+            _lastFetchedPostDoc = snapshotDocs.last;
+            final filtered = snapshotDocs
+                .where((doc) => !_savedPostIds.value.contains(doc.id))
+                .toList();
+            collectedDocs.addAll(filtered);
+          case Error():
+            return Result.error(result.asError.error);
+        }
       }
+
+      if (collectedDocs.isEmpty) {
+        // Daha fazla yoksa veya tüm postlar filtreleniyorsa mevcut listeyi dön.
+        return Result.ok(_posts.value);
+      }
+
+      final newPosts = collectedDocs
+          .take(targetNewItems)
+          .map((doc) => Post.fromJson({'id': doc.id, ...doc.data()}))
+          .toList();
+
+      final allPosts = <Post>[..._posts.value, ...newPosts];
+      _posts.value = allPosts;
+      return Result.ok(allPosts);
     } catch (e) {
       return Result.error(Exception('Failed to fetch posts: $e'));
     }
@@ -145,6 +167,26 @@ class PostRepositoryRemote extends PostRepository {
       }
     } catch (e) {
       return Result.error(Exception('Failed to unsave post: $e'));
+    }
+  }
+
+  @override
+  Future<Result<List<String>>> fetchSavedPostIds({
+    required String userId,
+  }) async {
+    try {
+      final result = await _firestorePostService.fetchSavedPostIds(
+        userId: userId,
+      );
+      switch (result) {
+        case Ok():
+          _savedPostIds.value = result.asOk.value;
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch saved post ids: $e'));
     }
   }
 }

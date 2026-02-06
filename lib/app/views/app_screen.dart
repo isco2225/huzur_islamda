@@ -81,6 +81,7 @@ class _AppScreenState extends State<AppScreen> {
         hiveInitializer: HiveInitializerService(),
         hiveService: widget.hiveDhikr,
       ),
+      postRepository: widget.postRepository,
       dhikrUseCase: widget.dhikrUseCase,
       prayerTimeUseCase: widget.prayerTimeUseCase,
       syncPermissionUseCase: widget.syncPermissionUseCase,

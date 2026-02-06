@@ -11,6 +11,7 @@ class AppViewModel {
     required AuthRepository authRepository,
     required UserRepository userRepository,
     required HiveRepository hiveRepository,
+    required PostRepository postRepository,
     required DhikrUseCase dhikrUseCase,
     required PrayerTimeUseCase prayerTimeUseCase,
     required SyncPermissionUseCase syncPermissionUseCase,
@@ -21,6 +22,7 @@ class AppViewModel {
        _authRepository = authRepository,
        _userRepository = userRepository,
        _hiveRepository = hiveRepository,
+       _postRepository = postRepository,
        _dhikrUseCase = dhikrUseCase,
        _syncPermissionUseCase = syncPermissionUseCase,
        _wipeDataUseCase = wipeDataUseCase,
@@ -41,6 +43,7 @@ class AppViewModel {
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
   final HiveRepository _hiveRepository;
+  final PostRepository _postRepository;
   final DhikrUseCase _dhikrUseCase;
   final SyncPermissionUseCase _syncPermissionUseCase;
   final WipeDataUseCase _wipeDataUseCase;
@@ -112,6 +115,19 @@ class AppViewModel {
         }
       }
       if (userInitialized && currentUser.value.isRegistered) {
+        // fetch saved post ids
+        final savedPostIdsResult = await _postRepository.fetchSavedPostIds(
+          userId: currentUser.value.uid,
+        );
+        switch (savedPostIdsResult) {
+          case Ok():
+            _log.info('Saved post ids fetched successfully');
+            break;
+          case Error():
+            _log.warning(
+              'Failed to fetch saved post ids: ${savedPostIdsResult.asError.error}',
+            );
+        }
         if (currentUser.value.districtId!.isNotEmpty &&
             currentUser.value.city!.isNotEmpty &&
             currentUser.value.country!.isNotEmpty) {

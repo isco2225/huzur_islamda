@@ -45,4 +45,7 @@ abstract class PostRepository {
     required String userId,
     required String postId,
   });
+
+  /// Kayıtlı post'ların ids'ini getir
+  Future<Result<List<String>>> fetchSavedPostIds({required String userId});
 }

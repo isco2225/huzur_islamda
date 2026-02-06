@@ -9,7 +9,7 @@ class FirestorePostService {
   static const int _fetchLimit = 3;
   // Todo(omran): Fetch posts that are not reported, active and not favorited by the current user.
   Future<Result<QuerySnapshot<Map<String, dynamic>>>> fetchPosts({
-    DocumentSnapshot? lastFetchedPost,
+    required DocumentSnapshot? lastFetchedPost,
   }) async {
     try {
       Query<Map<String, dynamic>> query = _firestore
@@ -64,6 +64,25 @@ class FirestorePostService {
       );
     } catch (e) {
       return Result.error(Exception('Failed to unfavorite post: $e'));
+    }
+  }
+
+  Future<Result<List<String>>> fetchSavedPostIds({
+    required String userId,
+  }) async {
+    try {
+      final snapshot = await _firestore
+          .collection(_collectionName)
+          .where(_favoritesCollectionName, arrayContains: userId)
+          .get();
+      final savedPostIds = snapshot.docs.map((doc) => doc.id).toList();
+      return Result.ok(savedPostIds);
+    } on FirebaseException catch (e) {
+      return Result.error(
+        Exception('Failed to fetch saved post ids: ${e.message ?? e.code}'),
+      );
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch saved post ids: $e'));
     }
   }
 
