@@ -189,4 +189,28 @@ class PostRepositoryRemote extends PostRepository {
       return Result.error(Exception('Failed to fetch saved post ids: $e'));
     }
   }
+
+  @override
+  Future<Result<List<Post>>> fetchPostsByIds() async {
+    if (_savedPostIds.value.isEmpty) {
+      return Result.ok([]);
+    }
+    if (_savedPostIds.value.length == _savedPosts.value.length) {
+      return Result.ok(_savedPosts.value);
+    }
+    try {
+      final result = await _firestorePostService.fetchPostsByIds(
+        postIds: _savedPostIds.value,
+      );
+      switch (result) {
+        case Ok():
+          _savedPosts.value = result.asOk.value;
+          return Result.ok(result.asOk.value);
+        case Error():
+          return Result.error(result.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to fetch saved posts: $e'));
+    }
+  }
 }

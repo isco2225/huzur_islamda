@@ -31,6 +31,17 @@ class UserProfileView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              context.pushSavedPosts();
+            },
+            icon: Icon(
+              Icons.bookmark_outline,
+              size: context.isSmallScreen ? 22 : 24,
+              color: AppColors.primary,
+            ),
+            tooltip: 'Kaydedilenler',
+          ),
+          IconButton(
+            onPressed: () {
               context.pushSettings();
             },
             icon: Icon(Icons.settings, size: context.isSmallScreen ? 22 : 24),

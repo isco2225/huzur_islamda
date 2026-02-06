@@ -55,6 +55,10 @@ extension RouterExtensions on BuildContext {
   /// Push settings screen
   Future<T?> pushSettings<T extends Object?>() => push<T>(AppRoutes.settings);
 
+  /// Push saved posts screen
+  Future<T?> pushSavedPosts<T extends Object?>() =>
+      push<T>(AppRoutes.savedPosts);
+
   /// Push edit profile screen
   Future<T?> pushEditProfile<T extends Object?>() =>
       push<T>(AppRoutes.editProfile);

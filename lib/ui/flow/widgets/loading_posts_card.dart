@@ -3,8 +3,8 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../app/app.dart';
 
-class LoadingFlowCard extends StatelessWidget {
-  const LoadingFlowCard({super.key});
+class LoadingPostsCard extends StatelessWidget {
+  const LoadingPostsCard({super.key});
 
   @override
   Widget build(BuildContext context) {

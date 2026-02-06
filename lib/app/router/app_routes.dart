@@ -50,6 +50,9 @@ class AppRoutes {
   /// Settings screen route
   static const String settings = '/settings';
 
+  /// Saved posts screen route
+  static const String savedPosts = '/saved_posts';
+
   /// Post detail screen route
   static const String postDetail = '/post_detail';
 

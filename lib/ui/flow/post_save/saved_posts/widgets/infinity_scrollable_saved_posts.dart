@@ -1,84 +1,84 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../app/app.dart';
-import '../../../../domain/domain.dart';
-import '../../../ui.dart';
+import '../../../../../app/app.dart';
+import '../../../../../domain/domain.dart';
+import '../../../../ui.dart';
 
-class InfinityScrollablePosts extends StatefulWidget {
-  const InfinityScrollablePosts({
-    required this.fetchPostsViewModel,
+class InfinityScrollableSavedPosts extends StatefulWidget {
+  const InfinityScrollableSavedPosts({
+    super.key,
+    required this.viewModel,
     required this.noItemsToShowWidget,
     required this.onFetch,
-    required this.posts,
+    required this.savedPosts,
     required this.hasError,
     required this.isFetching,
     required this.isAllItemsFetched,
     required this.postReportViewModel,
     required this.postSaveViewModel,
-    super.key,
   });
-  final FetchPostsViewModel fetchPostsViewModel;
+
+  final SavedPostsViewModel viewModel;
   final Widget noItemsToShowWidget;
   final VoidCallback onFetch;
-  final ValueListenable<List<Post>> posts;
+  final ValueListenable<List<Post>> savedPosts;
   final ValueListenable<bool> hasError;
   final ValueListenable<bool> isFetching;
   final ValueListenable<bool> isAllItemsFetched;
   final PostReportViewModel postReportViewModel;
   final PostSaveViewModel postSaveViewModel;
   @override
-  State<InfinityScrollablePosts> createState() =>
-      _InfinityScrollablePostsState();
+  State<InfinityScrollableSavedPosts> createState() =>
+      _InfinityScrollableSavedPostsState();
 }
 
-class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
+class _InfinityScrollableSavedPostsState
+    extends State<InfinityScrollableSavedPosts> {
   @override
   void initState() {
     super.initState();
-    widget.fetchPostsViewModel.fetchPosts.execute();
+    widget.onFetch();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: Listenable.merge([
-        widget.posts,
+        widget.savedPosts,
         widget.hasError,
         widget.isFetching,
         widget.isAllItemsFetched,
       ]),
       builder: (context, _) {
-        final posts = widget.posts.value;
         return InfinityScrollable.listView(
           scrollController: null,
           bottomPadding: 8,
           initializeFailureWidget: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Gönderiler yüklenemedi. Tekrar deneyiniz.'),
+                const Text('Kayıtlı gönderiler yüklenemedi. Tekrar deneyiniz.'),
                 TextButton(
-                  onPressed: () =>
-                      widget.fetchPostsViewModel.fetchPosts.execute(),
-                  child: Text('Retry'),
+                  onPressed: () => widget.onFetch(),
+                  child: const Text('Tekrar Dene'),
                 ),
               ],
             ),
           ),
           fetchMoreFailureWidget: Column(
             children: [
-              Text('Gönderiler yüklenemedi. Tekrar deneyiniz.'),
+              const Text('Kayıtlı gönderiler yüklenemedi. Tekrar deneyiniz.'),
               AppButton(
-                onPressed: () =>
-                    widget.fetchPostsViewModel.fetchPosts.execute(),
+                onPressed: () => widget.onFetch(),
                 text: 'Tekrar Dene',
-                running: widget.fetchPostsViewModel.fetchPosts.running,
+                running: widget.viewModel.fetchSavedPosts.running,
               ),
             ],
           ),
-          itemCount: posts.length,
+          itemCount: widget.savedPosts.value.length,
           itemBuilder: (context, index) {
-            final post = posts[index];
+            final post = widget.savedPosts.value[index];
             return Center(
               child: FlowCard(
                 post: post,
@@ -93,7 +93,7 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
           fetchingFirstItems: Center(
             child: SingleChildScrollView(
               child: Column(
-                children: List.generate(2, (index) => LoadingPostsCard()),
+                children: List.generate(2, (index) => const LoadingPostsCard()),
               ),
             ),
           ),

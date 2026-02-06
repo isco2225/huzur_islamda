@@ -48,4 +48,7 @@ abstract class PostRepository {
 
   /// Kayıtlı post'ların ids'ini getir
   Future<Result<List<String>>> fetchSavedPostIds({required String userId});
+
+  /// Kayıtlı post'ları getir
+  Future<Result<List<Post>>> fetchPostsByIds();
 }

@@ -150,6 +150,12 @@ final List<RouteBase> _routes = [
   ),
 
   GoRoute(
+    path: AppRoutes.savedPosts,
+    name: 'saved_posts',
+    builder: (context, state) => const SavedPostsScreen(),
+  ),
+
+  GoRoute(
     path: AppRoutes.createDhikr,
     name: 'create_dhikr',
     builder: (context, state) => const CreateDhikrScreen(),
