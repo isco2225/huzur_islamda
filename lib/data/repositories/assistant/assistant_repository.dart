@@ -7,5 +7,6 @@ abstract class AssistantRepository {
     required String senderAge,
     required String senderGender,
     List<String>? previousMessages,
+    String? postContent,
   });
 }

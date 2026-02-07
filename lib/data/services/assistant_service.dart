@@ -22,6 +22,7 @@ class AssistantService {
     required String senderAge,
     required String senderGender,
     List<String>? previousMessages,
+    String? postContent,
   }) async {
     try {
       final uri = Uri.parse('$_baseUrl/$_model:generateContent');
@@ -76,10 +77,14 @@ Kullanıcının Allah ile olan bağını güçlendirmek, ibadetleri sevdirmek ve
         {'text': '$systemRole\n\n$userContext'},
         if (historyText != null && historyText.isNotEmpty)
           {'text': 'ÖNCEKİ KONUŞMALAR (Bağlam):\n$historyText'},
-
+        if (postContent != null && postContent.isNotEmpty)
+          {
+            'text':
+                'KULLANICININ ÜZERİNE KONUŞMAK İSTEDİĞİ İÇERİK (Bu içerik hakkında soru soruyor):\n$postContent',
+          },
         {
           'text':
-              'KULLANICININ YENİ MESAJI(Bu mesaja cevap vereceksin):\n$message',
+              'KULLANICININ YENİ MESAJI (Bu mesaja cevap vereceksin):\n$message',
         },
       ];
 

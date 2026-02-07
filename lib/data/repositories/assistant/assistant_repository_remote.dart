@@ -14,6 +14,7 @@ class AssistantRepositoryRemote implements AssistantRepository {
     required String senderAge,
     required String senderGender,
     List<String>? previousMessages,
+    String? postContent,
   }) async {
     return await _assistantService.sendMessage(
       message: message,
@@ -21,6 +22,7 @@ class AssistantRepositoryRemote implements AssistantRepository {
       senderAge: senderAge,
       senderGender: senderGender,
       previousMessages: previousMessages,
+      postContent: postContent,
     );
   }
 }
