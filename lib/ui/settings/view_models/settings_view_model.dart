@@ -97,6 +97,7 @@ class SettingsViewModel {
 
   // ACTIONS
   Future<Result<void>> _toggleNotifications(bool value) async {
+    isNotificationsEnabled.value = value;
     try {
       _log.info('Toggling notifications: $value');
 
@@ -105,20 +106,27 @@ class SettingsViewModel {
         final permissionResult = Platform.isIOS
             ? await _requestNotificationPermissionIOS()
             : await _requestNotificationPermissionAndroid();
-
         switch (permissionResult) {
           case Ok():
             await _scheduleNotifications();
             break;
           case Error():
+            isNotificationsEnabled.value = !value;
             return permissionResult;
         }
       }
-
       // Repository'yi güncelle ve bildirimleri planla/iptal et
-      return await _updateNotificationPreference(value);
+      final updateResult = await _updateNotificationPreference(value);
+      switch (updateResult) {
+        case Ok():
+          break;
+        case Error():
+          isNotificationsEnabled.value = !value;
+      }
+      return updateResult;
     } catch (e) {
       _log.severe('Exception toggling notifications: $e');
+      isNotificationsEnabled.value = !value;
       return Result.error(Exception('Bildirim ayarı güncellenemedi: $e'));
     }
   }
