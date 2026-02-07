@@ -29,6 +29,7 @@ class LogOutViewModel {
 
   // FUNCTIONS
   Future<Result<void>> _logOut() async {
+    await Future.delayed(const Duration(seconds: 3));
     final result = await _authRepository.signOut();
     switch (result) {
       case Ok():

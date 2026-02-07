@@ -16,73 +16,93 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      appBar: const SettingsAppBar(),
-      safeArea: true,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.horizontalPadding,
-          vertical: context.verticalPadding,
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: context.maxContentWidth),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SettingsDisplayerCard(
-                  title: 'Bildirimler',
-                  description:
-                      'Bildirim seçeneklerini tercihinize göre özelleştirin.',
-                  children: [
-                    SwitchableSettingTile(
-                      icon: Icons.notifications_none_rounded,
-                      title: 'Bildirimler',
-                      subtitle: 'Bildirim ayarlarını yönet',
-                      valueListenable: viewModel.isNotificationsEnabled,
-                      onChanged: (value) =>
-                          viewModel.toggleNotifications.execute(value),
-                    ),
-                    SettingsDivider(),
-                    SwitchableSettingTile(
-                      icon: Icons.vibration_rounded,
-                      title: 'Titreşim',
-                      subtitle: 'Bildirimlerde titreşimi kullan',
-                      valueListenable: viewModel.isVibrationEnabled,
-                      onChanged: (value) {
-                        if (value) {
-                          viewModel.toggleVibration.execute(value);
-                        }
-                        viewModel.toggleVibration.execute(value);
-                      },
-                    ),
-                  ],
+    return ValueListenableBuilder(
+      valueListenable: logOutViewModel.logOut.running,
+      builder: (context, isLoggingOut, _) {
+        return Stack(
+          children: [
+            BaseScaffold(
+              appBar: const SettingsAppBar(),
+              safeArea: true,
+              body: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.horizontalPadding,
+                  vertical: context.verticalPadding,
                 ),
-                SizedBox(height: context.spacingMedium),
-                SettingsDisplayerCard(
-                  title: 'Hesap',
-                  children: [
-                    NavigatableSettingTile(
-                      icon: Icons.lock_reset_rounded,
-                      title: 'Şifreyi Değiştir',
-                      subtitle: 'Güvenliğinizi güncel tutun',
-                      onTap: () {
-                        // TODO: Navigate to change password
-                      },
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: context.maxContentWidth,
                     ),
-                    SettingsDivider(),
-                    SettingsLogOutCard(
-                      onTap: () {
-                        logOutViewModel.logOut.execute();
-                      },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SettingsDisplayerCard(
+                          title: 'Bildirimler',
+                          description:
+                              'Bildirim seçeneklerini tercihinize göre özelleştirin.',
+                          children: [
+                            SwitchableSettingTile(
+                              icon: Icons.notifications_none_rounded,
+                              title: 'Bildirimler',
+                              subtitle: 'Bildirim ayarlarını yönet',
+                              valueListenable: viewModel.isNotificationsEnabled,
+                              onChanged: (value) =>
+                                  viewModel.toggleNotifications.execute(value),
+                            ),
+                            SettingsDivider(),
+                            SwitchableSettingTile(
+                              icon: Icons.vibration_rounded,
+                              title: 'Titreşim',
+                              subtitle: 'Bildirimlerde titreşimi kullan',
+                              valueListenable: viewModel.isVibrationEnabled,
+                              onChanged: (value) {
+                                if (value) {
+                                  viewModel.toggleVibration.execute(value);
+                                }
+                                viewModel.toggleVibration.execute(value);
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: context.spacingMedium),
+                        SettingsDisplayerCard(
+                          title: 'Hesap',
+                          children: [
+                            NavigatableSettingTile(
+                              icon: Icons.lock_reset_rounded,
+                              title: 'Şifreyi Değiştir',
+                              subtitle: 'Güvenliğinizi güncel tutun',
+                              onTap: () {
+                                // TODO: Navigate to change password
+                              },
+                            ),
+                            SettingsDivider(),
+                            SettingsLogOutCard(
+                              onTap: () {
+                                logOutViewModel.logOut.execute();
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
+            if (isLoggingOut)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
