@@ -48,6 +48,8 @@ class AssistantView extends StatelessWidget {
                       if (messages.isEmpty) {
                         return _EmptyChatPlaceholder(
                           responsivePadding: responsive.horizontalPadding,
+                          onSuggestionTap: (text) =>
+                              viewModel.sendMessage.execute(text),
                         );
                       }
 
@@ -108,69 +110,91 @@ class AssistantView extends StatelessWidget {
 }
 
 class _EmptyChatPlaceholder extends StatelessWidget {
-  const _EmptyChatPlaceholder({required this.responsivePadding});
+  const _EmptyChatPlaceholder({
+    required this.responsivePadding,
+    required this.onSuggestionTap,
+  });
 
   final double responsivePadding;
+  final void Function(String text) onSuggestionTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: responsivePadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline_rounded,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Merhaba, ben senin asistanınım.',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Icon(
+              Icons.chat_bubble_outline_rounded,
+              size: context.screenWidth * 0.25,
+              color: AppColors.primary,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Sorularını, duaları, kuran ve hadisleri, ibadetle ilgili merak ettiklerini buradan sorabilirsin.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[700],
-              height: 1.4,
+            const SizedBox(height: 16),
+            Text(
+              'Merhaba, ben senin asistanınım.',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: const [
-              _SuggestionChip(label: 'Bugün hangi duayı okuyabilirim?'),
-              _SuggestionChip(label: 'Bana kısa bir hadis paylaşır mısın?'),
-              _SuggestionChip(label: 'Tesbih için bir zikir öner.'),
-            ],
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              'Sorularını, duaları, kuran ve hadisleri, islam ile ilgili merak ettiklerini buradan sorabilirsin.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[700],
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _SuggestionChip(
+                  label: 'Peygamberimizin en sık okuduğu dualar nelerdir?',
+                  onTap: () =>
+                      onSuggestionTap('Bugün hangi duayı okuyabilirim?'),
+                ),
+                _SuggestionChip(
+                  label: 'Bana kısa bir hadis paylaşır mısın?',
+                  onTap: () =>
+                      onSuggestionTap('Bana kısa bir hadis paylaşır mısın?'),
+                ),
+                _SuggestionChip(
+                  label: 'Tesbih için bir zikir öner.',
+                  onTap: () => onSuggestionTap('Tesbih için bir zikir öner.'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _SuggestionChip extends StatelessWidget {
-  const _SuggestionChip({required this.label});
+  const _SuggestionChip({required this.label, required this.onTap});
 
   final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Chip(
-      backgroundColor: Colors.white.withValues(alpha: 0.9),
-      side: BorderSide(color: Colors.grey.shade300),
-      label: Text(
-        label,
-        style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[800]),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Chip(
+        backgroundColor: Colors.white.withValues(alpha: 0.9),
+        side: BorderSide(color: AppColors.primary),
+        label: Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[800]),
+        ),
       ),
     );
   }

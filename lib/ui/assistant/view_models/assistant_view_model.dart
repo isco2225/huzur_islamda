@@ -26,16 +26,6 @@ class AssistantViewModel {
       _sendMessage,
       debugLabel: 'sendMessage',
     );
-
-    // Default welcome message
-    messages.value = [
-      AssistantMessage(
-        text:
-            'Selam ${_userRepository.currentUser.value.name}, bugün sana nasıl yardımcı olabilirim?',
-        isUser: false,
-        timeLabel: _nowLabel,
-      ),
-    ];
   }
   // logger
   final _log = Logger('AssistantViewModel');
