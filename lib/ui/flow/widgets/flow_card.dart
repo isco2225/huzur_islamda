@@ -76,6 +76,7 @@ class FlowCard extends StatelessWidget {
                         PopMenuButton(
                           post: post,
                           postReportViewModel: postReportViewModel,
+                          postSaveViewModel: postSaveViewModel,
                         ),
                       ],
                     ),

@@ -15,6 +15,7 @@ class PostDetailScreen extends StatefulWidget {
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
   late final PostReportViewModel _postReportViewModel;
+  late final PostSaveViewModel _postSaveViewModel;
   @override
   void initState() {
     super.initState();
@@ -22,6 +23,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       reportRepository: context.read<ReportRepository>(),
       userRepository: context.read<UserRepository>(),
     );
+    _postSaveViewModel = PostSaveViewModel(
+      postRepository: context.read<PostRepository>(),
+      userRepository: context.read<UserRepository>(),
+      connectivityUseCase: context.read<ConnectivityUseCase>(),
+    );
+    _postSaveViewModel.savePost.handleError(context, showSnackBar: true);
+    _postSaveViewModel.unsavePost.handleError(context, showSnackBar: true);
     _postReportViewModel.reportPost.handleCompleted(
       context,
       successMessage: 'Şikayetiniz alındı!',
@@ -31,6 +39,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   void dispose() {
     _postReportViewModel.dispose();
+    _postSaveViewModel.dispose();
     super.dispose();
   }
 
@@ -39,6 +48,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return PostDetailView(
       post: widget.post,
       postReportViewModel: _postReportViewModel,
+      postSaveViewModel: _postSaveViewModel,
     );
   }
 }

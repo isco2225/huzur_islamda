@@ -9,9 +9,11 @@ class PopMenuButton extends StatelessWidget {
     super.key,
     required this.post,
     required this.postReportViewModel,
+    required this.postSaveViewModel,
   });
   final Post post;
   final PostReportViewModel postReportViewModel;
+  final PostSaveViewModel postSaveViewModel;
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -29,6 +31,30 @@ class PopMenuButton extends StatelessWidget {
               Icon(Icons.flag_outlined, size: 20),
               SizedBox(width: 8),
               Text('Şikayet Et'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            postSaveViewModel.savedPostIds.value.contains(post.id)
+                ? postSaveViewModel.unsavePost.execute((postId: post.id))
+                : postSaveViewModel.savePost.execute((postId: post.id));
+          },
+          value: 'save',
+          child: Row(
+            children: [
+              Icon(
+                postSaveViewModel.savedPostIds.value.contains(post.id)
+                    ? Icons.bookmark_remove
+                    : Icons.bookmark_border,
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                postSaveViewModel.savedPostIds.value.contains(post.id)
+                    ? 'Kayıttan Kaldır'
+                    : 'Kaydet',
+              ),
             ],
           ),
         ),

@@ -9,10 +9,12 @@ class PostDetailView extends StatelessWidget {
     super.key,
     required this.post,
     required this.postReportViewModel,
+    required this.postSaveViewModel,
   });
 
   final Post post;
   final PostReportViewModel postReportViewModel;
+  final PostSaveViewModel postSaveViewModel;
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -26,16 +28,20 @@ class PostDetailView extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         actions: [
-          PopMenuButton(post: post, postReportViewModel: postReportViewModel),
+          PopMenuButton(
+            post: post,
+            postReportViewModel: postReportViewModel,
+            postSaveViewModel: postSaveViewModel,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Implement save functionality
+          // TODO: Implement assistant functionality
         },
-        heroTag: 'save_post',
+        heroTag: 'assistant_post',
         backgroundColor: AppColors.background,
-        child: Icon(Icons.bookmark_border, color: Colors.black),
+        child: Icon(Icons.smart_toy, color: AppColors.primary),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(responsive.horizontalPadding),
