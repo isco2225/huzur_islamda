@@ -155,16 +155,18 @@ class _EmptyChatPlaceholder extends StatelessWidget {
               children: [
                 _SuggestionChip(
                   label: 'Peygamberimizin en sık okuduğu dualar nelerdir?',
-                  onTap: () =>
-                      onSuggestionTap('Bugün hangi duayı okuyabilirim?'),
+                  onTap: () => onSuggestionTap(
+                    'Peygamberimizin en sık okuduğu dualar nelerdir?',
+                  ),
                 ),
                 _SuggestionChip(
-                  label: 'Bana kısa bir hadis paylaşır mısın?',
-                  onTap: () =>
-                      onSuggestionTap('Bana kısa bir hadis paylaşır mısın?'),
+                  label: 'Bana kısa bir buhari hadis paylaşır mısın?',
+                  onTap: () => onSuggestionTap(
+                    'Bana kısa bir buhari hadis paylaşır mısın?',
+                  ),
                 ),
                 _SuggestionChip(
-                  label: 'Tesbih için bir zikir öner.',
+                  label: 'Tesbih için bir zikir önerir misin?',
                   onTap: () => onSuggestionTap('Tesbih için bir zikir öner.'),
                 ),
               ],
