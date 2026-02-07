@@ -11,60 +11,62 @@ class MoodSelectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      appBar: AppBar(
-        title: const Text('Ruh haline göre zikir'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
-      safeArea: true,
-      backgroundColor: AppColors.background,
-      body: ValueListenableBuilder<bool>(
-        valueListenable: viewModel.isLoadingMoods,
-        builder: (context, isLoading, _) {
-          if (isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return ValueListenableBuilder<Object?>(
-            valueListenable: viewModel.loadMoodsError,
-            builder: (context, error, _) {
-              if (error != null) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(context.horizontalPadding),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: Colors.grey[600],
-                        ),
-                        SizedBox(height: context.spacingLarge),
-                        Text(
-                          error is Exception
-                              ? error.toString()
-                              : 'Ruh halleri yüklenemedi.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-              return ValueListenableBuilder<List<Mood>?>(
-                valueListenable: viewModel.moods,
-                builder: (context, moods, _) {
-                  if (moods == null || moods.isEmpty) {
-                    return const Center(child: Text('Ruh hali bulunamadı.'));
+    return ValueListenableBuilder<bool>(
+      valueListenable: viewModel.createDhikrsForMood.running,
+      builder: (context, isCreating, _) {
+        return Stack(
+          children: [
+            BaseScaffold(
+              appBar: AppBar(
+                title: const Text('Ruh haline göre zikir'),
+                backgroundColor: AppColors.background,
+                elevation: 0,
+              ),
+              safeArea: true,
+              backgroundColor: AppColors.background,
+              body: ValueListenableBuilder<bool>(
+                valueListenable: viewModel.isLoadingMoods,
+                builder: (context, isLoading, _) {
+                  if (isLoading) {
+                    return const Center(child: CircularProgressIndicator());
                   }
-                  return ValueListenableBuilder<bool>(
-                    valueListenable: viewModel.createDhikrsForMood.running,
-                    builder: (context, isCreating, _) {
-                      return Stack(
-                        children: [
-                          ListView.builder(
+                  return ValueListenableBuilder<Object?>(
+                    valueListenable: viewModel.loadMoodsError,
+                    builder: (context, error, _) {
+                      if (error != null) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(context.horizontalPadding),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Colors.grey[600],
+                                ),
+                                SizedBox(height: context.spacingLarge),
+                                Text(
+                                  error is Exception
+                                      ? error.toString()
+                                      : 'Ruh halleri yüklenemedi.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return ValueListenableBuilder<List<Mood>?>(
+                        valueListenable: viewModel.moods,
+                        builder: (context, moods, _) {
+                          if (moods == null || moods.isEmpty) {
+                            return const Center(
+                              child: Text('Ruh hali bulunamadı.'),
+                            );
+                          }
+                          return ListView.builder(
                             padding: EdgeInsets.all(context.horizontalPadding),
                             itemCount: moods.length,
                             itemBuilder: (context, index) {
@@ -76,26 +78,26 @@ class MoodSelectView extends StatelessWidget {
                                 isCreating: isCreating,
                               );
                             },
-                          ),
-                          if (isCreating)
-                            Positioned.fill(
-                              child: Container(
-                                color: Colors.black26,
-                                child: const Center(
-                                  child: CircularProgressIndicator.adaptive(),
-                                ),
-                              ),
-                            ),
-                        ],
+                          );
+                        },
                       );
                     },
                   );
                 },
-              );
-            },
-          );
-        },
-      ),
+              ),
+            ),
+            if (isCreating)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
