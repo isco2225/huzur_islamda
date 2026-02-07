@@ -62,18 +62,31 @@ class MoodSelectView extends StatelessWidget {
                   return ValueListenableBuilder<bool>(
                     valueListenable: viewModel.createDhikrsForMood.running,
                     builder: (context, isCreating, _) {
-                      return ListView.builder(
-                        padding: EdgeInsets.all(context.horizontalPadding),
-                        itemCount: moods.length,
-                        itemBuilder: (context, index) {
-                          final mood = moods[index];
-                          return _MoodTile(
-                            mood: mood,
-                            onTap: () =>
-                                viewModel.createDhikrsForMood.execute(mood),
-                            isCreating: isCreating,
-                          );
-                        },
+                      return Stack(
+                        children: [
+                          ListView.builder(
+                            padding: EdgeInsets.all(context.horizontalPadding),
+                            itemCount: moods.length,
+                            itemBuilder: (context, index) {
+                              final mood = moods[index];
+                              return _MoodTile(
+                                mood: mood,
+                                onTap: () =>
+                                    viewModel.createDhikrsForMood.execute(mood),
+                                isCreating: isCreating,
+                              );
+                            },
+                          ),
+                          if (isCreating)
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black26,
+                                child: const Center(
+                                  child: CircularProgressIndicator.adaptive(),
+                                ),
+                              ),
+                            ),
+                        ],
                       );
                     },
                   );
@@ -120,13 +133,7 @@ class _MoodTile extends StatelessWidget {
           '${mood.suggestions.length} zikir önerisi',
           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
-        trailing: isCreating
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.add_circle_outline),
+        trailing: const Icon(Icons.add_circle_outline),
         onTap: isCreating ? null : onTap,
       ),
     );
