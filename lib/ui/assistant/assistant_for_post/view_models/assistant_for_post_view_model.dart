@@ -23,7 +23,7 @@ class AssistantForPostViewModel {
     );
     messages.value = [
       AssistantMessage(
-        text: 'Bu gönderi hakkında ne sormak istersin?',
+        text: '**${post.title}**, konusu hakkında ne sormak istersin?',
         isUser: false,
         timeLabel: _nowLabel,
       ),

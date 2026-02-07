@@ -13,53 +13,17 @@ class AssistantForPostView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final post = viewModel.post;
-
     return BaseScaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.background,
-        title: Text(
-          'Gönderi hakkında soru sor',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-        ),
+        title: Text('Gönderi Hakkında'),
       ),
       backgroundColor: AppColors.background,
       safeArea: true,
       resizeToAvoidBottomInset: true,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.horizontalPadding,
-              vertical: 8,
-            ),
-            color: AppColors.primary.withValues(alpha: 0.08),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.article_outlined,
-                  size: 18,
-                  color: AppColors.primary,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    post.title,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
