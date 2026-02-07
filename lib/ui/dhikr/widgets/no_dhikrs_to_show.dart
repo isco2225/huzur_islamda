@@ -8,27 +8,30 @@ class NoDhikrsToShow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final responsive = context.responsive;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.horizontalPadding,
+        vertical: responsive.verticalPadding,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon container with background
           Container(
-            width: 120,
-            height: 120,
+            width: context.screenWidth * 0.25,
+            height: context.screenWidth * 0.25,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.auto_awesome_outlined,
-              size: 64,
+              size: context.screenWidth * 0.15,
               color: AppColors.primary.withValues(alpha: 0.7),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: responsive.spacingMedium),
           // Title
           Text(
             'Henüz zikir yok',
@@ -38,7 +41,17 @@ class NoDhikrsToShow extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: responsive.spacingExtraSmall),
+          Text(
+            '\'Kalpler Allah\'ı anmakla huzur bulur\'',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.subtitleColor,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: responsive.spacingMedium),
           // Description
           Text(
             'Günün ilk zikrini oluşturarak başlayabilirsin',
@@ -47,7 +60,7 @@ class NoDhikrsToShow extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: responsive.spacingSmall),
           // Action button
           AppButton(
             onPressed: () => context.pushCreateDhikr(),
