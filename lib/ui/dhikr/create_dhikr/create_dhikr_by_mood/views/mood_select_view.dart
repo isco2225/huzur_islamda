@@ -128,7 +128,7 @@ class _MoodTile extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: tileColor.withValues(alpha: 0.2),
-          child: Icon(Icons.mood, color: tileColor),
+          child: Icon(Icons.snowing, color: tileColor),
         ),
         title: Text(mood.title),
         subtitle: Text(

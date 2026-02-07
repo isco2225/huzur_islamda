@@ -37,7 +37,7 @@ class MoodSelectView extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.error_outline,
-                          size: 48,
+                          size: context.screenWidth * 0.25,
                           color: Colors.grey[600],
                         ),
                         SizedBox(height: context.spacingLarge),
@@ -46,7 +46,8 @@ class MoodSelectView extends StatelessWidget {
                               ? error.toString()
                               : 'Ruh halleri yüklenemedi.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.grey[700]),
                         ),
                       ],
                     ),
@@ -113,7 +114,6 @@ class _MoodTile extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: tileColor.withValues(alpha: 0.2),
-          child: Icon(Icons.mood, color: tileColor),
         ),
         title: Text(mood.title),
         subtitle: Text(
