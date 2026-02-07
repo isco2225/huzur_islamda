@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
-import '../../ui.dart';
+import '../../view_models/view_models.dart' show AssistantMessage;
+import '../../widgets/widgets.dart';
+import '../view_models/view_models.dart';
 
-class AssistantView extends StatelessWidget {
-  const AssistantView({super.key, required this.viewModel});
+class AssistantForPostView extends StatelessWidget {
+  const AssistantForPostView({super.key, required this.viewModel});
 
-  final AssistantViewModel viewModel;
+  final AssistantForPostViewModel viewModel;
+
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+    final post = viewModel.post;
 
     return BaseScaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.background,
         title: Text(
-          'Asistan',
+          'Gönderi hakkında soru sor',
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -27,6 +31,35 @@ class AssistantView extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       body: Column(
         children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: context.horizontalPadding,
+              vertical: 8,
+            ),
+            color: AppColors.primary.withValues(alpha: 0.08),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.article_outlined,
+                  size: 18,
+                  color: AppColors.primary,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    post.title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -42,15 +75,9 @@ class AssistantView extends StatelessWidget {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),
-                  child: ValueListenableBuilder(
+                  child: ValueListenableBuilder<List<AssistantMessage>>(
                     valueListenable: viewModel.messages,
                     builder: (context, messages, _) {
-                      if (messages.isEmpty) {
-                        return _EmptyChatPlaceholder(
-                          responsivePadding: responsive.horizontalPadding,
-                        );
-                      }
-
                       return ValueListenableBuilder<bool>(
                         valueListenable: viewModel.sendMessage.running,
                         builder: (context, isRunning, __) {
@@ -66,9 +93,7 @@ class AssistantView extends StatelessWidget {
                               vertical: responsive.verticalPadding,
                             ),
                             itemBuilder: (context, index) {
-                              // reverse: true olduğu için index 0 en altta.
                               final isTypingItem = isRunning && index == 0;
-
                               if (isTypingItem) {
                                 return const ChatBubble(
                                   text: '',
@@ -77,7 +102,6 @@ class AssistantView extends StatelessWidget {
                                   isThinking: true,
                                 );
                               }
-
                               final message =
                                   reversed[isRunning ? index - 1 : index];
                               return ChatBubble(
@@ -102,75 +126,6 @@ class AssistantView extends StatelessWidget {
             onSend: (userMessage) => viewModel.sendMessage.execute(userMessage),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _EmptyChatPlaceholder extends StatelessWidget {
-  const _EmptyChatPlaceholder({required this.responsivePadding});
-
-  final double responsivePadding;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsivePadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline_rounded,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Merhaba, ben senin asistanınım.',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Sorularını, duaları, kuran ve hadisleri, ibadetle ilgili merak ettiklerini buradan sorabilirsin.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[700],
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: const [
-              _SuggestionChip(label: 'Bugün hangi duayı okuyabilirim?'),
-              _SuggestionChip(label: 'Bana kısa bir hadis paylaşır mısın?'),
-              _SuggestionChip(label: 'Tesbih için bir zikir öner.'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SuggestionChip extends StatelessWidget {
-  const _SuggestionChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Chip(
-      backgroundColor: Colors.white.withValues(alpha: 0.9),
-      side: BorderSide(color: Colors.grey.shade300),
-      label: Text(
-        label,
-        style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[800]),
       ),
     );
   }

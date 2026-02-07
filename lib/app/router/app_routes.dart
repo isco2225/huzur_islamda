@@ -28,6 +28,9 @@ class AppRoutes {
   /// Assistant screen route
   static const String assistant = '/assistant';
 
+  /// Assistant with post screen route
+  static const String assistantForPost = '/assistant_for_post';
+
   /// Prayer screen route
   static const String prayer = '/prayer';
 

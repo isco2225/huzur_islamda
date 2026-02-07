@@ -7,6 +7,16 @@ import '../../domain/domain.dart';
 import '../../ui/ui.dart';
 import 'app_routes.dart';
 
+/// [state.extra] some times go_router extra is not typed, so we need to cast it to the correct type.
+Post? _postFromExtra(Object? extra) {
+  if (extra == null) return null;
+  if (extra is Post) return extra;
+  if (extra is Map<String, dynamic>) {
+    return Post.fromJson(Map<String, Object?>.from(extra));
+  }
+  return null;
+}
+
 /// Creates and returns the app router with refresh listenable support.
 ///
 /// This router handles all navigation logic including authentication-based
@@ -141,11 +151,23 @@ final List<RouteBase> _routes = [
     path: AppRoutes.postDetail,
     name: 'post_detail',
     builder: (context, state) {
-      final post = state.extra as Post?;
+      final post = _postFromExtra(state.extra);
       if (post == null) {
         return const Scaffold(body: Center(child: Text('Post not found')));
       }
       return PostDetailScreen(post: post);
+    },
+  ),
+
+  GoRoute(
+    path: AppRoutes.assistantForPost,
+    name: 'assistant_with_post',
+    builder: (context, state) {
+      final post = _postFromExtra(state.extra);
+      if (post == null) {
+        return const Scaffold(body: Center(child: Text('Gönderi bulunamadı')));
+      }
+      return AssistantForPostScreen(post: post);
     },
   ),
 

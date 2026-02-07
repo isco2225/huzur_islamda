@@ -19,6 +19,7 @@ class AssistantUseCase {
     required String senderAge,
     required String senderGender,
     required List<String>? previousMessages,
+    required String? postContent,
   }) async {
     final assistantDailyLimit =
         appRepository.appPreferences.value.assistantDailyLimit;
@@ -39,6 +40,7 @@ class AssistantUseCase {
           senderAge: senderAge,
           senderGender: senderGender,
           previousMessages: previousMessages,
+          postContent: postContent,
         );
         switch (messageResult) {
           case Ok():

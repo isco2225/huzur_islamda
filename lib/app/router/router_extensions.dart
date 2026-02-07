@@ -29,6 +29,10 @@ extension RouterExtensions on BuildContext {
   /// Navigate to assistant screen
   void goToAssistant() => go(AppRoutes.assistant);
 
+  /// Gönderi hakkında asistan ekranını açar (yeni ekran, post zorunlu).
+  Future<T?> pushToAssistantForPost<T extends Object?>(Post post) =>
+      push<T>(AppRoutes.assistantForPost, extra: post);
+
   /// Navigate to prayer screen
   void goToPrayer() => go(AppRoutes.prayer);
 

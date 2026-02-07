@@ -1,62 +1,53 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-import '../../../app/app.dart';
-import '../../../data/data.dart';
-import '../../../domain/domain.dart';
+import '../../../../app/app.dart';
+import '../../../../data/data.dart';
+import '../../../../domain/domain.dart';
+import '../../view_models/view_models.dart';
 
-class AssistantMessage {
-  AssistantMessage({required this.text, required this.isUser, this.timeLabel});
-
-  final String text;
-  final bool isUser;
-  final String? timeLabel;
-}
-
-class AssistantViewModel {
-  AssistantViewModel({
+/// Gönderi bağlamında asistan sohbeti için ViewModel. [Post] her zaman vardır.
+class AssistantForPostViewModel {
+  AssistantForPostViewModel({
+    required Post post,
     required UserRepository userRepository,
     required AssistantUseCase assistantUseCase,
     required ConnectivityUseCase connectivityUseCase,
-  }) : _userRepository = userRepository,
+  }) : _post = post,
+       _userRepository = userRepository,
        _assistantUseCase = assistantUseCase,
        _connectivityUseCase = connectivityUseCase {
-    // DEFINE COMMANDS
     sendMessage = Command1<void, String>(
       _sendMessage,
       debugLabel: 'sendMessage',
     );
-
-    // Default welcome message
     messages.value = [
       AssistantMessage(
-        text:
-            'Selam ${_userRepository.currentUser.value.name}, bugün sana nasıl yardımcı olabilirim?',
+        text: 'Bu gönderi hakkında ne sormak istersin?',
         isUser: false,
         timeLabel: _nowLabel,
       ),
     ];
   }
-  // logger
-  final _log = Logger('AssistantViewModel');
-  // repositories and use cases
+
+  final Logger _log = Logger('AssistantForPostViewModel');
+  final Post _post;
   final UserRepository _userRepository;
   final AssistantUseCase _assistantUseCase;
   final ConnectivityUseCase _connectivityUseCase;
-  // state
+
+  Post get post => _post;
+
   final ValueNotifier<List<AssistantMessage>> messages =
       ValueNotifier<List<AssistantMessage>>([]);
-  // commands
   late final Command1<void, String> sendMessage;
-  // dispose
+
   void dispose() {
     messages.dispose();
     sendMessage.dispose();
     _log.fine('Disposed');
   }
 
-  // functions
-  /// check internet connection and execute assistant use case
   Future<Result<void>> _sendMessage(String userMessage) async {
     final connectivityResult = await _connectivityUseCase.connectionType();
     switch (connectivityResult) {
@@ -71,11 +62,8 @@ class AssistantViewModel {
         );
         return Result.error(connectivityResult.asError.error);
     }
-    _log.info('Internet connection is available');
-    // copy current messages list to previous messages list
-    final previousMessages = List<AssistantMessage>.from(messages.value);
 
-    // add new user message to messages list
+    final previousMessages = List<AssistantMessage>.from(messages.value);
     final current = List<AssistantMessage>.from(previousMessages);
     current.add(
       AssistantMessage(text: userMessage, isUser: true, timeLabel: _nowLabel),
@@ -83,22 +71,20 @@ class AssistantViewModel {
     messages.value = current;
 
     final user = _userRepository.currentUser.value;
-
-    final List<AssistantMessage> limitedHistory;
-    if (previousMessages.length <= 2) {
-      limitedHistory = previousMessages;
-    } else {
-      limitedHistory = previousMessages.sublist(previousMessages.length - 2);
-    }
+    final limitedHistory = previousMessages.length <= 2
+        ? previousMessages
+        : previousMessages.sublist(previousMessages.length - 2);
     final previousTexts = limitedHistory.map((m) => m.text).toList();
+
     final result = await _assistantUseCase.execute(
       message: userMessage,
       senderName: user.name.isNotEmpty ? user.name : 'Kullanıcı',
       senderAge: _getUserAge(),
       senderGender: user.gender.isNotEmpty ? user.gender : '',
       previousMessages: previousTexts,
-      postContent: null,
+      postContent: _post.content,
     );
+
     switch (result) {
       case Ok():
         _log.info('Message sent successfully');
@@ -110,7 +96,6 @@ class AssistantViewModel {
     }
   }
 
-  /// add assistant reply to messages list
   void _addAssistantReply(String text) {
     final current = List<AssistantMessage>.from(messages.value);
     current.add(
@@ -119,19 +104,15 @@ class AssistantViewModel {
     messages.value = current;
   }
 
-  /// get current time label
   String get _nowLabel {
     final now = DateTime.now();
     String twoDigits(int v) => v.toString().padLeft(2, '0');
     return '${twoDigits(now.hour)}:${twoDigits(now.minute)}';
   }
 
-  /// get user age
   String _getUserAge() {
     final dobString = _userRepository.currentUser.value.dateOfBirth;
-    if (dobString.isEmpty) {
-      return 'Bilinmiyor';
-    }
+    if (dobString.isEmpty) return 'Bilinmiyor';
     try {
       final dob = DateTime.parse(dobString);
       return UserAgeCalculater(dateOfBirth: dob).calculateAge().toString();

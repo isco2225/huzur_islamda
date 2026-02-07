@@ -36,9 +36,7 @@ class PostDetailView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement assistant functionality
-        },
+        onPressed: () => context.pushToAssistantForPost(post),
         heroTag: 'assistant_post',
         backgroundColor: AppColors.background,
         child: Icon(Icons.smart_toy, color: AppColors.primary),
