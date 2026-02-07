@@ -90,7 +90,7 @@ class DhikrDetailView extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 100.0),
                             child: Center(
                               child: Text(
-                                dhikr.name,
+                                dhikr.arabic ?? dhikr.name,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
