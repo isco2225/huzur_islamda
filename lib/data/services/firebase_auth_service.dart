@@ -210,7 +210,7 @@ class FirebaseAuthService {
     }
   }
 
-  /// refresh the current user
+  /// refresh the current user(Not used for now)
   Future<Result<void>> refreshUser() async {
     try {
       final user = _auth.currentUser;
