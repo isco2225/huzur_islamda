@@ -38,14 +38,14 @@ class SettingsView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SettingsDisplayerCard(
-                          title: 'Bildirimler',
+                          title: 'Etkileşimler',
                           description:
-                              'Bildirim seçeneklerini tercihinize göre özelleştirin.',
+                              'Seçenekleri Tercihinize Göre Özelleştirin.',
                           children: [
                             SwitchableSettingTile(
                               icon: Icons.notifications_none_rounded,
                               title: 'Bildirimler',
-                              subtitle: 'Bildirim ayarlarını yönet',
+                              subtitle: 'Bildirim Ayarlarını Yönet',
                               valueListenable: viewModel.isNotificationsEnabled,
                               onChanged: (value) =>
                                   viewModel.toggleNotifications.execute(value),
@@ -54,7 +54,7 @@ class SettingsView extends StatelessWidget {
                             SwitchableSettingTile(
                               icon: Icons.vibration_rounded,
                               title: 'Titreşim',
-                              subtitle: 'Bildirimlerde titreşimi kullan',
+                              subtitle: 'Titreşimi Kullan',
                               valueListenable: viewModel.isVibrationEnabled,
                               onChanged: (value) {
                                 if (value) {
@@ -67,12 +67,58 @@ class SettingsView extends StatelessWidget {
                         ),
                         SizedBox(height: context.spacingMedium),
                         SettingsDisplayerCard(
-                          title: 'Hesap',
+                          title: 'Hakkında',
+                          description: 'Uygulama hakkında bilgi alın',
                           children: [
+                            NavigatableSettingTile(
+                              icon: Icons.info_outline_rounded,
+                              title: 'Uygulama Hakkında',
+                              subtitle: 'Uygulamanın Açıklamasını Öğrenin',
+                              onTap: () {
+                                // TODO: open about bottom sheet
+                              },
+                            ),
+                            SettingsDivider(),
+                            // Privacy Policy
+                            NavigatableSettingTile(
+                              icon: Icons.privacy_tip_outlined,
+                              title: 'Gizlilik Politikası',
+                              subtitle: 'Gizlilik Politikasını Öğrenin',
+                              onTap: () {
+                                // TODO: open privacy policy bottom sheet
+                              },
+                            ),
+                            SettingsDivider(),
+                            // Terms of Service
+                            NavigatableSettingTile(
+                              icon: Icons.description_outlined,
+                              title: 'Kullanım Koşulları',
+                              subtitle: 'Kullanım Koşullarını Öğrenin',
+                              onTap: () {
+                                // TODO: open terms of service bottom sheet
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: context.spacingMedium),
+                        SettingsDisplayerCard(
+                          title: 'Hesap',
+                          description: 'Hesap ayarlarını yönetin',
+                          children: [
+                            // Edit Profile
+                            NavigatableSettingTile(
+                              icon: Icons.person_outline_rounded,
+                              title: 'Profili Düzenle',
+                              subtitle: 'Profil Bilgilerini Düzenleyin',
+                              onTap: () {
+                                context.pushEditProfile();
+                              },
+                            ),
+                            SettingsDivider(),
                             NavigatableSettingTile(
                               icon: Icons.lock_reset_rounded,
                               title: 'Şifreyi Değiştir',
-                              subtitle: 'Güvenliğinizi güncel tutun',
+                              subtitle: 'Hesap Şifresini Güncelleyin',
                               onTap: () {
                                 // TODO: Navigate to change password
                               },
@@ -81,6 +127,12 @@ class SettingsView extends StatelessWidget {
                             SettingsLogOutCard(
                               onTap: () {
                                 logOutViewModel.logOut.execute();
+                              },
+                            ),
+                            SettingsDivider(),
+                            SettingsDeleteAccountCard(
+                              onTap: () {
+                                // TODO: Navigate to delete account
                               },
                             ),
                           ],
