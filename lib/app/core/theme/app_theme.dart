@@ -43,6 +43,9 @@ class AppTheme {
           ),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+      ),
     );
   }
 }

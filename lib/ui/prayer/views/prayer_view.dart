@@ -217,20 +217,18 @@ class NoNotificationPermissionInformation extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(
-                    'İptal',
-                    style: TextStyle(color: AppColors.error),
-                  ),
+                  child: const Text('İptal'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                     context.pushSettings();
                   },
-                  child: Text(
-                    'Ayarlara Git',
-                    style: TextStyle(color: AppColors.hadisColor),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
                   ),
+                  child: const Text('Ayarlara Git'),
                 ),
               ],
             ),
@@ -238,35 +236,6 @@ class NoNotificationPermissionInformation extends StatelessWidget {
         }
       },
       icon: Icon(Icons.info_outline, color: AppColors.error),
-    );
-  }
-}
-
-class GoToSettingsDialog extends StatelessWidget {
-  const GoToSettingsDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Bildirimleri Aç'),
-      content: Text(
-        'Ezan vaktinde bildirim almak için, ayarlardan bildirimleri açınız.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('İptal'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            context.pushSettings();
-          },
-          child: Text('Ayarlara Git'),
-        ),
-      ],
     );
   }
 }

@@ -10,23 +10,9 @@ class OpenSettingsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-
-    return AlertDialog(
-      title: Text(
-        'Bildirim İzni Gerekli',
-        style: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          fontSize: context.responsiveFontSize(textTheme.titleLarge?.fontSize),
-        ),
-      ),
-      content: Text(
-        'Namaz vakitleri bildirimlerini almak için bildirim iznine ihtiyacımız var. Lütfen ayarlardan bildirim iznini açın.',
-        style: textTheme.bodyMedium?.copyWith(
-          fontSize: context.responsiveFontSize(textTheme.bodyMedium?.fontSize),
-        ),
-      ),
+    return CustomDialog(
+      title: 'Bildirim İzni Gerekli',
+      content: 'Lütfen telefon ayarlarından, uygulamaya bildirim izni verin.',
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -39,14 +25,12 @@ class OpenSettingsDialog extends StatelessWidget {
             await openAppSettings();
           },
           style: TextButton.styleFrom(
-            foregroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
           ),
           child: const Text('Ayarlara Git'),
         ),
       ],
-      contentPadding: context.dialogContentPadding,
-      titlePadding: context.dialogTitlePadding,
-      actionsPadding: context.dialogActionsPadding,
     );
   }
 }

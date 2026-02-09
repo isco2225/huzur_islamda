@@ -12,15 +12,9 @@ class EmailVerificationView extends StatelessWidget {
   void _showDeleteAccountConfirmation(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: Text(
-          'Hesabı Sil',
-          style: TextStyle(fontSize: context.responsiveFontSize(18)),
-        ),
-        content: Text(
-          'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz. Doğru email adresi ile tekrar kayıt olabilirsiniz.',
-          style: TextStyle(fontSize: context.responsiveFontSize(14)),
-        ),
+      builder: (BuildContext dialogContext) => CustomDialog(
+        title: 'Hesabı Sil',
+        content: 'Hesabınızı silmek istediğinizden emin misiniz?',
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
@@ -31,12 +25,10 @@ class EmailVerificationView extends StatelessWidget {
               Navigator.of(dialogContext).pop();
               viewModel.deleteAccount.execute();
             },
-            child: Text('Sil', style: TextStyle(color: AppColors.error)),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Sil'),
           ),
         ],
-        contentPadding: context.dialogContentPadding,
-        titlePadding: context.dialogTitlePadding,
-        actionsPadding: context.dialogActionsPadding,
       ),
     );
   }

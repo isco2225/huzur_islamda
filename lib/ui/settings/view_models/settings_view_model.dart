@@ -222,6 +222,7 @@ class SettingsViewModel {
         final granted = iosPermissionResult.asOk.value;
         if (!granted) {
           _log.warning('Notification permission denied on iOS');
+          showOpenSettingsDialog.value = true;
           return Result.error(
             Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
           );

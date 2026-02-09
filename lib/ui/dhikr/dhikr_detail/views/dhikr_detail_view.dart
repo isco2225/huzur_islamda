@@ -163,9 +163,9 @@ class DhikrDetailView extends StatelessWidget {
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Zikiri Sil'),
-        content: const Text('Bu zikiri silmek istediğinize emin misiniz?'),
+      builder: (context) => CustomDialog(
+        title: 'Zikiri Sil',
+        content: 'Bu zikiri silmek istediğinize emin misiniz?',
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -176,7 +176,10 @@ class DhikrDetailView extends StatelessWidget {
               Navigator.pop(context);
               viewModel.deleteDhikr.execute();
             },
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red,
+            ),
             child: const Text('Sil'),
           ),
         ],
@@ -187,9 +190,9 @@ class DhikrDetailView extends StatelessWidget {
   void _showResetConfirmation(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sayacı Sıfırla'),
-        content: const Text('Sayacı sıfırlamak istediğinize emin misiniz?'),
+      builder: (context) => CustomDialog(
+        title: 'Sayacı Sıfırla',
+        content: 'Sayacı sıfırlamak istediğinize emin misiniz?',
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -200,6 +203,7 @@ class DhikrDetailView extends StatelessWidget {
               Navigator.pop(context);
               viewModel.resetCount.execute();
             },
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text('Sıfırla'),
           ),
         ],
