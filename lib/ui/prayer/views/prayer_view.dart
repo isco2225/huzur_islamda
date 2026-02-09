@@ -169,7 +169,7 @@ class _PrayerViewState extends State<PrayerView> {
                         },
                       ),
                       SizedBox(height: responsive.spacingMedium),
-                      const BannerAdWidget(),
+                      //const BannerAdWidget(),
                     ],
                   ),
                 ),

@@ -52,7 +52,7 @@ class FlowView extends StatelessWidget {
               isAllItemsFetched: fetchPostsViewModel.isAllItemsFetched,
             ),
           ),
-          const BannerAdWidget(),
+          //const BannerAdWidget(),
         ],
       ),
     );
