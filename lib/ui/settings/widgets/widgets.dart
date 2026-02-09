@@ -4,3 +4,4 @@ export 'settings_divider.dart';
 export 'settings_log_out_card.dart';
 export 'switchable_setting_tile.dart';
 export 'open_settings_dialog.dart';
+export 'version_displayer.dart';

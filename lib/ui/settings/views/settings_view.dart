@@ -85,6 +85,8 @@ class SettingsView extends StatelessWidget {
                             ),
                           ],
                         ),
+                        SizedBox(height: context.spacingMedium),
+                        Center(child: VersionDisplayer()),
                       ],
                     ),
                   ),
