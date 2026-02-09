@@ -21,7 +21,7 @@ class DhikrPopMenuButton extends StatelessWidget {
           value: 'create_dhikrs_for_prayer',
           child: Row(
             children: [
-              Icon(Icons.mosque, size: 20),
+              Icon(Icons.mosque, color: AppColors.primary, size: 20),
               SizedBox(width: 8),
               Text('Namaz Zikirleri Oluştur'),
             ],
@@ -34,9 +34,9 @@ class DhikrPopMenuButton extends StatelessWidget {
           value: 'create_dhikr_by_mood',
           child: Row(
             children: [
-              Icon(Icons.mood, size: 20),
+              Icon(Icons.mood, color: AppColors.duaColor, size: 20),
               SizedBox(width: 8),
-              Text('Ruh haline göre zikir oluştur.'),
+              Text('Ruh Haline Göre Zikir Oluştur'),
             ],
           ),
         ),

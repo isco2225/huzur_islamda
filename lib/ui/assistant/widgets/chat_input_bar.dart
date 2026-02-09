@@ -33,6 +33,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     final theme = Theme.of(context);
 
     return Container(
@@ -65,6 +66,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   border: InputBorder.none,
                   isCollapsed: false,
                   contentPadding: EdgeInsets.all(4),
+                  fillColor: Colors.white,
+                  filled: true,
                 ),
                 style: theme.textTheme.bodyMedium,
               ),
@@ -73,15 +76,15 @@ class _ChatInputBarState extends State<ChatInputBar> {
             GestureDetector(
               onTap: _handleSend,
               child: Container(
-                width: 42,
-                height: 42,
+                width: responsive.isSmallScreen ? 32 : 42,
+                height: responsive.isSmallScreen ? 32 : 42,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(21),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.send_rounded,
-                  size: 20,
+                  size: responsive.isSmallScreen ? 16 : 20,
                   color: Colors.white,
                 ),
               ),

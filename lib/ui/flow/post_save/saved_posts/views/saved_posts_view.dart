@@ -57,7 +57,7 @@ class SavedPostsView extends StatelessWidget {
               ),
             ),
           ),
-          const BannerAdWidget(),
+          //const BannerAdWidget(),
         ],
       ),
     );

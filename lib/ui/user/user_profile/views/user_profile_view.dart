@@ -34,7 +34,7 @@ class UserProfileView extends StatelessWidget {
               context.pushSavedPosts();
             },
             icon: Icon(
-              Icons.bookmark_outline,
+              Icons.bookmark,
               size: context.isSmallScreen ? 22 : 24,
               color: AppColors.primary,
             ),
