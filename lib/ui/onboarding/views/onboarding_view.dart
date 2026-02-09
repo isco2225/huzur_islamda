@@ -41,6 +41,7 @@ class _OnboardingViewState extends State<OnboardingView> {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     return BaseScaffold(
+      safeArea: true,
       body: Column(
         children: [
           Expanded(

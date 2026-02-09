@@ -85,12 +85,15 @@ class _DhikrMeanBottomSheetState extends State<DhikrMeanBottomSheet> {
           SizedBox(height: responsive.spacingSmall),
           Align(
             alignment: Alignment.centerRight,
-            child: AppButton(
-              running: ValueNotifier(false),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              text: 'Tamam',
+            child: Padding(
+              padding: EdgeInsets.only(bottom: responsive.spacingSmall),
+              child: AppButton(
+                running: ValueNotifier(false),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                text: 'Tamam',
+              ),
             ),
           ),
         ],
