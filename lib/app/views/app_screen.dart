@@ -35,6 +35,7 @@ class AppScreen extends StatefulWidget {
     required this.reportRepository,
     required this.reportService,
     required this.assistantUseCase,
+    required this.deleteAccountUseCase,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -63,6 +64,7 @@ class AppScreen extends StatefulWidget {
   final ReportRepository reportRepository;
   final ReportService reportService;
   final AssistantUseCase assistantUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -138,6 +140,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.wipeDataUseCase),
         Provider(create: (_) => widget.showAdUseCase),
         Provider(create: (_) => widget.assistantUseCase),
+        Provider(create: (_) => widget.deleteAccountUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

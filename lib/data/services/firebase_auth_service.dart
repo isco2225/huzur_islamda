@@ -198,8 +198,8 @@ class FirebaseAuthService {
       if (user == null) {
         return Result.error(Exception('No user is currently signed in'));
       }
-
       await user.delete();
+      await _googleSignIn.signOut();
       return Result.ok(null);
     } on FirebaseAuthException catch (e) {
       return Result.error(
@@ -207,6 +207,63 @@ class FirebaseAuthService {
       );
     } catch (e) {
       return Result.error(Exception('Failed to delete account: $e'));
+    }
+  }
+
+  Future<Result<void>> reauthenticateWithEmail({
+    required String password,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return Result.error(Exception('No user is currently signed in'));
+    }
+    final email = user.email;
+    if (email == null) {
+      return Result.error(Exception('User email not found'));
+    }
+    final credential = EmailAuthProvider.credential(
+      email: email,
+      password: password,
+    );
+    await user.reauthenticateWithCredential(credential);
+    return Result.ok(null);
+  }
+
+  Future<Result<void>> reauthenticateWithGoogle() async {
+    try {
+      await initializeGoogleSignIn();
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
+      final authorizationClient = googleUser.authorizationClient;
+      final authorization = await authorizationClient.authorizationForScopes([
+        'email',
+        'profile',
+      ]);
+      if (authorization == null || googleAuth.idToken == null) {
+        return Result.error(
+          Exception('Failed to get Google authentication tokens'),
+        );
+      }
+      final credential = GoogleAuthProvider.credential(
+        accessToken: authorization.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final user = _auth.currentUser;
+      if (user == null) {
+        return Result.error(Exception('No user is currently signed in'));
+      }
+      await user.reauthenticateWithCredential(credential);
+      return Result.ok(null);
+    } on FirebaseAuthException catch (e) {
+      return Result.error(
+        Exception(
+          e.message ?? 'Failed to reauthenticate with Google: ${e.code}',
+        ),
+      );
+    } catch (e) {
+      return Result.error(
+        Exception('Failed to reauthenticate with Google: $e'),
+      );
     }
   }
 

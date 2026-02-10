@@ -183,4 +183,42 @@ class AuthRepositoryRemote extends AuthRepository {
       return Result.error(Exception(e));
     }
   }
+
+  @override
+  Future<Result> reauthenticate() async {
+    try {
+      final currentUser = _firebaseAuthService.getCurrentUser();
+      if (currentUser == null) {
+        return Result.error(Exception('No user is currently signed in'));
+      }
+
+      final providerIds = currentUser.providerData
+          .map((p) => p.providerId)
+          .toList();
+
+      AuthProviderType providerType = AuthProviderType.emailPassword;
+      if (providerIds.contains('google.com')) {
+        providerType = AuthProviderType.google;
+      }
+
+      switch (providerType) {
+        case AuthProviderType.google:
+          final result = await _firebaseAuthService.reauthenticateWithGoogle();
+          switch (result) {
+            case Ok():
+              return Result.ok(null);
+            case Error():
+              return Result.error(result.asError.error);
+          }
+        case AuthProviderType.emailPassword:
+          return Result.error(
+            Exception(
+              'Bu işlem için yeniden giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.',
+            ),
+          );
+      }
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
 }

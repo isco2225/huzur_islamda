@@ -161,7 +161,7 @@ class FirestoreUserService {
     }
   }
 
-  /// Kullanıcıyı Firestore'dan sil
+  /// Delete user from Firestore
   Future<Result<void>> deleteAuthenticatedUser({required String uid}) async {
     try {
       await _firestore.collection(_collectionName).doc(uid).delete();

@@ -34,4 +34,7 @@ abstract class AuthRepository {
 
   /// Delete current user account
   Future<Result> deleteAccount();
+
+  /// Reauthenticate current user
+  Future<Result> reauthenticate();
 }

@@ -1,6 +1,7 @@
+import '../../../app/app.dart';
+import '../../../data/data.dart';
 
-
-/*class DeleteAccountUseCase {
+class DeleteAccountUseCase {
   DeleteAccountUseCase({
     required AuthRepository authRepository,
     required UserRepository userRepository,
@@ -13,36 +14,31 @@
   Future<Result<void>> execute() async {
     try {
       final currentUserId = _authRepository.auth.value.uid;
+      if (currentUserId.isEmpty) {
+        return Result.error(Exception('User ID is empty'));
+      }
+      // TODO: Implement reauthentication with email/password
+      await _authRepository.reauthenticate();
 
-      // 1. Önce Firestore'dan kullanıcıyı sil
-      // (Eğer Auth silme başarısız olursa, en azından Firestore'da orphan data kalmaz)
+      // 1. Delete user from Firestore
       final userResult = await _userRepository.deleteAuthenticatedUser(
         uid: currentUserId,
       );
-
-      // Firestore silme başarısız olsa bile Auth silmeyi dene
-      // (Kullanıcı zaten Auth'da varsa, Firestore'da olmayabilir)
-      final authResult = await _authRepository.deleteAccount();
-
-      switch (authResult) {
+      switch (userResult) {
         case Ok():
-          // Auth silme başarılı - Firestore sonucu önemli değil
-          return Result.ok(null);
-        case Error():
-          // Auth silme başarısız - Firestore sonucunu da kontrol et
-          if (userResult is Error<void>) {
-            return Result.error(
-              Exception(
-                'Failed to delete account: ${authResult.asError.error}. Also failed to delete from Firestore: ${userResult.asError.error}',
-              ),
-            );
+          // Delete user from Auth
+          final authResult = await _authRepository.deleteAccount();
+          switch (authResult) {
+            case Ok():
+              return Result.ok(null);
+            case Error():
+              return Result.error(authResult.asError.error);
           }
-          // Firestore başarılı ama Auth başarısız
-          return Result.error(authResult.asError.error);
+        case Error():
+          return Result.error(userResult.asError.error);
       }
     } catch (e) {
       return Result.error(Exception('Unexpected error: $e'));
     }
   }
 }
-*/

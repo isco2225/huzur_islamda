@@ -113,6 +113,10 @@ void main() async {
     ),
     appRepository: appRepository,
   );
+  final deleteAccountUseCase = DeleteAccountUseCase(
+    authRepository: authRepository,
+    userRepository: userRepository,
+  );
   runApp(
     AppScreen(
       assistantRepository: AssistantRepositoryRemote(
@@ -158,6 +162,7 @@ void main() async {
       reportRepository: ReportRepositoryRemote(reportService: reportService),
       reportService: reportService,
       assistantUseCase: assistantUseCase,
+      deleteAccountUseCase: deleteAccountUseCase,
     ),
   );
 }

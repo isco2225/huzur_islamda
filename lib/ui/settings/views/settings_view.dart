@@ -9,11 +9,12 @@ class SettingsView extends StatelessWidget {
     super.key,
     required this.viewModel,
     required this.logOutViewModel,
+    required this.userViewModel,
   });
 
   final SettingsViewModel viewModel;
   final LogOutViewModel logOutViewModel;
-
+  final UserViewModel userViewModel;
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -131,8 +132,8 @@ class SettingsView extends StatelessWidget {
                             ),
                             SettingsDivider(),
                             SettingsDeleteAccountCard(
-                              onTap: () {
-                                // TODO: Navigate to delete account
+                              onTap: () async {
+                                await userViewModel.deleteAccount.execute();
                               },
                             ),
                           ],

@@ -16,7 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     with WidgetsBindingObserver {
   late final SettingsViewModel _viewModel;
   late final LogOutViewModel _logOutViewModel;
-
+  late final UserViewModel _userViewModel;
   @override
   void initState() {
     super.initState();
@@ -31,6 +31,14 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
     _logOutViewModel = LogOutViewModel(
       authRepository: context.read<AuthRepository>(),
+    );
+    _userViewModel = UserViewModel(
+      deleteAccountUseCase: context.read<DeleteAccountUseCase>(),
+    );
+    _userViewModel.deleteAccount.handleError(context, showSnackBar: true);
+    _userViewModel.deleteAccount.handleCompleted(
+      context,
+      successMessage: 'Hesap silindi!',
     );
     _viewModel.toggleNotifications.handleError(context, showSnackBar: true);
     _viewModel.toggleNotifications.handleCompleted(context);
@@ -63,7 +71,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   void dispose() {
     _viewModel.showOpenSettingsDialog.removeListener(_onShowOpenSettingsDialog);
     _viewModel.dispose();
-    _logOutViewModel.logOut.dispose();
+    _logOutViewModel.dispose();
+    _userViewModel.dispose();
     super.dispose();
   }
 
@@ -72,6 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     return SettingsView(
       viewModel: _viewModel,
       logOutViewModel: _logOutViewModel,
+      userViewModel: _userViewModel,
     );
   }
 }
