@@ -14,7 +14,8 @@ class EmailVerificationView extends StatelessWidget {
       context: context,
       builder: (BuildContext dialogContext) => CustomDialog(
         title: 'Hesabı Sil',
-        content: 'Hesabınızı silmek istediğinizden emin misiniz?',
+        content:
+            'Hesabınızı silmek istediğinize emin misiniz? Verileriniz silinecektir ve bu işlem geri alınamaz.',
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),

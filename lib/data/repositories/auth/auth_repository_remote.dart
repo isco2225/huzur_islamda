@@ -106,15 +106,6 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<User>> createAccount({
-    required String email,
-    required String verificationCode,
-  }) {
-    // TODO: implement createAccount
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Result<void>> sendPasswordResetCode({required String email}) {
     // TODO: implement sendPasswordResetCode
     throw UnimplementedError();

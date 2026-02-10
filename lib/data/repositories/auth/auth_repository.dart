@@ -20,12 +20,6 @@ abstract class AuthRepository {
     required String password,
   });
 
-  /// Perform sign up with code
-  Future<Result> createAccount({
-    required String email,
-    required String verificationCode,
-  });
-
   /// Perform send password reset code
   Future<Result<void>> sendPasswordResetCode({required String email});
 
