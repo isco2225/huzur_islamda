@@ -164,7 +164,14 @@ class FirestoreUserService {
   /// Delete user from Firestore
   Future<Result<void>> deleteAuthenticatedUser({required String uid}) async {
     try {
-      await _firestore.collection(_collectionName).doc(uid).delete();
+      final userRef = _firestore.collection(_collectionName).doc(uid);
+      // delete dhikrs
+      final dhikrsSnapshot = await userRef.collection('dhikrs').get();
+      for (final doc in dhikrsSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      // delete user
+      await userRef.delete();
       return Result.ok(null);
     } on FirebaseException catch (e) {
       return Result.error(
