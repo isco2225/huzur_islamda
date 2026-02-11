@@ -60,7 +60,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   @override
   Widget build(BuildContext context) {
     return DhikrView(
-      viewModel: _viewModel,
+      fetchDhikrsViewModel: _viewModel,
       createDhikrViewModel: _createDhikrViewModel,
     );
   }

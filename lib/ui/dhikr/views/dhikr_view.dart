@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../../../../app/app.dart';
 import '../../ui.dart';
@@ -6,11 +7,11 @@ import '../../ui.dart';
 class DhikrView extends StatefulWidget {
   const DhikrView({
     super.key,
-    required this.viewModel,
+    required this.fetchDhikrsViewModel,
     required this.createDhikrViewModel,
   });
 
-  final FetchDhikrsViewModel viewModel;
+  final FetchDhikrsViewModel fetchDhikrsViewModel;
   final CreateDhikrViewModel createDhikrViewModel;
 
   @override
@@ -19,9 +20,11 @@ class DhikrView extends StatefulWidget {
 
 class _DhikrViewState extends State<DhikrView> {
   ValueNotifier<bool> isOnGroupTap = ValueNotifier<bool>(false);
+  ValueNotifier<bool> isDialOpen = ValueNotifier<bool>(false);
   @override
   void dispose() {
     isOnGroupTap.dispose();
+    isDialOpen.dispose();
     super.dispose();
   }
 
@@ -29,287 +32,140 @@ class _DhikrViewState extends State<DhikrView> {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-
+    final responsive = context.responsive;
     return ListenableBuilder(
       listenable: Listenable.merge([
-        widget.viewModel.selectedDate,
+        widget.fetchDhikrsViewModel.selectedDate,
         isOnGroupTap,
-        widget.viewModel.groupDhikrs,
+        widget.fetchDhikrsViewModel.groupDhikrs,
       ]),
       builder: (context, _) {
-        final isTodaySelected = widget.viewModel.selectedDate.value == today;
-        final selectedDate = widget.viewModel.selectedDate.value;
-        final groupDhikrs = widget.viewModel.groupDhikrs.value;
+        final isTodaySelected =
+            widget.fetchDhikrsViewModel.selectedDate.value == today;
+        final selectedDate = widget.fetchDhikrsViewModel.selectedDate.value;
+        final groupDhikrs = widget.fetchDhikrsViewModel.groupDhikrs.value;
         final hasGroups = groupDhikrs != null && groupDhikrs.isNotEmpty;
-
-        // Grup zikirleri varken silme: overlay tüm ekranı (app bar dahil) kaplasın
         if (hasGroups) {
-          return ValueListenableBuilder<bool>(
-            valueListenable: widget.viewModel.deleteGroup.running,
+          return ValueListenableBuilder(
+            valueListenable: widget.fetchDhikrsViewModel.deleteGroup.running,
             builder: (context, isDeleting, _) {
-              return Stack(
-                children: [
-                  BaseScaffold(
-                    safeArea: true,
-                    floatingActionButton: isTodaySelected && !isOnGroupTap.value
-                        ? FloatingActionButton(
-                            onPressed: () {
-                              context.pushCreateDhikr();
-                            },
-                            heroTag: 'create_dhikr',
-                            backgroundColor: AppColors.primary,
-                            child: const Icon(Icons.add, color: Colors.white),
-                          )
-                        : null,
-                    appBar: AppBar(
-                      title: const Text('Zikirlerim'),
-                      actions: [
-                        isTodaySelected
-                            ? DhikrPopMenuButton(
-                                onCreateDhikrsForPrayerTapped: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (dialogContext) =>
-                                        CreateDhikrsForPrayerAlertDialog(
-                                          createDhikrViewModel:
-                                              widget.createDhikrViewModel,
-                                        ),
-                                  );
-                                },
-                              )
-                            : const SizedBox.shrink(),
-                      ],
-                    ),
-                    body: Column(
-                      children: [
-                        DhikrDateSelector(viewModel: widget.viewModel),
-                        Expanded(
-                          child: DefaultTabController(
-                            length: 2,
-                            child: Column(
-                              children: [
-                                TabBar(
-                                  labelColor: AppColors.primary,
-                                  unselectedLabelColor: Colors.grey[600],
-                                  indicatorColor: AppColors.primary,
-                                  indicatorWeight: 2,
-                                  indicatorSize: TabBarIndicatorSize.label,
-                                  dividerColor: Colors.transparent,
-                                  onTap: (index) {
-                                    isOnGroupTap.value = index == 1;
-                                  },
-                                  tabs: const [
-                                    Tab(text: 'Zikirler'),
-                                    Tab(text: 'Gruplar'),
-                                  ],
-                                ),
-                                Expanded(
-                                  child: TabBarView(
-                                    children: [
-                                      InfinityScrollableDhikrs(
-                                        fetchDhikrsViewModel: widget.viewModel,
-                                        noItemsToShowWidget: isTodaySelected
-                                            ? const Center(
-                                                child: NoDhikrsToShow(),
-                                              )
-                                            : const Center(
-                                                child: Text(
-                                                  'Bu tarih için zikir yok.',
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                        onFetch: () {
-                                          widget.viewModel.fetchDhikrs.execute(
-                                            selectedDate,
-                                          );
-                                        },
-                                        dhikrs: widget.viewModel.dhikrs,
-                                        hasError:
-                                            widget.viewModel.fetchDhikrs.error,
-                                        isFetching: widget
-                                            .viewModel
-                                            .fetchDhikrs
-                                            .running,
-                                        isAllItemsFetched: widget
-                                            .viewModel
-                                            .fetchDhikrs
-                                            .completed,
-                                      ),
-                                      SingleChildScrollView(
-                                        child: GroupDhikrsCard(
-                                          viewModel: widget.viewModel,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+              return ValueListenableBuilder<bool>(
+                valueListenable: isDialOpen,
+                builder: (context, dialOpen, _) {
+                  return Stack(
+                    children: [
+                      PopScope(
+                        canPop: !dialOpen,
+                        onPopInvokedWithResult: (didPop, _) {
+                          if (!didPop && dialOpen) {
+                            isDialOpen.value = false;
+                          }
+                        },
+                        child: GroupSelectedView(
+                          fetchDhikrsViewModel: widget.fetchDhikrsViewModel,
+                          createDhikrViewModel: widget.createDhikrViewModel,
+                          isTodaySelected: isTodaySelected,
+                          responsive: responsive,
+                          isDialOpen: isDialOpen,
+                          isOnGroupTap: isOnGroupTap,
+                          selectedDate: selectedDate,
+                        ),
+                      ),
+                      if (isDeleting)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black26,
+                            child: const Center(
+                              child: CircularProgressIndicator.adaptive(),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  if (isDeleting)
-                    Positioned.fill(
-                      child: Container(
-                        color: Colors.black26,
-                        child: const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
-                      ),
-                    ),
-                ],
+                    ],
+                  );
+                },
               );
             },
           );
         }
 
-        return BaseScaffold(
-          safeArea: true,
-          floatingActionButton: isTodaySelected && !isOnGroupTap.value
-              ? FloatingActionButton(
-                  onPressed: () {
-                    context.pushCreateDhikr();
-                  },
-                  heroTag: 'create_dhikr',
-                  backgroundColor: AppColors.primary,
-                  child: const Icon(Icons.add, color: Colors.white),
-                )
-              : null,
-          appBar: AppBar(
-            title: const Text('Zikirlerim'),
-            actions: [
-              isTodaySelected
-                  ? DhikrPopMenuButton(
-                      onCreateDhikrsForPrayerTapped: () {
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (dialogContext) =>
-                              CreateDhikrsForPrayerAlertDialog(
-                                createDhikrViewModel:
-                                    widget.createDhikrViewModel,
-                              ),
-                        );
-                      },
-                    )
-                  : const SizedBox.shrink(),
-            ],
-          ),
-          body: Column(
-            children: [
-              DhikrDateSelector(viewModel: widget.viewModel),
-              Expanded(
-                child: ValueListenableBuilder(
-                  valueListenable: widget.viewModel.isInitialLoading,
-                  builder: (context, isInitialLoading, _) {
-                    if (isInitialLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return ValueListenableBuilder(
-                      valueListenable: widget.viewModel.groupDhikrs,
-                      builder: (context, groupDhikrs, _) {
-                        if (groupDhikrs == null || groupDhikrs.isEmpty) {
-                          return InfinityScrollableDhikrs(
-                            fetchDhikrsViewModel: widget.viewModel,
-                            noItemsToShowWidget: isTodaySelected
-                                ? const Center(child: NoDhikrsToShow())
-                                : const Center(
-                                    child: Text(
-                                      'Bu tarih için zikir yok.',
-                                      style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                            onFetch: () {
-                              widget.viewModel.fetchDhikrs.execute(
-                                selectedDate,
-                              );
-                            },
-                            dhikrs: widget.viewModel.dhikrs,
-                            hasError: widget.viewModel.fetchDhikrs.error,
-                            isFetching: widget.viewModel.fetchDhikrs.running,
-                            isAllItemsFetched:
-                                widget.viewModel.fetchDhikrs.completed,
-                          );
-                        }
-                        return DefaultTabController(
-                          length: 2,
-                          child: Column(
-                            children: [
-                              TabBar(
-                                labelColor: AppColors.primary,
-                                unselectedLabelColor: Colors.grey[600],
-                                indicatorColor: AppColors.primary,
-                                indicatorWeight: 2,
-                                indicatorSize: TabBarIndicatorSize.label,
-                                dividerColor: Colors.transparent,
-                                onTap: (index) {
-                                  isOnGroupTap.value = index == 1;
-                                },
-                                tabs: const [
-                                  Tab(text: 'Zikirler'),
-                                  Tab(text: 'Gruplar'),
-                                ],
-                              ),
-                              Expanded(
-                                child: TabBarView(
-                                  children: [
-                                    InfinityScrollableDhikrs(
-                                      fetchDhikrsViewModel: widget.viewModel,
-                                      noItemsToShowWidget: isTodaySelected
-                                          ? const Center(
-                                              child: NoDhikrsToShow(),
-                                            )
-                                          : const Center(
-                                              child: Text(
-                                                'Bu tarih için zikir yok.',
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                      onFetch: () {
-                                        widget.viewModel.fetchDhikrs.execute(
-                                          selectedDate,
-                                        );
-                                      },
-                                      dhikrs: widget.viewModel.dhikrs,
-                                      hasError:
-                                          widget.viewModel.fetchDhikrs.error,
-                                      isFetching:
-                                          widget.viewModel.fetchDhikrs.running,
-                                      isAllItemsFetched: widget
-                                          .viewModel
-                                          .fetchDhikrs
-                                          .completed,
-                                    ),
-                                    SingleChildScrollView(
-                                      child: GroupDhikrsCard(
-                                        viewModel: widget.viewModel,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+        return ValueListenableBuilder<bool>(
+          valueListenable: isDialOpen,
+          builder: (context, dialOpen, _) {
+            return PopScope(
+              canPop: !dialOpen,
+              onPopInvokedWithResult: (didPop, _) {
+                if (!didPop && dialOpen) {
+                  isDialOpen.value = false;
+                }
+              },
+              child: DhikrSelectedView(
+                fetchDhikrsViewModel: widget.fetchDhikrsViewModel,
+                createDhikrViewModel: widget.createDhikrViewModel,
+                isTodaySelected: isTodaySelected,
+                responsive: responsive,
+                isDialOpen: isDialOpen,
+                isOnGroupTap: isOnGroupTap,
+                selectedDate: selectedDate,
               ),
-            ],
-          ),
+            );
+          },
         );
       },
+    );
+  }
+}
+
+class DhikrFloatingActionButton extends StatelessWidget {
+  const DhikrFloatingActionButton({
+    super.key,
+    required this.responsive,
+    required this.isDialOpen,
+    required this.isOnGroupTap,
+    required this.onCreateDhikrsForPrayerTapped,
+  });
+
+  final ResponsiveData responsive;
+  final ValueNotifier<bool> isDialOpen;
+  final ValueNotifier<bool> isOnGroupTap;
+  final void Function() onCreateDhikrsForPrayerTapped;
+
+  @override
+  Widget build(BuildContext context) {
+    return SpeedDial(
+      overlayColor: Colors.grey.shade400,
+      backgroundColor: AppColors.primary,
+      spacing: responsive.spacingExtraSmall,
+      spaceBetweenChildren: responsive.spacingExtraSmall,
+      animatedIcon: AnimatedIcons.menu_close,
+      activeBackgroundColor: AppColors.primary,
+      activeForegroundColor: Colors.black,
+      direction: SpeedDialDirection.up,
+      closeDialOnPop: true,
+      openCloseDial: isDialOpen,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.mosque, color: AppColors.primary),
+          label: 'Namaz için zikirler',
+          onTap: () {
+            onCreateDhikrsForPrayerTapped();
+          },
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.wb_sunny_outlined, color: AppColors.duaColor),
+          label: 'Ruh haline göre zikirler',
+          onTap: () {
+            context.pushCreateDhikrByMood();
+          },
+        ),
+        if (!isOnGroupTap.value)
+          SpeedDialChild(
+            child: Icon(Icons.add, color: AppColors.primary),
+            label: 'Zikir oluştur',
+            onTap: () {
+              context.pushCreateDhikr();
+            },
+          ),
+      ],
     );
   }
 }

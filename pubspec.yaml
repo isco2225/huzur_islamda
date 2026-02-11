@@ -73,6 +73,9 @@ dependencies:
   #Package Info(For version displayer)
   package_info_plus: ^9.0.0
 
+  #Speed Dial(For floating action button)
+  flutter_speed_dial: ^7.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
