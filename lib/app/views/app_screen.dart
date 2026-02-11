@@ -36,6 +36,7 @@ class AppScreen extends StatefulWidget {
     required this.reportService,
     required this.assistantUseCase,
     required this.deleteAccountUseCase,
+    required this.firebaseCloudFunctionsService,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -65,6 +66,7 @@ class AppScreen extends StatefulWidget {
   final ReportService reportService;
   final AssistantUseCase assistantUseCase;
   final DeleteAccountUseCase deleteAccountUseCase;
+  final FirebaseCloudFunctionsService firebaseCloudFunctionsService;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -128,6 +130,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.assistantService),
         Provider(create: (_) => widget.dhikrMoodService),
         Provider(create: (_) => widget.reportService),
+        Provider(create: (_) => widget.firebaseCloudFunctionsService),
         // use cases
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.prayerTimeUseCase),

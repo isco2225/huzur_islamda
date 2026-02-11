@@ -34,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
     _userViewModel = UserViewModel(
       deleteAccountUseCase: context.read<DeleteAccountUseCase>(),
+      authRepository: context.read<AuthRepository>(),
     );
     _userViewModel.deleteAccount.handleError(context, showSnackBar: true);
     _userViewModel.deleteAccount.handleCompleted(

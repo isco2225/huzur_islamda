@@ -30,6 +30,9 @@ void main() async {
   final prayerService = PrayerService();
   final notificationService = NotificationService();
   final admobService = AdMobService();
+  final assistantService = AssistantService();
+  final reportService = ReportService();
+  final firebaseCloudFunctionsService = FirebaseCloudFunctionsService();
 
   // Initialize notification service
   final notificationInitResult = await notificationService.initialize();
@@ -60,6 +63,7 @@ void main() async {
   // Repositories
   final authRepository = AuthRepositoryRemote(
     firebaseAuthService: FirebaseAuthService(),
+    firebaseCloudFunctionsService: firebaseCloudFunctionsService,
   );
   final dhikrRepository = DhikrRepositoryRemote(
     hiveService: hiveDhikr,
@@ -105,8 +109,7 @@ void main() async {
     notificationRepository: notificationRepository,
   );
   final showAdUseCase = ShowAdUseCase(admobService: admobService);
-  final assistantService = AssistantService();
-  final reportService = ReportService();
+
   final assistantUseCase = AssistantUseCase(
     assistantRepository: AssistantRepositoryRemote(
       assistantService: assistantService,
@@ -163,6 +166,7 @@ void main() async {
       reportService: reportService,
       assistantUseCase: assistantUseCase,
       deleteAccountUseCase: deleteAccountUseCase,
+      firebaseCloudFunctionsService: firebaseCloudFunctionsService,
     ),
   );
 }

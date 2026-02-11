@@ -6,13 +6,17 @@ import '../../../domain/domain.dart';
 import '../../services/services.dart';
 
 class AuthRepositoryRemote extends AuthRepository {
-  AuthRepositoryRemote({required FirebaseAuthService firebaseAuthService})
-    : _firebaseAuthService = firebaseAuthService {
+  AuthRepositoryRemote({
+    required FirebaseAuthService firebaseAuthService,
+    required FirebaseCloudFunctionsService firebaseCloudFunctionsService,
+  }) : _firebaseAuthService = firebaseAuthService,
+       _firebaseCloudFunctionsService = firebaseCloudFunctionsService {
     // Initialize auth state by checking current user on app startup
     _initializeAuthState();
   }
 
   final FirebaseAuthService _firebaseAuthService;
+  final FirebaseCloudFunctionsService _firebaseCloudFunctionsService;
 
   /// Initialize auth state by checking Firebase Auth current user
   void _initializeAuthState() {
@@ -169,10 +173,10 @@ class AuthRepositoryRemote extends AuthRepository {
   @override
   Future<Result> deleteAccount() async {
     try {
-      final result = await _firebaseAuthService.deleteAccount();
+      final result = await _firebaseCloudFunctionsService.deleteUserAccount();
       switch (result) {
         case Ok():
-          // Manually update auth state after successful sign out
+          // Manually update auth state after successful delete account
           _auth.value = Auth.empty();
           _isSignedIn.value = false;
           return Result.ok(null);

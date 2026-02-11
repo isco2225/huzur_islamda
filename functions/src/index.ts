@@ -4,6 +4,7 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 export const deleteUserAccount = onCall(
+  {region: "europe-west1"},
   async (request) => {
     if (!request.auth) {
       throw new HttpsError(
@@ -14,7 +15,6 @@ export const deleteUserAccount = onCall(
 
     const uid = request.auth.uid;
     const db = admin.firestore();
-    const bucket = admin.storage().bucket();
 
     try {
       console.log(
@@ -34,9 +34,6 @@ export const deleteUserAccount = onCall(
 
       await db.recursiveDelete(userDocRef);
 
-      await bucket.deleteFiles({
-        prefix: `users/${uid}/`,
-      });
 
       await admin.auth().deleteUser(uid);
 
