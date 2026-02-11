@@ -2,16 +2,26 @@ import '../../../app/app.dart';
 import '../../../data/data.dart';
 
 class DeleteAccountUseCase {
-  DeleteAccountUseCase({
-    required AuthRepository authRepository,
-    required UserRepository userRepository,
-  }) : _authRepository = authRepository,
-       _userRepository = userRepository;
+  DeleteAccountUseCase({required AuthRepository authRepository})
+    : _authRepository = authRepository;
 
   final AuthRepository _authRepository;
-  final UserRepository _userRepository;
-
   Future<Result<void>> execute() async {
+    try {
+      final deleteAccountResult = await _authRepository.deleteAccount();
+      switch (deleteAccountResult) {
+        case Ok():
+          await _authRepository.signOut();
+          return Result.ok(null);
+        case Error():
+          return Result.error(deleteAccountResult.asError.error);
+      }
+    } catch (e) {
+      return Result.error(Exception('Unexpected error: $e'));
+    }
+  }
+
+  /*Future<Result<void>> execute() async {
     try {
       final currentUserId = _authRepository.auth.value.uid;
       if (currentUserId.isEmpty) {
@@ -40,5 +50,5 @@ class DeleteAccountUseCase {
     } catch (e) {
       return Result.error(Exception('Unexpected error: $e'));
     }
-  }
+  }*/
 }

@@ -118,7 +118,6 @@ void main() async {
   );
   final deleteAccountUseCase = DeleteAccountUseCase(
     authRepository: authRepository,
-    userRepository: userRepository,
   );
   runApp(
     AppScreen(
