@@ -1,1 +1,48 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"huzur-islamda-f1bf3","appId":"1:418329675000:android:4efa0dd8b2b8665154670d","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"huzur-islamda-f1bf3","appId":"1:418329675000:ios:bd50dbe8cef22b0a54670d","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"huzur-islamda-f1bf3","configurations":{"android":"1:418329675000:android:4efa0dd8b2b8665154670d","ios":"1:418329675000:ios:bd50dbe8cef22b0a54670d","web":"1:418329675000:web:8bcd2e2b4dd4c8d454670d"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "huzur-islamda-f1bf3",
+          "appId": "1:418329675000:android:4efa0dd8b2b8665154670d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "huzur-islamda-f1bf3",
+          "appId": "1:418329675000:ios:bd50dbe8cef22b0a54670d",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "huzur-islamda-f1bf3",
+          "configurations": {
+            "android": "1:418329675000:android:4efa0dd8b2b8665154670d",
+            "ios": "1:418329675000:ios:bd50dbe8cef22b0a54670d",
+            "web": "1:418329675000:web:8bcd2e2b4dd4c8d454670d"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}
