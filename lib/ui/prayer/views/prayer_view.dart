@@ -151,7 +151,7 @@ class _PrayerViewState extends State<PrayerView> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Sonraki vakit için(${widget.prayerTimesViewModel.prayerTimes.value?.getNextPrayerTime()?.name ?? ''}):',
+                          'Sonraki vakit için:',
                           style: TextStyle(
                             fontSize: responsive.isSmallScreen ? 12 : 16,
                             fontWeight: FontWeight.normal,
