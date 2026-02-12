@@ -6,3 +6,4 @@ export 'switchable_setting_tile.dart';
 export 'open_settings_dialog.dart';
 export 'version_displayer.dart';
 export 'settings_delete_account_card.dart';
+export 'settings_info_bottom_sheet.dart';
