@@ -17,7 +17,7 @@ class FlowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: AppBar(title: const Text('Keşfet'), elevation: 0),
+      appBar: AppBar(title: const Text('Keşfet')),
       safeArea: true,
       body: Column(
         children: [

@@ -18,7 +18,7 @@ class SavedPostsView extends StatelessWidget {
     final responsive = context.responsive;
     final textTheme = Theme.of(context).textTheme;
     return BaseScaffold(
-      appBar: AppBar(title: const Text('Kaydedilenler'), elevation: 0),
+      appBar: AppBar(title: const Text('Kaydedilenler')),
       safeArea: true,
       body: Column(
         children: [

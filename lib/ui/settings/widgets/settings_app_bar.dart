@@ -5,12 +5,7 @@ class SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Text('Ayarlar'),
-      centerTitle: true,
-      forceMaterialTransparency: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-    );
+    return AppBar(title: const Text('Ayarlar'));
   }
 
   @override

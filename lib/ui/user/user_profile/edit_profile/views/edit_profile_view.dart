@@ -61,21 +61,8 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-
     return BaseScaffold(
-      appBar: AppBar(
-        title: Text(
-          'Profili Düzenle',
-          style: textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: context.responsiveFontSize(
-              textTheme.titleLarge?.fontSize,
-            ),
-          ),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Profili Düzenle')),
       safeArea: true,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(

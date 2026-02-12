@@ -67,9 +67,7 @@ class _PrayerViewState extends State<PrayerView> {
     final responsive = context.responsive;
     return BaseScaffold(
       appBar: AppBar(
-        title: Text('Ezan Vakitleri'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
+        title: const Text('Ezan Vakitleri'),
         actions: [
           ValueListenableBuilder(
             valueListenable: widget.prayerViewModel.isNotificationsEnabled,

@@ -25,8 +25,6 @@ class PostDetailView extends StatelessWidget {
       appBar: AppBar(
         leading: const SafeBackButton(),
         title: const Text('Gönderi Detayı'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
         actions: [
           PopMenuButton(
             post: post,

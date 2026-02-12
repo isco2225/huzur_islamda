@@ -14,11 +14,7 @@ class AssistantForPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     return BaseScaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.background,
-        title: Text('Gönderi Hakkında'),
-      ),
+      appBar: AppBar(title: const Text('Gönderi Hakkında')),
       backgroundColor: AppColors.background,
       safeArea: true,
       resizeToAvoidBottomInset: true,

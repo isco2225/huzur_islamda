@@ -19,15 +19,7 @@ class UserProfileView extends StatelessWidget {
 
     return BaseScaffold(
       appBar: AppBar(
-        title: Text(
-          'Profil',
-          style: textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: context.responsiveFontSize(
-              textTheme.titleLarge?.fontSize,
-            ),
-          ),
-        ),
+        title: const Text('Profil'),
         actions: [
           IconButton(
             onPressed: () {

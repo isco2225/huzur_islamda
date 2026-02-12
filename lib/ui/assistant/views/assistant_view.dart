@@ -12,17 +12,7 @@ class AssistantView extends StatelessWidget {
     final responsive = context.responsive;
 
     return BaseScaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.background,
-        title: Text(
-          'Asistan',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-        ),
-      ),
-      backgroundColor: AppColors.background,
+      appBar: AppBar(title: const Text('Asistan')),
       safeArea: true,
       resizeToAvoidBottomInset: true,
       body: Column(

@@ -12,13 +12,8 @@ class MoodSelectView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: AppBar(
-        title: const Text('Ruh haline göre zikir'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Ruh haline göre zikir')),
       safeArea: true,
-      backgroundColor: AppColors.background,
       body: ValueListenableBuilder<bool>(
         valueListenable: viewModel.isLoadingMoods,
         builder: (context, isLoading, _) {

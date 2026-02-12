@@ -23,13 +23,8 @@ class _CreateDhikrViewState extends State<CreateDhikrView> {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: AppBar(
-        title: Text('Zikir Oluştur'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Zikir Oluştur')),
       safeArea: true,
-      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(context.horizontalPadding),
         child: Column(
