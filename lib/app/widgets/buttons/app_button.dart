@@ -9,10 +9,12 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     required this.text,
     required this.running,
+    this.backgroundColor,
   });
   final VoidCallback onPressed;
   final String text;
   final ValueListenable<bool> running;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class AppButton extends StatelessWidget {
       builder: (BuildContext context, bool running, _) {
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: backgroundColor ?? AppColors.primary,
             side: BorderSide(style: BorderStyle.solid, width: 0.6),
           ),
           onPressed: running ? null : onPressed,

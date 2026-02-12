@@ -1,17 +1,37 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app.dart';
+import '../../ui.dart';
 
 class SettingsDeleteAccountCard extends StatelessWidget {
-  const SettingsDeleteAccountCard({super.key, required this.onTap});
+  const SettingsDeleteAccountCard({super.key, required this.userViewModel});
 
-  final VoidCallback onTap;
+  final UserViewModel userViewModel;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
-      onTap: onTap,
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => CustomDialog(
+          title: 'Dikkat!',
+          content:
+              'Hesabınızı silmek istediğinize emin misiniz? Verileriniz silinecektir ve bu işlem geri alınamaz.',
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppStrings.cancel),
+            ),
+            AppButton(
+              onPressed: userViewModel.deleteAccount.execute,
+              text: 'Sil',
+              running: userViewModel.deleteAccount.running,
+              backgroundColor: AppColors.error,
+            ),
+          ],
+        ),
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: context.isSmallScreen ? 10 : 12,

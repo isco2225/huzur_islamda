@@ -1,17 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:huzur_islamda/app/app.dart';
 
-class SettingsLogOutCard extends StatelessWidget {
-  const SettingsLogOutCard({super.key, required this.onTap});
+import '../../ui.dart';
 
-  final VoidCallback onTap;
+class SettingsLogOutCard extends StatelessWidget {
+  const SettingsLogOutCard({super.key, required this.logOutViewModel});
+
+  final LogOutViewModel logOutViewModel;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => CustomDialog(
+            title: 'Çıkış Yap',
+            content: 'Hesabınızdan güvenle ayrılın',
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppStrings.cancel),
+              ),
+              AppButton(
+                onPressed: logOutViewModel.logOut.execute,
+                text: 'Çıkış Yap',
+                running: logOutViewModel.logOut.running,
+                backgroundColor: AppColors.error,
+              ),
+            ],
+          ),
+        );
+      },
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: context.isSmallScreen ? 10 : 12,

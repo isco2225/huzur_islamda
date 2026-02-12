@@ -19,15 +19,16 @@ class EmailVerificationView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('İptal'),
+            child: Text(AppStrings.cancel),
           ),
-          TextButton(
+          AppButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
               viewModel.deleteAccount.execute();
             },
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Sil'),
+            running: viewModel.deleteAccount.running,
+            text: 'Sil',
+            backgroundColor: AppColors.error,
           ),
         ],
       ),

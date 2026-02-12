@@ -126,15 +126,11 @@ class SettingsView extends StatelessWidget {
                             ),
                             SettingsDivider(),
                             SettingsLogOutCard(
-                              onTap: () {
-                                logOutViewModel.logOut.execute();
-                              },
+                              logOutViewModel: logOutViewModel,
                             ),
                             SettingsDivider(),
                             SettingsDeleteAccountCard(
-                              onTap: () async {
-                                await userViewModel.deleteAccount.execute();
-                              },
+                              userViewModel: userViewModel,
                             ),
                           ],
                         ),
