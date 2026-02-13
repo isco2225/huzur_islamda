@@ -22,17 +22,22 @@ extension ExceptionLocalizationExtension on BuildContext {
       // Auth
       AuthException() => switch (exception) {
         AuthSignUpFailed() => 'Kayıt sırasında bir hata oluştu',
+        AuthUserAlreadyExists() => 'Bu e-posta adresi ile zaten bir hesap mevcut',
         AuthSignInFailed() => 'Giriş sırasında bir hata oluştu',
+        AuthEmailUsedWithDifferentProvider() =>
+          'Bu e-posta adresi başka bir giriş yöntemi (ör. Google) ile kayıtlı. Lütfen o yöntemle giriş yapın.',
         AuthGoogleSignInFailed() =>
           'Google ile giriş sırasında bir hata oluştu',
         AuthNoUserSignedIn() => 'Şu anda oturum açmış bir kullanıcı yok',
-        AuthUserEmailNotFound() => 'Kullanıcının e-posta adresi bulunamadı',
+        AuthUserEmailNotFound() => 'Kullanıcının bulunamadı',
         AuthSendVerificationEmailFailed() =>
           'Doğrulama e-postası gönderimi sırasında bir hata oluştu',
         AuthEmailAlreadyVerified() => 'E-posta zaten doğrulanmış',
         AuthCheckEmailVerificationFailed() =>
           'Doğrulama kontrolü sırasında bir hata oluştu',
         AuthDeleteAccountFailed() => 'Hesap silinirken bir hata oluştu',
+        AuthSendPasswordResetEmailFailed() =>
+          'Sıfırlama e-postası gönderimi sırasında bir hata oluştu',
       },
       // Dhikr
       DhikrException() => switch (exception) {

@@ -40,6 +40,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
+      appBar: AppBar(title: const TitleText(title: 'Kayıt Ol')),
       safeArea: true,
       body: SingleChildScrollView(
         child: Padding(

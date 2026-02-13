@@ -80,6 +80,25 @@ class _SignInViewState extends State<SignInView> {
                             ));
                           },
                         ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: responsive.isSmallScreen ? 4 : 6,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: GestureDetector(
+                              onTap: () => context.pushResetPassword(),
+                              child: Text(
+                                'Şifremi unuttum',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: responsive.responsiveFontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     );
                   },

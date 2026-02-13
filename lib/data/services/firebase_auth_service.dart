@@ -43,7 +43,10 @@ class FirebaseAuthService {
       return Result.ok(
         Auth(uid: user.uid, email: email, isEmailVerified: user.emailVerified),
       );
-    } on FirebaseAuthException catch (_) {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return Result.error(const AuthUserAlreadyExists());
+      }
       return Result.error(const AuthSignUpFailed());
     } catch (_) {
       return Result.error(const AuthSignUpFailed());
@@ -138,6 +141,18 @@ class FirebaseAuthService {
     }
   }
 
+  /// Send password reset email to the given email address
+  Future<Result<void>> sendPasswordResetEmail({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return Result.ok(null);
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthSendPasswordResetEmailFailed());
+    } catch (_) {
+      return Result.error(const AuthSendPasswordResetEmailFailed());
+    }
+  }
+
   /// Sign in with email and password
   Future<Result<Auth>> signInWithEmailAndPassword({
     required String email,
@@ -150,7 +165,7 @@ class FirebaseAuthService {
       );
       final auth = result.user;
       if (auth == null) {
-        return Result.error(const AuthSignInFailed());
+        return Result.error(const AuthUserEmailNotFound());
       }
       return Result.ok(
         Auth(
@@ -159,7 +174,10 @@ class FirebaseAuthService {
           isEmailVerified: auth.emailVerified,
         ),
       );
-    } on FirebaseAuthException catch (_) {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return Result.error(const AuthUserEmailNotFound());
+      }
       return Result.error(const AuthSignInFailed());
     } catch (_) {
       return Result.error(const AuthSignInFailed());

@@ -106,7 +106,6 @@ class NotificationService {
   /// Bildirim tıklandığında çağrılır
   void _onNotificationTapped(NotificationResponse response) {
     _log.info('Notification tapped: ${response.id}');
-    // TODO: Navigate to prayer times screen if needed
   }
 
   /// iOS'ta bildirim izin durumunu kontrol eder (izin istemez, sadece kontrol eder)

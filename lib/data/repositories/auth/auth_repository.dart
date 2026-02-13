@@ -20,8 +20,8 @@ abstract class AuthRepository {
     required String password,
   });
 
-  /// Perform send password reset code
-  Future<Result<void>> sendPasswordResetCode({required String email});
+  /// Send password reset email to the given email address
+  Future<Result<void>> sendPasswordResetEmail({required String email});
 
   /// Send email verification to current user
   Future<Result<void>> sendEmailVerification();

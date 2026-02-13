@@ -110,9 +110,15 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<void>> sendPasswordResetCode({required String email}) {
-    // TODO: implement sendPasswordResetCode
-    throw UnimplementedError();
+  Future<Result<void>> sendPasswordResetEmail({required String email}) async {
+    try {
+      final result = await _firebaseAuthService.sendPasswordResetEmail(
+        email: email,
+      );
+      return result;
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
   }
 
   @override

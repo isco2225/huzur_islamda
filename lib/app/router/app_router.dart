@@ -59,6 +59,12 @@ final List<RouteBase> _routes = [
     builder: (context, state) => const EmailVerificationScreen(),
   ),
 
+  GoRoute(
+    path: AppRoutes.resetPassword,
+    name: 'reset_password',
+    builder: (context, state) => const ResetPasswordScreen(),
+  ),
+
   // -------------------- BOTTOM NAVIGATION BAR ROUTES --------------------
 
   /// Stateful Shell Route for Bottom Navigation.
@@ -232,6 +238,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
     AppRoutes.signIn,
     AppRoutes.signUp,
     AppRoutes.emailVerification,
+    AppRoutes.resetPassword,
   ];
 
   // Routes that handle their own redirect logic

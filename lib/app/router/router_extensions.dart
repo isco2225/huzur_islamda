@@ -55,7 +55,6 @@ extension RouterExtensions on BuildContext {
   void goToCreateDhikr() => go(AppRoutes.createDhikr);
 
   // -------------------- PUSH METHODS (Add to navigation stack) --------------------
-
   /// Push settings screen
   Future<T?> pushSettings<T extends Object?>() => push<T>(AppRoutes.settings);
 
@@ -74,6 +73,10 @@ extension RouterExtensions on BuildContext {
   /// Push create dhikr by mood screen
   Future<T?> pushCreateDhikrByMood<T extends Object?>() =>
       push<T>(AppRoutes.createDhikrByMood);
+
+  /// Push reset password screen
+  Future<T?> pushResetPassword<T extends Object?>() =>
+      push<T>(AppRoutes.resetPassword);
 
   // -------------------- SPECIAL ROUTES WITH PARAMETERS --------------------
 

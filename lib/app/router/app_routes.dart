@@ -20,6 +20,9 @@ class AppRoutes {
   /// Email verification screen route
   static const String emailVerification = '/email_verification';
 
+  /// Reset password screen route
+  static const String resetPassword = '/reset_password';
+
   // -------------------- MAIN APP ROUTES --------------------
 
   /// Flow (home) screen route
