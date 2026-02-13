@@ -34,6 +34,19 @@ extension ExceptionLocalizationExtension on BuildContext {
           'Doğrulama kontrolü sırasında bir hata oluştu',
         AuthDeleteAccountFailed() => 'Hesap silinirken bir hata oluştu',
       },
+      // Dhikr
+      DhikrException() => switch (exception) {
+        DhikrUserIdEmpty() => 'Kullanıcı oturumu olmadan işlem yapamaz.',
+        DhikrRemoteCountNotFound() => 'Zikir sayısı bulunamadı',
+        DhikrGroupIdsEmpty() => 'Grup silme işlemi için grup ID listesi boş',
+        DhikrReminderCancelFailed() =>
+          'Bugünkü zikir hatırlatma bildirimi iptal edilemedi',
+        DhikrSaveFailed() => 'Zikirler kaydedilirken hata oluştu',
+        DhikrFetchFailed() => 'Zikirler getirilirken hata oluştu',
+        DhikrFetchAllFailed() => 'Tüm zikirler getirilirken hata oluştu',
+        DhikrDeleteFailed() => 'Zikir silinirken hata oluştu',
+        DhikrGetCountFailed() => 'Zikir sayısı getirilirken hata oluştu',
+      },
       // Unknown
       _ => 'Bilinmeyen bir hata oluştu',
     };

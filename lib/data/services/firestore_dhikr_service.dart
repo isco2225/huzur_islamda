@@ -21,12 +21,10 @@ class FirestoreDhikrService {
         await docRef.set(dhikr.toJson());
       }
       return Result.ok(null);
-    } on FirebaseException catch (e) {
-      return Result.error(
-        Exception('Failed to save dhikrs to firestore: ${e.message ?? e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to save dhikrs to firestore: $e'));
+    } on FirebaseException catch (_) {
+      return Result.error(const DhikrSaveFailed());
+    } catch (_) {
+      return Result.error(const DhikrSaveFailed());
     }
   }
 
@@ -46,12 +44,10 @@ class FirestoreDhikrService {
           .map((doc) => Dhikr.fromJson(doc.data()))
           .toList();
       return Result.ok(dhikrs);
-    } on FirebaseException catch (e) {
-      return Result.error(
-        Exception('Failed to fetch dhikrs: ${e.message ?? e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to fetch dhikrs: $e'));
+    } on FirebaseException catch (_) {
+      return Result.error(const DhikrFetchFailed());
+    } catch (_) {
+      return Result.error(const DhikrFetchFailed());
     }
   }
 
@@ -67,12 +63,10 @@ class FirestoreDhikrService {
           .map((doc) => Dhikr.fromJson(doc.data()))
           .toList();
       return Result.ok(dhikrs);
-    } on FirebaseException catch (e) {
-      return Result.error(
-        Exception('Failed to fetch all dhikrs: ${e.message ?? e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to fetch all dhikrs: $e'));
+    } on FirebaseException catch (_) {
+      return Result.error(const DhikrFetchAllFailed());
+    } catch (_) {
+      return Result.error(const DhikrFetchAllFailed());
     }
   }
 
@@ -88,12 +82,10 @@ class FirestoreDhikrService {
           .doc(dhikrId)
           .delete();
       return Result.ok(null);
-    } on FirebaseException catch (e) {
-      return Result.error(
-        Exception('Failed to delete dhikr: ${e.message ?? e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to delete dhikr: $e'));
+    } on FirebaseException catch (_) {
+      return Result.error(const DhikrDeleteFailed());
+    } catch (_) {
+      return Result.error(const DhikrDeleteFailed());
     }
   }
 
@@ -109,12 +101,10 @@ class FirestoreDhikrService {
         return Result.ok(null);
       }
       return Result.ok(snapshot.count);
-    } on FirebaseException catch (e) {
-      return Result.error(
-        Exception('Failed to get dhikrs count: ${e.message ?? e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to get dhikrs count: $e'));
+    } on FirebaseException catch (_) {
+      return Result.error(const DhikrGetCountFailed());
+    } catch (_) {
+      return Result.error(const DhikrGetCountFailed());
     }
   }
 }
