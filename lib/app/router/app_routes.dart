@@ -51,6 +51,9 @@ class AppRoutes {
   /// Edit profile screen route
   static const String editProfile = '/profile/edit_profile';
 
+  /// Change password screen route
+  static const String changePassword = '/profile/change_password';
+
   // -------------------- OTHER ROUTES --------------------
 
   /// Settings screen route

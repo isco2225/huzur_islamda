@@ -146,6 +146,12 @@ final List<RouteBase> _routes = [
     builder: (context, state) => const EditProfileScreen(),
   ),
 
+  GoRoute(
+    path: AppRoutes.changePassword,
+    name: 'change_password',
+    builder: (context, state) => const ChangePasswordScreen(),
+  ),
+
   // -------------------- OTHER ROUTES --------------------
   GoRoute(
     path: AppRoutes.settings,

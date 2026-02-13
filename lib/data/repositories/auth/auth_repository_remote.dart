@@ -195,6 +195,22 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
+  Future<Result<void>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final result = await _firebaseAuthService.updatePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+      return result;
+    } catch (e) {
+      return Result.error(Exception(e));
+    }
+  }
+
+  @override
   Future<Result> reauthenticate() async {
     try {
       final currentUser = _firebaseAuthService.getCurrentUser();

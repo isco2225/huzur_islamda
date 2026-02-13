@@ -49,3 +49,7 @@ final class AuthDeleteAccountFailed extends AuthException {
 final class AuthSendPasswordResetEmailFailed extends AuthException {
   const AuthSendPasswordResetEmailFailed();
 }
+
+final class AuthChangePasswordFailed extends AuthException {
+  const AuthChangePasswordFailed();
+}

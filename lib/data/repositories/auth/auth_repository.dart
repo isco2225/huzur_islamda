@@ -35,6 +35,12 @@ abstract class AuthRepository {
   /// Delete current user account
   Future<Result> deleteAccount();
 
+  /// Update current user password.
+  Future<Result<void>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
   /// Reauthenticate current user
   Future<Result> reauthenticate();
 }

@@ -66,6 +66,10 @@ extension RouterExtensions on BuildContext {
   Future<T?> pushEditProfile<T extends Object?>() =>
       push<T>(AppRoutes.editProfile);
 
+  /// Push change password screen
+  Future<T?> pushChangePassword<T extends Object?>() =>
+      push<T>(AppRoutes.changePassword);
+
   /// Push create dhikr screen
   Future<T?> pushCreateDhikr<T extends Object?>() =>
       push<T>(AppRoutes.createDhikr);

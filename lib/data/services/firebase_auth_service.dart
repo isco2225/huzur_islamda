@@ -178,7 +178,6 @@ class FirebaseAuthService {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      print(e.code);
       if (e.code == 'user-not-found') {
         return Result.error(const AuthUserEmailNotFound());
       }
@@ -222,20 +221,74 @@ class FirebaseAuthService {
   Future<Result<void>> reauthenticateWithEmail({
     required String password,
   }) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      return Result.error(const AuthNoUserSignedIn());
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        return Result.error(const AuthNoUserSignedIn());
+      }
+      final email = user.email;
+      if (email == null || email.isEmpty) {
+        return Result.error(const AuthUserEmailNotFound());
+      }
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+      await user.reauthenticateWithCredential(credential);
+      return Result.ok(null);
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return Result.error(const AuthChangePasswordFailed());
+      }
+      return Result.error(Exception(e.message ?? e.code));
+    } catch (e) {
+      return Result.error(Exception(e.toString()));
     }
-    final email = user.email;
-    if (email == null) {
-      return Result.error(const AuthUserEmailNotFound());
+  }
+
+  /// Requires the current password for reauthentication.
+  Future<Result<void>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (currentPassword.isEmpty) {
+      return Result.error(const AuthChangePasswordFailed());
     }
-    final credential = EmailAuthProvider.credential(
-      email: email,
-      password: password,
-    );
-    await user.reauthenticateWithCredential(credential);
-    return Result.ok(null);
+    if (newPassword.isEmpty) {
+      return Result.error(const AuthChangePasswordFailed());
+    }
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        return Result.error(const AuthNoUserSignedIn());
+      }
+      final email = user.email;
+      if (email == null || email.isEmpty) {
+        return Result.error(const AuthUserEmailNotFound());
+      }
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      return Result.ok(null);
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      if (e.code == 'requires-recent-login') {
+        return Result.error(const AuthChangePasswordFailed());
+      }
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return Result.error(const AuthChangePasswordFailed());
+      }
+      if (e.code == 'weak-password') {
+        return Result.error(const AuthChangePasswordFailed());
+      }
+      return Result.error(const AuthChangePasswordFailed());
+    } catch (_) {
+      return Result.error(const AuthChangePasswordFailed());
+    }
   }
 
   Future<Result<void>> reauthenticateWithGoogle() async {

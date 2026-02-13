@@ -179,7 +179,7 @@ class SettingsView extends StatelessWidget {
                               title: 'Şifreyi Değiştir',
                               subtitle: 'Hesap Şifresini Güncelleyin',
                               onTap: () {
-                                // TODO: Navigate to change password
+                                context.pushChangePassword();
                               },
                             ),
                             SettingsDivider(),

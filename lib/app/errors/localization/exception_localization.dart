@@ -38,6 +38,7 @@ extension ExceptionLocalizationExtension on BuildContext {
         AuthDeleteAccountFailed() => 'Hesap silinirken bir hata oluştu',
         AuthSendPasswordResetEmailFailed() =>
           'Sıfırlama e-postası gönderimi sırasında bir hata oluştu',
+        AuthChangePasswordFailed() => 'Şifre değiştirilemedi',
       },
       // Dhikr
       DhikrException() => switch (exception) {
