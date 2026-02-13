@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 
 import '../../../app/app.dart';
 import '../../../data/data.dart';
+import '../../../domain/domain.dart';
 
 class AssistantUseCase {
   AssistantUseCase({
@@ -26,7 +27,7 @@ class AssistantUseCase {
     _log.info('Assistant daily limit: $assistantDailyLimit');
     if (assistantDailyLimit <= 0) {
       _log.severe('no assistant daily limit available');
-      return Result.error(Exception('Günlük Asistan hakkınız doldu.'));
+      return Result.error(const AssistantDailyLimitExceeded());
     }
     final result = await appRepository.updateAssistantDailyLimit(
       updatedDailyLimit: assistantDailyLimit - 1,

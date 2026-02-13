@@ -54,7 +54,7 @@ class AssistantForPostViewModel {
       case Ok():
         if (connectivityResult.asOk.value == ConnectivityEnum.none) {
           _log.severe('No internet connection');
-          return Result.error(ConnectivityNoConnection());
+          return Result.error(const ConnectivityNoConnection());
         }
       case Error():
         _log.warning(

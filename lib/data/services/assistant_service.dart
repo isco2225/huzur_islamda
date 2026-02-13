@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:huzur_islamda/domain/domain.dart';
 import 'package:logging/logging.dart';
 
 import '../../app/app.dart';
@@ -109,9 +110,7 @@ Kullanıcının Allah ile olan bağını güçlendirmek, ibadetleri sevdirmek ve
         _log.severe(
           'Gemini API error: ${response.statusCode} - ${response.body}',
         );
-        return Result.error(
-          Exception('Asistan yanıtı alınamadı: ${response.statusCode}'),
-        );
+        return Result.error(const AssistantUnexpectedError());
       }
 
       final Map<String, dynamic> data =

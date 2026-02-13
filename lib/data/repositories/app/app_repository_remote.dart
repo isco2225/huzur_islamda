@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:huzur_islamda/app/utils/result.dart';
 import 'package:huzur_islamda/data/repositories/app/app_repository.dart';
 import 'package:huzur_islamda/data/services/shared_preferences_sevice.dart';
-import 'package:huzur_islamda/domain/app/models/app_preferences.dart';
+
+import '../../../domain/domain.dart';
 
 class AppRepositoryRemote implements AppRepository {
   AppRepositoryRemote({
@@ -34,8 +35,8 @@ class AppRepositoryRemote implements AppRepository {
         case Error():
           return Result.error(result.error);
       }
-    } on Exception catch (exception) {
-      return Result.error(exception);
+    } on Exception {
+      return Result.error(const AppLoadFailed());
     }
   }
 
