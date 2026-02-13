@@ -19,6 +19,21 @@ extension ExceptionLocalizationExtension on BuildContext {
         AssistantDailyLimitExceeded() => 'Asistan günlük limiti doldu',
         AssistantUnexpectedError() => 'Beklenmeyen bir hata oluştu',
       },
+      // Auth
+      AuthException() => switch (exception) {
+        AuthSignUpFailed() => 'Kayıt sırasında bir hata oluştu',
+        AuthSignInFailed() => 'Giriş sırasında bir hata oluştu',
+        AuthGoogleSignInFailed() =>
+          'Google ile giriş sırasında bir hata oluştu',
+        AuthNoUserSignedIn() => 'Şu anda oturum açmış bir kullanıcı yok',
+        AuthUserEmailNotFound() => 'Kullanıcının e-posta adresi bulunamadı',
+        AuthSendVerificationEmailFailed() =>
+          'Doğrulama e-postası gönderimi sırasında bir hata oluştu',
+        AuthEmailAlreadyVerified() => 'E-posta zaten doğrulanmış',
+        AuthCheckEmailVerificationFailed() =>
+          'Doğrulama kontrolü sırasında bir hata oluştu',
+        AuthDeleteAccountFailed() => 'Hesap silinirken bir hata oluştu',
+      },
       // Unknown
       _ => 'Bilinmeyen bir hata oluştu',
     };

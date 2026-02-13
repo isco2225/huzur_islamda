@@ -38,17 +38,15 @@ class FirebaseAuthService {
       );
       final user = result.user;
       if (user == null) {
-        return Result.error(Exception('Failed to sign up'));
+        return Result.error(const AuthSignUpFailed());
       }
       return Result.ok(
         Auth(uid: user.uid, email: email, isEmailVerified: user.emailVerified),
       );
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to sign up: ${e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to sign up: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthSignUpFailed());
+    } catch (_) {
+      return Result.error(const AuthSignUpFailed());
     }
   }
 
@@ -64,15 +62,11 @@ class FirebaseAuthService {
         'profile',
       ]);
       if (authorization == null) {
-        return Result.error(
-          Exception('Failed to get Google authentication tokens'),
-        );
+        return Result.error(const AuthGoogleSignInFailed());
       }
 
       if (googleAuth.idToken == null) {
-        return Result.error(
-          Exception('Failed to get Google authentication tokens'),
-        );
+        return Result.error(const AuthGoogleSignInFailed());
       }
 
       final credential = GoogleAuthProvider.credential(
@@ -84,7 +78,7 @@ class FirebaseAuthService {
       final user = userCredential.user;
 
       if (user == null) {
-        return Result.error(Exception('Failed to sign in with Google'));
+        return Result.error(const AuthGoogleSignInFailed());
       }
       return Result.ok(
         Auth(
@@ -93,12 +87,10 @@ class FirebaseAuthService {
           isEmailVerified: user.emailVerified,
         ),
       );
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to sign in with Google: ${e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to sign in with Google: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthGoogleSignInFailed());
+    } catch (_) {
+      return Result.error(const AuthGoogleSignInFailed());
     }
   }
 
@@ -107,21 +99,19 @@ class FirebaseAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return Result.error(Exception('No user is currently signed in'));
+        return Result.error(const AuthNoUserSignedIn());
       }
 
       if (user.emailVerified) {
-        return Result.error(Exception('Email is already verified'));
+        return Result.error(const AuthEmailAlreadyVerified());
       }
 
       await user.sendEmailVerification();
       return Result.ok(null);
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to send verification email'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to send verification email: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthSendVerificationEmailFailed());
+    } catch (_) {
+      return Result.error(const AuthSendVerificationEmailFailed());
     }
   }
 
@@ -130,23 +120,21 @@ class FirebaseAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return Result.error(Exception('No user is currently signed in'));
+        return Result.error(const AuthNoUserSignedIn());
       }
 
       await user.reload();
       final refreshedUser = _auth.currentUser;
 
       if (refreshedUser == null) {
-        return Result.error(Exception('User not found after reload'));
+        return Result.error(const AuthCheckEmailVerificationFailed());
       }
 
       return Result.ok(refreshedUser.emailVerified);
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to check email verification'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to check email verification: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthCheckEmailVerificationFailed());
+    } catch (_) {
+      return Result.error(const AuthCheckEmailVerificationFailed());
     }
   }
 
@@ -162,7 +150,7 @@ class FirebaseAuthService {
       );
       final auth = result.user;
       if (auth == null) {
-        return Result.error(Exception('Failed to sign in'));
+        return Result.error(const AuthSignInFailed());
       }
       return Result.ok(
         Auth(
@@ -171,12 +159,10 @@ class FirebaseAuthService {
           isEmailVerified: auth.emailVerified,
         ),
       );
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to sign in: ${e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to sign in: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthSignInFailed());
+    } catch (_) {
+      return Result.error(const AuthSignInFailed());
     }
   }
 
@@ -196,17 +182,15 @@ class FirebaseAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return Result.error(Exception('No user is currently signed in'));
+        return Result.error(const AuthNoUserSignedIn());
       }
       await user.delete();
       await _googleSignIn.signOut();
       return Result.ok(null);
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to delete account: ${e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to delete account: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthDeleteAccountFailed());
+    } catch (_) {
+      return Result.error(const AuthDeleteAccountFailed());
     }
   }
 
@@ -215,11 +199,11 @@ class FirebaseAuthService {
   }) async {
     final user = _auth.currentUser;
     if (user == null) {
-      return Result.error(Exception('No user is currently signed in'));
+      return Result.error(const AuthNoUserSignedIn());
     }
     final email = user.email;
     if (email == null) {
-      return Result.error(Exception('User email not found'));
+      return Result.error(const AuthUserEmailNotFound());
     }
     final credential = EmailAuthProvider.credential(
       email: email,
@@ -240,9 +224,7 @@ class FirebaseAuthService {
         'profile',
       ]);
       if (authorization == null || googleAuth.idToken == null) {
-        return Result.error(
-          Exception('Failed to get Google authentication tokens'),
-        );
+        return Result.error(const AuthGoogleSignInFailed());
       }
       final credential = GoogleAuthProvider.credential(
         accessToken: authorization.accessToken,
@@ -250,20 +232,14 @@ class FirebaseAuthService {
       );
       final user = _auth.currentUser;
       if (user == null) {
-        return Result.error(Exception('No user is currently signed in'));
+        return Result.error(const AuthNoUserSignedIn());
       }
       await user.reauthenticateWithCredential(credential);
       return Result.ok(null);
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(
-          e.message ?? 'Failed to reauthenticate with Google: ${e.code}',
-        ),
-      );
-    } catch (e) {
-      return Result.error(
-        Exception('Failed to reauthenticate with Google: $e'),
-      );
+    } on FirebaseAuthException catch (_) {
+      return Result.error(Exception('abnormal reauthentication with google'));
+    } catch (_) {
+      return Result.error(Exception('abnormal reauthentication with google'));
     }
   }
 
@@ -272,16 +248,14 @@ class FirebaseAuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        return Result.error(Exception('No user is currently signed in'));
+        return Result.error(const AuthNoUserSignedIn());
       }
       await user.reload();
       return Result.ok(null);
-    } on FirebaseAuthException catch (e) {
-      return Result.error(
-        Exception(e.message ?? 'Failed to refresh user: ${e.code}'),
-      );
-    } catch (e) {
-      return Result.error(Exception('Failed to refresh user: $e'));
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthCheckEmailVerificationFailed());
+    } catch (_) {
+      return Result.error(const AuthCheckEmailVerificationFailed());
     }
   }
 }
