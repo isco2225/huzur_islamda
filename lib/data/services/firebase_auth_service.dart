@@ -143,6 +143,9 @@ class FirebaseAuthService {
 
   /// Send password reset email to the given email address
   Future<Result<void>> sendPasswordResetEmail({required String email}) async {
+    if (email.isEmpty) {
+      return Result.error(const AuthUserEmailNotFound());
+    }
     try {
       await _auth.sendPasswordResetEmail(email: email);
       return Result.ok(null);
@@ -175,7 +178,11 @@ class FirebaseAuthService {
         ),
       );
     } on FirebaseAuthException catch (e) {
+      print(e.code);
       if (e.code == 'user-not-found') {
+        return Result.error(const AuthUserEmailNotFound());
+      }
+      if (e.code == 'invalid-credential') {
         return Result.error(const AuthUserEmailNotFound());
       }
       return Result.error(const AuthSignInFailed());
