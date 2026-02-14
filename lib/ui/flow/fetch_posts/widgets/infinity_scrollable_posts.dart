@@ -33,6 +33,7 @@ class InfinityScrollablePosts extends StatefulWidget {
 }
 
 class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
+  final int adsEveryNPosts = 3;
   @override
   void initState() {
     super.initState();
@@ -79,6 +80,14 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
+            if (index % adsEveryNPosts == 0 && index != 0) {
+              return Center(
+                child: FlowNativeAd(
+                  isCurrentUserPremium:
+                      widget.postSaveViewModel.currentUser.value.isPremium,
+                ),
+              );
+            }
             return Center(
               child: FlowCard(
                 post: post,

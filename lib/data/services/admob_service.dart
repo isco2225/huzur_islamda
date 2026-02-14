@@ -59,8 +59,70 @@ class AdMobService {
     }
   }
 
+  /// Platform'a göre Native Advanced (template) ad unit ID'yi döndürür
+  String getNativeAdUnitId() {
+    if (Platform.isAndroid) {
+      return AppAdIds.nativeAdUnitIdAndroid;
+    } else if (Platform.isIOS) {
+      return AppAdIds.nativeAdUnitIdIOS;
+    } else {
+      _log.warning('Unsupported platform, using Android native ad unit ID');
+      return AppAdIds.nativeAdUnitIdAndroid;
+    }
+  }
+
   AdRequest createAdRequest() {
     return const AdRequest();
+  }
+
+  /// Native Advanced (template) reklam yükler. Yüklenen reklamı [AdWidget] ile gösterebilirsiniz.
+  /// Kullanım bitince [NativeAd.dispose] çağrılmalı.
+  Future<Result<NativeAd>> loadNativeAd() async {
+    try {
+      if (!_isInitialized) {
+        final initResult = await initialize();
+        if (initResult case Error()) {
+          return Result.error(initResult.asError.error);
+        }
+      }
+      final adUnitId = getNativeAdUnitId();
+      if (adUnitId.isEmpty) {
+        return Result.error(Exception('Native ad unit ID bulunamadı'));
+      }
+      final completer = Completer<Result<NativeAd>>();
+      final nativeAd = NativeAd(
+        adUnitId: adUnitId,
+        request: createAdRequest(),
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            _log.info('Native ad loaded successfully');
+            if (!completer.isCompleted) {
+              completer.complete(Result.ok(ad as NativeAd));
+            }
+          },
+          onAdFailedToLoad: (ad, error) {
+            _log.warning('Native ad failed to load: ${error.message}');
+            ad.dispose();
+            if (!completer.isCompleted) {
+              completer.complete(
+                Result.error(
+                  Exception('Native ad yüklenemedi: ${error.message}'),
+                ),
+              );
+            }
+          },
+        ),
+        nativeTemplateStyle: NativeTemplateStyle(
+          templateType: TemplateType.medium,
+          cornerRadius: 10.0,
+        ),
+      );
+      nativeAd.load();
+      return await completer.future;
+    } catch (e) {
+      _log.severe('Error loading native ad: $e');
+      return Result.error(Exception('Native ad yüklenemedi: $e'));
+    }
   }
 
   /// Interstitial ad yükler

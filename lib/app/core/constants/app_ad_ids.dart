@@ -24,4 +24,13 @@ class AppAdIds {
   /// Production ID'yi AdMob konsolundan alın ve buraya ekleyin
   static const String interstitialAdUnitIdIOS =
       'ca-app-pub-4675450525864095/3431445981';
+
+  /// Native Advanced (Template) Ad Unit ID - Android
+  /// Test ID: ca-app-pub-3940256099942544/2247696110
+  static const String nativeAdUnitIdAndroid = 'TEST';
+
+  /// Native Advanced (Template) Ad Unit ID - iOS
+  /// Test ID: ca-app-pub-3940256099942544/3986624511
+  static const String nativeAdUnitIdIOS =
+      'ca-app-pub-4675450525864095/7878899407';
 }

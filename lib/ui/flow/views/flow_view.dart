@@ -54,18 +54,6 @@ class FlowView extends StatelessWidget {
               isAllItemsFetched: fetchPostsViewModel.isAllItemsFetched,
             ),
           ),
-
-          ValueListenableBuilder(
-            valueListenable: advertViewModel.isAdMobInitialized,
-            builder: (context, value, _) {
-              return value
-                  ? BannerAdWidget(
-                      isCurrentUserPremium:
-                          postSaveViewModel.currentUser.value.isPremium,
-                    )
-                  : const SizedBox.shrink();
-            },
-          ),
         ],
       ),
     );

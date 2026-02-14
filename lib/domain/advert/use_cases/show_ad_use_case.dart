@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logging/logging.dart';
 
+import '../../../app/app.dart';
 import '../../../data/data.dart';
 import '../../domain.dart';
 
@@ -44,5 +45,13 @@ class ShowAdUseCase {
   AdRequest createBannerAdRequest() {
     _log.info('Creating banner ad request');
     return _admobService.createAdRequest();
+  }
+
+  String getNativeAdUnitId() {
+    return _admobService.getNativeAdUnitId();
+  }
+
+  Future<Result<NativeAd>> loadNativeAd() async {
+    return _admobService.loadNativeAd();
   }
 }
