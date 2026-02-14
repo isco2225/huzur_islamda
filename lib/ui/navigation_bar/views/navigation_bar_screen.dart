@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../../domain/domain.dart';
 import '../../ui.dart';
 
 /// Screen that manages the bottom navigation bar and stateful shell navigation.
@@ -22,7 +24,9 @@ class _NavigationBarScreenState extends State<NavigationBarScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = NavigationBarViewModel();
+    _viewModel = NavigationBarViewModel(
+      showAdUseCase: context.read<ShowAdUseCase>(),
+    );
     // Initialize with current tab index
     _viewModel.onTabChanged(widget.navigationShell.currentIndex);
   }

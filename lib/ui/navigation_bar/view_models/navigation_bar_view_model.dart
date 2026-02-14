@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import '../../../domain/domain.dart';
+
 /// ViewModel for navigation bar feature.
 ///
 /// Manages tab selection state and business logic related to navigation bar.
 class NavigationBarViewModel {
-  NavigationBarViewModel() {
+  NavigationBarViewModel({required ShowAdUseCase showAdUseCase})
+    : _showAdUseCase = showAdUseCase {
     // DEFINE LISTENERS
     _currentTabIndex = ValueNotifier<int>(0);
   }
@@ -14,7 +17,7 @@ class NavigationBarViewModel {
   final _log = Logger('NavigationBarViewModel');
 
   // REPOSITORIES & USE CASES
-  // TODO: Add repositories and use cases if needed
+  final ShowAdUseCase _showAdUseCase;
 
   // DOMAIN
 
@@ -31,6 +34,8 @@ class NavigationBarViewModel {
 
   // FUNCTIONS
   void onTabChanged(int index) {
+    // show interstitial ad
+    _showAdUseCase.showInterstitialAd();
     if (_currentTabIndex.value != index) {
       _log.info('Tab changed from ${_currentTabIndex.value} to $index');
       _currentTabIndex.value = index;
