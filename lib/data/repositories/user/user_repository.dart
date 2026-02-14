@@ -53,10 +53,16 @@ abstract class UserRepository {
     required String districtId,
   });
 
-  Future<Result<void>> updateUserSupport({
+  /*Future<Result<void>> updateUserPremium({
+    required String uid,
+    required DateTime lastPremiumAt,
+    required SupportPackage supportPackage,
+  });*/
+
+  /*Future<Result<void>> updateUserSupport({
     required String uid,
     required bool hasSupported,
     required DateTime lastSupportedAt,
     required SupportPackage supportPackage,
-  });
+  });*/
 }

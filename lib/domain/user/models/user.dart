@@ -17,7 +17,6 @@ class User {
   final String? city;
   final String? districtId;
   // support features
-  final bool hasSupported;
   final DateTime? lastSupportedAt;
   final SupportPackage? supportPackage;
   const User({
@@ -34,7 +33,6 @@ class User {
     required this.country,
     required this.city,
     required this.districtId,
-    required this.hasSupported,
     this.lastSupportedAt,
     this.supportPackage,
   });
@@ -65,7 +63,6 @@ class User {
       country: json['country'] as String? ?? '',
       city: json['city'] as String? ?? '',
       districtId: json['districtId'] as String? ?? '',
-      hasSupported: json['hasSupported'] as bool? ?? false,
       lastSupportedAt: parseDateTime(json['lastSupportedAt']),
       supportPackage: SupportPackage.fromString(
         json['supportPackage'] as String?,
@@ -87,7 +84,6 @@ class User {
     country: '',
     city: '',
     districtId: '',
-    hasSupported: false,
     lastSupportedAt: null,
     supportPackage: null,
   );
@@ -107,7 +103,6 @@ class User {
       'country': country,
       'city': city,
       'districtId': districtId,
-      'hasSupported': hasSupported,
       'lastSupportedAt': lastSupportedAt?.toIso8601String(),
       'supportPackage': supportPackage?.value,
     };
@@ -127,7 +122,6 @@ class User {
     String? country,
     String? city,
     String? districtId,
-    bool? hasSupported,
     DateTime? lastSupportedAt,
     SupportPackage? supportPackage,
   }) {
@@ -145,7 +139,6 @@ class User {
       country: country ?? this.country,
       city: city ?? this.city,
       districtId: districtId ?? this.districtId,
-      hasSupported: hasSupported ?? this.hasSupported,
       lastSupportedAt: lastSupportedAt ?? this.lastSupportedAt,
       supportPackage: supportPackage ?? this.supportPackage,
     );

@@ -80,7 +80,6 @@ class UserRepositoryRemote extends UserRepository {
               country: null,
               city: null,
               districtId: null,
-              hasSupported: false,
               lastSupportedAt: null,
               supportPackage: null,
             );
@@ -251,8 +250,32 @@ class UserRepositoryRemote extends UserRepository {
     }
   }
 
-  @override
-  Future<Result<void>> updateUserSupport({
+  /*@override
+  Future<Result<void>> updateUserPremium({
+    required String uid,
+    required DateTime lastPremiumAt,
+    required SupportPackage supportPackage,
+  }) async {
+    try {
+      final result = await _firestoreUserService.updateUserPremium(
+        uid: uid,
+        lastPremiumAt: lastPremiumAt,
+        supportPackage: supportPackage.value,
+      );
+      switch (result) {
+        case Ok():
+          _currentUser.value = _currentUser.value.copyWith(
+            lastPremiumAt: lastPremiumAt,
+            supportPackage: supportPackage,
+          );
+          return Result.ok(null);
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to update user premium: $e'));
+    }
+  }*/
+
+  /*Future<Result<void>> updateUserSupport({
     required String uid,
     required bool hasSupported,
     required DateTime lastSupportedAt,
@@ -284,5 +307,5 @@ class UserRepositoryRemote extends UserRepository {
     } catch (e) {
       return Result.error(Exception('Failed to update user support: $e'));
     }
-  }
+  }*/
 }
