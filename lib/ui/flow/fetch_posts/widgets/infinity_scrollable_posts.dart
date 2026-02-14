@@ -33,7 +33,7 @@ class InfinityScrollablePosts extends StatefulWidget {
 }
 
 class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
-  final int adsEveryNPosts = 3;
+  final int adsEveryNPosts = 4;
   @override
   void initState() {
     super.initState();
