@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/app.dart';
 import '../../ui.dart';
 
-class FlowView extends StatelessWidget {
+class FlowView extends StatefulWidget {
   const FlowView({
     super.key,
     required this.fetchPostsViewModel,
@@ -16,18 +16,78 @@ class FlowView extends StatelessWidget {
   final PostReportViewModel postReportViewModel;
   final PostSaveViewModel postSaveViewModel;
   final AdvertViewModel advertViewModel;
+
+  @override
+  State<FlowView> createState() => _FlowViewState();
+}
+
+class _FlowViewState extends State<FlowView> {
+  late final ScrollController _scrollController;
+
+  static const String _logoAsset = 'assets/icons/app_icon.png';
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToTop() {
+    if (!_scrollController.hasClients) return;
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+    final logoSize = responsive.spacingMedium;
     return BaseScaffold(
-      appBar: AppBar(title: const Text('Keşfet')),
+      appBar: AppBar(
+        leadingWidth: logoSize * 3,
+        leading: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _scrollToTop,
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset(
+                    _logoAsset,
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.explore_outlined,
+                      color: Theme.of(context).appBarTheme.iconTheme?.color,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        title: const Text('Keşfet'),
+      ),
       safeArea: true,
       body: Column(
         children: [
           Expanded(
             child: InfinityScrollablePosts(
-              fetchPostsViewModel: fetchPostsViewModel,
-              postReportViewModel: postReportViewModel,
-              postSaveViewModel: postSaveViewModel,
+              scrollController: _scrollController,
+              fetchPostsViewModel: widget.fetchPostsViewModel,
+              postReportViewModel: widget.postReportViewModel,
+              postSaveViewModel: widget.postSaveViewModel,
               noItemsToShowWidget: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -47,11 +107,11 @@ class FlowView extends StatelessWidget {
                   ],
                 ),
               ),
-              onFetch: () => fetchPostsViewModel.fetchPosts.execute(),
-              posts: fetchPostsViewModel.posts,
-              hasError: fetchPostsViewModel.fetchPosts.error,
-              isFetching: fetchPostsViewModel.fetchPosts.running,
-              isAllItemsFetched: fetchPostsViewModel.isAllItemsFetched,
+              onFetch: () => widget.fetchPostsViewModel.fetchPosts.execute(),
+              posts: widget.fetchPostsViewModel.posts,
+              hasError: widget.fetchPostsViewModel.fetchPosts.error,
+              isFetching: widget.fetchPostsViewModel.fetchPosts.running,
+              isAllItemsFetched: widget.fetchPostsViewModel.isAllItemsFetched,
             ),
           ),
         ],

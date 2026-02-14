@@ -16,6 +16,7 @@ class InfinityScrollablePosts extends StatefulWidget {
     required this.isAllItemsFetched,
     required this.postReportViewModel,
     required this.postSaveViewModel,
+    this.scrollController,
     super.key,
   });
   final FetchPostsViewModel fetchPostsViewModel;
@@ -27,6 +28,7 @@ class InfinityScrollablePosts extends StatefulWidget {
   final ValueListenable<bool> isAllItemsFetched;
   final PostReportViewModel postReportViewModel;
   final PostSaveViewModel postSaveViewModel;
+  final ScrollController? scrollController;
   @override
   State<InfinityScrollablePosts> createState() =>
       _InfinityScrollablePostsState();
@@ -34,10 +36,19 @@ class InfinityScrollablePosts extends StatefulWidget {
 
 class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
   final int adsEveryNPosts = 4;
+  late final ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = widget.scrollController ?? ScrollController();
     widget.fetchPostsViewModel.fetchPosts.execute();
+  }
+
+  @override
+  void dispose() {
+    if (widget.scrollController == null) _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,7 +63,7 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
       builder: (context, _) {
         final posts = widget.posts.value;
         return InfinityScrollable.listView(
-          scrollController: null,
+          scrollController: _scrollController,
           bottomPadding: 8,
           initializeFailureWidget: Center(
             child: Column(
