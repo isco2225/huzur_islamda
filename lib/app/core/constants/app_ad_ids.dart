@@ -27,7 +27,8 @@ class AppAdIds {
 
   /// Native Advanced (Template) Ad Unit ID - Android
   /// Test ID: ca-app-pub-3940256099942544/2247696110
-  static const String nativeAdUnitIdAndroid = 'TEST';
+  static const String nativeAdUnitIdAndroid =
+      'ca-app-pub-4675450525864095/6449325711';
 
   /// Native Advanced (Template) Ad Unit ID - iOS
   /// Test ID: ca-app-pub-3940256099942544/3986624511
