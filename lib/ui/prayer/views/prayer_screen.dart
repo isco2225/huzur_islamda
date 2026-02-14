@@ -18,7 +18,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
   late final EditProfileViewModel _editProfileViewModel;
   late final FetchUserViewModel _fetchUserViewModel;
   late final PrayerViewModel _prayerViewModel;
-
+  late final AdvertViewModel _advertViewModel;
   @override
   void initState() {
     super.initState();
@@ -74,6 +74,9 @@ class _PrayerScreenState extends State<PrayerScreen> {
         await _prayerViewModel.schedulePrayerNotifications.execute();
       },
     );
+    _advertViewModel = AdvertViewModel(
+      admobService: context.read<AdMobService>(),
+    );
   }
 
   @override
@@ -83,6 +86,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _placeSelectorViewModel.dispose();
     _editProfileViewModel.dispose();
     _fetchUserViewModel.dispose();
+    _advertViewModel.dispose();
     super.dispose();
   }
 
@@ -91,6 +95,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     return PrayerView(
       prayerViewModel: _prayerViewModel,
       user: _fetchUserViewModel.currentUser.value,
+      advertViewModel: _advertViewModel,
       prayerTimesViewModel: _prayerTimesViewModel,
       placeSelectorViewModel: _placeSelectorViewModel,
       editProfileViewModel: _editProfileViewModel,

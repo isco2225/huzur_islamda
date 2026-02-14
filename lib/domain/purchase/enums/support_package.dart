@@ -1,7 +1,6 @@
 enum SupportPackage {
-  kehribar,
-  inci,
-  elmas;
+  yearly,
+  weekly;
 
   static SupportPackage? fromString(String? value) {
     if (value == null || value.isEmpty) return null;
@@ -15,12 +14,10 @@ enum SupportPackage {
 extension SupportPackageExtension on SupportPackage {
   String get value {
     switch (this) {
-      case SupportPackage.kehribar:
-        return 'kehribar';
-      case SupportPackage.inci:
-        return 'inci';
-      case SupportPackage.elmas:
-        return 'elmas';
+      case SupportPackage.yearly:
+        return 'yearly';
+      case SupportPackage.weekly:
+        return 'weekly';
     }
   }
 }

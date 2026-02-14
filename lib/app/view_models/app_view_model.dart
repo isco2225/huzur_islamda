@@ -18,6 +18,7 @@ class AppViewModel {
     required WipeDataUseCase wipeDataUseCase,
     required SchedulePrayerNotificationsUseCase
     schedulePrayerNotificationsUseCase,
+    required AdMobService admobService,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
@@ -27,7 +28,8 @@ class AppViewModel {
        _syncPermissionUseCase = syncPermissionUseCase,
        _wipeDataUseCase = wipeDataUseCase,
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
-       _prayerTimeUseCase = prayerTimeUseCase {
+       _prayerTimeUseCase = prayerTimeUseCase,
+       _admobService = admobService {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     initUser = Command0(_initUser, debugLabel: 'AppViewModel.initUser');
@@ -49,6 +51,7 @@ class AppViewModel {
   final WipeDataUseCase _wipeDataUseCase;
   final SchedulePrayerNotificationsUseCase _schedulePrayerNotificationsUseCase;
   final PrayerTimeUseCase _prayerTimeUseCase;
+  final AdMobService _admobService;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -115,6 +118,8 @@ class AppViewModel {
         }
       }
       if (userInitialized && currentUser.value.isRegistered) {
+        // initialize admob
+        await _admobService.initialize();
         // fetch saved post ids
         final savedPostIdsResult = await _postRepository.fetchSavedPostIds(
           userId: currentUser.value.uid,

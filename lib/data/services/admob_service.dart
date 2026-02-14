@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logging/logging.dart';
 
@@ -11,6 +12,10 @@ class AdMobService {
 
   final Logger _log;
   bool _isInitialized = false;
+  final ValueNotifier<bool> _isInitializedNotifier = ValueNotifier<bool>(false);
+
+  /// Dinlenebilir init durumu; tüm ekranlar aynı kaynağı kullanır.
+  ValueListenable<bool> get isInitialized => _isInitializedNotifier;
 
   Future<Result<void>> initialize() async {
     if (_isInitialized) {
@@ -21,6 +26,7 @@ class AdMobService {
       _log.info('Initializing AdMob service...');
       await MobileAds.instance.initialize();
       _isInitialized = true;
+      _isInitializedNotifier.value = true;
       _log.info('AdMob service initialized successfully');
       return Result.ok(null);
     } catch (e) {

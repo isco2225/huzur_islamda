@@ -7,3 +7,4 @@ export 'prayer/prayer.dart';
 export 'assistant/assistant.dart';
 export 'settings/settings.dart';
 export 'user/user.dart';
+export 'advert/advert.dart';

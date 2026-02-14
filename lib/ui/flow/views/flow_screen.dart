@@ -16,6 +16,7 @@ class _FlowScreenState extends State<FlowScreen> {
   late final FetchPostsViewModel _fetchPostsViewModel;
   late final PostReportViewModel _postReportViewModel;
   late final PostSaveViewModel _postSaveViewModel;
+  late final AdvertViewModel _advertViewModel;
   @override
   void initState() {
     super.initState();
@@ -43,10 +44,9 @@ class _FlowScreenState extends State<FlowScreen> {
       context,
       successMessage: 'Şikayetiniz alındı!',
     );
-    // _viewModel.fetchPosts.handleCompleted(
-    //   context,
-    //   successMessage: 'Posts fetched successfully',
-    // );
+    _advertViewModel = AdvertViewModel(
+      admobService: context.read<AdMobService>(),
+    );
   }
 
   @override
@@ -54,6 +54,7 @@ class _FlowScreenState extends State<FlowScreen> {
     _fetchPostsViewModel.dispose();
     _postReportViewModel.dispose();
     _postSaveViewModel.dispose();
+    _advertViewModel.dispose();
     super.dispose();
   }
 
@@ -63,6 +64,7 @@ class _FlowScreenState extends State<FlowScreen> {
       fetchPostsViewModel: _fetchPostsViewModel,
       postReportViewModel: _postReportViewModel,
       postSaveViewModel: _postSaveViewModel,
+      advertViewModel: _advertViewModel,
     );
   }
 }

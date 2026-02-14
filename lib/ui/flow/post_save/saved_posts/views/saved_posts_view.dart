@@ -9,10 +9,12 @@ class SavedPostsView extends StatelessWidget {
     required this.viewModel,
     required this.postReportViewModel,
     required this.postSaveViewModel,
+    required this.advertViewModel,
   });
   final SavedPostsViewModel viewModel;
   final PostReportViewModel postReportViewModel;
   final PostSaveViewModel postSaveViewModel;
+  final AdvertViewModel advertViewModel;
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -57,7 +59,17 @@ class SavedPostsView extends StatelessWidget {
               ),
             ),
           ),
-          //const BannerAdWidget(),
+          ValueListenableBuilder(
+            valueListenable: advertViewModel.isAdMobInitialized,
+            builder: (context, value, _) {
+              return value
+                  ? BannerAdWidget(
+                      isCurrentUserPremium:
+                          postSaveViewModel.currentUser.value.isPremium,
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );

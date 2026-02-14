@@ -12,12 +12,14 @@ class PrayerView extends StatefulWidget {
     required this.placeSelectorViewModel,
     required this.editProfileViewModel,
     required this.user,
+    required this.advertViewModel,
   });
   final PrayerViewModel prayerViewModel;
   final PrayerTimesViewModel prayerTimesViewModel;
   final PlaceSelectorViewModel placeSelectorViewModel;
   final EditProfileViewModel editProfileViewModel;
   final User user;
+  final AdvertViewModel advertViewModel;
   @override
   State<PrayerView> createState() => _PrayerViewState();
 }
@@ -167,7 +169,21 @@ class _PrayerViewState extends State<PrayerView> {
                         },
                       ),
                       SizedBox(height: responsive.spacingMedium),
-                      //const BannerAdWidget(),
+                      ValueListenableBuilder(
+                        valueListenable:
+                            widget.advertViewModel.isAdMobInitialized,
+                        builder: (context, value, _) {
+                          return value
+                              ? BannerAdWidget(
+                                  isCurrentUserPremium: widget
+                                      .editProfileViewModel
+                                      .currentUser
+                                      .value
+                                      .isPremium,
+                                )
+                              : const SizedBox.shrink();
+                        },
+                      ),
                     ],
                   ),
                 ),

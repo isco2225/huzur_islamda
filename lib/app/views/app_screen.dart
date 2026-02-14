@@ -92,6 +92,7 @@ class _AppScreenState extends State<AppScreen> {
       wipeDataUseCase: widget.wipeDataUseCase,
       schedulePrayerNotificationsUseCase:
           widget.schedulePrayerNotificationsUseCase,
+      admobService: widget.admobService,
     );
     // App'i başlat
     _appViewModel.initApp.execute();

@@ -47,19 +47,6 @@ void main() async {
       break;
   }
 
-  // Initialize AdMob service
-  final admobInitResult = await admobService.initialize();
-  switch (admobInitResult) {
-    case Ok():
-      debugPrint('AdMob service initialized successfully');
-      break;
-    case Error():
-      debugPrint(
-        'Failed to initialize AdMob service: ${admobInitResult.asError.error}',
-      );
-      break;
-  }
-
   // Repositories
   final authRepository = AuthRepositoryRemote(
     firebaseAuthService: FirebaseAuthService(),
@@ -108,7 +95,10 @@ void main() async {
     userRepository: userRepository,
     notificationRepository: notificationRepository,
   );
-  final showAdUseCase = ShowAdUseCase(admobService: admobService);
+  final showAdUseCase = ShowAdUseCase(
+    admobService: admobService,
+    userRepository: userRepository,
+  );
 
   final assistantUseCase = AssistantUseCase(
     assistantRepository: AssistantRepositoryRemote(

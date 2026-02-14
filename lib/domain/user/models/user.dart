@@ -152,4 +152,6 @@ class User {
   }
 
   bool isEmpty() => this == User.empty();
+
+  bool get isPremium => supportPackage != null;
 }

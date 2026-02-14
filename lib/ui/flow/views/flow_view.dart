@@ -9,11 +9,13 @@ class FlowView extends StatelessWidget {
     required this.fetchPostsViewModel,
     required this.postReportViewModel,
     required this.postSaveViewModel,
+    required this.advertViewModel,
   });
 
   final FetchPostsViewModel fetchPostsViewModel;
   final PostReportViewModel postReportViewModel;
   final PostSaveViewModel postSaveViewModel;
+  final AdvertViewModel advertViewModel;
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
@@ -52,7 +54,18 @@ class FlowView extends StatelessWidget {
               isAllItemsFetched: fetchPostsViewModel.isAllItemsFetched,
             ),
           ),
-          //const BannerAdWidget(),
+
+          ValueListenableBuilder(
+            valueListenable: advertViewModel.isAdMobInitialized,
+            builder: (context, value, _) {
+              return value
+                  ? BannerAdWidget(
+                      isCurrentUserPremium:
+                          postSaveViewModel.currentUser.value.isPremium,
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );

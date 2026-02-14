@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../domain/domain.dart';
 
 class BannerAdWidget extends StatefulWidget {
-  const BannerAdWidget({super.key});
+  const BannerAdWidget({super.key, required this.isCurrentUserPremium});
+  final bool isCurrentUserPremium;
 
   @override
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
@@ -25,7 +26,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   }
 
   Future<void> _loadAd() async {
-    if (_isAdLoading || _isAdLoaded) {
+    if (widget.isCurrentUserPremium || _isAdLoading || _isAdLoaded) {
       return;
     }
 

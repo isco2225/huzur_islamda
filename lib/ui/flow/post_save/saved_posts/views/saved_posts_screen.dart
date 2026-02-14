@@ -16,6 +16,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
   late final SavedPostsViewModel _viewModel;
   late final PostReportViewModel _postReportViewModel;
   late final PostSaveViewModel _postSaveViewModel;
+  late final AdvertViewModel _advertViewModel;
   @override
   void initState() {
     super.initState();
@@ -33,6 +34,9 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
       userRepository: context.read<UserRepository>(),
       connectivityUseCase: context.read<ConnectivityUseCase>(),
     );
+    _advertViewModel = AdvertViewModel(
+      admobService: context.read<AdMobService>(),
+    );
     _viewModel.fetchSavedPosts.handleError(context, showSnackBar: true);
     _viewModel.fetchSavedPosts.execute();
   }
@@ -42,6 +46,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
     _viewModel.dispose();
     _postReportViewModel.dispose();
     _postSaveViewModel.dispose();
+    _advertViewModel.dispose();
     super.dispose();
   }
 
@@ -51,6 +56,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
       viewModel: _viewModel,
       postReportViewModel: _postReportViewModel,
       postSaveViewModel: _postSaveViewModel,
+      advertViewModel: _advertViewModel,
     );
   }
 }
