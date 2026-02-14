@@ -236,6 +236,7 @@ class NotificationService {
         'prayer_times_channel',
         'Namaz Vakitleri',
         channelDescription: 'Namaz vakitleri bildirimleri için kanal',
+        icon: '@mipmap/ic_launcher',
         importance: Importance.high,
         priority: Priority.high,
         playSound: true,
