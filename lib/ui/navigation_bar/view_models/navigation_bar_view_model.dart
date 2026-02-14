@@ -6,40 +6,45 @@ import '../../../domain/domain.dart';
 /// ViewModel for navigation bar feature.
 ///
 /// Manages tab selection state and business logic related to navigation bar.
+/// Reklam stratejisi: Kullanıcı **farklı** sekmeye geçtiğinde en fazla
+/// [_interstitialCooldown] sürede bir reklam gösterilir (sık geçişte spam önlenir).
 class NavigationBarViewModel {
   NavigationBarViewModel({required ShowAdUseCase showAdUseCase})
     : _showAdUseCase = showAdUseCase {
-    // DEFINE LISTENERS
     _currentTabIndex = ValueNotifier<int>(0);
   }
 
-  // LOGGER
   final _log = Logger('NavigationBarViewModel');
-
-  // REPOSITORIES & USE CASES
   final ShowAdUseCase _showAdUseCase;
 
-  // DOMAIN
-
-  // STATE
   late final ValueNotifier<int> _currentTabIndex;
-
-  /// Current selected tab index (0-based).
   ValueListenable<int> get currentTabIndex => _currentTabIndex;
 
-  // DISPOSE
+  /// it should be at least this duration between two interstitial ads.
+  static const Duration _interstitialCooldown = Duration(minutes: 2);
+
+  DateTime? _lastInterstitialShownAt;
+
   void dispose() {
     _currentTabIndex.dispose();
   }
 
-  // FUNCTIONS
+  /// When the tab changes, it is called. If a different tab is selected and the cooldown has passed,
+  /// an interstitial ad is shown; clicking on the same tab or too frequent switching does not show an ad.
   void onTabChanged(int index) {
-    // show interstitial ad
-    _showAdUseCase.showInterstitialAd();
-    if (_currentTabIndex.value != index) {
-      _log.info('Tab changed from ${_currentTabIndex.value} to $index');
-      _currentTabIndex.value = index;
-      // TODO: Add business logic here (analytics, data refresh, etc.)
+    final previousIndex = _currentTabIndex.value;
+    if (previousIndex == index) return;
+
+    _log.info('Tab changed from $previousIndex to $index');
+    _currentTabIndex.value = index;
+
+    final now = DateTime.now();
+    final canShowAd =
+        _lastInterstitialShownAt == null ||
+        now.difference(_lastInterstitialShownAt!) >= _interstitialCooldown;
+    if (canShowAd) {
+      _lastInterstitialShownAt = now;
+      _showAdUseCase.showInterstitialAd();
     }
   }
 }
