@@ -105,6 +105,7 @@ void main() async {
       assistantService: assistantService,
     ),
     appRepository: appRepository,
+    userRepository: userRepository,
   );
   final deleteAccountUseCase = DeleteAccountUseCase(
     authRepository: authRepository,
