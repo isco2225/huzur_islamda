@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
@@ -136,11 +138,13 @@ class _SignInViewState extends State<SignInView> {
                 },
               ),
               SizedBox(height: responsive.isSmallScreen ? 8 : 12),
-              SocialLoginButton(
-                text: 'Apple ile Giriş Yap',
-                icon: Icon(Icons.apple),
-                onPressed: () {},
-              ),
+              Platform.isIOS
+                  ? SocialLoginButton(
+                      text: 'Apple ile Giriş Yap',
+                      icon: Icon(Icons.apple),
+                      onPressed: () {},
+                    )
+                  : SizedBox.shrink(),
               // you dont have an account?
               Padding(
                 padding: EdgeInsets.only(top: responsive.spacingSmall),
