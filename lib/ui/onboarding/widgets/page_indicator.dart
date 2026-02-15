@@ -14,7 +14,7 @@ class PageIndicator extends StatelessWidget {
 
     return SmoothPageIndicator(
       controller: controller,
-      count: 2,
+      count: 4,
       effect: WormEffect(
         activeDotColor: Colors.black,
         dotWidth: dotSize,

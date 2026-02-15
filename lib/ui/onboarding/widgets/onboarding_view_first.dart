@@ -19,9 +19,9 @@ class _OnboardingViewFirstState extends State<OnboardingViewFirst> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Huzur İslamda',
+          AppStrings.appName,
           style: textTheme.bodyLarge?.copyWith(
-            fontSize: responsive.responsiveFontSize(25) ?? 25,
+            fontSize: context.responsiveFontSize(25) ?? 25,
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
           ),

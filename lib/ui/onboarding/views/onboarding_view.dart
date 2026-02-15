@@ -15,7 +15,7 @@ class _OnboardingViewState extends State<OnboardingView> {
   final PageController _controller = PageController();
   final ValueNotifier<bool> _isLoading = ValueNotifier<bool>(false);
   int _currentPage = 0;
-  static const int _totalPages = 2;
+  static const int _totalPages = 4;
 
   void _handleButtonPress() {
     if (_currentPage < _totalPages - 1) {
@@ -52,7 +52,12 @@ class _OnboardingViewState extends State<OnboardingView> {
                   _currentPage = page;
                 });
               },
-              children: const [OnboardingViewFirst(), OnboardingViewSecound()],
+              children: const [
+                OnboardingViewFirst(),
+                OnboardingViewSecound(),
+                OnboardingViewThird(),
+                OnboardingViewFourth(),
+              ],
             ),
           ),
           Padding(
@@ -70,7 +75,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                   child: AppButton(
                     running: _isLoading,
                     onPressed: _handleButtonPress,
-                    text: _currentPage == 0
+                    text: _currentPage < _totalPages - 1
                         ? AppStrings.onboardingNext
                         : AppStrings.start,
                   ),

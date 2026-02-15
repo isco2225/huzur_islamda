@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../../app/app.dart';
 
-class OnboardingViewSecound extends StatelessWidget {
-  const OnboardingViewSecound({super.key});
+class OnboardingViewFourth extends StatelessWidget {
+  const OnboardingViewFourth({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +12,13 @@ class OnboardingViewSecound extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.alarm_outlined,
-            color: AppColors.primary,
-            size: responsive.spacingExtraLarge * 4,
+          Padding(
+            padding: EdgeInsets.all(responsive.isSmallScreen ? 8.0 : 10.0),
+            child: CustomLottieAnimation(assetPath: AppAnimations.fatherAndSon),
           ),
-          TitleText(title: AppStrings.onboardingTitle2),
+          TitleText(title: AppStrings.onboardingTitle4),
           SizedBox(height: responsive.spacingSmall),
-          SubtitleText(text: AppStrings.onboardingText2),
+          SubtitleText(text: AppStrings.onboardingText4),
         ],
       ),
     );

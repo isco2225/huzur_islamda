@@ -14,15 +14,21 @@ class AppStrings {
   static const String errorNetwork = 'İnternet bağlantısı yok';
   static const String errorTimeout = 'İstek zaman aşımına uğradı';
 
-  // Onboarding
-  static const String onboardingNext = 'ileri';
+  // Onboarding — Sade: uygulamanın amacı (1. sayfa), kısa davet (2. sayfa). Tek animasyon ilk sayfada.
+  static const String onboardingNext = 'İleri';
   static const String signUp = 'kayıt Ol';
   static const String onboardingTitle1 = 'Hoş Geldiniz';
   static const String onboardingText1 =
-      'Bu yolculuğunuzda size eşlik edecek manevi rehberiniz';
-  static const String onboardingTitle2 = 'Sizi Anlayan Bir Deneyim';
+      'İslamın ışığında daha huzurlu, dengeli bir yaşam sürmene ve ibadet ile günlük rutinini '
+      'düzenli tutmana yardımcı olmak için buradayız.';
+  static const String onboardingTitle2 = 'Namaz vakitleri';
   static const String onboardingText2 =
-      'Namaz ve zikir takibini kolayca yapın. Ruh halinize göre size özel seçilmiş kuran ve hadislerle sizin için hazırlanmıştır.';
+      'Günlük namaz vakitlerini görüntüle, hatırlatmalarla vakitleri kaçırma. Konumuna göre vakitler hesaplanır.';
+  static const String onboardingTitle4 = 'Başlamaya hazır mısın?';
+  static const String onboardingText4 = 'Beraber bu yolculukta ilerleyelim!';
+  static const String onboardingTitle3 = 'Akıllı Zikirmatik';
+  static const String onboardingText3 =
+      'Günlük zikirlerini oluştur, say ve takip et. Geçmiş zikirlerini görüntüle; ruh haline göre zikir seti oluşturabilirsin.';
 
   // Settings - Legal texts
   static const String settingsAboutAppDescription =
