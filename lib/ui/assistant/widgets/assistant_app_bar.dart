@@ -10,10 +10,14 @@ class AssistantAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.viewModel,
     required this.user,
+    this.onBackPressed,
   });
 
   final AssistantViewModel viewModel;
   final ValueListenable<User> user;
+
+  /// Opsiyonel geri butonu aksiyonu. Sağlanmazsa Navigator.pop kullanılır.
+  final VoidCallback? onBackPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +27,12 @@ class AssistantAppBar extends StatelessWidget implements PreferredSizeWidget {
         final isPremium = user.value.isPremium;
         final dailyLimit = viewModel.dailyLimit.value;
         return AppBar(
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: const BackButtonIcon(),
+                  onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+                )
+              : null,
           title: const Text('Asistan'),
           // Show daily limit if user is not premium
           actions: [
