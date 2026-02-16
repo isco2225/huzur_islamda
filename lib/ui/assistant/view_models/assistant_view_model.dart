@@ -24,8 +24,7 @@ class AssistantViewModel {
        _connectivityUseCase = connectivityUseCase,
        _appRepository = appRepository {
     // INITIAL STATE
-    //_dailyLimit.value = _appRepository.appPreferences.value.assistantDailyLimit;
-    _dailyLimit.value = 0;
+    _dailyLimit.value = _appRepository.appPreferences.value.assistantDailyLimit;
 
     // LISTEN TO APP PREFERENCES CHANGES
     _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
@@ -68,9 +67,7 @@ class AssistantViewModel {
   /// check internet connection and execute assistant use case
   Future<Result<void>> _sendMessage(String userMessage) async {
     if (_isDisposed) {
-      return Result.error(
-        Exception('AssistantViewModel is disposed'),
-      );
+      return Result.error(Exception('AssistantViewModel is disposed'));
     }
     final connectivityResult = await _connectivityUseCase.connectionType();
     switch (connectivityResult) {
@@ -95,9 +92,7 @@ class AssistantViewModel {
       AssistantMessage(text: userMessage, isUser: true, timeLabel: _nowLabel),
     );
     if (_isDisposed) {
-      return Result.error(
-        Exception('AssistantViewModel is disposed'),
-      );
+      return Result.error(Exception('AssistantViewModel is disposed'));
     }
     _messages.value = current;
 
