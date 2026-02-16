@@ -30,6 +30,13 @@ class ProfileHeaderDisplayer extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // Premium Badge
+          if (user.isPremium) ...[
+            Align(
+              alignment: Alignment.topRight,
+              child: PremiumBadge(textTheme: textTheme),
+            ),
+          ],
           // Avatar Circle
           UserProfileAvatar(user: user),
           SizedBox(height: context.spacingSmall),
