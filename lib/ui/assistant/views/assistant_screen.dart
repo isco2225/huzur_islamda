@@ -22,6 +22,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
       assistantUseCase: context.read<AssistantUseCase>(),
       connectivityUseCase: context.read<ConnectivityUseCase>(),
       userRepository: context.read<UserRepository>(),
+      appRepository: context.read<AppRepository>(),
     );
     _viewModel.sendMessage.handleError(context);
   }

@@ -12,7 +12,7 @@ class AssistantView extends StatelessWidget {
     final responsive = context.responsive;
 
     return BaseScaffold(
-      appBar: AppBar(title: const Text('Asistan')),
+      appBar: AssistantAppBar(viewModel: viewModel, user: viewModel.user),
       safeArea: true,
       resizeToAvoidBottomInset: true,
       body: Column(
@@ -91,6 +91,8 @@ class AssistantView extends StatelessWidget {
             ),
           ),
           ChatInputBar(
+            viewModel: viewModel,
+            isAnswering: viewModel.sendMessage.running,
             onSend: (userMessage) => viewModel.sendMessage.execute(userMessage),
           ),
         ],

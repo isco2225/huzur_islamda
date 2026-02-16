@@ -18,9 +18,18 @@ class AssistantViewModel {
     required UserRepository userRepository,
     required AssistantUseCase assistantUseCase,
     required ConnectivityUseCase connectivityUseCase,
+    required AppRepository appRepository,
   }) : _userRepository = userRepository,
        _assistantUseCase = assistantUseCase,
-       _connectivityUseCase = connectivityUseCase {
+       _connectivityUseCase = connectivityUseCase,
+       _appRepository = appRepository {
+    // INITIAL STATE
+    //_dailyLimit.value = _appRepository.appPreferences.value.assistantDailyLimit;
+    _dailyLimit.value = 0;
+
+    // LISTEN TO APP PREFERENCES CHANGES
+    _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
+
     // DEFINE COMMANDS
     sendMessage = Command1<void, String>(
       _sendMessage,
@@ -33,14 +42,22 @@ class AssistantViewModel {
   final UserRepository _userRepository;
   final AssistantUseCase _assistantUseCase;
   final ConnectivityUseCase _connectivityUseCase;
+  final AppRepository _appRepository;
   // state
-  final ValueNotifier<List<AssistantMessage>> messages =
+  ValueListenable<List<AssistantMessage>> get messages => _messages;
+  final ValueNotifier<List<AssistantMessage>> _messages =
       ValueNotifier<List<AssistantMessage>>([]);
+  ValueListenable<int> get dailyLimit => _dailyLimit;
+  final ValueNotifier<int> _dailyLimit = ValueNotifier<int>(0);
+  ValueListenable<User> get user => _userRepository.currentUser;
+
   // commands
   late final Command1<void, String> sendMessage;
   // dispose
   void dispose() {
-    messages.dispose();
+    _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
+    _messages.dispose();
+    _dailyLimit.dispose();
     sendMessage.dispose();
     _log.fine('Disposed');
   }
@@ -63,14 +80,14 @@ class AssistantViewModel {
     }
     _log.info('Internet connection is available');
     // copy current messages list to previous messages list
-    final previousMessages = List<AssistantMessage>.from(messages.value);
+    final previousMessages = List<AssistantMessage>.from(_messages.value);
 
     // add new user message to messages list
     final current = List<AssistantMessage>.from(previousMessages);
     current.add(
       AssistantMessage(text: userMessage, isUser: true, timeLabel: _nowLabel),
     );
-    messages.value = current;
+    _messages.value = current;
 
     final user = _userRepository.currentUser.value;
 
@@ -102,11 +119,16 @@ class AssistantViewModel {
 
   /// add assistant reply to messages list
   void _addAssistantReply(String text) {
-    final current = List<AssistantMessage>.from(messages.value);
+    final current = List<AssistantMessage>.from(_messages.value);
     current.add(
       AssistantMessage(text: text, isUser: false, timeLabel: _nowLabel),
     );
-    messages.value = current;
+    _messages.value = current;
+  }
+
+  /// listen to app preferences changes and update daily limit
+  void _onAppPreferencesChanged() {
+    _dailyLimit.value = _appRepository.appPreferences.value.assistantDailyLimit;
   }
 
   /// get current time label

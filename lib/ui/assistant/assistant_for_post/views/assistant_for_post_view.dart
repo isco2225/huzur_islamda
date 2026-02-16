@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
-import '../../view_models/view_models.dart' show AssistantMessage;
-import '../../widgets/widgets.dart';
-import '../view_models/view_models.dart';
+import '../../../ui.dart';
 
 class AssistantForPostView extends StatelessWidget {
-  const AssistantForPostView({super.key, required this.viewModel});
+  const AssistantForPostView({
+    super.key,
+    required this.viewModel,
+    required this.assistantViewModel,
+  });
 
   final AssistantForPostViewModel viewModel;
+  final AssistantViewModel assistantViewModel;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     return BaseScaffold(
-      appBar: AppBar(title: const Text('Gönderi Hakkında')),
+      appBar: AssistantAppBar(
+        viewModel: assistantViewModel,
+        user: assistantViewModel.user,
+      ),
       backgroundColor: AppColors.background,
       safeArea: true,
       resizeToAvoidBottomInset: true,
@@ -83,6 +89,8 @@ class AssistantForPostView extends StatelessWidget {
             ),
           ),
           ChatInputBar(
+            viewModel: assistantViewModel,
+            isAnswering: viewModel.sendMessage.running,
             onSend: (userMessage) => viewModel.sendMessage.execute(userMessage),
           ),
         ],

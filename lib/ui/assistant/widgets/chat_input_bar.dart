@@ -1,9 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/app.dart';
+import '../../ui.dart';
 
 class ChatInputBar extends StatefulWidget {
-  const ChatInputBar({super.key, this.onSend});
+  const ChatInputBar({
+    super.key,
+    required this.viewModel,
+    required this.isAnswering,
+    this.onSend,
+  });
+
+  final AssistantViewModel viewModel;
+  final ValueListenable<bool> isAnswering;
 
   final void Function(String message)? onSend;
 
@@ -73,25 +83,42 @@ class _ChatInputBarState extends State<ChatInputBar> {
               ),
             ),
             const SizedBox(width: 10),
-            GestureDetector(
-              onTap: _handleSend,
-              child: Container(
-                width: responsive.isSmallScreen ? 32 : 42,
-                height: responsive.isSmallScreen ? 32 : 42,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(21),
-                ),
-                child: Icon(
-                  Icons.send_rounded,
-                  size: responsive.isSmallScreen ? 16 : 20,
-                  color: Colors.white,
-                ),
-              ),
+            ListenableBuilder(
+              listenable: Listenable.merge([
+                widget.viewModel.dailyLimit,
+                widget.viewModel.user,
+                widget.isAnswering,
+              ]),
+              builder: (context, _) {
+                return GestureDetector(
+                  onTap: () => _isDisabled() ? null : _handleSend(),
+                  child: Container(
+                    width: responsive.isSmallScreen ? 32 : 42,
+                    height: responsive.isSmallScreen ? 32 : 42,
+                    decoration: BoxDecoration(
+                      color: _isDisabled()
+                          ? Colors.grey.shade500
+                          : AppColors.primary,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Icon(
+                      Icons.send_rounded,
+                      size: responsive.isSmallScreen ? 16 : 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  bool _isDisabled() {
+    return (widget.viewModel.dailyLimit.value <= 0 &&
+            !widget.viewModel.user.value.isPremium) ||
+        widget.isAnswering.value;
   }
 }
