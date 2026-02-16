@@ -36,6 +36,8 @@ class AssistantForPostViewModel {
   final AssistantUseCase _assistantUseCase;
   final ConnectivityUseCase _connectivityUseCase;
 
+  bool _isDisposed = false;
+
   Post get post => _post;
 
   final ValueNotifier<List<AssistantMessage>> messages =
@@ -43,12 +45,18 @@ class AssistantForPostViewModel {
   late final Command1<void, String> sendMessage;
 
   void dispose() {
+    _isDisposed = true;
     messages.dispose();
     sendMessage.dispose();
     _log.fine('Disposed');
   }
 
   Future<Result<void>> _sendMessage(String userMessage) async {
+    if (_isDisposed) {
+      return Result.error(
+        Exception('AssistantForPostViewModel is disposed'),
+      );
+    }
     final connectivityResult = await _connectivityUseCase.connectionType();
     switch (connectivityResult) {
       case Ok():
@@ -68,6 +76,11 @@ class AssistantForPostViewModel {
     current.add(
       AssistantMessage(text: userMessage, isUser: true, timeLabel: _nowLabel),
     );
+    if (_isDisposed) {
+      return Result.error(
+        Exception('AssistantForPostViewModel is disposed'),
+      );
+    }
     messages.value = current;
 
     final user = _userRepository.currentUser.value;
@@ -97,10 +110,16 @@ class AssistantForPostViewModel {
   }
 
   void _addAssistantReply(String text) {
+    if (_isDisposed) {
+      return;
+    }
     final current = List<AssistantMessage>.from(messages.value);
     current.add(
       AssistantMessage(text: text, isUser: false, timeLabel: _nowLabel),
     );
+    if (_isDisposed) {
+      return;
+    }
     messages.value = current;
   }
 

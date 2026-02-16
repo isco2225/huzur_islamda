@@ -44,6 +44,7 @@ class AssistantViewModel {
   final ConnectivityUseCase _connectivityUseCase;
   final AppRepository _appRepository;
   // state
+  bool _isDisposed = false;
   ValueListenable<List<AssistantMessage>> get messages => _messages;
   final ValueNotifier<List<AssistantMessage>> _messages =
       ValueNotifier<List<AssistantMessage>>([]);
@@ -55,6 +56,7 @@ class AssistantViewModel {
   late final Command1<void, String> sendMessage;
   // dispose
   void dispose() {
+    _isDisposed = true;
     _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
     _messages.dispose();
     _dailyLimit.dispose();
@@ -65,6 +67,11 @@ class AssistantViewModel {
   // functions
   /// check internet connection and execute assistant use case
   Future<Result<void>> _sendMessage(String userMessage) async {
+    if (_isDisposed) {
+      return Result.error(
+        Exception('AssistantViewModel is disposed'),
+      );
+    }
     final connectivityResult = await _connectivityUseCase.connectionType();
     switch (connectivityResult) {
       case Ok():
@@ -87,6 +94,11 @@ class AssistantViewModel {
     current.add(
       AssistantMessage(text: userMessage, isUser: true, timeLabel: _nowLabel),
     );
+    if (_isDisposed) {
+      return Result.error(
+        Exception('AssistantViewModel is disposed'),
+      );
+    }
     _messages.value = current;
 
     final user = _userRepository.currentUser.value;
@@ -119,15 +131,24 @@ class AssistantViewModel {
 
   /// add assistant reply to messages list
   void _addAssistantReply(String text) {
+    if (_isDisposed) {
+      return;
+    }
     final current = List<AssistantMessage>.from(_messages.value);
     current.add(
       AssistantMessage(text: text, isUser: false, timeLabel: _nowLabel),
     );
+    if (_isDisposed) {
+      return;
+    }
     _messages.value = current;
   }
 
   /// listen to app preferences changes and update daily limit
   void _onAppPreferencesChanged() {
+    if (_isDisposed) {
+      return;
+    }
     _dailyLimit.value = _appRepository.appPreferences.value.assistantDailyLimit;
   }
 
