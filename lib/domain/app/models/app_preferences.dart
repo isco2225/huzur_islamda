@@ -20,7 +20,7 @@ class AppPreferences {
       isVibrationEnabled: true,
       isNotificationsEnabled: false,
       isOnboardingCompleted: false,
-      assistantDailyLimit: 10,
+      assistantDailyLimit: 5,
       lastLimitResetDate: today,
     );
   }
@@ -33,7 +33,7 @@ class AppPreferences {
       isVibrationEnabled: json['isVibrationEnabled'] as bool? ?? true,
       isNotificationsEnabled: json['isNotificationsEnabled'] as bool? ?? false,
       isOnboardingCompleted: json['isOnboardingCompleted'] as bool? ?? false,
-      assistantDailyLimit: json['assistantDailyLimit'] as int? ?? 10,
+      assistantDailyLimit: json['assistantDailyLimit'] as int? ?? 5,
       lastLimitResetDate: json['lastLimitResetDate'] as String? ?? today,
     );
   }
