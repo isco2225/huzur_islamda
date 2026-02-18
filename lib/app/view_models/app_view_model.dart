@@ -18,6 +18,7 @@ class AppViewModel {
     required WipeDataUseCase wipeDataUseCase,
     required SchedulePrayerNotificationsUseCase
     schedulePrayerNotificationsUseCase,
+    required SyncRevenueCatStatusUseCase syncRevenueCatStatusUseCase,
     required AdMobService admobService,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
@@ -28,6 +29,7 @@ class AppViewModel {
        _syncPermissionUseCase = syncPermissionUseCase,
        _wipeDataUseCase = wipeDataUseCase,
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
+       _syncRevenueCatStatusUseCase = syncRevenueCatStatusUseCase,
        _prayerTimeUseCase = prayerTimeUseCase,
        _admobService = admobService {
     // DEFINE COMMANDS
@@ -50,6 +52,7 @@ class AppViewModel {
   final SyncPermissionUseCase _syncPermissionUseCase;
   final WipeDataUseCase _wipeDataUseCase;
   final SchedulePrayerNotificationsUseCase _schedulePrayerNotificationsUseCase;
+  final SyncRevenueCatStatusUseCase _syncRevenueCatStatusUseCase;
   final PrayerTimeUseCase _prayerTimeUseCase;
   final AdMobService _admobService;
   // DOMAIN
@@ -118,8 +121,23 @@ class AppViewModel {
         }
       }
       if (userInitialized && currentUser.value.isRegistered) {
+        final syncPremiumResult = await _syncRevenueCatStatusUseCase.execute();
+        switch (syncPremiumResult) {
+          case Ok():
+            _log.info('Premium status synced successfully');
+            break;
+          case Error():
+            _log.warning(
+              'Failed to sync premium status: ${syncPremiumResult.asError.error}',
+            );
+        }
+
         // initialize admob
-        await _admobService.initialize();
+        if (!currentUser.value.isPremium) {
+          await _admobService.initialize();
+        } else {
+          _log.info('User is premium, skipping AdMob initialization');
+        }
         // fetch saved post ids
         final savedPostIdsResult = await _postRepository.fetchSavedPostIds(
           userId: currentUser.value.uid,

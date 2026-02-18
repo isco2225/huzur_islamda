@@ -34,6 +34,30 @@ void main() async {
   final reportService = ReportService();
   final firebaseCloudFunctionsService = FirebaseCloudFunctionsService();
 
+  // RevenueCat
+  final revenueCatService = RevenueCatService();
+  String revenueCatEntitlementId = 'premium';
+  try {
+    revenueCatEntitlementId = AppPurchaseConfig.entitlementId;
+  } catch (e) {
+    debugPrint('RevenueCat entitlement id missing, using default: $e');
+  }
+  try {
+    final rcInitResult = await revenueCatService.configure(
+      apiKey: AppPurchaseConfig.revenueCatApiKey,
+    );
+    switch (rcInitResult) {
+      case Ok():
+        debugPrint('RevenueCat initialized successfully');
+        break;
+      case Error():
+        debugPrint('RevenueCat init failed: ${rcInitResult.asError.error}');
+        break;
+    }
+  } catch (e) {
+    debugPrint('RevenueCat init exception: $e');
+  }
+
   // Initialize notification service
   final notificationInitResult = await notificationService.initialize();
   switch (notificationInitResult) {
@@ -65,6 +89,14 @@ void main() async {
   );
   final userRepository = UserRepositoryRemote(
     firestoreUserService: FirestoreUserService(),
+  );
+  final purchaseRepository = PurchaseRepositoryRemote(
+    revenueCatService: revenueCatService,
+    authRepository: authRepository,
+    userRepository: userRepository,
+    entitlementId: revenueCatEntitlementId,
+    weeklyProductId: AppPurchaseConfig.weeklyProductId,
+    yearlyProductId: AppPurchaseConfig.yearlyProductId,
   );
 
   // Use Cases
@@ -157,6 +189,17 @@ void main() async {
       assistantUseCase: assistantUseCase,
       deleteAccountUseCase: deleteAccountUseCase,
       firebaseCloudFunctionsService: firebaseCloudFunctionsService,
+      revenueCatService: revenueCatService,
+      purchaseRepository: purchaseRepository,
+      syncRevenueCatStatusUseCase: SyncRevenueCatStatusUseCase(
+        purchaseRepository: purchaseRepository,
+      ),
+      purchasePremiumUseCase: PurchasePremiumUseCase(
+        purchaseRepository: purchaseRepository,
+      ),
+      restorePurchasesUseCase: RestorePurchasesUseCase(
+        purchaseRepository: purchaseRepository,
+      ),
     ),
   );
 }

@@ -160,6 +160,12 @@ final List<RouteBase> _routes = [
   ),
 
   GoRoute(
+    path: AppRoutes.purchase,
+    name: 'purchase',
+    builder: (context, state) => const PurchaseScreen(),
+  ),
+
+  GoRoute(
     path: AppRoutes.postDetail,
     name: 'post_detail',
     builder: (context, state) {

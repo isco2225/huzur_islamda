@@ -250,7 +250,7 @@ class UserRepositoryRemote extends UserRepository {
     }
   }
 
-  /*@override
+  @override
   Future<Result<void>> updateUserPremium({
     required String uid,
     required DateTime lastPremiumAt,
@@ -264,16 +264,23 @@ class UserRepositoryRemote extends UserRepository {
       );
       switch (result) {
         case Ok():
-          _currentUser.value = _currentUser.value.copyWith(
-            lastPremiumAt: lastPremiumAt,
-            supportPackage: supportPackage,
-          );
+          final updatedUser = result.asOk.value;
+          if (updatedUser != null) {
+            _currentUser.value = updatedUser;
+          } else {
+            _currentUser.value = _currentUser.value.copyWith(
+              lastSupportedAt: lastPremiumAt,
+              supportPackage: supportPackage,
+            );
+          }
           return Result.ok(null);
+        case Error():
+          return Result.error(result.asError.error);
       }
     } catch (e) {
       return Result.error(Exception('Failed to update user premium: $e'));
     }
-  }*/
+  }
 
   /*Future<Result<void>> updateUserSupport({
     required String uid,

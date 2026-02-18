@@ -246,6 +246,19 @@ class FirestoreUserService {
     }
   }
 
+  Future<Result<User?>> updateUserPremium({
+    required String uid,
+    required DateTime lastPremiumAt,
+    required String supportPackage,
+  }) async {
+    return updateUserSupport(
+      uid: uid,
+      hasSupported: true,
+      lastSupportedAt: lastPremiumAt,
+      supportPackage: supportPackage,
+    );
+  }
+
   /// Firestore'dan gelen Timestamp'leri DateTime'a dönüştürür
   Map<String, dynamic> _convertTimestampsToDateTime(Map<String, dynamic> data) {
     final cleanData = Map<String, dynamic>.from(data);

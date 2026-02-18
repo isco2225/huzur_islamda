@@ -2,7 +2,7 @@ name: huzur_islamda
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.9.2
@@ -76,6 +76,7 @@ dependencies:
 
   #Speed Dial(For floating action button)
   flutter_speed_dial: ^7.0.0
+  purchases_flutter: ^9.12.0
 
 dev_dependencies:
   flutter_test:

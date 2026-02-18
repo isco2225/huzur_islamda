@@ -37,6 +37,11 @@ class AppScreen extends StatefulWidget {
     required this.assistantUseCase,
     required this.deleteAccountUseCase,
     required this.firebaseCloudFunctionsService,
+    required this.revenueCatService,
+    required this.purchaseRepository,
+    required this.syncRevenueCatStatusUseCase,
+    required this.purchasePremiumUseCase,
+    required this.restorePurchasesUseCase,
   });
   final AuthRepository authRepository;
   final UserRepository userRepository;
@@ -67,6 +72,11 @@ class AppScreen extends StatefulWidget {
   final AssistantUseCase assistantUseCase;
   final DeleteAccountUseCase deleteAccountUseCase;
   final FirebaseCloudFunctionsService firebaseCloudFunctionsService;
+  final RevenueCatService revenueCatService;
+  final PurchaseRepository purchaseRepository;
+  final SyncRevenueCatStatusUseCase syncRevenueCatStatusUseCase;
+  final PurchasePremiumUseCase purchasePremiumUseCase;
+  final RestorePurchasesUseCase restorePurchasesUseCase;
   @override
   State<AppScreen> createState() => _AppScreenState();
 }
@@ -77,6 +87,9 @@ class _AppScreenState extends State<AppScreen> {
   @override
   void initState() {
     super.initState();
+    final syncRevenueCatStatusUseCase = SyncRevenueCatStatusUseCase(
+      purchaseRepository: widget.purchaseRepository,
+    );
     _appViewModel = AppViewModel(
       appRepository: widget.appRepository,
       authRepository: widget.authRepository,
@@ -92,6 +105,7 @@ class _AppScreenState extends State<AppScreen> {
       wipeDataUseCase: widget.wipeDataUseCase,
       schedulePrayerNotificationsUseCase:
           widget.schedulePrayerNotificationsUseCase,
+      syncRevenueCatStatusUseCase: syncRevenueCatStatusUseCase,
       admobService: widget.admobService,
     );
     // App'i başlat
@@ -132,6 +146,8 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.dhikrMoodService),
         Provider(create: (_) => widget.reportService),
         Provider(create: (_) => widget.firebaseCloudFunctionsService),
+        Provider(create: (_) => widget.revenueCatService),
+        Provider(create: (_) => widget.purchaseRepository),
         // use cases
         Provider(create: (_) => widget.dhikrUseCase),
         Provider(create: (_) => widget.prayerTimeUseCase),
@@ -145,6 +161,9 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.showAdUseCase),
         Provider(create: (_) => widget.assistantUseCase),
         Provider(create: (_) => widget.deleteAccountUseCase),
+        Provider(create: (context) => widget.purchasePremiumUseCase),
+        Provider(create: (context) => widget.restorePurchasesUseCase),
+        Provider(create: (context) => widget.syncRevenueCatStatusUseCase),
       ],
       child: ValueListenableBuilder(
         valueListenable: _appViewModel.initApp.running,

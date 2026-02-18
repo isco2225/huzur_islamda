@@ -13,3 +13,4 @@ export 'admob_service.dart';
 export 'assistant_service.dart';
 export 'report_service.dart';
 export 'firebase_cloud_functions_service.dart';
+export 'revenue_cat_service.dart';

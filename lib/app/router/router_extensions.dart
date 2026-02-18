@@ -51,12 +51,18 @@ extension RouterExtensions on BuildContext {
   /// Navigate to settings screen
   void goToSettings() => go(AppRoutes.settings);
 
+  /// Navigate to purchase (paywall) screen
+  void goToPurchase() => go(AppRoutes.purchase);
+
   /// Navigate to create dhikr screen
   void goToCreateDhikr() => go(AppRoutes.createDhikr);
 
   // -------------------- PUSH METHODS (Add to navigation stack) --------------------
   /// Push settings screen
   Future<T?> pushSettings<T extends Object?>() => push<T>(AppRoutes.settings);
+
+  /// Push purchase (paywall) screen
+  Future<T?> pushPurchase<T extends Object?>() => push<T>(AppRoutes.purchase);
 
   /// Push saved posts screen
   Future<T?> pushSavedPosts<T extends Object?>() =>

@@ -8,3 +8,4 @@ export 'assistant/assistant.dart';
 export 'settings/settings.dart';
 export 'user/user.dart';
 export 'advert/advert.dart';
+export 'purchase/purchase.dart';

@@ -9,3 +9,4 @@ export 'app/app.dart';
 export 'notification/notification.dart';
 export 'assistant/assistant.dart';
 export 'report/report.dart';
+export 'purchase/purchase.dart';

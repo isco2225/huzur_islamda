@@ -48,6 +48,58 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418329675000:android:b1a2d44de6080b4754670d",
+        "android_client_info": {
+          "package_name": "com.omran.huzur_islamda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418329675000-f7veknlnjdhhkh2l52eh15ti40fj0orj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omran.huzur_islamda",
+            "certificate_hash": "73f9167c1dd4749a3d571b38a56c0ebf92e9eb2e"
+          }
+        },
+        {
+          "client_id": "418329675000-tgrc57g165f8cucn7c9tb02ijtibapl3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omran.huzur_islamda",
+            "certificate_hash": "708da099a0d5b4dad3adfeb6eec930da71ae9de6"
+          }
+        },
+        {
+          "client_id": "418329675000-f4eb2vigvvn0j5v0dm4mcn63c2494tdb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQqD8QfMnrJ8Sr-IRJ_fBnzXkz3JC0dYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418329675000-f4eb2vigvvn0j5v0dm4mcn63c2494tdb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "418329675000-vmesaqqgq7hhattb1b5jl35mt796s81k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.huzurIslamda"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

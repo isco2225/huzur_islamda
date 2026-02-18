@@ -59,6 +59,9 @@ class AppRoutes {
   /// Settings screen route
   static const String settings = '/settings';
 
+  /// Purchase / Paywall screen route
+  static const String purchase = '/purchase';
+
   /// Saved posts screen route
   static const String savedPosts = '/saved_posts';
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:huzur_islamda/ui/settings/widgets/navigatable_setting_tile.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../app/app.dart';
+import '../../../../data/data.dart';
 import '../../ui.dart';
 
 class SettingsView extends StatelessWidget {
@@ -164,6 +166,23 @@ class SettingsView extends StatelessWidget {
                           title: 'Hesap',
                           description: 'Hesap ayarlarını yönetin',
                           children: [
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  context.read<UserRepository>().currentUser,
+                              builder: (context, user, _) {
+                                return NavigatableSettingTile(
+                                  icon: Icons.workspace_premium_outlined,
+                                  title: 'Reklamsız Kullanım',
+                                  subtitle: user.isPremium
+                                      ? 'Premium aktif'
+                                      : 'Aboneliği başlat veya yönet',
+                                  onTap: () {
+                                    context.pushPurchase();
+                                  },
+                                );
+                              },
+                            ),
+                            SettingsDivider(),
                             // Edit Profile
                             NavigatableSettingTile(
                               icon: Icons.person_outline_rounded,

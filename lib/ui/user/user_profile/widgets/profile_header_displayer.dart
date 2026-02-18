@@ -52,6 +52,14 @@ class ProfileHeaderDisplayer extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
+          if (!user.isPremium) ...[
+            SizedBox(height: context.spacingSmall),
+            OutlinedButton.icon(
+              onPressed: () => context.pushPurchase(),
+              icon: const Icon(Icons.workspace_premium_outlined),
+              label: const Text('Reklamsız Kullanım'),
+            ),
+          ],
         ],
       ),
     );
