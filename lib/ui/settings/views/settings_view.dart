@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huzur_islamda/ui/settings/widgets/navigatable_setting_tile.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../app/app.dart';
-import '../../../../data/data.dart';
 import '../../ui.dart';
 
 class SettingsView extends StatelessWidget {
@@ -42,9 +40,7 @@ class SettingsView extends StatelessWidget {
                       children: [
                         // Premium olmayan kullanıcılar için üstte premium çağrısı
                         ValueListenableBuilder(
-                          valueListenable: context
-                              .read<UserRepository>()
-                              .currentUser,
+                          valueListenable: userViewModel.user,
                           builder: (context, user, _) {
                             if (user.isPremium) {
                               return const SizedBox.shrink();
@@ -246,9 +242,7 @@ class SettingsView extends StatelessWidget {
                           description: 'Hesap ayarlarını yönetin',
                           children: [
                             ValueListenableBuilder(
-                              valueListenable: context
-                                  .read<UserRepository>()
-                                  .currentUser,
+                              valueListenable: userViewModel.user,
                               builder: (context, user, _) {
                                 return NavigatableSettingTile(
                                   icon: Icons.workspace_premium_outlined,

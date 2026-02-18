@@ -1,11 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../app/app.dart';
+import '../../../data/data.dart';
 import '../../../domain/domain.dart';
 
 class UserViewModel {
-  UserViewModel({required DeleteAccountUseCase deleteAccountUseCase})
-    : _deleteAccountUseCase = deleteAccountUseCase {
+  UserViewModel({
+    required DeleteAccountUseCase deleteAccountUseCase,
+    required UserRepository userRepository,
+  }) : _deleteAccountUseCase = deleteAccountUseCase,
+       _userRepository = userRepository {
     // DEFINE COMMANDS
     deleteAccount = Command0<void>(_deleteAccount, debugLabel: 'deleteAccount');
   }
@@ -13,9 +18,12 @@ class UserViewModel {
   // logger
   final _log = Logger('UserViewModel');
 
+  // state
+  ValueListenable<User> get user => _userRepository.currentUser;
+
   // repositories and use cases
   final DeleteAccountUseCase _deleteAccountUseCase;
-
+  final UserRepository _userRepository;
   // commands
   late final Command0<void> deleteAccount;
 
