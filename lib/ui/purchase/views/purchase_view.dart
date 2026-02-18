@@ -63,10 +63,11 @@ class PurchaseView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const SizedBox(height: 10),
-                            const Icon(
-                              Icons.star_rate_rounded,
-                              size: 80,
-                              color: kGoldColor,
+                            Image.asset(
+                              'assets/icons/moon_mosque.png',
+                              width: context.screenWidth * 0.3,
+                              height: context.screenHeight * 0.15,
+                              fit: BoxFit.contain,
                             ),
                             const Text(
                               "Premium'a Geç",

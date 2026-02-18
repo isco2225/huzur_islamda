@@ -40,6 +40,85 @@ class SettingsView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // Premium olmayan kullanıcılar için üstte premium çağrısı
+                        ValueListenableBuilder(
+                          valueListenable: context
+                              .read<UserRepository>()
+                              .currentUser,
+                          builder: (context, user, _) {
+                            if (user.isPremium) {
+                              return const SizedBox.shrink();
+                            }
+                            return Container(
+                              padding: EdgeInsets.all(context.spacingMedium),
+                              margin: EdgeInsets.only(
+                                bottom: context.spacingMedium,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.primary,
+                                  width: 1.2,
+                                ),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFF7E8),
+                                    Color(0xFFFFE6BF),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.workspace_premium_rounded,
+                                    color: AppColors.primary,
+                                    size: 40,
+                                  ),
+                                  SizedBox(width: context.spacingMedium),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: const [
+                                        Text(
+                                          'Premium Ol!',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.secondary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Reklamsız kullanım ve sınırsız asistan erişimi için premium\'a geçin.',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: AppColors.subtitleColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: context.spacingSmall),
+                                  AppButton(
+                                    onPressed: () => context.pushPurchase(),
+                                    text: 'Premium Ol',
+                                    running: ValueNotifier(false),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                         SettingsDisplayerCard(
                           title: 'Etkileşimler',
                           description:
@@ -167,8 +246,9 @@ class SettingsView extends StatelessWidget {
                           description: 'Hesap ayarlarını yönetin',
                           children: [
                             ValueListenableBuilder(
-                              valueListenable:
-                                  context.read<UserRepository>().currentUser,
+                              valueListenable: context
+                                  .read<UserRepository>()
+                                  .currentUser,
                               builder: (context, user, _) {
                                 return NavigatableSettingTile(
                                   icon: Icons.workspace_premium_outlined,
