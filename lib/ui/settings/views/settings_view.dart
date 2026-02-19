@@ -73,22 +73,26 @@ class SettingsView extends StatelessWidget {
                                 ],
                               ),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.workspace_premium_rounded,
                                     color: AppColors.primary,
-                                    size: 40,
+                                    size: context.isSmallScreen ? 30 : 36,
                                   ),
                                   SizedBox(width: context.spacingMedium),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
                                       children: const [
                                         Text(
                                           'Premium Ol!',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.w700,
                                             color: AppColors.secondary,
                                           ),
@@ -96,8 +100,10 @@ class SettingsView extends StatelessWidget {
                                         SizedBox(height: 4),
                                         Text(
                                           'Reklamsız kullanım ve sınırsız asistan erişimi için premium\'a geçin.',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 13,
+                                            fontSize: 12,
                                             color: AppColors.subtitleColor,
                                           ),
                                         ),
@@ -105,10 +111,13 @@ class SettingsView extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(width: context.spacingSmall),
-                                  AppButton(
-                                    onPressed: () => context.pushPurchase(),
-                                    text: 'Premium Ol',
-                                    running: ValueNotifier(false),
+                                  SizedBox(
+                                    height: context.isSmallScreen ? 30 : 36,
+                                    child: AppButton(
+                                      onPressed: () => context.pushPurchase(),
+                                      text: 'Premium Ol',
+                                      running: ValueNotifier(false),
+                                    ),
                                   ),
                                 ],
                               ),
