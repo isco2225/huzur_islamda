@@ -260,7 +260,9 @@ class SettingsView extends StatelessWidget {
                                       ? 'Premium aktif'
                                       : 'Aboneliği başlat veya yönet',
                                   onTap: () {
-                                    context.pushPurchase();
+                                    if (user.isPremium) {
+                                      context.pushPurchase();
+                                    }
                                   },
                                 );
                               },
