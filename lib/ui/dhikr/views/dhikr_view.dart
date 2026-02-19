@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
 import '../../../../app/app.dart';
 import '../../ui.dart';
 
@@ -67,7 +65,6 @@ class _DhikrViewState extends State<DhikrView> {
                           isTodaySelected: isTodaySelected,
                           responsive: responsive,
                           isDialOpen: isDialOpen,
-                          isOnGroupTap: isOnGroupTap,
                           selectedDate: selectedDate,
                         ),
                       ),
@@ -104,68 +101,12 @@ class _DhikrViewState extends State<DhikrView> {
                 isTodaySelected: isTodaySelected,
                 responsive: responsive,
                 isDialOpen: isDialOpen,
-                isOnGroupTap: isOnGroupTap,
                 selectedDate: selectedDate,
               ),
             );
           },
         );
       },
-    );
-  }
-}
-
-class DhikrFloatingActionButton extends StatelessWidget {
-  const DhikrFloatingActionButton({
-    super.key,
-    required this.responsive,
-    required this.isDialOpen,
-    required this.isOnGroupTap,
-    required this.onCreateDhikrsForPrayerTapped,
-  });
-
-  final ResponsiveData responsive;
-  final ValueNotifier<bool> isDialOpen;
-  final ValueNotifier<bool> isOnGroupTap;
-  final void Function() onCreateDhikrsForPrayerTapped;
-
-  @override
-  Widget build(BuildContext context) {
-    return SpeedDial(
-      overlayColor: Colors.grey.shade400,
-      backgroundColor: AppColors.primary,
-      spacing: responsive.spacingExtraSmall,
-      spaceBetweenChildren: responsive.spacingExtraSmall,
-      animatedIcon: AnimatedIcons.menu_close,
-      activeBackgroundColor: AppColors.primary,
-      activeForegroundColor: Colors.black,
-      direction: SpeedDialDirection.up,
-      closeDialOnPop: true,
-      openCloseDial: isDialOpen,
-      children: [
-        SpeedDialChild(
-          child: Icon(Icons.mosque, color: AppColors.primary),
-          label: 'Namaz için zikirler',
-          onTap: () {
-            onCreateDhikrsForPrayerTapped();
-          },
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.wb_sunny_outlined, color: AppColors.duaColor),
-          label: 'Ruh haline göre zikirler',
-          onTap: () {
-            context.pushCreateDhikrByMood();
-          },
-        ),
-        if (!isOnGroupTap.value)
-          SpeedDialChild(
-            child: Icon(Icons.add, color: AppColors.primary),
-            label: 'Zikir oluştur',
-            onTap: () {
-              context.pushCreateDhikr();
-            },
-          ),
-      ],
     );
   }
 }

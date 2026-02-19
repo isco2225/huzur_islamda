@@ -9,7 +9,6 @@ class GroupSelectedView extends StatelessWidget {
     required this.isTodaySelected,
     required this.responsive,
     required this.isDialOpen,
-    required this.isOnGroupTap,
     required this.createDhikrViewModel,
     required this.selectedDate,
     required this.fetchDhikrsViewModel,
@@ -18,7 +17,6 @@ class GroupSelectedView extends StatelessWidget {
   final bool isTodaySelected;
   final ResponsiveData responsive;
   final ValueNotifier<bool> isDialOpen;
-  final ValueNotifier<bool> isOnGroupTap;
   final CreateDhikrViewModel createDhikrViewModel;
   final DateTime selectedDate;
   final FetchDhikrsViewModel fetchDhikrsViewModel;
@@ -29,9 +27,9 @@ class GroupSelectedView extends StatelessWidget {
       safeArea: true,
       floatingActionButton: isTodaySelected
           ? DhikrFloatingActionButton(
+              groupDhikrs: fetchDhikrsViewModel.groupDhikrs,
               responsive: responsive,
               isDialOpen: isDialOpen,
-              isOnGroupTap: isOnGroupTap,
               onCreateDhikrsForPrayerTapped: () {
                 showDialog(
                   barrierDismissible: false,
@@ -59,9 +57,7 @@ class GroupSelectedView extends StatelessWidget {
                     indicatorWeight: 2,
                     indicatorSize: TabBarIndicatorSize.label,
                     dividerColor: Colors.transparent,
-                    onTap: (index) {
-                      isOnGroupTap.value = index == 1;
-                    },
+                    onTap: (index) {},
                     tabs: const [
                       Tab(text: 'Zikirler'),
                       Tab(text: 'Gruplar'),
