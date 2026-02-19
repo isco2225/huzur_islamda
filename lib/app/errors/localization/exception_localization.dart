@@ -29,7 +29,7 @@ extension ExceptionLocalizationExtension on BuildContext {
         AuthGoogleSignInFailed() =>
           'Google ile giriş sırasında bir hata oluştu',
         AuthNoUserSignedIn() => 'Şu anda oturum açmış bir kullanıcı yok',
-        AuthUserEmailNotFound() => 'Kullanıcının bulunamadı',
+        AuthUserEmailNotFound() => 'Kullanıcı bulunamadı',
         AuthSendVerificationEmailFailed() =>
           'Doğrulama e-postası gönderimi sırasında bir hata oluştu',
         AuthEmailAlreadyVerified() => 'E-posta zaten doğrulanmış',
