@@ -48,7 +48,11 @@ class DhikrDetailView extends StatelessWidget {
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
-                    context.pop();
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.goToDhikr();
+                    }
                   },
                 ),
                 backgroundColor: AppColors.background,

@@ -18,7 +18,7 @@ class CreateDhikrViewModel {
        _showAdUseCase = showAdUseCase,
        _scheduleDhikrReminderUseCase = scheduleDhikrReminderUseCase {
     // DEFINE COMMANDS
-    createDhikr = Command1<void, ({String name, int targetCount})>(
+    createDhikr = Command1<String, ({String name, int targetCount})>(
       _createDhikr,
       debugLabel: 'createDhikr',
     );
@@ -46,7 +46,7 @@ class CreateDhikrViewModel {
   final ValueNotifier<int> targetCount = ValueNotifier<int>(33);
 
   // COMMANDS
-  late final Command1<void, ({String name, int targetCount})> createDhikr;
+  late final Command1<String, ({String name, int targetCount})> createDhikr;
   late final Command0<List<String>> createDhikrsForPrayer;
 
   // DISPOSE
@@ -57,7 +57,7 @@ class CreateDhikrViewModel {
   }
 
   // FUNCTIONS
-  Future<Result<void>> _createDhikr(
+  Future<Result<String>> _createDhikr(
     ({String name, int targetCount}) params,
   ) async {
     try {
@@ -68,9 +68,10 @@ class CreateDhikrViewModel {
       }
 
       final currentDate = DateTime.now();
+      final dhikrId = currentDate.toString();
       final result = await _dhikrRepository.saveDhikrLocally(
         dhikr: Dhikr(
-          id: currentDate.toString(),
+          id: dhikrId,
           userId: userId,
           name: params.name,
           targetCount: params.targetCount,
@@ -84,36 +85,37 @@ class CreateDhikrViewModel {
         ),
       );
 
-      if (result is Error<void>) {
-        _log.warning('Create dhikr failed: ${result.error}');
-      } else {
-        // Dhikr reminder notification scheduled for the same day at 22:00
-        try {
-          final reminderResult = await _scheduleDhikrReminderUseCase
-              .scheduleForDay();
-          switch (reminderResult) {
-            case Ok():
-              _log.info('Dhikr reminder scheduled successfully');
-            case Error():
-              _log.warning(
-                'Failed to schedule dhikr reminder: ${reminderResult.asError.error}',
-              );
+      switch (result) {
+        case Ok():
+          // Dhikr reminder notification scheduled for the same day at 22:00
+          try {
+            final reminderResult = await _scheduleDhikrReminderUseCase
+                .scheduleForDay();
+            switch (reminderResult) {
+              case Ok():
+                _log.info('Dhikr reminder scheduled successfully');
+              case Error():
+                _log.warning(
+                  'Failed to schedule dhikr reminder: ${reminderResult.asError.error}',
+                );
+            }
+          } catch (e) {
+            _log.warning('Exception while scheduling dhikr reminder: $e');
           }
-        } catch (e) {
-          _log.warning('Exception while scheduling dhikr reminder: $e');
-        }
 
-        final syncResult = await _dhikrUseCase.syncDhikrs();
-        switch (syncResult) {
-          case Ok():
-            _log.info('Dhikr synced successfully');
-          case Error():
-            _log.warning('Failed to sync dhikr: ${syncResult.error}');
-        }
-        _log.info('Dhikr created successfully');
+          final syncResult = await _dhikrUseCase.syncDhikrs();
+          switch (syncResult) {
+            case Ok():
+              _log.info('Dhikr synced successfully');
+            case Error():
+              _log.warning('Failed to sync dhikr: ${syncResult.error}');
+          }
+          _log.info('Dhikr created successfully');
+          return Result.ok(dhikrId);
+        case Error():
+          _log.warning('Create dhikr failed: ${result.asError.error}');
+          return Result.error(result.asError.error);
       }
-
-      return result;
     } catch (e) {
       _log.severe('Failed to create dhikr: $e');
       return Result.error(Exception('Failed to create dhikr: $e'));

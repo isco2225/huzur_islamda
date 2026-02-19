@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 import '../../../../domain/domain.dart';
 import '../../../ui.dart';
@@ -30,10 +31,12 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
     _viewModel.createDhikr.handleError(context);
     _viewModel.createDhikr.handleCompleted(
       context,
-      popCount: 1,
       successMessage: 'Zikir oluşturuldu!',
-      onCompleted: (_) {
+      onCompleted: (dhikrId) {
         _viewModel.showInterstitialAd();
+        if (context.mounted) {
+          context.goToDhikrDetail(dhikrId);
+        }
       },
     );
   }
