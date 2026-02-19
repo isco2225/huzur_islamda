@@ -15,8 +15,21 @@ class PrayerTimeDisplayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // make top left and right radius if its imsak, make bottom left and right radius if its yatsı
+    final borderRadius = BorderRadius.only(
+      topLeft: name == 'İmsak' ? Radius.circular(12) : Radius.zero,
+      topRight: name == 'İmsak' ? Radius.circular(12) : Radius.zero,
+      bottomLeft: name == 'Yatsı' ? Radius.circular(12) : Radius.zero,
+      bottomRight: name == 'Yatsı' ? Radius.circular(12) : Radius.zero,
+    );
     return Container(
-      color: isHighlighted ? AppColors.primary.withValues(alpha: 0.5) : null,
+      decoration: BoxDecoration(
+        borderRadius: borderRadius,
+        color: isHighlighted ? AppColors.primary.withValues(alpha: 0.5) : null,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade200, width: 1),
+        ),
+      ),
       padding: context.containerPadding,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
