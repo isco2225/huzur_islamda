@@ -46,7 +46,7 @@ class _SignInViewState extends State<SignInView> {
             children: [
               TitleText(title: 'Hemen Giriş Yap'),
               SubtitleText(
-                text: 'Bu eşsiz deneyim için heasp bilgilerini gir.',
+                text: 'Bu eşsiz deneyim için hesap bilgilerini gir.',
               ),
               Padding(
                 padding: EdgeInsets.only(top: responsive.spacingSmall),
