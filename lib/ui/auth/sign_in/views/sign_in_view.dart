@@ -185,7 +185,7 @@ class DontHaveAnAccount extends StatelessWidget {
         SizedBox(width: responsive.isSmallScreen ? 3 : 4),
         GestureDetector(
           onTap: () {
-            context.goToSignUp();
+            context.pushSignUp();
           },
           child: Text(
             'Kayıt ol',

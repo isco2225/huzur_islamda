@@ -58,6 +58,9 @@ extension RouterExtensions on BuildContext {
   void goToCreateDhikr() => go(AppRoutes.createDhikr);
 
   // -------------------- PUSH METHODS (Add to navigation stack) --------------------
+  /// Push sign up screen
+  Future<T?> pushSignUp<T extends Object?>() => push<T>(AppRoutes.signUp);
+
   /// Push settings screen
   Future<T?> pushSettings<T extends Object?>() => push<T>(AppRoutes.settings);
 

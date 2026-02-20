@@ -121,7 +121,57 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
               ),
-              SizedBox(height: context.isSmallScreen ? 32 : 40),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: context.isSmallScreen ? 12 : 16,
+                  bottom: context.isSmallScreen ? 8 : 12,
+                ),
+                child: Center(
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: context.responsiveFontSize(12),
+                      ),
+                      children: [
+                        const TextSpan(text: 'Kayıt olarak '),
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () => _showPrivacyPolicy(context),
+                            child: Text(
+                              'Gizlilik Politikası',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: context.responsiveFontSize(12),
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const TextSpan(text: ' ve '),
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () => _showTermsOfService(context),
+                            child: Text(
+                              'Kullanım Koşulları',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: context.responsiveFontSize(12),
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const TextSpan(text: "'nı kabul etmiş olursunuz."),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: context.isSmallScreen ? 20 : 28),
               Center(
                 child: RichText(
                   text: TextSpan(
@@ -171,5 +221,43 @@ class _SignUpViewState extends State<SignUpView> {
     _displayConfirmPasswordError.value = !isConfirmPasswordValid;
 
     return isEmailValid && isPasswordValid && isConfirmPasswordValid;
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => const SettingsInfoBottomSheet(
+        title: 'Gizlilik Politikası',
+        subtitle:
+            'Kişisel verilerinizin toplanması, saklanması ve korunması hakkında bilgiler',
+        child: Text(
+          AppStrings.settingsPrivacyPolicy,
+          textAlign: TextAlign.start,
+        ),
+      ),
+    );
+  }
+
+  void _showTermsOfService(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => const SettingsInfoBottomSheet(
+        title: 'Kullanım Koşulları',
+        subtitle:
+            'Huzur İslamda uygulamasını kullanırken geçerli kurallar ve sorumluluklar',
+        child: Text(
+          AppStrings.settingsTermsOfService,
+          textAlign: TextAlign.start,
+        ),
+      ),
+    );
   }
 }

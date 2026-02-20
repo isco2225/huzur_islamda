@@ -67,12 +67,15 @@ class SettingsInfoBottomSheet extends StatelessWidget {
             child: SingleChildScrollView(child: child),
           ),
           SizedBox(height: responsive.spacingMedium),
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppButton(
-              running: ValueNotifier(false),
-              onPressed: () => Navigator.of(context).pop(),
-              text: 'Kapat',
+          Padding(
+            padding: EdgeInsets.only(bottom: responsive.spacingMedium),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: AppButton(
+                running: ValueNotifier(false),
+                onPressed: () => Navigator.of(context).pop(),
+                text: 'Kapat',
+              ),
             ),
           ),
         ],
