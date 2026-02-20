@@ -63,7 +63,12 @@ class NoDhikrsToShow extends StatelessWidget {
           SizedBox(height: responsive.spacingSmall),
           // Action button
           AppButton(
-            onPressed: () => context.pushCreateDhikr(),
+            onPressed: () async {
+              final dhikrId = await context.pushCreateDhikr<String>();
+              if (dhikrId != null && context.mounted) {
+                await context.pushToDhikrDetail(dhikrId);
+              }
+            },
             text: 'Hemen bir zikir oluştur',
             running: ValueNotifier(false),
           ),

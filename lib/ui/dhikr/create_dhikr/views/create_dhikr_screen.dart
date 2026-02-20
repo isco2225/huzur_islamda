@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../app/app.dart';
 import '../../../../data/data.dart';
 import '../../../../domain/domain.dart';
 import '../../../ui.dart';
@@ -35,7 +34,7 @@ class _CreateDhikrScreenState extends State<CreateDhikrScreen> {
       onCompleted: (dhikrId) {
         _viewModel.showInterstitialAd();
         if (context.mounted) {
-          context.goToDhikrDetail(dhikrId);
+          Navigator.of(context).pop(dhikrId);
         }
       },
     );

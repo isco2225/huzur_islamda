@@ -37,6 +37,16 @@ class DhikrDetailView extends StatelessWidget {
                 appBar: AppBar(
                   backgroundColor: AppColors.background,
                   elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.goToDhikr();
+                      }
+                    },
+                  ),
                 ),
                 backgroundColor: AppColors.background,
                 body: const Center(child: Text('Zikir bulunamadı')),

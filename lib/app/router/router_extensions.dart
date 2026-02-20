@@ -103,17 +103,6 @@ extension RouterExtensions on BuildContext {
     extra: DhikrDetailParams(initialDhikrId: dhikrId, groupDhikrIds: null),
   );
 
-  /// Go (replace) to dhikr detail screen (single dhikr).
-  /// Kullanım: mevcut route'u dhikr detay ile değiştirir,
-  /// geri tuşunda create ekranına değil dhikr ana ekranına dönülür.
-  void goToDhikrDetail(String dhikrId) => go(
-        AppRoutes.dhikrDetail,
-        extra: DhikrDetailParams(
-          initialDhikrId: dhikrId,
-          groupDhikrIds: null,
-        ),
-      );
-
   /// Push dhikr detail screen for a group.
   Future<T?> pushToDhikrDetailForGroup<T extends Object?>(
     List<String> dhikrIds,

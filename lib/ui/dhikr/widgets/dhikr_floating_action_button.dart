@@ -53,8 +53,11 @@ class DhikrFloatingActionButton extends StatelessWidget {
             SpeedDialChild(
               child: Icon(Icons.add, color: AppColors.primary),
               label: 'Zikir oluştur',
-              onTap: () {
-                context.pushCreateDhikr();
+              onTap: () async {
+                final dhikrId = await context.pushCreateDhikr<String>();
+                if (dhikrId != null && context.mounted) {
+                  await context.pushToDhikrDetail(dhikrId);
+                }
               },
             ),
           ],
