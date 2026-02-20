@@ -28,10 +28,11 @@ class _PlaceSelectorState extends State<PlaceSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Dialog(
       child: SizedBox(
-        width: 300,
-        height: 400,
+        width: responsive.screenWidth * 0.8,
+        height: responsive.screenHeight * 0.6,
         child: ValueListenableBuilder<PlaceSelectionMode>(
           valueListenable: widget.viewModel.selectionMode,
           builder: (context, selectionMode, _) {
@@ -50,7 +51,7 @@ class _PlaceSelectorState extends State<PlaceSelector> {
             final title = switch (selectionMode) {
               PlaceSelectionMode.country => 'Ülke Seçin',
               PlaceSelectionMode.state => 'Şehir Seçin',
-              PlaceSelectionMode.district => 'İlçe Seçin',
+              PlaceSelectionMode.district => 'En yakın ilçeyi Seçin',
             };
             // Get hint text based on selection mode
             final hintText = switch (selectionMode) {
