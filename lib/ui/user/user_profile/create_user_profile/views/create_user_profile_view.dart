@@ -42,6 +42,7 @@ class _CreateUserProfileViewState extends State<CreateUserProfileView> {
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
+      locale: const Locale('tr', 'TR'),
     );
 
     if (picked != null) {
