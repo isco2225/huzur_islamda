@@ -32,7 +32,10 @@ class _CreateDhikrViewState extends State<CreateDhikrView> {
           children: [
             SizedBox(height: context.spacingLarge),
             // Dhikr Name Field
-            DhikrNameTextField(controller: nameController),
+            DhikrNameTextField(
+              controller: nameController,
+              onSuggestDhikr: _showDhikrSuggestions,
+            ),
             SizedBox(height: context.spacingLarge),
             // Target Count Field
             ValueListenableBuilder<int>(
@@ -60,6 +63,28 @@ class _CreateDhikrViewState extends State<CreateDhikrView> {
             ),
             SizedBox(height: context.spacingLarge),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showDhikrSuggestions() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: DhikrSuggestionsBottomSheet(
+          onDhikrSelected: (dhikr) {
+            nameController.text = dhikr;
+            nameController.selection = TextSelection.fromPosition(
+              TextPosition(offset: dhikr.length),
+            );
+          },
         ),
       ),
     );
