@@ -23,6 +23,7 @@ class AppScreen extends StatefulWidget {
     required this.getPermissionStatesUseCase,
     required this.schedulePrayerNotificationsUseCase,
     required this.scheduleDhikrReminderUseCase,
+    required this.scheduleDhikrCreateReminderUseCase,
     required this.notificationService,
     required this.admobService,
     required this.showAdUseCase,
@@ -58,6 +59,7 @@ class AppScreen extends StatefulWidget {
   final GetPermissionStatesUseCase getPermissionStatesUseCase;
   final SchedulePrayerNotificationsUseCase schedulePrayerNotificationsUseCase;
   final ScheduleDhikrReminderUseCase scheduleDhikrReminderUseCase;
+  final ScheduleDhikrCreateReminderUseCase scheduleDhikrCreateReminderUseCase;
   final NotificationService notificationService;
   final AdMobService admobService;
   final ShowAdUseCase showAdUseCase;
@@ -105,6 +107,8 @@ class _AppScreenState extends State<AppScreen> {
       wipeDataUseCase: widget.wipeDataUseCase,
       schedulePrayerNotificationsUseCase:
           widget.schedulePrayerNotificationsUseCase,
+      scheduleDhikrCreateReminderUseCase:
+          widget.scheduleDhikrCreateReminderUseCase,
       syncRevenueCatStatusUseCase: syncRevenueCatStatusUseCase,
       admobService: widget.admobService,
     );
@@ -156,6 +160,7 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (_) => widget.getPermissionStatesUseCase),
         Provider(create: (_) => widget.schedulePrayerNotificationsUseCase),
         Provider(create: (_) => widget.scheduleDhikrReminderUseCase),
+        Provider(create: (_) => widget.scheduleDhikrCreateReminderUseCase),
         Provider(create: (_) => widget.syncPermissionUseCase),
         Provider(create: (_) => widget.wipeDataUseCase),
         Provider(create: (_) => widget.showAdUseCase),

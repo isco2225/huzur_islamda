@@ -20,6 +20,8 @@ class AppViewModel {
     schedulePrayerNotificationsUseCase,
     required SyncRevenueCatStatusUseCase syncRevenueCatStatusUseCase,
     required AdMobService admobService,
+    required ScheduleDhikrCreateReminderUseCase
+    scheduleDhikrCreateReminderUseCase,
   }) : _appRepository = appRepository,
        _authRepository = authRepository,
        _userRepository = userRepository,
@@ -31,7 +33,9 @@ class AppViewModel {
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
        _syncRevenueCatStatusUseCase = syncRevenueCatStatusUseCase,
        _prayerTimeUseCase = prayerTimeUseCase,
-       _admobService = admobService {
+       _admobService = admobService,
+       _scheduleDhikrCreateReminderUseCase =
+           scheduleDhikrCreateReminderUseCase {
     // DEFINE COMMANDS
     initApp = Command0(_initApp, debugLabel: 'AppViewModel.initApp');
     initUser = Command0(_initUser, debugLabel: 'AppViewModel.initUser');
@@ -55,6 +59,7 @@ class AppViewModel {
   final SyncRevenueCatStatusUseCase _syncRevenueCatStatusUseCase;
   final PrayerTimeUseCase _prayerTimeUseCase;
   final AdMobService _admobService;
+  final ScheduleDhikrCreateReminderUseCase _scheduleDhikrCreateReminderUseCase;
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
   ValueListenable<Auth> get auth => _authRepository.auth;
@@ -151,27 +156,32 @@ class AppViewModel {
               'Failed to fetch saved post ids: ${savedPostIdsResult.asError.error}',
             );
         }
-        if (currentUser.value.districtId!.isNotEmpty &&
-            currentUser.value.city!.isNotEmpty &&
-            currentUser.value.country!.isNotEmpty) {
-          // local prayer times.
-          final prayerTimesResult = await _prayerTimeUseCase.getPrayerTimes(
-            districtId: currentUser.value.districtId!,
-            city: currentUser.value.city!,
-            country: currentUser.value.country!,
-            userId: currentUser.value.uid,
-          );
-          switch (prayerTimesResult) {
-            case Ok():
-              if (prayerTimesResult.asOk.value != null &&
-                  appPreferences.value.isNotificationsEnabled) {
-                _log.info('Prayer times loaded successfully');
-                await _schedulePrayerNotificationsUseCase.scheduleForWeek();
-              }
-            case Error():
-              _log.warning(
-                'Failed to load prayer times: ${prayerTimesResult.asError.error}',
-              );
+        // check if notifications are enabled
+        if (appPreferences.value.isNotificationsEnabled) {
+          await _scheduleDhikrCreateReminderUseCase
+              .scheduleReminderForCreatingDhikr();
+          if (currentUser.value.districtId!.isNotEmpty &&
+              currentUser.value.city!.isNotEmpty &&
+              currentUser.value.country!.isNotEmpty) {
+            // local prayer times.
+            final prayerTimesResult = await _prayerTimeUseCase.getPrayerTimes(
+              districtId: currentUser.value.districtId!,
+              city: currentUser.value.city!,
+              country: currentUser.value.country!,
+              userId: currentUser.value.uid,
+            );
+            switch (prayerTimesResult) {
+              case Ok():
+                if (prayerTimesResult.asOk.value != null &&
+                    appPreferences.value.isNotificationsEnabled) {
+                  _log.info('Prayer times loaded successfully');
+                  await _schedulePrayerNotificationsUseCase.scheduleForWeek();
+                }
+              case Error():
+                _log.warning(
+                  'Failed to load prayer times: ${prayerTimesResult.asError.error}',
+                );
+            }
           }
         }
       }
