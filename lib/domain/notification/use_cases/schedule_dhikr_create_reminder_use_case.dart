@@ -5,8 +5,8 @@ import '../../../app/app.dart';
 import '../../../data/data.dart';
 import '../../domain.dart';
 
-class ScheduleDhikrReminderUseCase {
-  ScheduleDhikrReminderUseCase({
+class ScheduleDhikrCreateReminderUseCase {
+  ScheduleDhikrCreateReminderUseCase({
     required NotificationRepository notificationRepository,
     required UserRepository userRepository,
   }) : _notificationRepository = notificationRepository,
