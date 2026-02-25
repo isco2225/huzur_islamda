@@ -209,6 +209,35 @@ class DhikrUseCase {
     }
   }
 
+  Future<Result<void>> cancelTodayDhikrCreationReminder() async {
+    if (auth.value.uid.isEmpty) {
+      _log.warning('User ID is empty, cannot cancel dhikr creation reminder');
+      return Result.error(Exception('User ID is empty'));
+    }
+
+    try {
+      final cancelResult = await _notificationRepository
+          .cancelTodayDhikrCreationReminderNotification(userId: auth.value.uid);
+      switch (cancelResult) {
+        case Ok():
+          _log.info('Today\'s dhikr creation reminder cancelled successfully');
+          return Result.ok(null);
+        case Error():
+          _log.warning(
+            'Failed to cancel today\'s dhikr creation reminder: ${cancelResult.asError.error}',
+          );
+          return Result.error(cancelResult.asError.error);
+      }
+    } catch (e) {
+      _log.severe(
+        'Exception while cancelling today\'s dhikr creation reminder: $e',
+      );
+      return Result.error(
+        Exception('Zikir oluşturma hatırlatma bildirimi iptal edilemedi: $e'),
+      );
+    }
+  }
+
   Future<Result<void>> deleteDhikr({required String dhikrId}) async {
     if (auth.value.uid.isEmpty) {
       _log.warning('User ID is empty, cannot delete dhikr');

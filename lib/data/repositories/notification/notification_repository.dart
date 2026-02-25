@@ -32,6 +32,11 @@ abstract class NotificationRepository {
   /// Cancel today's dhikr reminder notifications
   Future<Result<void>> cancelTodayDhikrNotifications({required String userId});
 
+  /// Cancel today's dhikr creation reminder notification
+  Future<Result<void>> cancelTodayDhikrCreationReminderNotification({
+    required String userId,
+  });
+
   /// Cancel dhikr reminder notification for a specific day
   Future<Result<void>> cancelDhikrReminderNotification({
     required String userId,

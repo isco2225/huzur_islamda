@@ -252,7 +252,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
     required String userId,
   }) async {
     try {
-      _log.info('Cancelling today\'s dhikr notifications...');
+      _log.info('Cancelling today\'s dhikr completion notifications...');
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final pendingResult = await _notificationService
@@ -286,6 +286,44 @@ class NotificationRepositoryRemote implements NotificationRepository {
       _log.severe('Error cancelling all dhikr reminder notifications: $e');
       return Result.error(
         Exception('Zikir hatırlatma bildirimleri iptal edilemedi: $e'),
+      );
+    }
+  }
+
+  @override
+  Future<Result<void>> cancelTodayDhikrCreationReminderNotification({
+    required String userId,
+  }) async {
+    try {
+      _log.info('Cancelling today\'s dhikr creation reminder notification...');
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final notificationId = _generateDhikrCreationReminderId(
+        userId: userId,
+        day: today,
+      );
+
+      final cancelResult = await _notificationService.cancelNotifications(
+        ids: [notificationId],
+      );
+      switch (cancelResult) {
+        case Ok():
+          _log.info(
+            'Cancelled today\'s dhikr creation reminder notification: $notificationId',
+          );
+          return Result.ok(null);
+        case Error():
+          _log.warning(
+            'Failed to cancel today\'s dhikr creation reminder notification: ${cancelResult.asError.error}',
+          );
+          return Result.error(cancelResult.asError.error);
+      }
+    } catch (e) {
+      _log.severe(
+        'Error cancelling today\'s dhikr creation reminder notification: $e',
+      );
+      return Result.error(
+        Exception('Zikir oluşturma hatırlatma bildirimi iptal edilemedi: $e'),
       );
     }
   }

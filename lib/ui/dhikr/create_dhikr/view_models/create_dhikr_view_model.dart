@@ -87,7 +87,27 @@ class CreateDhikrViewModel {
 
       switch (result) {
         case Ok():
-          // Dhikr reminder notification scheduled for the same day at 22:00
+          // Bugün için varsa "zikir oluşturma" hatırlatmasını iptal et
+          try {
+            final cancelCreateReminderResult = await _dhikrUseCase
+                .cancelTodayDhikrCreationReminder();
+            switch (cancelCreateReminderResult) {
+              case Ok():
+                _log.info(
+                  'Today\'s dhikr creation reminder cancelled after creating dhikr',
+                );
+              case Error():
+                _log.warning(
+                  'Failed to cancel today\'s dhikr creation reminder: ${cancelCreateReminderResult.asError.error}',
+                );
+            }
+          } catch (e) {
+            _log.warning(
+              'Exception while cancelling today\'s dhikr creation reminder: $e',
+            );
+          }
+
+          // Dhikr completion reminder notification scheduled for the same day at 22:00
           try {
             final reminderResult = await _scheduleDhikrReminderUseCase
                 .scheduleForDay();
