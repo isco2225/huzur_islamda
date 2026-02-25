@@ -131,7 +131,7 @@ class AppRepositoryRemote implements AppRepository {
         '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     final result = await _updateAppPreferences(
       _appPreferences.value.copyWith(
-        assistantDailyLimit: 10,
+        assistantDailyLimit: 5,
         lastLimitResetDate: today,
       ),
     );
