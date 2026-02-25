@@ -45,12 +45,10 @@ class ScheduleDhikrReminderUseCase {
         switch (result) {
           case Ok():
             _log.info('Dhikr reminder scheduled successfully for $date');
-            return Result.ok(null);
           case Error():
             _log.warning(
               'Failed to schedule dhikr reminder for creating dhikr: ${result.asError.error}',
             );
-            return Result.error(result.asError.error);
         }
       }
       return Result.ok(null);
