@@ -59,7 +59,7 @@ class ScheduleDhikrReminderUseCase {
       // if today's 22:00 dhikr reminder notification is already scheduled, skip scheduling
 
       final result = await _notificationRepository
-          .scheduleDhikrReminderNotification(
+          .scheduleDhikrCompletionReminderNotification(
             userId: user.uid,
             day: normalizedDay,
           );

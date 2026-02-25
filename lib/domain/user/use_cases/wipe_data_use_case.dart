@@ -35,22 +35,12 @@ class WipeDataUseCase {
           return Result.error(prayerResult.asError.error);
       }
       final notificationResult = await _notificationRepository
-          .cancelAllPrayerNotifications();
+          .cancelAllNotifications();
       switch (notificationResult) {
         case Ok():
           break;
         case Error():
           return Result.error(notificationResult.asError.error);
-      }
-      final dhikrReminderResult = await _notificationRepository
-          .cancelTodayDhikrNotifications(
-            userId: _userRepository.currentUser.value.uid,
-          );
-      switch (dhikrReminderResult) {
-        case Ok():
-          break;
-        case Error():
-          return Result.error(dhikrReminderResult.asError.error);
       }
       _userRepository.wipeUser();
       return Result.ok(null);

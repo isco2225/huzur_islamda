@@ -323,6 +323,39 @@ class NotificationService {
     }
   }
 
+  Future<Result<void>> cancelDhikrCreationReminderNotifications() async {
+    try {
+      _log.info('Cancelling dhikr creation reminder notifications...');
+      final pendingResult = await getPendingNotifications();
+      switch (pendingResult) {
+        case Ok():
+          final pendingNotifications = pendingResult.asOk.value;
+          _log.info(
+            'Found ${pendingNotifications.length} pending notifications',
+          );
+          for (final notification in pendingNotifications) {
+            if (notification.id >= 12000 && notification.id < 13000) {
+              await cancelNotifications(ids: [notification.id]);
+              _log.info(
+                'Cancelled dhikr creation reminder notification: ${notification.id}',
+              );
+            }
+          }
+          return Result.ok(null);
+        case Error():
+          _log.severe(
+            'Failed to get pending notifications: ${pendingResult.asError.error}',
+          );
+          return Result.error(pendingResult.asError.error);
+      }
+    } catch (e) {
+      _log.severe('Error cancelling dhikr creation reminder notifications: $e');
+      return Result.error(
+        Exception('Zikir hatırlatma bildirimleri iptal edilemedi: $e'),
+      );
+    }
+  }
+
   /// Tüm bildirimleri iptal eder
   Future<Result<void>> cancelAllNotifications() async {
     try {

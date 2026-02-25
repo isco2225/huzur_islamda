@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:logging/logging.dart';
 
 import '../../../app/app.dart';
@@ -61,6 +63,18 @@ class NotificationRepositoryRemote implements NotificationRepository {
     return 11000 + hash;
   }
 
+  /// Generate a notification ID for a dhikr creation reminder
+  int _generateDhikrCreationReminderId({
+    required String userId,
+    required DateTime day,
+  }) {
+    final dateKey =
+        '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+    final compositeKey = '$userId-$dateKey';
+    final hash = compositeKey.hashCode.abs() % 1000;
+    return 12000 + hash;
+  }
+
   @override
   Future<Result<void>> schedulePrayerTimeNotification({
     required String prayerName,
@@ -110,7 +124,7 @@ class NotificationRepositoryRemote implements NotificationRepository {
   }
 
   @override
-  Future<Result<void>> scheduleDhikrReminderNotification({
+  Future<Result<void>> scheduleDhikrCompletionReminderNotification({
     required String userId,
     required DateTime day,
   }) async {
@@ -274,5 +288,150 @@ class NotificationRepositoryRemote implements NotificationRepository {
         Exception('Zikir hatırlatma bildirimleri iptal edilemedi: $e'),
       );
     }
+  }
+
+  @override
+  Future<Result<void>> cancelDhikrReminderNotification({
+    required String userId,
+    required DateTime day,
+  }) {
+    // TODO: implement cancelDhikrReminderNotification
+    throw UnimplementedError();
+  }
+
+  /// Schedule message generator.
+  List<Map<String, String>> _generateDhikrCreationReminderMessage({
+    required String userName,
+  }) {
+    return [
+      {
+        'title': 'Zikir Vakti',
+        'body': 'Allah’ı çokça zikret ki kalbin huzur bulsun, $userName.',
+      },
+      {
+        'title': 'Zikir Hatırlatma',
+        'body':
+            'Günün yoğun geçse de birkaç dakikalık zikir tüm ruhunu tazeler.',
+      },
+      {'title': 'Hey $userName!', 'body': 'Bugün zikirlerini yapmadın!.'},
+      {
+        'title': 'Kalp Huzuru',
+        'body':
+            '“Kalpler ancak Allah’ı zikretmekle huzur bulur.” Bugün zikrine vakit ayırmayı unutma.',
+      },
+      {
+        'title': 'Kısa Bir Mola',
+        'body':
+            'Yoğunluğa kısa bir ara ver ve dilini tesbih, tahmid ve tekbir ile süsle.',
+      },
+      {
+        'title': 'Gizli Hazine',
+        'body':
+            '“Lâ havle ve lâ kuvvete illâ billâh” zikri bugün sana güç ve teslimiyet versin.',
+      },
+      {
+        'title': 'Akşam Sükûneti',
+        'body':
+            'Günü, kalbini Rabbine çeviren birkaç tesbihle kapatmaya ne dersin?',
+      },
+      {
+        'title': 'Tevekkül Hatırlatması',
+        'body':
+            'Zikir, teslimiyetini tazeler. Bugün Rabbine sığınarak O’nu anmayı ihmal etme.',
+      },
+      {
+        'title': 'Şükür Vakti',
+        'body':
+            'Bugün nimetlerini düşünerek “Elhamdülillah” demeyi çoğalt, $userName.',
+      },
+    ];
+  }
+
+  @override
+  Future<Result<void>> scheduleDhikrCreationReminderNotification({
+    required String userId,
+    required DateTime day,
+    required String userName,
+  }) async {
+    try {
+      // Normalize the day (hour/minute/second is set to 0)
+      final normalizedDay = DateTime(day.year, day.month, day.day);
+      final now = DateTime.now();
+
+      // For past days, skip scheduling the notification
+      final today = DateTime(now.year, now.month, now.day);
+      if (normalizedDay.isBefore(today)) {
+        _log.info(
+          'Skipping dhikr reminder scheduling for past day: $normalizedDay',
+        );
+        return Result.ok(null);
+      }
+
+      // Target time: 19:00
+      final scheduledDate = DateTime(
+        normalizedDay.year,
+        normalizedDay.month,
+        normalizedDay.day,
+        19,
+      );
+
+      // If today's 19:00 has already passed, skip scheduling the notification
+      if (!scheduledDate.isAfter(now)) {
+        _log.info(
+          'Skipping dhikr reminder for today because 19:00 has already passed. Now: $now, target: $scheduledDate',
+        );
+        return Result.ok(null);
+      }
+
+      final notificationId = _generateDhikrCreationReminderId(
+        userId: userId,
+        day: normalizedDay,
+      );
+      final messages = _generateDhikrCreationReminderMessage(
+        userName: userName,
+      );
+      final randomIndex = Random().nextInt(messages.length);
+      final randomMessage = messages[randomIndex];
+      final title = randomMessage['title'] ?? 'Zikir Hatırlatma';
+      final body =
+          randomMessage['body'] ?? 'Gün bitmeden zikirlerini yapmayı unutma.';
+      _log.info(
+        'Scheduling dhikr reminder notification: id=$notificationId, day=$normalizedDay, dateTime=$scheduledDate',
+      );
+
+      final result = await _notificationService.scheduleNotification(
+        id: notificationId,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+      );
+
+      switch (result) {
+        case Ok():
+          _log.info('Dhikr reminder notification scheduled successfully');
+          return Result.ok(null);
+        case Error():
+          _log.severe(
+            'Failed to schedule dhikr reminder notification: ${result.asError.error}',
+          );
+          return result;
+      }
+    } catch (e) {
+      _log.severe('Error scheduling dhikr reminder notification: $e');
+      return Result.error(
+        Exception('Zikir hatırlatma bildirimi planlanamadı: $e'),
+      );
+    }
+  }
+
+  @override
+  Future<Result<void>> cancelDhikrCreationReminderNotifications() async {
+    return await _notificationService
+        .cancelDhikrCreationReminderNotifications();
+  }
+
+  @override
+  Future<Result<void>> cancelAllNotifications() async {
+    return await _notificationService.cancelAllNotifications();
   }
 }
