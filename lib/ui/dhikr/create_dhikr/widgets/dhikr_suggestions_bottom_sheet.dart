@@ -78,16 +78,18 @@ class DhikrSuggestionsBottomSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Arapça metin
-                        Text(
-                          suggestion.arabic,
-                          style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                            fontSize: 20,
-                            height: 1.5,
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            suggestion.arabic,
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                              fontSize: 20,
+                              height: 1.5,
+                            ),
+                            textDirection: TextDirection.rtl,
                           ),
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.right,
                         ),
                         SizedBox(height: responsive.spacingExtraSmall),
                         Row(
