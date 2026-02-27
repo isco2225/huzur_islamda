@@ -42,7 +42,7 @@ class _DhikrMeanBottomSheetState extends State<DhikrMeanBottomSheet> {
           ),
           Center(
             child: Text(
-              widget.dhikr.name,
+              widget.dhikr.arabic ?? widget.dhikr.name,
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: AppColors.primary,

@@ -54,7 +54,7 @@ class DhikrDetailView extends StatelessWidget {
             }
             return BaseScaffold(
               appBar: AppBar(
-                title: Text(dhikr.name),
+                title: Text(dhikr.arabic ?? dhikr.name),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
@@ -104,7 +104,7 @@ class DhikrDetailView extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 100.0),
                             child: Center(
                               child: Text(
-                                dhikr.arabic ?? dhikr.name,
+                                dhikr.name,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
