@@ -24,12 +24,9 @@ class UserRepositoryRemote extends UserRepository {
     required String dateOfBirth,
     required String gender,
   }) async {
-    if (name.isEmpty ||
-        surname.isEmpty ||
-        dateOfBirth.isEmpty ||
-        gender.isEmpty) {
+    if (name.isEmpty || surname.isEmpty || gender.isEmpty) {
       return Result.error(
-        Exception('Name, surname, date of birth and gender are required'),
+        Exception('Ad, soyad ve cinsiyet zorunludur'),
       );
     }
     try {

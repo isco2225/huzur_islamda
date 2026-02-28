@@ -20,7 +20,7 @@ class DateOfBirthTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TextFieldTitle(text: 'Doğum Tarihi'),
+        TextFieldTitle(text: 'Doğum Tarihi (Opsiyonel)'),
         _buildTextField(context),
       ],
     );

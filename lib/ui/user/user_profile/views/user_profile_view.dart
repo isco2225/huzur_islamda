@@ -68,7 +68,9 @@ class UserProfileView extends StatelessWidget {
                   UserProfileInfoCard(
                     icon: Icons.cake_outlined,
                     label: 'Doğum Tarihi',
-                    value: user.dateOfBirth,
+                    value: user.dateOfBirth.isNotEmpty
+                        ? user.dateOfBirth
+                        : 'Belirtilmedi',
                   ),
                   SizedBox(height: context.spacingExtraSmall),
                   UserProfileInfoCard(
