@@ -105,6 +105,7 @@ class DhikrDetailView extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 dhikr.name,
+                                textScaler: TextScaler.noScaling,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
