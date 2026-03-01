@@ -89,6 +89,7 @@ class SettingsView extends StatelessWidget {
                                       children: const [
                                         Text(
                                           'Premium Ol!',
+                                          textScaler: TextScaler.noScaling,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -100,6 +101,7 @@ class SettingsView extends StatelessWidget {
                                         SizedBox(height: 4),
                                         Text(
                                           'Reklamsız kullanım ve sınırsız asistan erişimi için premium\'a geçin.',
+                                          textScaler: TextScaler.noScaling,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
