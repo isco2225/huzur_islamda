@@ -62,6 +62,7 @@ class ChatBubble extends StatelessWidget {
                 const _TypingDots()
               else
                 _buildStyledText(
+                  context,
                   text,
                   theme.textTheme.bodyMedium?.copyWith(
                         color: textColor,
@@ -87,7 +88,12 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildStyledText(String text, TextStyle baseStyle, Color normalColor) {
+  Widget _buildStyledText(
+    BuildContext context,
+    String text,
+    TextStyle baseStyle,
+    Color normalColor,
+  ) {
     final spans = <TextSpan>[];
     final regex = RegExp(r'\*\*(.*?)\*\*');
     int lastEnd = 0;
@@ -158,7 +164,10 @@ class ChatBubble extends StatelessWidget {
       );
     }
 
-    return RichText(text: TextSpan(children: spans));
+    return RichText(
+      textScaler: MediaQuery.textScalerOf(context),
+      text: TextSpan(children: spans),
+    );
   }
 }
 
