@@ -116,8 +116,8 @@ class FlowCard extends StatelessWidget {
                               maxLines:
                                   post.arabicContent != null &&
                                       post.arabicContent!.isNotEmpty
-                                  ? (responsive.isSmallScreen ? 2 : 3)
-                                  : (responsive.isSmallScreen ? 4 : 5),
+                                  ? (responsive.isSmallScreen ? 2 : 2)
+                                  : (responsive.isSmallScreen ? 3 : 4),
                               overflow: TextOverflow.fade,
                             ),
                           ),
