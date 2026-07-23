@@ -9,6 +9,9 @@ import '../../../domain/domain.dart';
 
 /// Native Advanced (template) reklam widget'ı. Flow vb. ekranlarda kullanılır.
 /// Premium kullanıcıya reklam göstermez.
+/// [AutomaticKeepAliveClientMixin] sayesinde liste içinde ekran dışına
+/// çıktığında dispose edilmez; böylece aynı reklam scroll'da tekrar
+/// yüklenmez (gereksiz reklam isteği ve jank önlenir).
 class FlowNativeAd extends StatefulWidget {
   const FlowNativeAd({super.key, required this.isCurrentUserPremium});
   final bool isCurrentUserPremium;
@@ -17,7 +20,8 @@ class FlowNativeAd extends StatefulWidget {
   State<FlowNativeAd> createState() => _FlowNativeAdState();
 }
 
-class _FlowNativeAdState extends State<FlowNativeAd> {
+class _FlowNativeAdState extends State<FlowNativeAd>
+    with AutomaticKeepAliveClientMixin {
   final _log = Logger('NativeAdWidget');
   NativeAd? _nativeAd;
   bool _isAdLoaded = false;
@@ -92,8 +96,13 @@ class _FlowNativeAdState extends State<FlowNativeAd> {
     super.dispose();
   }
 
+  // Premium kullanıcıda reklam render edilmediği için canlı tutmaya gerek yok.
+  @override
+  bool get wantKeepAlive => !widget.isCurrentUserPremium;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final responsive = context.responsive;
     final adHeight = responsive.isSmallScreen
         ? 250.0

@@ -62,6 +62,11 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
       ]),
       builder: (context, _) {
         final posts = widget.posts.value;
+        final isPremium = widget.postSaveViewModel.currentUser.value.isPremium;
+        // Reklamlar gönderilerin yerine geçmez, her [adsEveryNPosts]
+        // gönderiden sonra araya eklenir. Yalnızca devamında gönderi olan
+        // slotlar sayılır; premium kullanıcıda hiç reklam slotu oluşmaz.
+        final adCount = isPremium ? 0 : (posts.length - 1) ~/ adsEveryNPosts;
         return InfinityScrollable.listView(
           scrollController: _scrollController,
           bottomPadding: 8,
@@ -88,17 +93,18 @@ class _InfinityScrollablePostsState extends State<InfinityScrollablePosts> {
               ),
             ],
           ),
-          itemCount: posts.length,
+          itemCount: posts.length + adCount,
           itemBuilder: (context, index) {
-            final post = posts[index];
-            if (index % adsEveryNPosts == 0 && index != 0) {
-              return Center(
-                child: FlowNativeAd(
-                  isCurrentUserPremium:
-                      widget.postSaveViewModel.currentUser.value.isPremium,
-                ),
+            // Her blok: [adsEveryNPosts] gönderi + 1 reklam.
+            final blockSize = adsEveryNPosts + 1;
+            final offsetInBlock = index % blockSize;
+            if (!isPremium && offsetInBlock == adsEveryNPosts) {
+              return const Center(
+                child: FlowNativeAd(isCurrentUserPremium: false),
               );
             }
+            final adsBefore = isPremium ? 0 : index ~/ blockSize;
+            final post = posts[index - adsBefore];
             return Center(
               child: FlowCard(
                 post: post,
