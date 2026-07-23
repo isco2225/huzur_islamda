@@ -39,6 +39,9 @@ class DhikrDetailViewModel {
   final List<String>? _groupDhikrIds;
   final Logger _log;
 
+  /// Zikir ilk kez tamamlandığında paywall (satın alma) ekranını göstermek için tetikleyici.
+  final ValueNotifier<bool> showPaywall = ValueNotifier<bool>(false);
+
   /// Currently displayed dhikr id (changes in group mode when advancing).
   String _currentDhikrId;
   // State
@@ -112,6 +115,8 @@ class DhikrDetailViewModel {
       return Result.error(Exception('Zikir yüklenmedi'));
     }
 
+    final wasCompletedBefore = dhikr.isCompleted;
+
     _log.info('Incrementing count for dhikr: $_currentDhikrId');
 
     final updatedDhikr = dhikr.copyWith(
@@ -146,6 +151,11 @@ class DhikrDetailViewModel {
               'Exception while cancelling today\'s dhikr reminder after completion: $e',
             );
           }
+        }
+
+        // Zikir ilk kez tamamlandığı anda paywall tetikle
+        if (!wasCompletedBefore && updatedDhikr.isCompleted) {
+          showPaywall.value = true;
         }
 
         // In group mode, when current dhikr just completed, advance to next incomplete
@@ -268,6 +278,7 @@ class DhikrDetailViewModel {
     deleteDhikr.dispose();
     resetCount.dispose();
     _currentDhikr.dispose();
+     showPaywall.dispose();
     _log.info('DhikrDetailViewModel disposed');
   }
 }

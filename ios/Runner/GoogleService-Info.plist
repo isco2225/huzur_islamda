@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>418329675000-vmesaqqgq7hhattb1b5jl35mt796s81k.apps.googleusercontent.com</string>
+	<string>418329675000-uqu6h6r03h2hnemttlng0cjilndk7ead.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.418329675000-vmesaqqgq7hhattb1b5jl35mt796s81k</string>
+	<string>com.googleusercontent.apps.418329675000-uqu6h6r03h2hnemttlng0cjilndk7ead</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>418329675000-aqr013k6d4ppu9vcviadu4cc2td3k5o2.apps.googleusercontent.com</string>
+	<string>418329675000-15m1igpkui65j1pc48ngggpjham3i1lf.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBx3v0URi9j-u6VOWdqYeE1XjN-zNL_0tk</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.huzurIslamda</string>
+	<string>com.omran.huzurislamda</string>
 	<key>PROJECT_ID</key>
 	<string>huzur-islamda-f1bf3</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:418329675000:ios:bd50dbe8cef22b0a54670d</string>
+	<string>1:418329675000:ios:4e995bf16dae966054670d</string>
 </dict>
 </plist>

@@ -1,1 +1,1 @@
-enum AuthProviderType { emailPassword, google }
+enum AuthProviderType { emailPassword, google, apple }

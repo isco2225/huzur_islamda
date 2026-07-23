@@ -38,7 +38,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TitleText(title: 'Şifreni yenilemek için...'),
+              TitleText(title: 'Şifreni yenilemek için;'),
               Padding(
                 padding: EdgeInsets.only(top: responsive.spacingSmall),
                 child: SubtitleText(

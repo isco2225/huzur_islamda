@@ -28,6 +28,8 @@ extension ExceptionLocalizationExtension on BuildContext {
           'Bu e-posta adresi başka bir giriş yöntemi (ör. Google) ile kayıtlı. Lütfen o yöntemle giriş yapın.',
         AuthGoogleSignInFailed() =>
           'Google ile giriş sırasında bir hata oluştu',
+        AuthAppleSignInFailed() =>
+          'Apple ile giriş sırasında bir hata oluştu',
         AuthNoUserSignedIn() => 'Şu anda oturum açmış bir kullanıcı yok',
         AuthUserEmailNotFound() => 'Kullanıcı bulunamadı',
         AuthSendVerificationEmailFailed() =>

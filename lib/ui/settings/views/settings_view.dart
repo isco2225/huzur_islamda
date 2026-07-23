@@ -279,15 +279,15 @@ class SettingsView extends StatelessWidget {
                                 context.pushEditProfile();
                               },
                             ),
-                            SettingsDivider(),
-                            NavigatableSettingTile(
-                              icon: Icons.lock_reset_rounded,
-                              title: 'Şifreyi Değiştir',
-                              subtitle: 'Hesap Şifresini Güncelleyin',
-                              onTap: () {
-                                context.pushChangePassword();
-                              },
-                            ),
+                            // SettingsDivider(),
+                            // NavigatableSettingTile(
+                            //   icon: Icons.lock_reset_rounded,
+                            //   title: 'Şifreyi Değiştir',
+                            //   subtitle: 'Hesap Şifresini Güncelleyin',
+                            //   onTap: () {
+                            //     context.pushChangePassword();
+                            //   },
+                            // ),
                             SettingsDivider(),
                             SettingsLogOutCard(
                               logOutViewModel: logOutViewModel,

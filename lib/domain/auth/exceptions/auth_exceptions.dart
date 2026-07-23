@@ -22,6 +22,10 @@ final class AuthGoogleSignInFailed extends AuthException {
   const AuthGoogleSignInFailed();
 }
 
+final class AuthAppleSignInFailed extends AuthException {
+  const AuthAppleSignInFailed();
+}
+
 final class AuthNoUserSignedIn extends AuthException {
   const AuthNoUserSignedIn();
 }

@@ -12,6 +12,10 @@ class SignInViewModel {
       _signInWithGoogle,
       debugLabel: 'signInWithGoogle',
     );
+    signInWithApple = Command0(
+      _signInWithApple,
+      debugLabel: 'signInWithApple',
+    );
     // DEFINE LISTENERS
   }
 
@@ -26,11 +30,13 @@ class SignInViewModel {
   // COMMANDS
   late Command1<void, ({String email, String password})> signIn;
   late Command0<void> signInWithGoogle;
+  late Command0<void> signInWithApple;
 
   // DISPOSE
   void dispose() {
     signIn.dispose();
     signInWithGoogle.dispose();
+    signInWithApple.dispose();
   }
 
   // FUNCTIONS
@@ -65,6 +71,21 @@ class SignInViewModel {
           'Sign in with Google failed: ${signInWithGoogleResult.asError.error}',
         );
         return Result.error(signInWithGoogleResult.asError.error);
+    }
+  }
+
+  Future<Result<void>> _signInWithApple() async {
+    _log.info('Signing in with Apple...');
+    final signInWithAppleResult = await _authRepository.signInWithApple();
+    switch (signInWithAppleResult) {
+      case Ok():
+        _log.info('Sign in with Apple successful');
+        return Result.ok(null);
+      case Error():
+        _log.warning(
+          'Sign in with Apple failed: ${signInWithAppleResult.asError.error}',
+        );
+        return Result.error(signInWithAppleResult.asError.error);
     }
   }
 }

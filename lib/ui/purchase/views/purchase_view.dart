@@ -110,7 +110,7 @@ class PurchaseView extends StatelessWidget {
                                 Expanded(
                                   child: _PriceCard(
                                     title: "Haftalık Plan",
-                                    price: "₺99 / Hafta",
+                                    price: "₺49 / Hafta",
                                     subtitle: "İptal edilebilir",
                                     isSelected: selectedIndex == 0,
                                     activeColor: kGoldColor,
@@ -125,8 +125,8 @@ class PurchaseView extends StatelessWidget {
                                 Expanded(
                                   child: _PriceCard(
                                     title: "Yıllık Plan",
-                                    price: "₺3999 / Yıl",
-                                    subtitle: "1200TL daha az öde",
+                                    price: "₺1999 / Yıl",
+                                    subtitle: "550TL daha az öde",
                                     isSelected: selectedIndex == 1,
                                     activeColor: kGoldColor,
                                     isPopular: true,
@@ -156,13 +156,17 @@ class PurchaseView extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  _FooterLink(
-                                    text: "Satın Almayı Geri Yükle",
-                                    onTap: viewModel.restorePurchases.execute,
-                                  ),
+                                  // _FooterLink(
+                                  //   text: "Satın Almayı Geri Yükle",
+                                  //   onTap: viewModel.restorePurchases.execute,
+                                  // ),
                                   _FooterLink(
                                     text: "Kullanım Koşulları",
                                     onTap: () => _showTermsOfService(context),
+                                  ),
+                                  _FooterLink(
+                                    text: "Gizlilik Politikası",
+                                    onTap: () => _showPrivacyPolicy(context),
                                   ),
                                 ],
                               ),
@@ -195,6 +199,25 @@ class PurchaseView extends StatelessWidget {
             'Huzur İslamda uygulamasını kullanırken geçerli kurallar ve sorumluluklar',
         child: Text(
           AppStrings.settingsTermsOfService,
+          textAlign: TextAlign.start,
+        ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => const SettingsInfoBottomSheet(
+        title: 'Gizlilik Politikası',
+        subtitle:
+            'Kişisel verilerinizin toplanması, saklanması ve korunması hakkında bilgiler',
+        child: Text(
+          AppStrings.settingsPrivacyPolicy,
           textAlign: TextAlign.start,
         ),
       ),

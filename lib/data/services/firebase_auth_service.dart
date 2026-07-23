@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth show User;
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../app/app.dart';
 import '../../domain/domain.dart';
@@ -95,6 +99,76 @@ class FirebaseAuthService {
     } catch (_) {
       return Result.error(const AuthGoogleSignInFailed());
     }
+  }
+
+  /// Sign in with Apple
+  Future<Result<Auth>> signInWithApple() async {
+    try {
+      final rawNonce = _generateNonce();
+      final hashedNonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+
+      if (appleCredential.identityToken == null) {
+        return Result.error(const AuthAppleSignInFailed());
+      }
+
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken!,
+        rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final userCredential = await _auth.signInWithCredential(oauthCredential);
+      final user = userCredential.user;
+
+      if (user == null) {
+        return Result.error(const AuthAppleSignInFailed());
+      }
+
+      String email = user.email ?? appleCredential.email ?? '';
+      if (email.isEmpty) {
+        final providerWithEmail = user.providerData
+            .where((p) => p.email != null && p.email!.isNotEmpty)
+            .firstOrNull;
+        email = providerWithEmail?.email ?? '';
+      }
+
+      return Result.ok(
+        Auth(
+          uid: user.uid,
+          email: email,
+          isEmailVerified: user.emailVerified,
+        ),
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return Result.error(const AuthAppleSignInFailed());
+      }
+      return Result.error(const AuthAppleSignInFailed());
+    } on SignInWithAppleNotSupportedException {
+      return Result.error(const AuthAppleSignInFailed());
+    } on FirebaseAuthException catch (_) {
+      return Result.error(const AuthAppleSignInFailed());
+    } catch (_) {
+      return Result.error(const AuthAppleSignInFailed());
+    }
+  }
+
+  String _generateNonce([int length = 32]) {
+    return generateNonce(length: length);
+  }
+
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
   /// Send link to the user email address for email verification
@@ -318,6 +392,46 @@ class FirebaseAuthService {
       return Result.error(Exception('abnormal reauthentication with google'));
     } catch (_) {
       return Result.error(Exception('abnormal reauthentication with google'));
+    }
+  }
+
+  Future<Result<void>> reauthenticateWithApple() async {
+    try {
+      final rawNonce = _generateNonce();
+      final hashedNonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+
+      if (appleCredential.identityToken == null) {
+        return Result.error(const AuthAppleSignInFailed());
+      }
+
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken!,
+        rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final user = _auth.currentUser;
+      if (user == null) {
+        return Result.error(const AuthNoUserSignedIn());
+      }
+      await user.reauthenticateWithCredential(oauthCredential);
+      return Result.ok(null);
+    } on SignInWithAppleAuthorizationException catch (_) {
+      return Result.error(const AuthAppleSignInFailed());
+    } on SignInWithAppleNotSupportedException {
+      return Result.error(const AuthAppleSignInFailed());
+    } on FirebaseAuthException catch (_) {
+      return Result.error(Exception('abnormal reauthentication with apple'));
+    } catch (_) {
+      return Result.error(Exception('abnormal reauthentication with apple'));
     }
   }
 

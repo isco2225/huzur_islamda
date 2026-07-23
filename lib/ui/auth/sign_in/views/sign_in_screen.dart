@@ -35,6 +35,12 @@ class _SignInScreenState extends State<SignInScreen> {
       context,
       successMessage: 'Google ile giriş başarılı!',
     );
+
+    _viewModel.signInWithApple.handleError(context, showSnackBar: true);
+    _viewModel.signInWithApple.handleCompleted(
+      context,
+      successMessage: 'Apple ile giriş başarılı!',
+    );
   }
 
   @override
