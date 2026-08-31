@@ -140,6 +140,8 @@ class _SignInViewState extends State<SignInView> {
               SocialLoginButton(
                 text: 'Google ile Giriş Yap',
                 icon: Icon(Icons.g_mobiledata),
+                running: widget.viewModel.signInWithGoogle.running,
+                blocked: widget.viewModel.isAnySignInRunning,
                 onPressed: () {
                   widget.viewModel.signInWithGoogle.execute();
                 },
@@ -149,6 +151,8 @@ class _SignInViewState extends State<SignInView> {
                   ? SocialLoginButton(
                       text: 'Apple ile Giriş Yap',
                       icon: Icon(Icons.apple),
+                      running: widget.viewModel.signInWithApple.running,
+                      blocked: widget.viewModel.isAnySignInRunning,
                       onPressed: () {
                         widget.viewModel.signInWithApple.execute();
                       },

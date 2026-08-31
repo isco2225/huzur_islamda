@@ -66,6 +66,9 @@ class FakeAuthRepository implements AuthRepository {
   /// Per-call hook for [checkEmailVerification]; wins over the result field.
   Future<Result<bool>> Function()? onCheckEmailVerification;
 
+  /// Per-call hook for [signInWithGoogle]; wins over the result field.
+  Future<Result<dynamic>> Function()? onSignInWithGoogle;
+
   @override
   ValueListenable<Auth> get auth => authNotifier;
 
@@ -84,6 +87,7 @@ class FakeAuthRepository implements AuthRepository {
   @override
   Future<Result<dynamic>> signInWithGoogle() async {
     calls.add('signInWithGoogle()');
+    if (onSignInWithGoogle != null) return onSignInWithGoogle!();
     return signInWithGoogleResult ?? const Ok(null);
   }
 

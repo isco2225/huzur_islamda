@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huzur_islamda/app/utils/result.dart';
 import 'package:huzur_islamda/domain/domain.dart';
@@ -86,6 +88,48 @@ void main() {
         (viewModel.signInWithApple.result.value! as Error<void>).error,
         same(exception),
       );
+    });
+  });
+
+  group('SignInViewModel.isAnySignInRunning', () {
+    test('is false when no command is running', () {
+      expect(viewModel.isAnySignInRunning.value, isFalse);
+    });
+
+    test('is true while Google sign-in is in flight and resets after', () async {
+      final gate = Completer<Result<dynamic>>();
+      authRepository.onSignInWithGoogle = () => gate.future;
+      final seen = <bool>[];
+      viewModel.isAnySignInRunning.addListener(
+        () => seen.add(viewModel.isAnySignInRunning.value),
+      );
+
+      final execution = viewModel.signInWithGoogle.execute();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.signInWithGoogle.running.value, isTrue);
+      expect(viewModel.isAnySignInRunning.value, isTrue);
+
+      gate.complete(const Ok(null));
+      await execution;
+
+      expect(viewModel.isAnySignInRunning.value, isFalse);
+      expect(seen, [true, false]);
+    });
+
+    test('stops notifying after dispose', () async {
+      final gate = Completer<Result<dynamic>>();
+      authRepository.onSignInWithGoogle = () => gate.future;
+      final execution = viewModel.signInWithGoogle.execute();
+      await Future<void>.delayed(Duration.zero);
+      expect(viewModel.isAnySignInRunning.value, isTrue);
+
+      viewModel.dispose();
+      gate.complete(const Ok(null));
+      await execution;
+
+      // Re-create so the shared tearDown has something to dispose.
+      viewModel = SignInViewModel(authRepository: authRepository);
     });
   });
 }

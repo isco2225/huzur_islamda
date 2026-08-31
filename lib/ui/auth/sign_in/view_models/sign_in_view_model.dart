@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../app/app.dart';
@@ -17,6 +18,11 @@ class SignInViewModel {
       debugLabel: 'signInWithApple',
     );
     // DEFINE LISTENERS
+    _isAnySignInRunning = _AnyRunning([
+      signIn.running,
+      signInWithGoogle.running,
+      signInWithApple.running,
+    ]);
   }
 
   // LOGGER
@@ -32,8 +38,16 @@ class SignInViewModel {
   late Command0<void> signInWithGoogle;
   late Command0<void> signInWithApple;
 
+  // LISTENABLES
+  late final _AnyRunning _isAnySignInRunning;
+
+  /// True while any sign-in method (email, Google or Apple) is in flight.
+  /// Used by the view to disable the other sign-in buttons meanwhile.
+  ValueListenable<bool> get isAnySignInRunning => _isAnySignInRunning;
+
   // DISPOSE
   void dispose() {
+    _isAnySignInRunning.dispose();
     signIn.dispose();
     signInWithGoogle.dispose();
     signInWithApple.dispose();
@@ -87,5 +101,26 @@ class SignInViewModel {
         );
         return Result.error(signInWithAppleResult.asError.error);
     }
+  }
+}
+
+/// OR-combines several boolean listenables into one.
+class _AnyRunning extends ValueNotifier<bool> {
+  _AnyRunning(this._sources) : super(_sources.any((s) => s.value)) {
+    for (final source in _sources) {
+      source.addListener(_recompute);
+    }
+  }
+
+  final List<ValueListenable<bool>> _sources;
+
+  void _recompute() => value = _sources.any((s) => s.value);
+
+  @override
+  void dispose() {
+    for (final source in _sources) {
+      source.removeListener(_recompute);
+    }
+    super.dispose();
   }
 }
