@@ -46,4 +46,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Firestore `whereIn` 30 değer limiti — post servislerinde henüz chunk'lanmadı (`firestore_post_service.dart`).
 - `PostRepositoryRemote` içinde `UnimplementedError` stub'ları, `NotificationRepositoryRemote` içinde TODO'lar var (örn. `cancelDhikrReminderNotification`).
 - RevenueCat: customer info listener yok; abonelik düşüşü (downgrade) senkronize edilmiyor.
+- iOS Google girişi: `Info.plist`'teki `GIDClientID` ve URL scheme, `GoogleService-Info.plist`'teki `CLIENT_ID`/`REVERSED_CLIENT_ID` ile birebir aynı olmalı (bundle id `com.omran.huzurislamda`). `lib/firebase_options.dart` hâlâ eski `com.example.huzurIslamda` bundle id'sini taşıyor → `flutterfire configure` yeniden çalıştırılmalı.
+- Disk dolunca `flutter test` hata vermek yerine takılır (`No space left on device` yalnızca log'da görünür); önce `df -h /` kontrol et.
 - `.cursorrules` dosyası mimariyi anlatır ama kısmen eski: router için `@TypedGoRoute` der, gerçekte düz `GoRoute` kullanılıyor; DI kurulumu `AppScreen`'de değil `main.dart`'ta yapılır. Çelişkide bu dosya (CLAUDE.md) geçerlidir.

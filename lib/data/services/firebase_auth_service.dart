@@ -4,12 +4,14 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth show User;
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logging/logging.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../app/app.dart';
 import '../../domain/domain.dart';
 
 class FirebaseAuthService {
+  final _log = Logger('FirebaseAuthService');
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
@@ -69,10 +71,12 @@ class FirebaseAuthService {
         'profile',
       ]);
       if (authorization == null) {
+        _log.warning('Google sign-in: no authorization for email/profile');
         return Result.error(const AuthGoogleSignInFailed());
       }
 
       if (googleAuth.idToken == null) {
+        _log.warning('Google sign-in: account returned no idToken');
         return Result.error(const AuthGoogleSignInFailed());
       }
 
@@ -85,6 +89,7 @@ class FirebaseAuthService {
       final user = userCredential.user;
 
       if (user == null) {
+        _log.warning('Google sign-in: Firebase returned no user');
         return Result.error(const AuthGoogleSignInFailed());
       }
       return Result.ok(
@@ -94,9 +99,26 @@ class FirebaseAuthService {
           isEmailVerified: user.emailVerified,
         ),
       );
-    } on FirebaseAuthException catch (_) {
+    } on GoogleSignInException catch (e, stackTrace) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        _log.info('Google sign-in cancelled by the user');
+        return Result.error(
+          const UserMessageException('Google ile giriş iptal edildi'),
+        );
+      }
+      // Configuration problems (client id / URL scheme / bundle id mismatch)
+      // surface here as clientConfigurationError or providerConfigurationError.
+      _log.severe(
+        'Google sign-in failed: ${e.code} ${e.description ?? ''}',
+        e,
+        stackTrace,
+      );
       return Result.error(const AuthGoogleSignInFailed());
-    } catch (_) {
+    } on FirebaseAuthException catch (e, stackTrace) {
+      _log.severe('Google sign-in Firebase error: ${e.code}', e, stackTrace);
+      return Result.error(const AuthGoogleSignInFailed());
+    } catch (e, stackTrace) {
+      _log.severe('Google sign-in unexpected error', e, stackTrace);
       return Result.error(const AuthGoogleSignInFailed());
     }
   }
@@ -141,22 +163,29 @@ class FirebaseAuthService {
       }
 
       return Result.ok(
-        Auth(
-          uid: user.uid,
-          email: email,
-          isEmailVerified: user.emailVerified,
-        ),
+        Auth(uid: user.uid, email: email, isEmailVerified: user.emailVerified),
       );
-    } on SignInWithAppleAuthorizationException catch (e) {
+    } on SignInWithAppleAuthorizationException catch (e, stackTrace) {
       if (e.code == AuthorizationErrorCode.canceled) {
-        return Result.error(const AuthAppleSignInFailed());
+        _log.info('Apple sign-in cancelled by the user');
+        return Result.error(
+          const UserMessageException('Apple ile giriş iptal edildi'),
+        );
       }
+      _log.severe(
+        'Apple sign-in failed: ${e.code} ${e.message}',
+        e,
+        stackTrace,
+      );
       return Result.error(const AuthAppleSignInFailed());
-    } on SignInWithAppleNotSupportedException {
+    } on SignInWithAppleNotSupportedException catch (e, stackTrace) {
+      _log.severe('Apple sign-in not supported on this device', e, stackTrace);
       return Result.error(const AuthAppleSignInFailed());
-    } on FirebaseAuthException catch (_) {
+    } on FirebaseAuthException catch (e, stackTrace) {
+      _log.severe('Apple sign-in Firebase error: ${e.code}', e, stackTrace);
       return Result.error(const AuthAppleSignInFailed());
-    } catch (_) {
+    } catch (e, stackTrace) {
+      _log.severe('Apple sign-in unexpected error', e, stackTrace);
       return Result.error(const AuthAppleSignInFailed());
     }
   }
@@ -311,7 +340,7 @@ class FirebaseAuthService {
       await user.reauthenticateWithCredential(credential);
       return Result.ok(null);
     } on FirebaseAuthException catch (e) {
-      print(e.code);
+      _log.warning('Firebase auth error: ${e.code}');
       if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
         return Result.error(const AuthChangePasswordFailed());
       }
@@ -349,7 +378,7 @@ class FirebaseAuthService {
       await user.updatePassword(newPassword);
       return Result.ok(null);
     } on FirebaseAuthException catch (e) {
-      print(e.code);
+      _log.warning('Firebase auth error: ${e.code}');
       if (e.code == 'requires-recent-login') {
         return Result.error(const AuthChangePasswordFailed());
       }
