@@ -108,9 +108,10 @@ void main() {
 
         expect(auth.isSignedIn(), isFalse);
       },
-      skip:
-          'KNOWN BUG: Auth has no == override, so isSignedIn() compares '
-          'identity and returns true for any non-canonical empty instance.',
     );
+
+    test('returns false for the canonical empty auth', () {
+      expect(Auth.empty().isSignedIn(), isFalse);
+    });
   });
 }

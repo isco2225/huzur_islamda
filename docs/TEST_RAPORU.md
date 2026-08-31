@@ -6,16 +6,16 @@ Tarih: 2026-08-31 · Sürüm: 1.2.2+9 · Flutter 3.38.5 / Dart 3.10.4 · Plan: `
 
 | | |
 |---|---|
-| Toplam test | **1089** |
-| Geçen | **1064** |
-| Atlanan (`KNOWN BUG`) | **25** |
+| Toplam test | **1092** (ilk teslimde 1089) |
+| Geçen | **1080** (ilk teslimde 1064) |
+| Atlanan (`KNOWN BUG`) | **12** (ilk teslimde 25 — bkz. §8) |
 | Başarısız | **0** |
 | Test dosyası | 100 (+5 yardımcı dosya) |
 | Test kodu | ≈18.200 satır (uygulama kodu ≈27.900 satır) |
 | Çalıştırma | 2 tam çalıştırma, ikisinde de aynı sonuç (flaky test yok) |
 | `flutter analyze` | Testlerden kaynaklı 0 sorun; `lib/` içinde önceden var olan 6 `info` |
 | Yeni paket | Yok (yalnızca `flutter_test`, elle yazılmış fake'ler) |
-| `lib/` değişikliği | Yok |
+| `lib/` değişikliği | İlk teslimde yok; ikinci turda 7 dosyada hata düzeltmesi (bkz. §8) |
 
 Proje bu çalışmadan önce hiç test içermiyordu. Suite; `lib/app`, `lib/domain`, `lib/data` ve `lib/ui` (ViewModel) katmanlarının platform SDK'sına bağlı olmayan tamamını kapsıyor. Testler sırasında kaynak kodda **22 gerçek hata** tespit edildi (bkz. §3); her biri için doğru davranışı iddia eden ve `skip: 'KNOWN BUG: …'` ile işaretlenmiş bir test yazıldı — hata düzeltildiğinde `skip` kaldırılarak test doğrudan regresyon testine dönüşür.
 
@@ -120,9 +120,27 @@ flutter analyze
 
 ## 7. Önerilen sonraki adımlar (öncelik sırasıyla)
 
-1. §3 Yüksek öncelikli 7 hatayı düzelt; ilgili testlerden `skip` parametresini kaldır.
-2. `Auth`, `User`, `AppPreferences` için `==`/`hashCode` ekle (veya `isSignedIn`/`isEmpty`'yi alan bazlı yaz) — router yönlendirmesi buna bağlı.
+1. ~~§3 Yüksek öncelikli 7 hatayı düzelt; ilgili testlerden `skip` parametresini kaldır.~~ Yapıldı (§8).
+2. `User`, `AppPreferences` için `isEmpty()`'yi alan bazlı yaz (`Auth.isSignedIn` düzeltildi).
 3. `PrayerService` ve `AssistantService`'e `http.Client` enjeksiyonu ekle; Gemini prompt/yanıt mantığını saf fonksiyona çıkar (CLAUDE.md'deki Cloud Function taşıma planıyla birleştirilebilir).
 4. Router `_redirect` mantığını saf fonksiyona çıkar ve 12+ dalını test et.
 5. `ResponsiveHelper` v1/v2 ikiliğini tek sınıfa indir.
 6. CI'da `flutter analyze && flutter test` çalıştır.
+
+## 8. Düzeltme durumu (31 Ağustos 2026, ikinci tur)
+
+Yüksek öncelikli 7 hata ile aynı dosyalardaki 2 komşu hata düzeltildi; ilgili 13 testin `skip` parametresi kaldırıldı, hatalı davranışı belgeleyen 2 test silindi, 4 yeni regresyon testi eklendi. `lib/` dışında API imzası değişmedi.
+
+| # | Konum | Düzeltme |
+|---|---|---|
+| 1 | `place_selector_view_model.dart` | `firstWhere` yerine null dönen `_selected{District,State,Country}Name()` yardımcıları; eksik id'de `null` dönüyor, çökmüyor. |
+| 2 | `base_scaffold.dart` | `onDoubleTap` artık lambda ile sarılıyor (build'de çağrılmıyor); `onDrawerChanged`/`onEndDrawerChanged` gerçekten iletiliyor. |
+| 3 | `schedule_prayer_notifications_use_case.dart` | Konum alanları yerel değişkenlere alınıp `null`/boş kontrolü yapılıyor; `!` operatörleri kaldırıldı. |
+| 4 | `auth.dart` | `isSignedIn()` → `uid.isNotEmpty` (kimlik karşılaştırması yerine alan bazlı; `ValueNotifier` semantiğini değiştirmemek için `==` override eklenmedi). |
+| 5 | `email_verification_view_model.dart` | `_isDisposed` bayrağı; uçuştaki kontrol bittikten sonra dispose edilmişse yeni timer kurulmuyor. |
+| 6 | `app_resend_code_button.dart` | Geri sayım sırasında `onPressed: null` (buton devre dışı). |
+| 7 | `dhikr_repository_remote.dart` | `syncDhikrsToFirestore` başarılı yüklemeden sonra her zikri `isSynced: true` ile yerelde güncelliyor; yerel işaretleme hatası yalnızca loglanıyor. |
+| 8 (komşu) | `dhikr_repository_remote.dart` | `updateDhikrLocally` yayınlanmış listeyi yerinde değiştirmiyor, öğeyi yerinde bırakıyor; listede yoksa sona ekliyor. |
+| 18 (komşu) | `app_resend_code_button.dart` | Geri sayım `resendCooldown` parametresinden hesaplanıyor (sabit 60 kaldırıldı). |
+
+Kalan 12 atlanan test: #9–#17 ve #19–#21 (bkz. §3 Orta/Düşük).

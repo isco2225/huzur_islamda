@@ -120,39 +120,50 @@ class PlaceSelectorViewModel {
     _log.fine('All selections reset');
   }
 
+  /// Name of the selected district, or null if none is selected or the
+  /// selected id is no longer in the loaded list.
+  String? _selectedDistrictName() {
+    final districtId = _districtSelector.selectedDistrictId.value;
+    if (districtId == null) return null;
+    for (final district in _districtSelector.districts.value) {
+      if (district.id == districtId) return district.name;
+    }
+    return null;
+  }
+
+  String? _selectedStateName() {
+    final stateId = _stateSelector.selectedStateId.value;
+    if (stateId == null) return null;
+    for (final state in _stateSelector.states.value) {
+      if (state.id == stateId) return state.name;
+    }
+    return null;
+  }
+
+  String? _selectedCountryName() {
+    final countryId = _countrySelector.selectedCountryId.value;
+    if (countryId == null) return null;
+    for (final country in _countrySelector.countries.value) {
+      if (country.id == countryId) return country.name;
+    }
+    return null;
+  }
+
   /// Get currently selected place name (district, state, or country)
   String? getSelectedPlaceName() {
     // Priority: district > state > country
     if (_selectionMode.value == PlaceSelectionMode.district) {
-      final districtId = _districtSelector.selectedDistrictId.value;
-      if (districtId != null) {
-        final district = _districtSelector.districts.value.firstWhere(
-          (d) => d.id == districtId,
-        );
-        return district.name;
-      }
+      final districtName = _selectedDistrictName();
+      if (districtName != null) return districtName;
     }
 
     if (_selectionMode.value == PlaceSelectionMode.state ||
         _selectionMode.value == PlaceSelectionMode.district) {
-      final stateId = _stateSelector.selectedStateId.value;
-      if (stateId != null) {
-        final state = _stateSelector.states.value.firstWhere(
-          (s) => s.id == stateId,
-        );
-        return state.name;
-      }
+      final stateName = _selectedStateName();
+      if (stateName != null) return stateName;
     }
 
-    final countryId = _countrySelector.selectedCountryId.value;
-    if (countryId != null) {
-      final country = _countrySelector.countries.value.firstWhere(
-        (c) => c.id == countryId,
-      );
-      return country.name;
-    }
-
-    return null;
+    return _selectedCountryName();
   }
 
   /// Check if a place is fully selected (district selected)
@@ -162,31 +173,11 @@ class PlaceSelectorViewModel {
 
   /// Get full place hierarchy (Country > State > District)
   String? getFullPlaceHierarchy() {
-    final parts = <String>[];
-
-    final countryId = _countrySelector.selectedCountryId.value;
-    if (countryId != null) {
-      final country = _countrySelector.countries.value.firstWhere(
-        (c) => c.id == countryId,
-      );
-      parts.add(country.name);
-    }
-
-    final stateId = _stateSelector.selectedStateId.value;
-    if (stateId != null) {
-      final state = _stateSelector.states.value.firstWhere(
-        (s) => s.id == stateId,
-      );
-      parts.add(state.name);
-    }
-
-    final districtId = _districtSelector.selectedDistrictId.value;
-    if (districtId != null) {
-      final district = _districtSelector.districts.value.firstWhere(
-        (d) => d.id == districtId,
-      );
-      parts.add(district.name);
-    }
+    final parts = [
+      _selectedCountryName(),
+      _selectedStateName(),
+      _selectedDistrictName(),
+    ].nonNulls.toList();
 
     return parts.isEmpty ? null : parts.join(' > ');
   }

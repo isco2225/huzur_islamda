@@ -24,9 +24,16 @@ class SchedulePrayerNotificationsUseCase {
   /// Bir haftalık bildirim planlar
   /// Önce tüm eski namaz bildirimlerini iptal eder, sonra önümüzdeki 7 gün (bugün dahil) için yeni bildirimleri planlar
   Future<Result<bool>> scheduleForWeek() async {
-    if (currentUser.value.districtId!.isEmpty ||
-        currentUser.value.city!.isEmpty ||
-        currentUser.value.country!.isEmpty) {
+    final user = currentUser.value;
+    final districtId = user.districtId;
+    final city = user.city;
+    final country = user.country;
+    if (districtId == null ||
+        districtId.isEmpty ||
+        city == null ||
+        city.isEmpty ||
+        country == null ||
+        country.isEmpty) {
       return Result.ok(false);
     }
     try {
@@ -45,9 +52,9 @@ class SchedulePrayerNotificationsUseCase {
       }
 
       final localResult = await _prayerRepository.getPrayerTimesLocally(
-        districtId: currentUser.value.districtId!,
-        city: currentUser.value.city!,
-        country: currentUser.value.country!,
+        districtId: districtId,
+        city: city,
+        country: country,
       );
 
       switch (localResult) {

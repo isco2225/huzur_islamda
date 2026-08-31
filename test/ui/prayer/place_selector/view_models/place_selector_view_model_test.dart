@@ -149,10 +149,6 @@ void main() {
 
         expect(viewModel.getSelectedPlaceName(), isNull);
       },
-      skip:
-          'KNOWN BUG: getSelectedPlaceName/getFullPlaceHierarchy use '
-          'firstWhere without orElse and throw StateError when the selected '
-          'id is missing from the loaded list',
     );
   });
 
@@ -175,11 +171,8 @@ void main() {
 
         await selectCountry('tr');
 
-        expect(viewModel.getFullPlaceHierarchy(), anyOf(isNull, ''));
+        expect(viewModel.getFullPlaceHierarchy(), isNull);
       },
-      skip:
-          'KNOWN BUG: getFullPlaceHierarchy uses firstWhere without orElse '
-          'and throws StateError when the selected id is missing from the list',
     );
   });
 

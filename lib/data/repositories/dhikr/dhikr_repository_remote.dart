@@ -151,8 +151,11 @@ class DhikrRepositoryRemote implements DhikrRepository {
 
     switch (result) {
       case Ok():
-        _dhikrsLocally.value.removeWhere((d) => d.id == dhikrId);
-        _dhikrsLocally.value = [..._dhikrsLocally.value, dhikr];
+        final current = _dhikrsLocally.value;
+        final exists = current.any((d) => d.id == dhikrId);
+        _dhikrsLocally.value = exists
+            ? [for (final d in current) d.id == dhikrId ? dhikr : d]
+            : [...current, dhikr];
         return Result.ok(null);
       case Error():
         return Result.error(result.asError.error);
@@ -224,6 +227,18 @@ class DhikrRepositoryRemote implements DhikrRepository {
         );
         switch (firestoreResult) {
           case Ok():
+            for (final dhikr in unsyncedDhikrs) {
+              final markResult = await updateDhikrLocally(
+                dhikrId: dhikr.id,
+                dhikr: dhikr.copyWith(isSynced: true),
+              );
+              if (markResult is Error) {
+                _log.warning(
+                  'Uploaded dhikr ${dhikr.id} but failed to mark it as synced '
+                  'locally: ${markResult.asError.error}',
+                );
+              }
+            }
             return Result.ok(null);
           case Error():
             return Result.error(firestoreResult.asError.error);

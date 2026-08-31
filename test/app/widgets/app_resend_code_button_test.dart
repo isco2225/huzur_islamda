@@ -212,10 +212,6 @@ void main() {
           await tearDownWidget(tester);
         });
       },
-      skip:
-          'KNOWN BUG: app_resend_code_button.dart always passes '
-          'widget.onPressed to AppGradientButton, so the button stays '
-          'tappable while the countdown is displayed.',
     );
 
     group(
@@ -263,9 +259,6 @@ void main() {
           await tearDownWidget(tester);
         });
       },
-      skip:
-          'KNOWN BUG: app_resend_code_button.dart ignores resendCooldown and '
-          'hard-codes 60 seconds in build.',
     );
   });
 }

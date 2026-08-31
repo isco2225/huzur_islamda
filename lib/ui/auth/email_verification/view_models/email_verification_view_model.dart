@@ -38,6 +38,7 @@ class EmailVerificationViewModel {
   // DOMAIN
   Timer? _verificationTimer;
   bool _isChecking = false;
+  bool _isDisposed = false;
 
   ValueListenable<Auth> get auth => _authRepository.auth;
 
@@ -54,7 +55,9 @@ class EmailVerificationViewModel {
 
   // DISPOSE
   void dispose() {
+    _isDisposed = true;
     _verificationTimer?.cancel();
+    _verificationTimer = null;
     sendEmailVerification.dispose();
     checkEmailVerification.dispose();
     deleteAccount.dispose();
@@ -136,6 +139,8 @@ class EmailVerificationViewModel {
 
   /// Kontrolü yapar ve bir sonraki kontrolü planlar
   Future<void> _performCheckAndScheduleNext() async {
+    if (_isDisposed) return;
+
     // Email zaten doğrulandıysa, timer başlatma
     if (auth.value.isEmailVerified) {
       _log.info('Email already verified, skipping check.');
@@ -144,6 +149,9 @@ class EmailVerificationViewModel {
 
     // Kontrolü yap
     await _checkEmailVerification();
+
+    // The check may complete after dispose(); never schedule a timer then.
+    if (_isDisposed) return;
 
     // Email doğrulandıysa timer başlatma
     if (auth.value.isEmailVerified) {

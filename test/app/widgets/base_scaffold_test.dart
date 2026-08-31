@@ -198,12 +198,6 @@ void main() {
           expect(find.text('Body'), findsOneWidget);
         });
       },
-      skip:
-          'KNOWN BUG: base_scaffold.dart passes '
-          '`onDoubleTap: onScaffoldDoubleTap?.call()`, which invokes the '
-          'callback once during build and hands GestureDetector its return '
-          'value; real double taps never fire it, and a callback returning a '
-          'non-null value throws a _TypeError while building.',
     );
   });
 }

@@ -78,11 +78,9 @@ void main() {
 
         expect(result, isA<Ok<bool>>());
         expect(result.asOk.value, isFalse);
+        expect(prayerRepository.calls, isEmpty);
+        expect(notificationRepository.calls, isEmpty);
       },
-      skip:
-          'KNOWN BUG: scheduleForWeek applies `!` to the nullable location '
-          'fields outside the try/catch, so a User with a null districtId, '
-          'city or country throws a TypeError instead of returning Ok(false).',
     );
 
     test('cancels all old prayer notifications before reading the cache', () async {

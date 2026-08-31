@@ -247,10 +247,6 @@ void main() {
 
         viewModel = build();
       },
-      skip:
-          'KNOWN BUG: dispose() only cancels an existing timer; a check '
-          'that is in flight during dispose schedules a new timer afterwards '
-          'and keeps polling the repository',
     );
   });
 }

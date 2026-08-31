@@ -78,7 +78,9 @@ class BaseScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      onDoubleTap: onScaffoldDoubleTap?.call(),
+      onDoubleTap: onScaffoldDoubleTap == null
+          ? null
+          : () => onScaffoldDoubleTap!.call(),
       child: PopScope(
         canPop: canPop,
         child: Scaffold(
@@ -93,8 +95,13 @@ class BaseScaffold extends StatelessWidget {
           floatingActionButton: floatingActionButton,
           floatingActionButtonAnimator: floatingActionButtonAnimator,
           floatingActionButtonLocation: floatingActionButtonLocation,
-          onDrawerChanged: (bool onDrawerChanged) => onDrawerChanged,
-          onEndDrawerChanged: (bool onEndDrawerChanged) => onEndDrawerChanged,
+          onDrawerChanged: onDrawerChanged == null
+              ? null
+              : (bool isOpened) => onDrawerChanged!(onDrawerChanged: isOpened),
+          onEndDrawerChanged: onEndDrawerChanged == null
+              ? null
+              : (bool isOpened) =>
+                    onEndDrawerChanged!(onEndDrawerChanged: isOpened),
           persistentFooterButtons: persistentFooterButtons,
           resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           restorationId: restorationId,

@@ -53,10 +53,11 @@ class _ResendCodeButtonState extends State<AppResendCodeButton>
 
     final hasResendableDuration = resendableDuration != null;
 
+    final cooldown = widget.resendCooldown;
     final isResendableDurationDisplayable =
-        hasResendableDuration && resendableDuration.inSeconds < 60;
+        hasResendableDuration && resendableDuration.inSeconds < cooldown;
     final resendableDurationLeftString =
-        (60 - (resendableDuration?.inSeconds ?? 0)).toString();
+        (cooldown - (resendableDuration?.inSeconds ?? 0)).toString();
 
     return AppGradientButton(
       text: isResendableDurationDisplayable
@@ -64,7 +65,7 @@ class _ResendCodeButtonState extends State<AppResendCodeButton>
           : widget.text,
       isLoading: widget.isLoading,
       isBordered: true,
-      onPressed: widget.onPressed,
+      onPressed: isResendableDurationDisplayable ? null : widget.onPressed,
     );
   }
 }

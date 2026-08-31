@@ -227,29 +227,18 @@ void main() {
         expect(ids(before), ['a', 'b', 'c']);
         expect(ids(repository.dhikrsLocally.value), ['a', 'b', 'c']);
       },
-      skip:
-          'KNOWN BUG: updateDhikrLocally calls removeWhere on the current '
-          'notifier list (mutating the already-published list in place) and '
-          'then appends the new item, so it moves to the end.',
     );
 
-    test(
-      'currently moves the updated item to the end and mutates the previously '
-      'published list',
-      () async {
-        // Documents the actual behaviour behind the KNOWN BUG above.
-        await seedAbc();
-        final before = repository.dhikrsLocally.value;
+    test('appends the item when it is not in the notifier yet', () async {
+      await seedAbc();
 
-        await repository.updateDhikrLocally(
-          dhikrId: 'b',
-          dhikr: Fixtures.dhikr(id: 'b', currentCount: 7),
-        );
+      await repository.updateDhikrLocally(
+        dhikrId: 'd',
+        dhikr: Fixtures.dhikr(id: 'd'),
+      );
 
-        expect(ids(before), ['a', 'c']);
-        expect(ids(repository.dhikrsLocally.value), ['a', 'c', 'b']);
-      },
-    );
+      expect(ids(repository.dhikrsLocally.value), ['a', 'b', 'c', 'd']);
+    });
 
     test('keeps the notifier when Hive fails', () async {
       await seedAbc();
@@ -335,20 +324,44 @@ void main() {
         expect(hive.store['c']!.isSynced, isTrue);
         expect((await repository.getUnsyncedDhikrs()).asOk.value, isNull);
       },
-      skip:
-          'KNOWN BUG: syncDhikrsToFirestore never flips isSynced locally, so '
-          'the same dhikrs are re-uploaded on every sync.',
     );
 
-    test('currently leaves isSynced false after a successful upload', () async {
-      // Documents the actual behaviour behind the KNOWN BUG above.
+    test('does not re-upload already synced dhikrs on the next sync', () async {
       hive.store['b'] = Fixtures.dhikr(id: 'b', isSynced: false);
 
       await repository.syncDhikrsToFirestore(userId: 'uid-1');
       await repository.syncDhikrsToFirestore(userId: 'uid-1');
 
-      expect(hive.store['b']!.isSynced, isFalse);
-      expect(firestore.saveDhikrsCalls.length, 2);
+      expect(hive.store['b']!.isSynced, isTrue);
+      expect(firestore.saveDhikrsCalls.length, 1);
+    });
+
+    test('marks synced items in the notifier without reordering', () async {
+      await repository.saveDhikrLocally(
+        dhikr: Fixtures.dhikr(id: 'a', isSynced: true),
+      );
+      await repository.saveDhikrLocally(
+        dhikr: Fixtures.dhikr(id: 'b', isSynced: false),
+      );
+      final orderBefore = ids(repository.dhikrsLocally.value);
+
+      await repository.syncDhikrsToFirestore(userId: 'uid-1');
+
+      expect(ids(repository.dhikrsLocally.value), orderBefore);
+      expect(
+        repository.dhikrsLocally.value.every((d) => d.isSynced),
+        isTrue,
+      );
+    });
+
+    test('still returns Ok when marking as synced fails locally', () async {
+      hive.store['b'] = Fixtures.dhikr(id: 'b', isSynced: false);
+      hive.alwaysFail.add('update');
+
+      final result = await repository.syncDhikrsToFirestore(userId: 'uid-1');
+
+      expect(result, isA<Ok<void>>());
+      expect(firestore.saveDhikrsCalls.length, 1);
     });
 
     test('propagates a Firestore failure', () async {

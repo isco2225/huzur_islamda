@@ -32,5 +32,5 @@ class Auth {
     );
   }
 
-  bool isSignedIn() => this != Auth.empty();
+  bool isSignedIn() => uid.isNotEmpty;
 }
