@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:huzur_islamda/app/errors/models/user_message_exception.dart';
 import 'package:huzur_islamda/app/utils/result.dart';
 import 'package:huzur_islamda/data/data.dart';
 import 'package:huzur_islamda/domain/domain.dart';
@@ -43,9 +44,10 @@ void main() {
       final result = await create(name: '');
 
       expect(result, isA<Error<User>>());
+      expect(result.asError.error, isA<UserMessageException>());
       expect(
-        result.asError.error.toString(),
-        'Exception: Ad, soyad ve cinsiyet zorunludur',
+        (result.asError.error as UserMessageException).message,
+        'Ad, soyad ve cinsiyet zorunludur',
       );
       expect(firestore.createUserCalls, isEmpty);
       expect(repository.currentUser.value.uid, '');

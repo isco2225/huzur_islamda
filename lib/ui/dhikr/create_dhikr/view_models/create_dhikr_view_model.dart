@@ -64,7 +64,7 @@ class CreateDhikrViewModel {
       final userId = currentUser.value.uid;
       if (userId.isEmpty) {
         _log.warning('User ID is empty, cannot create dhikr');
-        return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+        return Result.error(const UserMessageException('Kullanıcı bilgisi bulunamadı'));
       }
 
       final currentDate = DateTime.now();
@@ -138,7 +138,7 @@ class CreateDhikrViewModel {
       }
     } catch (e) {
       _log.severe('Failed to create dhikr: $e');
-      return Result.error(Exception('Failed to create dhikr: $e'));
+      return Result.error(UserMessageException('Zikir oluşturulamadı', cause: e));
     }
   }
 
@@ -153,7 +153,7 @@ class CreateDhikrViewModel {
       final userId = currentUser.value.uid;
       if (userId.isEmpty) {
         _log.warning('User ID is empty, cannot create prayer dhikrs');
-        return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+        return Result.error(const UserMessageException('Kullanıcı bilgisi bulunamadı'));
       }
 
       // Generate unique group ID
@@ -247,7 +247,7 @@ class CreateDhikrViewModel {
       }
     } catch (e) {
       _log.severe('Failed to create dhikrs for prayer: $e');
-      return Result.error(Exception('Failed to create dhikrs for prayer: $e'));
+      return Result.error(UserMessageException('Namaz tesbihatı oluşturulamadı', cause: e));
     }
   }
 }

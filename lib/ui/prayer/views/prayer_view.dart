@@ -125,27 +125,10 @@ class _PrayerViewState extends State<PrayerView> {
                         },
                       ),
                       SizedBox(height: responsive.spacingMedium),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.primary),
-                        ),
-                        child: ValueListenableBuilder<PrayerTimes?>(
-                          valueListenable:
-                              widget.prayerTimesViewModel.prayerTimes,
-                          builder: (context, prayerTimes, _) {
-                            if (prayerTimes == null) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text('Namaz vakitleri yükleniyor...'),
-                                ),
-                              );
-                            }
-                            return PrayerTimesList(prayerTimes: prayerTimes);
-                          },
-                        ),
+                      PrayerTimesCard(
+                        prayerTimes: widget.prayerTimesViewModel.prayerTimes,
+                        isLoading:
+                            widget.prayerTimesViewModel.getPrayerTimes.running,
                       ),
                       SizedBox(height: responsive.spacingMedium),
                       Align(

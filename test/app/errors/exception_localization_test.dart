@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huzur_islamda/app/errors/localization/exception_localization.dart';
+import 'package:huzur_islamda/app/errors/models/user_message_exception.dart';
 import 'package:huzur_islamda/app/errors/models/value_object_failure.dart';
 import 'package:huzur_islamda/domain/domain.dart';
 
@@ -91,6 +92,29 @@ void main() {
         context.exceptionToUserFriendlyMessage(const FormatException('bad')),
         'Bilinmeyen bir hata oluştu',
       );
+    });
+
+    testWidgets('shows a UserMessageException message verbatim', (
+      tester,
+    ) async {
+      final context = await pumpContext(tester);
+
+      expect(
+        context.exceptionToUserFriendlyMessage(
+          const UserMessageException('Lütfen konum bilgilerini seçiniz'),
+        ),
+        'Lütfen konum bilgilerini seçiniz',
+      );
+      // The technical cause stays out of the UI but is kept for the logs.
+      final withCause = UserMessageException(
+        'Satın alma başarısız',
+        cause: Exception('PURCHASE_NOT_ALLOWED'),
+      );
+      expect(
+        context.exceptionToUserFriendlyMessage(withCause),
+        'Satın alma başarısız',
+      );
+      expect(withCause.toString(), contains('PURCHASE_NOT_ALLOWED'));
     });
 
     testWidgets('never returns an empty message', (tester) async {

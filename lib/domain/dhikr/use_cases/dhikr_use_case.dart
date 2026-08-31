@@ -41,7 +41,7 @@ class DhikrUseCase {
     if (_deviceHasConnection.value) {
       if (auth.value.uid.isEmpty) {
         _log.warning('User ID is empty, cannot sync dhikrs');
-        return Result.error(Exception('User ID is empty'));
+        return Result.error(const DhikrUserIdEmpty());
       }
       final userId = auth.value.uid;
       final unsyncedDhikrsResult = await _dhikrRepository.getUnsyncedDhikrs();
@@ -77,7 +77,7 @@ class DhikrUseCase {
           final firestoreDhikrsCount = firestoreDhikrsCountResult.asOk.value;
           if (firestoreDhikrsCount == null) {
             _log.info('No firestore dhikrs count found');
-            return Result.error(Exception('No firestore dhikrs count found'));
+            return Result.error(const DhikrRemoteCountNotFound());
           }
           // get locally dhikrs count
           final locallyDhikrsCountResult = await _dhikrRepository
@@ -137,7 +137,7 @@ class DhikrUseCase {
   Future<Result<void>> cancelTodayDhikrReminderIfAllCompleted() async {
     if (auth.value.uid.isEmpty) {
       _log.warning('User ID is empty, cannot cancel dhikr reminder');
-      return Result.error(Exception('User ID is empty'));
+      return Result.error(const DhikrUserIdEmpty());
     }
 
     try {
@@ -197,16 +197,14 @@ class DhikrUseCase {
       _log.severe(
         'Exception while cancelling today\'s dhikr reminder if all completed: $e',
       );
-      return Result.error(
-        Exception('Zikir hatırlatma bildirimi iptal edilemedi: $e'),
-      );
+      return Result.error(const DhikrReminderCancelFailed());
     }
   }
 
   Future<Result<void>> cancelTodayDhikrCreationReminder() async {
     if (auth.value.uid.isEmpty) {
       _log.warning('User ID is empty, cannot cancel dhikr creation reminder');
-      return Result.error(Exception('User ID is empty'));
+      return Result.error(const DhikrUserIdEmpty());
     }
 
     try {
@@ -227,7 +225,10 @@ class DhikrUseCase {
         'Exception while cancelling today\'s dhikr creation reminder: $e',
       );
       return Result.error(
-        Exception('Zikir oluşturma hatırlatma bildirimi iptal edilemedi: $e'),
+        UserMessageException(
+          'Zikir oluşturma hatırlatma bildirimi iptal edilemedi',
+          cause: e,
+        ),
       );
     }
   }
@@ -235,7 +236,7 @@ class DhikrUseCase {
   Future<Result<void>> deleteDhikr({required String dhikrId}) async {
     if (auth.value.uid.isEmpty) {
       _log.warning('User ID is empty, cannot delete dhikr');
-      return Result.error(Exception('User ID is empty'));
+      return Result.error(const DhikrUserIdEmpty());
     }
     await _updateDeviceHasConnection();
     if (!_deviceHasConnection.value) {
@@ -268,7 +269,7 @@ class DhikrUseCase {
   Future<Result<void>> deleteGroup({required List<String> groupIds}) async {
     if (groupIds.isEmpty) {
       _log.warning('No group IDs provided, cannot delete group');
-      return Result.error(Exception('No group IDs provided'));
+      return Result.error(const DhikrGroupIdsEmpty());
     }
     for (final groupId in groupIds) {
       final result = await deleteDhikr(dhikrId: groupId);

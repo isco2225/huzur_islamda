@@ -76,7 +76,7 @@ class DistrictSelectorViewModel extends BaseSelectorViewModel<District> {
       }
     } catch (e) {
       log.severe('Exception while getting districts: $e');
-      return Result.error(Exception('Failed to get districts: $e'));
+      return Result.error(UserMessageException('İlçeler yüklenemedi', cause: e));
     }
   }
 

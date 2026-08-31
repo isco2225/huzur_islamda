@@ -180,7 +180,16 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                                         .getSelectedStateName(),
                                     districtId: selectedDistrictId,
                                   ));
-                              if (context.mounted) {
+                              // Close only when the location was actually
+                              // saved; on failure the snackbar explains why
+                              // and the dialog stays open for a retry.
+                              final savedDistrictId = widget
+                                  .editProfileViewModel
+                                  .currentUser
+                                  .value
+                                  .districtId;
+                              if (context.mounted &&
+                                  savedDistrictId == selectedDistrictId) {
                                 Navigator.of(context).pop();
                                 if (widget.onLocationSelected != null) {
                                   widget.onLocationSelected!.call();

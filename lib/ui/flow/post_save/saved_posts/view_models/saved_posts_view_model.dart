@@ -49,7 +49,7 @@ class SavedPostsViewModel {
     final userId = currentUser.value.uid;
     if (userId.isEmpty) {
       _log.warning('Current user is not logged in');
-      return Result.error(Exception('Kullanıcı oturumu bulunamadı'));
+      return Result.error(const UserMessageException('Kullanıcı oturumu bulunamadı'));
     }
     try {
       final previousLength = savedPosts.value.length;
@@ -83,7 +83,7 @@ class SavedPostsViewModel {
       }
     } catch (e) {
       _log.severe('Failed to fetch saved posts: $e');
-      return Result.error(Exception('Failed to fetch saved posts: $e'));
+      return Result.error(UserMessageException('Kaydedilen gönderiler yüklenemedi', cause: e));
     }
   }
 }

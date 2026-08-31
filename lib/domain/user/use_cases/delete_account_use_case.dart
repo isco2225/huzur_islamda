@@ -17,7 +17,9 @@ class DeleteAccountUseCase {
           return Result.error(deleteAccountResult.asError.error);
       }
     } catch (e) {
-      return Result.error(Exception('Unexpected error: $e'));
+      return Result.error(
+        UserMessageException('Hesap silinirken bir hata oluştu', cause: e),
+      );
     }
   }
 

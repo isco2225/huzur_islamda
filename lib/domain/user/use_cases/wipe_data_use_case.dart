@@ -45,7 +45,7 @@ class WipeDataUseCase {
       _userRepository.wipeUser();
       return Result.ok(null);
     } catch (e) {
-      return Result.error(Exception('Failed to wipe data: $e'));
+      return Result.error(UserMessageException('Veriler temizlenemedi', cause: e));
     }
   }
 }

@@ -30,6 +30,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
     _postSaveViewModel.savePost.handleError(context, showSnackBar: true);
     _postSaveViewModel.unsavePost.handleError(context, showSnackBar: true);
+    _postReportViewModel.reportPost.handleError(context, showSnackBar: true);
     _postReportViewModel.reportPost.handleCompleted(
       context,
       successMessage: 'Şikayetiniz alındı!',

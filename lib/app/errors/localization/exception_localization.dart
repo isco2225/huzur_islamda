@@ -6,6 +6,7 @@ import '../../app.dart';
 extension ExceptionLocalizationExtension on BuildContext {
   String exceptionToUserFriendlyMessage(Exception exception) {
     return switch (exception) {
+      UserMessageException(:final message) => message,
       ConnectivityException() => switch (exception) {
         ConnectivityNoConnection() => 'İnternet bağlantısı yok',
         ConnectivityUnknown() => 'Bağlantınızı kontrol ediniz',

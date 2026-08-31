@@ -24,7 +24,7 @@ class ScheduleDhikrCreateReminderUseCase {
     final user = currentUser.value;
     if (user.uid.isEmpty) {
       _log.warning('No authenticated user for dhikr reminder');
-      return Result.error(Exception('Kullanıcı bulunamadı'));
+      return Result.error(const UserMessageException('Kullanıcı bulunamadı'));
     }
     try {
       // clear all scheduled notifications for dhikr creation reminder
@@ -55,7 +55,7 @@ class ScheduleDhikrCreateReminderUseCase {
     } catch (e) {
       _log.severe('Exception scheduling dhikr reminder: $e');
       return Result.error(
-        Exception('Zikir hatırlatma bildirimi planlanamadı: $e'),
+        UserMessageException('Zikir hatırlatma bildirimi planlanamadı', cause: e),
       );
     }
   }

@@ -62,7 +62,7 @@ class SchedulePrayerNotificationsUseCase {
           final prayer = localResult.asOk.value;
           if (prayer == null) {
             _log.warning('No prayer times found locally');
-            return Result.error(Exception('Namaz vakitleri bulunamadı'));
+            return Result.error(const UserMessageException('Namaz vakitleri bulunamadı'));
           }
 
           final now = DateTime.now();
@@ -127,7 +127,7 @@ class SchedulePrayerNotificationsUseCase {
       }
     } catch (e) {
       _log.severe('Exception scheduling notifications for week: $e');
-      return Result.error(Exception('Haftalık bildirimler planlanamadı: $e'));
+      return Result.error(UserMessageException('Haftalık bildirimler planlanamadı', cause: e));
     }
   }
 
@@ -138,7 +138,7 @@ class SchedulePrayerNotificationsUseCase {
       return await _notificationRepository.cancelAllPrayerNotifications();
     } catch (e) {
       _log.severe('Exception cancelling all notifications: $e');
-      return Result.error(Exception('Bildirimler iptal edilemedi: $e'));
+      return Result.error(UserMessageException('Bildirimler iptal edilemedi', cause: e));
     }
   }
 }

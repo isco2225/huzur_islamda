@@ -86,7 +86,7 @@ class StateSelectorViewModel extends BaseSelectorViewModel<StateModel> {
       }
     } catch (e) {
       log.severe('Exception while getting states: $e');
-      return Result.error(Exception('Failed to get states: $e'));
+      return Result.error(UserMessageException('Şehirler yüklenemedi', cause: e));
     }
   }
 

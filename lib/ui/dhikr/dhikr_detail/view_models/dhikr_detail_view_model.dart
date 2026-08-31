@@ -112,7 +112,7 @@ class DhikrDetailViewModel {
   Future<Result<void>> _incrementCount() async {
     final dhikr = _currentDhikr.value;
     if (dhikr == null) {
-      return Result.error(Exception('Zikir yüklenmedi'));
+      return Result.error(const UserMessageException('Zikir yüklenmedi'));
     }
 
     final wasCompletedBefore = dhikr.isCompleted;
@@ -196,11 +196,11 @@ class DhikrDetailViewModel {
   Future<Result<void>> _decrementCount() async {
     final dhikr = _currentDhikr.value;
     if (dhikr == null) {
-      return Result.error(Exception('Zikir yüklenmedi'));
+      return Result.error(const UserMessageException('Zikir yüklenmedi'));
     }
 
     if (dhikr.currentCount == 0) {
-      return Result.error(Exception('Sayı 0\'dan küçük olamaz'));
+      return Result.error(const UserMessageException('Sayı 0\'dan küçük olamaz'));
     }
 
     _log.info('Decrementing count for dhikr: $_currentDhikrId');
@@ -231,7 +231,7 @@ class DhikrDetailViewModel {
   Future<Result<void>> _resetCount() async {
     final dhikr = _currentDhikr.value;
     if (dhikr == null) {
-      return Result.error(Exception('Zikir yüklenmedi'));
+      return Result.error(const UserMessageException('Zikir yüklenmedi'));
     }
 
     _log.info('Resetting count for dhikr: $_currentDhikrId');

@@ -119,7 +119,7 @@ Kullanıcının Allah ile olan bağını güçlendirmek, ibadetleri sevdirmek ve
       final candidates = data['candidates'] as List<dynamic>?;
       if (candidates == null || candidates.isEmpty) {
         _log.warning('Gemini API returned no candidates');
-        return Result.error(Exception('Asistan yanıtı alınamadı (boş cevap).'));
+        return Result.error(const UserMessageException('Asistan yanıtı alınamadı (boş cevap).'));
       }
 
       final content =
@@ -145,18 +145,21 @@ Kullanıcının Allah ile olan bağını güçlendirmek, ibadetleri sevdirmek ve
 
       if (text == null || text.trim().isEmpty) {
         _log.warning('Gemini API returned empty text');
-        return Result.error(Exception('Asistan yanıtı alınamadı (metin yok).'));
+        return Result.error(const UserMessageException('Asistan yanıtı alınamadı (metin yok).'));
       }
 
       _log.info('Gemini response received successfully');
       return Result.ok(text.trim());
     } on http.ClientException catch (e) {
       _log.severe('Network error while calling Gemini API: $e');
-      return Result.error(Exception('Ağ hatası: ${e.message}'));
+      return Result.error(UserMessageException(
+          'Ağ hatası. Lütfen bağlantınızı kontrol edin.',
+          cause: e,
+        ));
     } catch (e) {
       _log.severe('Unexpected error while calling Gemini API: $e');
       return Result.error(
-        Exception('Asistan yanıtı alınırken bir hata oluştu: $e'),
+        UserMessageException('Asistan yanıtı alınırken bir hata oluştu', cause: e),
       );
     }
   }

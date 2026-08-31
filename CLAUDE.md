@@ -37,6 +37,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Uygulama sadece portrait mode.
 - ViewModel'lerde `dispose()` ile Command/ValueNotifier temizliği zorunlu; async sonrası `context` kullanmadan önce `mounted` kontrolü yap.
 - Renk/string/tema sabitleri `lib/app/core/` altında (`AppColors`, `AppStrings`, `AppTheme`); hardcode etme.
+- Hata mesajları: `exceptionToUserFriendlyMessage` yalnızca tipli exception'ları (`AuthException`, `DhikrException`… ve `UserMessageException`) çevirir; düz `Exception('...')` kullanıcıya her zaman "Bilinmeyen bir hata oluştu" olarak gider. Kullanıcıya gösterilecek Türkçe bir mesaj için `UserMessageException('mesaj', cause: e)` kullan (teknik ayrıntı `cause`'da loglanır, UI'a sızmaz); İngilizce geliştirici mesajları düz `Exception` kalabilir.
+- Her Screen, çalıştırdığı her Command için `initState`'te `handleError(context)` kaydeder; kaydedilmeyen komutun hatası kullanıcıya hiç ulaşmaz. `handleError` sonucu temizlediği için view içi `command.error` tabanlı hata widget'ları çalışmaz — kalıcı hata durumu gerekiyorsa `running` + veri null'luğuna bak (örn. `PrayerView`).
 
 ## Bilinen tuzaklar
 

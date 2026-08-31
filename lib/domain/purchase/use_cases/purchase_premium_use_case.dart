@@ -12,7 +12,7 @@ class PurchasePremiumUseCase {
     try {
       return await _purchaseRepository.purchasePremium(package);
     } catch (e) {
-      return Result.error(Exception('Satın alma başlatılamadı: $e'));
+      return Result.error(UserMessageException('Satın alma başlatılamadı', cause: e));
     }
   }
 }

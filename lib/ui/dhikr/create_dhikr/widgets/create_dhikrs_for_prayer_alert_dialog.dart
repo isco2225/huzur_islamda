@@ -68,12 +68,11 @@ class CreateDhikrsForPrayerAlertDialog extends StatelessWidget {
             return ElevatedButton(
               onPressed: isRunning
                   ? null
-                  : () async {
-                      await createDhikrViewModel.createDhikrsForPrayer
-                          .execute();
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                      }
+                  : () {
+                      // On success DhikrScreen's handleCompleted(popCount: 1)
+                      // closes this dialog; on failure it stays open so the
+                      // user can retry or cancel.
+                      createDhikrViewModel.createDhikrsForPrayer.execute();
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,

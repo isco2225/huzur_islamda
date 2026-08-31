@@ -344,15 +344,15 @@ void main() {
   });
 
   group('initUser command', () {
-    test("errors with 'User not authenticated' when the auth uid is empty", () async {
+    test('errors with AuthNoUserSignedIn when the auth uid is empty', () async {
       authRepository.authNotifier.value = Auth.empty();
 
       await viewModel.initUser.execute();
 
       expect(viewModel.initUser.error.value, isTrue);
       expect(
-        viewModel.initUser.result.value!.asError.error.toString(),
-        contains('User not authenticated'),
+        viewModel.initUser.result.value!.asError.error,
+        isA<AuthNoUserSignedIn>(),
       );
       expect(userRepository.calls, isEmpty);
     });

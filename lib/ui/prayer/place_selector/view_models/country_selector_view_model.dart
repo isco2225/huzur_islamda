@@ -82,7 +82,7 @@ class CountrySelectorViewModel extends BaseSelectorViewModel<Country> {
       }
     } catch (e) {
       log.severe('Exception while getting countries: $e');
-      return Result.error(Exception('Failed to get countries: $e'));
+      return Result.error(UserMessageException('Ülkeler yüklenemedi', cause: e));
     }
   }
 

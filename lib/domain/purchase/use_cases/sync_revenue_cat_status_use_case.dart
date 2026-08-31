@@ -11,7 +11,7 @@ class SyncRevenueCatStatusUseCase {
     try {
       return await _purchaseRepository.syncPremiumStatusWithBackend();
     } catch (e) {
-      return Result.error(Exception('Premium durumu senkronize edilemedi: $e'));
+      return Result.error(UserMessageException('Premium durumu senkronize edilemedi', cause: e));
     }
   }
 }

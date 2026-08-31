@@ -52,7 +52,7 @@ void main() {
       final result = await useCase.syncDhikrs();
 
       expect(result, isA<Error<void>>());
-      expect(result.asError.error.toString(), contains('User ID is empty'));
+      expect(result.asError.error, isA<DhikrUserIdEmpty>());
       expect(dhikrRepository.calls, isEmpty);
       expect(useCase.deviceHasConnection.value, isTrue);
     });
@@ -123,10 +123,7 @@ void main() {
       final result = await useCase.syncDhikrs();
 
       expect(result, isA<Error<void>>());
-      expect(
-        result.asError.error.toString(),
-        contains('No firestore dhikrs count found'),
-      );
+      expect(result.asError.error, isA<DhikrRemoteCountNotFound>());
       expect(
         dhikrRepository.calls,
         isNot(contains('getDhikrsCountLocally()')),
@@ -420,7 +417,7 @@ void main() {
       final result = await useCase.deleteGroup(groupIds: const []);
 
       expect(result, isA<Error<void>>());
-      expect(result.asError.error.toString(), contains('No group IDs'));
+      expect(result.asError.error, isA<DhikrGroupIdsEmpty>());
       expect(dhikrRepository.calls, isEmpty);
     });
 

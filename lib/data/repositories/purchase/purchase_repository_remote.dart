@@ -35,7 +35,7 @@ class PurchaseRepositoryRemote extends PurchaseRepository {
   Future<Result<void>> _ensureLoggedIn() async {
     final uid = _uid;
     if (uid.isEmpty) {
-      return Result.error(Exception('Kullanıcı oturum açmamış'));
+      return Result.error(const UserMessageException('Kullanıcı oturum açmamış'));
     }
     return _revenueCatService.logIn(appUserId: uid);
   }

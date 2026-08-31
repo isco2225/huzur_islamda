@@ -43,7 +43,7 @@ class PostReportViewModel {
     final reporterId = currentUser.value.uid;
     if (reporterId.isEmpty) {
       _log.warning('Reporter ID is empty, cannot report post');
-      return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+      return Result.error(const UserMessageException('Kullanıcı bilgisi bulunamadı'));
     }
 
     final result = await _reportRepository.reportPost(

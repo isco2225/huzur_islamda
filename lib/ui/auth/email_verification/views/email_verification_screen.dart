@@ -41,17 +41,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
     _viewModel.sendEmailVerification.handleError(context, showSnackBar: true);
     _viewModel.checkEmailVerification.handleError(context, showSnackBar: false);
-    _viewModel.deleteAccount.handleCompleted(
-      context,
-      onCompleted: (_) {
-        if (!mounted) return;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && context.mounted) {
-            context.goToSignUp();
-          }
-        });
-      },
-    );
     _viewModel.deleteAccount.handleError(context, showSnackBar: true);
 
     // Email gönderme başarılı olduğunda

@@ -217,7 +217,7 @@ class FetchDhikrsViewModel {
     final currentUser = _userRepository.currentUser.value;
     if (currentUser.uid.isEmpty) {
       _log.warning('No authenticated user found');
-      return Result.error(Exception('No authenticated user found'));
+      return Result.error(const DhikrUserIdEmpty());
     }
 
     final result = await _dhikrRepository.getAllDhikrsByDateLocally(date: date);

@@ -234,8 +234,8 @@ void main() {
 
       expect(viewModel.fetchDhikrs.error.value, isTrue);
       expect(
-        viewModel.fetchDhikrs.result.value!.asError.error.toString(),
-        contains('No authenticated user found'),
+        viewModel.fetchDhikrs.result.value!.asError.error,
+        isA<DhikrUserIdEmpty>(),
       );
       expect(dhikrRepository.calls, isNot(contains(startsWith('getAllDhikrsByDateLocally'))));
     });

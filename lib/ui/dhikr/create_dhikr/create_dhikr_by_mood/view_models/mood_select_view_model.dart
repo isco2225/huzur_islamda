@@ -63,7 +63,7 @@ class MoodSelectViewModel {
       final userId = _userRepository.currentUser.value.uid;
       if (userId.isEmpty) {
         _log.warning('User ID is empty, cannot create mood dhikrs');
-        return Result.error(Exception('Kullanıcı bilgisi bulunamadı'));
+        return Result.error(const UserMessageException('Kullanıcı bilgisi bulunamadı'));
       }
 
       final now = DateTime.now();
@@ -115,7 +115,7 @@ class MoodSelectViewModel {
       }
     } catch (e) {
       _log.severe('Failed to create dhikrs for mood: $e');
-      return Result.error(Exception('Zikir grubu oluşturulamadı: $e'));
+      return Result.error(UserMessageException('Zikir grubu oluşturulamadı', cause: e));
     }
   }
 

@@ -43,6 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
     _viewModel.toggleNotifications.handleError(context, showSnackBar: true);
     _viewModel.toggleNotifications.handleCompleted(context);
+    _viewModel.toggleVibration.handleError(context, showSnackBar: true);
     _logOutViewModel.logOut.handleError(context, showSnackBar: true);
     _logOutViewModel.logOut.handleCompleted(
       context,
@@ -69,7 +70,18 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // The user may have changed the notification permission in the OS
+    // settings; re-sync the toggle when the app comes back to the foreground.
+    if (state == AppLifecycleState.resumed && mounted) {
+      _viewModel.checkAndSyncPermissionStatus();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _viewModel.showOpenSettingsDialog.removeListener(_onShowOpenSettingsDialog);
     _viewModel.dispose();
     _logOutViewModel.dispose();

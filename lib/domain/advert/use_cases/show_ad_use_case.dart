@@ -30,11 +30,18 @@ class ShowAdUseCase {
       _log.info('User is premium, skipping ad');
       return;
     }
-    await _admobService.showInterstitialAd(
-      onAdDismissed: onAdDismissed,
-      onAdFailedToShow: onAdFailedToShow,
-      onAdFailedToLoad: onAdFailedToLoad,
-    );
+    // Ads are best-effort: a failure must never surface as an unhandled
+    // async error in the UI that triggered it.
+    try {
+      await _admobService.showInterstitialAd(
+        onAdDismissed: onAdDismissed,
+        onAdFailedToShow: onAdFailedToShow,
+        onAdFailedToLoad: onAdFailedToLoad,
+      );
+    } catch (e, stackTrace) {
+      _log.warning('Failed to show interstitial ad', e, stackTrace);
+      onAdFailedToShow?.call();
+    }
   }
 
   String getBannerAdUnitId() {

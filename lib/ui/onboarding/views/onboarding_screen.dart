@@ -19,6 +19,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _onboardingViewModel = OnboardingViewModel(
       appRepository: context.read<AppRepository>(),
     );
+    _onboardingViewModel.updateIsOnboardingCompleted.handleError(
+      context,
+      showSnackBar: true,
+    );
   }
 
   @override

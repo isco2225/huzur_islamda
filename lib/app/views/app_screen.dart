@@ -170,14 +170,28 @@ class _AppScreenState extends State<AppScreen> {
         Provider(create: (context) => widget.restorePurchasesUseCase),
         Provider(create: (context) => widget.syncRevenueCatStatusUseCase),
       ],
-      child: ValueListenableBuilder(
-        valueListenable: _appViewModel.initApp.running,
-        builder: (context, isInitializing, child) {
+      child: ListenableBuilder(
+        listenable: Listenable.merge([
+          _appViewModel.initApp.running,
+          _appViewModel.initApp.error,
+        ]),
+        builder: (context, child) {
           // App initialization tamamlanana kadar splash screen göster
-          if (isInitializing) {
+          if (_appViewModel.initApp.running.value) {
             return const MaterialApp(
               debugShowCheckedModeBanner: false,
               home: Scaffold(body: Center(child: AppSplashView())),
+            );
+          }
+          // Başlatma başarısız olduysa kullanıcıya söyle ve seçenek sun
+          if (_appViewModel.initApp.error.value) {
+            return AppInitializationErrorView(
+              error: _appViewModel.initApp.result.value?.asError.error,
+              onRetry: () {
+                _appViewModel.initApp.execute();
+                _appViewModel.initUser.execute();
+              },
+              onContinue: _appViewModel.initApp.clearResult,
             );
           }
           // Initialization tamamlandı, router'ı göster

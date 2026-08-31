@@ -35,13 +35,13 @@ class RevenueCatService {
       return Result.ok(null);
     } catch (e) {
       _log.severe('RevenueCat configure error: $e');
-      return Result.error(Exception('Abonelik sistemi başlatılamadı: $e'));
+      return Result.error(UserMessageException('Abonelik sistemi başlatılamadı', cause: e));
     }
   }
 
   Future<Result<void>> logIn({required String appUserId}) async {
     if (appUserId.isEmpty) {
-      return Result.error(Exception('Kullanıcı kimliği boş'));
+      return Result.error(const UserMessageException('Kullanıcı kimliği boş'));
     }
     try {
       await Purchases.logIn(appUserId);
@@ -49,7 +49,7 @@ class RevenueCatService {
       return Result.ok(null);
     } catch (e) {
       _log.warning('RevenueCat login error: $e');
-      return Result.error(Exception('Abonelik hesabına bağlanılamadı: $e'));
+      return Result.error(UserMessageException('Abonelik hesabına bağlanılamadı', cause: e));
     }
   }
 
@@ -60,7 +60,7 @@ class RevenueCatService {
       return Result.ok(null);
     } catch (e) {
       _log.warning('RevenueCat logout error: $e');
-      return Result.error(Exception('Abonelik oturumu kapatılamadı: $e'));
+      return Result.error(UserMessageException('Abonelik oturumu kapatılamadı', cause: e));
     }
   }
 
@@ -70,7 +70,7 @@ class RevenueCatService {
       return Result.ok(info);
     } catch (e) {
       _log.warning('RevenueCat getCustomerInfo error: $e');
-      return Result.error(Exception('Abonelik bilgisi alınamadı: $e'));
+      return Result.error(UserMessageException('Abonelik bilgisi alınamadı', cause: e));
     }
   }
 
@@ -101,7 +101,7 @@ class RevenueCatService {
       final current = offerings.current;
       if (current == null) {
         return Result.error(
-          Exception(
+          const UserMessageException(
             'Abonelik teklifi bulunamadı. Lütfen daha sonra tekrar deneyin.',
           ),
         );
@@ -109,7 +109,7 @@ class RevenueCatService {
 
       final Package? selected = _selectPackage(current, package);
       if (selected == null) {
-        return Result.error(Exception('Seçilen abonelik paketi bulunamadı.'));
+        return Result.error(const UserMessageException('Seçilen abonelik paketi bulunamadı.'));
       }
 
       // Not: purchases_flutter v9'da yeni purchase API'si mevcut, ancak projede
@@ -119,7 +119,9 @@ class RevenueCatService {
       final entitlement = info.entitlements.active[entitlementId];
       if (entitlement == null) {
         return Result.error(
-          Exception('Satın alma tamamlandı ancak premium etkinleşmedi.'),
+          const UserMessageException(
+            'Satın alma tamamlandı ancak premium etkinleşmedi.',
+          ),
         );
       }
       return Result.ok(null);
@@ -127,15 +129,15 @@ class RevenueCatService {
       // Kullanıcı iptal ettiyse bunu hata gibi göstermeyelim.
       final code = PurchasesErrorHelper.getErrorCode(e);
       if (code == PurchasesErrorCode.purchaseCancelledError) {
-        return Result.error(Exception('Satın alma iptal edildi'));
+        return Result.error(const UserMessageException('Satın alma iptal edildi'));
       }
       _log.warning('RevenueCat purchase platform error: $e');
       return Result.error(
-        Exception('Satın alma başarısız: ${e.message ?? e.code}'),
+        UserMessageException('Satın alma başarısız', cause: e.message ?? e.code),
       );
     } catch (e) {
       _log.warning('RevenueCat purchase error: $e');
-      return Result.error(Exception('Satın alma başarısız: $e'));
+      return Result.error(UserMessageException('Satın alma başarısız', cause: e));
     }
   }
 
@@ -148,18 +150,20 @@ class RevenueCatService {
       final entitlement = info.entitlements.active[entitlementId];
       if (entitlement == null) {
         return Result.error(
-          Exception('Geri yükleme tamamlandı ancak aktif abonelik bulunamadı'),
+          const UserMessageException(
+            'Geri yükleme tamamlandı ancak aktif abonelik bulunamadı',
+          ),
         );
       }
       return Result.ok(null);
     } on PlatformException catch (e) {
       _log.warning('RevenueCat restore platform error: $e');
       return Result.error(
-        Exception('Geri yükleme başarısız: ${e.message ?? e.code}'),
+        UserMessageException('Geri yükleme başarısız', cause: e.message ?? e.code),
       );
     } catch (e) {
       _log.warning('RevenueCat restore error: $e');
-      return Result.error(Exception('Geri yükleme başarısız: $e'));
+      return Result.error(UserMessageException('Geri yükleme başarısız', cause: e));
     }
   }
 

@@ -48,7 +48,9 @@ class MoodSelectView extends StatelessWidget {
                                 SizedBox(height: context.spacingLarge),
                                 Text(
                                   error is Exception
-                                      ? error.toString()
+                                      ? context.exceptionToUserFriendlyMessage(
+                                          error,
+                                        )
                                       : 'Ruh halleri yüklenemedi.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey[700]),

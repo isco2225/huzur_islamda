@@ -267,7 +267,7 @@ class AuthRepositoryRemote extends AuthRepository {
           }
         case AuthProviderType.emailPassword:
           return Result.error(
-            Exception(
+            const UserMessageException(
               'Bu işlem için yeniden giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.',
             ),
           );

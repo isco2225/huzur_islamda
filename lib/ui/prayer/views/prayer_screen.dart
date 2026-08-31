@@ -52,6 +52,18 @@ class _PrayerScreenState extends State<PrayerScreen> {
       context,
       showSnackBar: true,
     );
+    _placeSelectorViewModel.stateSelector.getStates.handleError(
+      context,
+      showSnackBar: true,
+    );
+    _placeSelectorViewModel.districtSelector.getDistricts.handleError(
+      context,
+      showSnackBar: true,
+    );
+    _prayerViewModel.schedulePrayerNotifications.handleError(
+      context,
+      showSnackBar: true,
+    );
     _editProfileViewModel.updateUserLocation.handleError(
       context,
       showSnackBar: true,

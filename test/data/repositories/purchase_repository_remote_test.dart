@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:huzur_islamda/app/errors/models/user_message_exception.dart';
 import 'package:huzur_islamda/app/utils/result.dart';
 import 'package:huzur_islamda/data/data.dart';
 import 'package:huzur_islamda/domain/domain.dart';
@@ -42,9 +43,10 @@ void main() {
 
   void expectNotLoggedIn(Result<Object?> result) {
     expect(result, isA<Error<Object?>>());
+    expect(result.asError.error, isA<UserMessageException>());
     expect(
-      result.asError.error.toString(),
-      'Exception: Kullanıcı oturum açmamış',
+      (result.asError.error as UserMessageException).message,
+      'Kullanıcı oturum açmamış',
     );
     expect(revenueCat.logInUserIds, isEmpty);
   }

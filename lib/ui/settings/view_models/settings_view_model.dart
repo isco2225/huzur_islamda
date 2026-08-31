@@ -127,7 +127,7 @@ class SettingsViewModel {
     } catch (e) {
       _log.severe('Exception toggling notifications: $e');
       isNotificationsEnabled.value = !value;
-      return Result.error(Exception('Bildirim ayarı güncellenemedi: $e'));
+      return Result.error(UserMessageException('Bildirim ayarı güncellenemedi', cause: e));
     }
   }
 
@@ -168,8 +168,9 @@ class SettingsViewModel {
           'Error checking notification status on Android: ${statusResult.asError.error}',
         );
         return Result.error(
-          Exception(
-            'Bildirim izni durumu kontrol edilemedi: ${statusResult.asError.error}',
+          UserMessageException(
+            'Bildirim izni durumu kontrol edilemedi',
+            cause: statusResult.asError.error,
           ),
         );
     }
@@ -195,7 +196,7 @@ class SettingsViewModel {
       );
       showOpenSettingsDialog.value = true;
       return Result.error(
-        Exception(
+        const UserMessageException(
           'Bildirim izni kalıcı olarak reddedilmiş. Lütfen ayarlardan izin verin.',
         ),
       );
@@ -224,7 +225,9 @@ class SettingsViewModel {
           _log.warning('Notification permission denied on iOS');
           showOpenSettingsDialog.value = true;
           return Result.error(
-            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+            const UserMessageException(
+          'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
+        ),
           );
         }
         _log.info('Notification permission granted on iOS');
@@ -251,12 +254,17 @@ class SettingsViewModel {
           return Result.ok(null);
         } else {
           return Result.error(
-            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+            const UserMessageException(
+          'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
+        ),
           );
         }
       case Error():
         return Result.error(
-          Exception('Bildirim izni alınamadı: ${retryResult.asError.error}'),
+          UserMessageException(
+            'Bildirim izni alınamadı',
+            cause: retryResult.asError.error,
+          ),
         );
     }
   }
@@ -274,7 +282,9 @@ class SettingsViewModel {
         if (requestedState != PermissionState.granted) {
           _log.warning('Notification permission not granted on Android');
           return Result.error(
-            Exception('Bildirim izni verilmedi. Lütfen ayarlardan izin verin.'),
+            const UserMessageException(
+          'Bildirim izni verilmedi. Lütfen ayarlardan izin verin.',
+        ),
           );
         }
         _log.info('Notification permission granted on Android');
@@ -284,8 +294,9 @@ class SettingsViewModel {
           'Error requesting notification permission on Android: ${permissionResult.asError.error}',
         );
         return Result.error(
-          Exception(
-            'Bildirim izni alınamadı: ${permissionResult.asError.error}',
+          UserMessageException(
+            'Bildirim izni alınamadı',
+            cause: permissionResult.asError.error,
           ),
         );
     }
@@ -335,14 +346,15 @@ class SettingsViewModel {
             'Error updating vibration preference: ${updateResult.asError.error}',
           );
           return Result.error(
-            Exception(
-              'Titreşim ayarı güncellenemedi: ${updateResult.asError.error}',
+            UserMessageException(
+              'Titreşim ayarı güncellenemedi',
+              cause: updateResult.asError.error,
             ),
           );
       }
     } catch (e) {
       _log.severe('Exception toggling vibration: $e');
-      return Result.error(Exception('Titreşim ayarı güncellenemedi: $e'));
+      return Result.error(UserMessageException('Titreşim ayarı güncellenemedi', cause: e));
     }
   }
 

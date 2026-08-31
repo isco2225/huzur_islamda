@@ -165,3 +165,43 @@ Kalan 12 atlanan testin karşılığı olan orta/düşük öncelikli hatalar dü
 | — | `dhikr_use_case.dart` | `syncDhikrsToFirestore` sonrası `updateDhikrLocally` döngüsü kaldırıldı (repository #7 düzeltmesiyle bunu kendisi yapıyor). |
 
 Doğrulama: `flutter analyze` (yalnızca `lib/`'deki 6 eski `info`), `flutter test` iki ardışık çalıştırmada 1064 geçen / 0 atlanan / 0 başarısız.
+
+## 10. Hata gösterimi denetimi (31 Ağustos 2026, dördüncü tur)
+
+Soru: "Bütün hatalar kullanıcıya doğru şekilde gösteriliyor mu?" İki kaynak incelendi: (a) `exceptionToUserFriendlyMessage` eşlemesi, (b) 36 ViewModel'in tüm komutları için ekranlardaki `handleError` kayıtları.
+
+### Bulgu 1 — Türkçe mesajlar kullanıcıya hiç ulaşmıyordu
+
+Eşleme yalnızca tipli sealed exception'ları çeviriyor, diğer her şeyi "Bilinmeyen bir hata oluştu" yapıyordu. Kod tabanında kullanıcı için yazılmış ~45 Türkçe `Exception('...')` (örn. "Lütfen konum bilgilerini seçiniz", "Satın alma iptal edildi", "Asistan günlük limiti…", "Bildirim izni kalıcı olarak reddedilmiş…") bu nedenle hiçbir zaman görünmüyordu.
+
+Çözüm: `lib/app/errors/models/user_message_exception.dart` — `UserMessageException(message, {cause})`; eşlemede `message` doğrudan gösteriliyor, `cause` yalnızca loglara gidiyor. Kullanıcıya yönelik tüm mesajlar bu tipe çevrildi; tipli karşılığı olanlar (`DhikrUserIdEmpty`, `DhikrRemoteCountNotFound`, `DhikrGroupIdsEmpty`, `DhikrReminderCancelFailed`, `AuthNoUserSignedIn`) o tipleri kullanıyor; İngilizce geliştirici mesajları (`Failed to fetch posts: $e` vb.) bilinçli olarak genel mesajın arkasında bırakıldı. `$e` içeren mesajlar artık ham hata metnini UI'a sızdırmıyor.
+
+### Bulgu 2 — `handleError` kaydı olmayan komutlar
+
+| Komut | Ekran | Düzeltme |
+|---|---|---|
+| `SettingsViewModel.toggleVibration` | `settings_screen.dart` | `handleError` eklendi |
+| `PrayerViewModel.schedulePrayerNotifications` | `prayer_screen.dart` | `handleError` eklendi |
+| `StateSelectorViewModel.getStates`, `DistrictSelectorViewModel.getDistricts` | `prayer_screen.dart` | `handleError` eklendi (ağ çağrısı; önceden hata sadece "Şehir bulunamadı" boş listesiyle görünüyordu) |
+| `PostReportViewModel.reportPost` | `post_detail_screen.dart`, `saved_posts_screen.dart` | `handleError` (+ kaydedilen gönderilerde `handleCompleted`) eklendi |
+| `PostSaveViewModel.savePost/unsavePost` | `saved_posts_screen.dart` | `handleError` eklendi |
+| `OnboardingViewModel.updateIsOnboardingCompleted` | `onboarding_screen.dart` | `handleError` eklendi |
+| `AppViewModel.initApp` | `app_screen.dart` | Başlatma hatasında artık splash yerine mesaj + "Tekrar dene" / "Yine de devam et" seçenekleri sunan bir hata görünümü gösteriliyor (önceden yarım başlatılmış uygulama sessizce açılıyordu) |
+
+### Bulgu 3 — Gösterim var ama yanıltıcı olan akışlar
+
+- `MoodSelectView` hata metnini ham `Exception: …` olarak basıyordu → eşlemeden geçiriliyor.
+- `PrayerView`, namaz vakitleri alınamadığında sonsuza kadar "yükleniyor…" gösteriyordu → `running` false ve veri yoksa "Namaz vakitleri alınamadı. Konumu seçip tekrar deneyin." gösteriyor.
+- `PlaceSelector` dialog'u konum kaydı başarısız olsa da kapanıp ekranı "konum seçildi" durumuna geçiriyordu → yalnızca kayıt gerçekten başarılıysa kapanıyor.
+- `CreateDhikrsForPrayerAlertDialog` hata olsa da kendini kapatıyordu (ve başarıda `handleCompleted(popCount: 1)` ile çift pop riski vardı) → dialog artık yalnızca `handleCompleted` tarafından kapatılıyor, hatada açık kalıyor.
+- `EmailVerificationScreen`'de `deleteAccount.handleCompleted` iki kez kaydedilmişti (ikinci kayıt ilkini `dispose`'dan gizliyordu) → tek kayıt.
+- `SettingsScreen` `WidgetsBindingObserver` ekliyor ama `didChangeAppLifecycleState` yoktu ve `removeObserver` çağrılmıyordu → uygulama öne gelince `checkAndSyncPermissionStatus()` çalışıyor, observer `dispose`'da kaldırılıyor.
+- `ShowAdUseCase.showInterstitialAd` hiçbir yerde `await`/`try` olmadan çağrılıyordu → use case içinde try/catch + log; reklam hatası artık yakalanmamış async hata üretmiyor.
+
+### Bilinçli olarak dokunulmayanlar
+
+- `PurchaseViewModel.syncStatus` ve `EmailVerificationViewModel.checkEmailVerification` `showSnackBar: false` ile kayıtlı (arka plan senkronu / 5 sn'lik polling; snackbar spam'i istenmiyor). Polling hataları yalnızca loglanıyor.
+- `AppViewModel.initUser` oturum yokken her soğuk açılışta `AuthNoUserSignedIn` döner; bu beklenen bir durum olduğundan kullanıcıya gösterilmiyor.
+- Ölü kod (ayrı temizlik önerisi): `DhikrViewModel` hiç örneklenmiyor, `lib/ui/dhikr/create_dhikr_by_mood/` dizini eski bir kopya, `FetchUserViewModel.fetchCurrentUser` hiç çalıştırılmıyor, `AppInitializingView` kullanılmıyor, `PurchaseViewModel.purchaseWeekly/purchaseYearly` ve `restorePurchases` çağrısı (yorum satırında) kullanılmıyor.
+
+Doğrulama: `flutter analyze` (yalnızca 6 eski `info`), `flutter test` 1067 geçen / 0 atlanan / 0 başarısız.

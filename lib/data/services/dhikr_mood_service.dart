@@ -30,7 +30,7 @@ class DhikrMoodService {
       return Result.ok(moods);
     } catch (e) {
       _log.severe('Failed to load moods: $e');
-      return Result.error(Exception('Ruh halleri yüklenemedi: $e'));
+      return Result.error(UserMessageException('Ruh halleri yüklenemedi', cause: e));
     }
   }
 }

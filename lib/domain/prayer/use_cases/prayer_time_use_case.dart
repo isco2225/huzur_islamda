@@ -31,7 +31,7 @@ class PrayerTimeUseCase {
     try {
       if (districtId.isEmpty || city.isEmpty || country.isEmpty) {
         _log.warning('Empty parameters provided for prayer times');
-        return Result.error(Exception('Lütfen konum bilgilerini seçiniz'));
+        return Result.error(const UserMessageException('Lütfen konum bilgilerini seçiniz'));
       }
       _log.info(
         'Getting prayer times for district: $districtId, city: $city, country: $country',
@@ -66,7 +66,7 @@ class PrayerTimeUseCase {
           if (connectivityResult.asOk.value == ConnectivityEnum.none) {
             _log.severe('No internet connection');
             return Result.error(
-              Exception(
+              const UserMessageException(
                 'İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.',
               ),
             );
@@ -125,10 +125,10 @@ class PrayerTimeUseCase {
               return Result.ok(todayTimes);
             }
             return Result.error(
-              Exception('Bugünün namaz vakitleri bulunamadı'),
+              const UserMessageException('Bugünün namaz vakitleri bulunamadı'),
             );
           }
-          return Result.error(Exception('Namaz vakitleri bulunamadı'));
+          return Result.error(const UserMessageException('Namaz vakitleri bulunamadı'));
         case Error():
           _log.severe(
             'Error getting prayer times from remote: ${remoteResult.asError.error}',
@@ -138,7 +138,7 @@ class PrayerTimeUseCase {
     } catch (e) {
       _log.severe('Exception getting prayer times: $e');
       return Result.error(
-        Exception('Namaz vakitleri alınırken hata oluştu: $e'),
+        UserMessageException('Namaz vakitleri alınırken hata oluştu', cause: e),
       );
     }
   }

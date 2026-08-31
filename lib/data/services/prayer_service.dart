@@ -29,15 +29,21 @@ class PrayerService {
           'Failed to fetch prayer times: ${response.statusCode} - ${response.body}',
         );
         return Result.error(
-          Exception('Failed to fetch prayer times: ${response.statusCode}'),
+          UserMessageException(
+          'Namaz vakitleri alınamadı',
+          cause: 'HTTP ${response.statusCode}',
+        ),
         );
       }
     } on http.ClientException catch (e) {
       _log.severe('Network error while fetching prayer times: $e');
-      return Result.error(Exception('Network error: ${e.message}'));
+      return Result.error(UserMessageException(
+          'Namaz vakitleri sunucusuna ulaşılamadı. Lütfen bağlantınızı kontrol edin.',
+          cause: e,
+        ));
     } catch (e) {
       _log.severe('Unexpected error while fetching prayer times: $e');
-      return Result.error(Exception('Failed to fetch prayer times: $e'));
+      return Result.error(UserMessageException('Namaz vakitleri alınamadı', cause: e));
     }
   }
 }

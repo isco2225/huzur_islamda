@@ -52,7 +52,7 @@ class PostSaveViewModel {
     final userId = currentUser.value.uid;
     if (userId.isEmpty) {
       _log.warning('Current user is not logged in');
-      return Result.error(Exception('Current user is not logged in'));
+      return Result.error(const UserMessageException('Bu işlem için oturum açmanız gerekiyor'));
     }
     try {
       final connectivityResult = await _connectivityUseCase.connectionType();
@@ -83,7 +83,7 @@ class PostSaveViewModel {
       }
     } catch (e) {
       _log.severe('Failed to save post: $e');
-      return Result.error(Exception('Failed to save post: $e'));
+      return Result.error(UserMessageException('Gönderi kaydedilemedi', cause: e));
     }
   }
 
@@ -91,7 +91,7 @@ class PostSaveViewModel {
     final userId = currentUser.value.uid;
     if (userId.isEmpty) {
       _log.warning('Current user is not logged in');
-      return Result.error(Exception('Current user is not logged in'));
+      return Result.error(const UserMessageException('Bu işlem için oturum açmanız gerekiyor'));
     }
     try {
       final connectivityResult = await _connectivityUseCase.connectionType();
@@ -122,7 +122,7 @@ class PostSaveViewModel {
       }
     } catch (e) {
       _log.severe('Failed to unsave post: $e');
-      return Result.error(Exception('Failed to unsave post: $e'));
+      return Result.error(UserMessageException('Gönderi kayıtlardan çıkarılamadı', cause: e));
     }
   }
 }

@@ -26,7 +26,7 @@ class UserRepositoryRemote extends UserRepository {
   }) async {
     if (name.isEmpty || surname.isEmpty || gender.isEmpty) {
       return Result.error(
-        Exception('Ad, soyad ve cinsiyet zorunludur'),
+        const UserMessageException('Ad, soyad ve cinsiyet zorunludur'),
       );
     }
     try {

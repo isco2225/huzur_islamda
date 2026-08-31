@@ -189,7 +189,7 @@ class AppViewModel {
       return Result.ok(null);
     } catch (e) {
       _log.severe('Failed to initialize app: $e');
-      return Result.error(Exception('Uygulama başlatılamadı: $e'));
+      return Result.error(UserMessageException('Uygulama başlatılamadı', cause: e));
     }
   }
 
@@ -207,7 +207,7 @@ class AppViewModel {
 
   Future<Result<bool>> _initUser() async {
     if (_authRepository.auth.value.uid.isEmpty) {
-      return Result.error(Exception('User not authenticated'));
+      return Result.error(const AuthNoUserSignedIn());
     }
     final result = await _userRepository.initUser(
       uid: _authRepository.auth.value.uid,
@@ -229,7 +229,7 @@ class AppViewModel {
       }
     } catch (e) {
       _log.severe('Exception wiping user data: $e');
-      return Result.error(Exception('Veri temizlenirken hata oluştu: $e'));
+      return Result.error(UserMessageException('Veri temizlenirken hata oluştu', cause: e));
     }
   }
 

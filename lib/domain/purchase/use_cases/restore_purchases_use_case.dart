@@ -11,7 +11,7 @@ class RestorePurchasesUseCase {
     try {
       return await _purchaseRepository.restorePurchases();
     } catch (e) {
-      return Result.error(Exception('Satın alımlar geri yüklenemedi: $e'));
+      return Result.error(UserMessageException('Satın alımlar geri yüklenemedi', cause: e));
     }
   }
 }

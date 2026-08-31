@@ -38,6 +38,13 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
       admobService: context.read<AdMobService>(),
     );
     _viewModel.fetchSavedPosts.handleError(context, showSnackBar: true);
+    _postSaveViewModel.savePost.handleError(context, showSnackBar: true);
+    _postSaveViewModel.unsavePost.handleError(context, showSnackBar: true);
+    _postReportViewModel.reportPost.handleError(context, showSnackBar: true);
+    _postReportViewModel.reportPost.handleCompleted(
+      context,
+      successMessage: 'Şikayetiniz alındı!',
+    );
     _viewModel.fetchSavedPosts.execute();
   }
 
