@@ -37,22 +37,6 @@ class Post {
     return DateTime.now();
   }
 
-  // static Map<Emotion, int> _parseEmotions(dynamic value) {
-  //   if (value == null) return {};
-  //   if (value is! Map) return {};
-
-  //   // Firestore'dan Map formatında gelir: {"sabır": 4, "rızık": 1}
-  //   final Map<Emotion, int> result = {};
-  //   value.forEach((key, val) {
-  //     final emotion = EmotionExtension.fromString(key.toString());
-  //     if (emotion != null) {
-  //       final weight = (val as int? ?? 1).clamp(1, 5);
-  //       result[emotion] = weight;
-  //     }
-  //   });
-  //   return result;
-  // }
-
   static ContentType _parseContentType(dynamic value) {
     if (value == null) return ContentType.dua;
     if (value is String) {

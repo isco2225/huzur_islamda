@@ -72,5 +72,9 @@ void main() {
     expect(find.byType(PrayerTimesList), findsOneWidget);
     expect(find.text(PrayerTimesCard.failureMessage), findsNothing);
     expect(find.text(PrayerTimesCard.loadingMessage), findsNothing);
+
+    // PrayerTimesList owns a periodic Timer; unmount it so the timer is
+    // cancelled before the test binding checks for pending timers.
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 }

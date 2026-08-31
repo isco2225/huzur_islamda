@@ -107,24 +107,4 @@ class FirestorePostService {
       return Result.error(Exception('Failed to fetch posts by ids: $e'));
     }
   }
-
-  // Future<Result<List<String>>> getFavoritedPostIds({
-  //   required String userId,
-  // }) async {
-  //   try {
-  //     final snapshot = await _firestore
-  //         .collection(_usersCollectionName)
-  //         .doc(userId)
-  //         .collection('favorites')
-  //         .get();
-  //     final favoritedPostIds = snapshot.docs.map((doc) => doc.id).toList();
-  //     return Result.ok(favoritedPostIds);
-  //   } on FirebaseException catch (e) {
-  //     return Result.error(
-  //       Exception('Failed to get favorited post ids: ${e.message ?? e.code}'),
-  //     );
-  //   } catch (e) {
-  //     return Result.error(Exception('Failed to get favorited post ids: $e'));
-  //   }
-  // }
 }

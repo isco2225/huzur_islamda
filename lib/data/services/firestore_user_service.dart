@@ -279,23 +279,4 @@ class FirestoreUserService {
     }
     return cleanData;
   }
-
-  // Future<Result<User?>> initUser({required String uid}) async {
-  //   try {
-  //     final doc = await _firestore.collection(_collectionName).doc(uid).get();
-  //     if (!doc.exists) {
-  //       return Result.ok(null);
-  //     }
-  //     final data = doc.data()!;
-  //     final cleanData = _convertTimestampsToDateTime(data);
-  //     final user = User.fromJson(cleanData);
-  //     return Result.ok(user);
-  //   } on FirebaseException catch (e) {
-  //     return Result.error(
-  //       Exception('Failed to init user: ${e.message ?? e.code}'),
-  //     );
-  //   } catch (e) {
-  //     return Result.error(Exception('Failed to init user: $e'));
-  //   }
-  // }
 }

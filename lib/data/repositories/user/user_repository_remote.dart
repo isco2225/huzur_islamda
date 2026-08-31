@@ -278,38 +278,4 @@ class UserRepositoryRemote extends UserRepository {
       return Result.error(Exception('Failed to update user premium: $e'));
     }
   }
-
-  /*Future<Result<void>> updateUserSupport({
-    required String uid,
-    required bool hasSupported,
-    required DateTime lastSupportedAt,
-    required SupportPackage supportPackage,
-  }) async {
-    try {
-      final result = await _firestoreUserService.updateUserSupport(
-        uid: uid,
-        hasSupported: hasSupported,
-        lastSupportedAt: lastSupportedAt,
-        supportPackage: supportPackage.value,
-      );
-      switch (result) {
-        case Ok():
-          final updatedUser = result.asOk.value;
-          if (updatedUser != null) {
-            _currentUser.value = updatedUser;
-          } else {
-            _currentUser.value = _currentUser.value.copyWith(
-              hasSupported: hasSupported,
-              lastSupportedAt: lastSupportedAt,
-              supportPackage: supportPackage,
-            );
-          }
-          return Result.ok(null);
-        case Error():
-          return Result.error(result.asError.error);
-      }
-    } catch (e) {
-      return Result.error(Exception('Failed to update user support: $e'));
-    }
-  }*/
 }

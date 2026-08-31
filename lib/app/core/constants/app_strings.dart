@@ -2,21 +2,11 @@ class AppStrings {
   AppStrings._();
 
   static const String appName = 'İbadet Rehberim';
-  static const String ok = 'Tamam';
   static const String cancel = 'İptal';
-  static const String confirm = 'Onayla';
-  static const String retry = 'Tekrar Dene';
-  static const String loading = 'Yükleniyor...';
   static const String start = 'Başla';
-
-  // Errors
-  static const String errorGeneric = 'Bir hata oluştu';
-  static const String errorNetwork = 'İnternet bağlantısı yok';
-  static const String errorTimeout = 'İstek zaman aşımına uğradı';
 
   // Onboarding — Sade: uygulamanın amacı (1. sayfa), kısa davet (2. sayfa). Tek animasyon ilk sayfada.
   static const String onboardingNext = 'İleri';
-  static const String signUp = 'kayıt Ol';
   static const String onboardingTitle1 = 'Hoş Geldiniz';
   static const String onboardingText1 =
       'İslamın ışığında daha huzurlu, dengeli bir yaşam sürmene ve ibadet ile günlük rutinini '
@@ -31,6 +21,7 @@ class AppStrings {
       'Günlük zikirlerini oluştur, say ve takip et. Geçmiş zikirlerini görüntüle; ruh haline göre zikir seti oluşturabilirsin.';
 
   // Settings - Legal texts
+
   static const String settingsAboutAppDescription =
       'İbadet Rehberim uygulaması, modern hayatın yoğunluğu içinde Kur’an ve sünnet ışığında daha huzurlu, '
       'bilinçli ve dengeli bir yaşam sürmene yardımcı olmak için tasarlanmış bir uygulamadır.\n\n'

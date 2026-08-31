@@ -11,9 +11,6 @@ import 'app_routes.dart';
 extension RouterExtensions on BuildContext {
   // -------------------- GO METHODS (Replace current route) --------------------
 
-  /// Navigate to onboarding screen
-  void goToOnboarding() => go(AppRoutes.onboarding);
-
   /// Navigate to sign in screen
   void goToSignIn() => go(AppRoutes.signIn);
 
@@ -26,41 +23,14 @@ extension RouterExtensions on BuildContext {
   /// Navigate to flow (home) screen
   void goToFlow() => go(AppRoutes.flow);
 
-  /// Navigate to assistant screen
-  void goToAssistant() => go(AppRoutes.assistant);
-
   /// Gönderi hakkında asistan ekranını açar (yeni ekran, post zorunlu).
   Future<T?> pushToAssistantForPost<T extends Object?>(Post post) =>
       push<T>(AppRoutes.assistantForPost, extra: post);
 
-  /// Navigate to prayer screen
-  void goToPrayer() => go(AppRoutes.prayer);
-
   /// Navigate to dhikr screen
   void goToDhikr() => go(AppRoutes.dhikr);
 
-  /// Navigate to profile screen
-  void goToProfile() => go(AppRoutes.profile);
-
-  /// Navigate to create profile screen
-  void goToCreateProfile() => go(AppRoutes.createProfile);
-
-  /// Navigate to edit profile screen
-  void goToEditProfile() => go(AppRoutes.editProfile);
-
-  /// Navigate to settings screen
-  void goToSettings() => go(AppRoutes.settings);
-
-  /// Navigate to purchase (paywall) screen
-  void goToPurchase() => go(AppRoutes.purchase);
-
-  /// Navigate to create dhikr screen
-  void goToCreateDhikr() => go(AppRoutes.createDhikr);
-
   // -------------------- PUSH METHODS (Add to navigation stack) --------------------
-  /// Push sign up screen
-  Future<T?> pushSignUp<T extends Object?>() => push<T>(AppRoutes.signUp);
-
   /// Push settings screen
   Future<T?> pushSettings<T extends Object?>() => push<T>(AppRoutes.settings);
 
@@ -75,10 +45,6 @@ extension RouterExtensions on BuildContext {
   Future<T?> pushEditProfile<T extends Object?>() =>
       push<T>(AppRoutes.editProfile);
 
-  /// Push change password screen
-  Future<T?> pushChangePassword<T extends Object?>() =>
-      push<T>(AppRoutes.changePassword);
-
   /// Push create dhikr screen
   Future<T?> pushCreateDhikr<T extends Object?>() =>
       push<T>(AppRoutes.createDhikr);
@@ -87,14 +53,7 @@ extension RouterExtensions on BuildContext {
   Future<T?> pushCreateDhikrByMood<T extends Object?>() =>
       push<T>(AppRoutes.createDhikrByMood);
 
-  /// Push reset password screen
-  Future<T?> pushResetPassword<T extends Object?>() =>
-      push<T>(AppRoutes.resetPassword);
-
   // -------------------- SPECIAL ROUTES WITH PARAMETERS --------------------
-
-  /// Navigate to post detail screen
-  void goToPostDetail(Post post) => go(AppRoutes.postDetail, extra: post);
 
   /// Push post detail screen
   Future<T?> pushPostDetail<T extends Object?>(Post post) =>
