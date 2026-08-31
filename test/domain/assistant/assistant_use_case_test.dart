@@ -141,10 +141,27 @@ void main() {
           appRepository.appPreferencesNotifier.value.assistantDailyLimit,
           3,
         );
+        expect(appRepository.calls, [
+          'updateAssistantDailyLimit(2)',
+          'updateAssistantDailyLimit(3)',
+        ]);
       },
-      skip:
-          'KNOWN BUG: AssistantUseCase decrements the daily limit before '
-          'sending, so a failed send still consumes one unit of quota.',
     );
+
+    test('still reports the send error when the refund fails', () async {
+      final sendException = Exception('gemini');
+      assistantRepository.sendMessageResult = Error(sendException);
+      var updateCalls = 0;
+      appRepository.onUpdateAssistantDailyLimit = (_) async {
+        updateCalls++;
+        return updateCalls == 1 ? const Ok(null) : Error(Exception('prefs'));
+      };
+
+      final result = await send();
+
+      expect(result, isA<Error<String>>());
+      expect(result.asError.error, same(sendException));
+      expect(updateCalls, 2);
+    });
   });
 }

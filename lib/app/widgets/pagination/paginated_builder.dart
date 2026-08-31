@@ -7,11 +7,17 @@ enum _PaginatedBuilderType {
 
 class PaginatedBuilder extends StatefulWidget {
   const PaginatedBuilder._(
-      this._type, this.itemCount, this.itemBuilder, this.onFetch);
+    this._type,
+    this.itemCount,
+    this.itemBuilder,
+    this.onFetch, {
+    this.gridDelegate,
+  });
   final _PaginatedBuilderType _type;
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
   final Future<void> Function() onFetch;
+  final SliverGridDelegate? gridDelegate;
 
   factory PaginatedBuilder.listView({
     required Widget Function(BuildContext, int) itemBuilder,
@@ -30,12 +36,15 @@ class PaginatedBuilder extends StatefulWidget {
     required Widget Function(BuildContext, int) itemBuilder,
     required int itemCount,
     required Future<void> Function() fetchFunction,
+    SliverGridDelegate gridDelegate =
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
   }) {
     return PaginatedBuilder._(
       _PaginatedBuilderType.gridView,
       itemCount,
       itemBuilder,
       fetchFunction,
+      gridDelegate: gridDelegate,
     );
   }
 
@@ -59,10 +68,12 @@ class _PaginatedBuilderState extends State<PaginatedBuilder> {
             return widget.itemBuilder(context, index);
           },
         ),
-      _PaginatedBuilderType.gridView => Container(
-          width: 320,
-          height: 320,
-          color: Colors.blue,
+      _PaginatedBuilderType.gridView => GridView.builder(
+          gridDelegate: widget.gridDelegate!,
+          itemCount: widget.itemCount,
+          itemBuilder: (BuildContext context, int index) {
+            return widget.itemBuilder(context, index);
+          },
         ),
     };
   }

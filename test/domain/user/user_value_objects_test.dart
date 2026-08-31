@@ -150,9 +150,6 @@ void main() {
         expect(dob.error, isA<DateOfBirthEmpty>());
         expect(dob.isValid, isFalse);
       },
-      skip:
-          'KNOWN BUG: validator returns null for an empty value, so '
-          'DateOfBirthEmpty is never emitted and an empty date is valid.',
     );
 
     test('rejects values that do not match dd/MM/yyyy', () {

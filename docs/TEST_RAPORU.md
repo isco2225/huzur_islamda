@@ -6,16 +6,16 @@ Tarih: 2026-08-31 · Sürüm: 1.2.2+9 · Flutter 3.38.5 / Dart 3.10.4 · Plan: `
 
 | | |
 |---|---|
-| Toplam test | **1092** (ilk teslimde 1089) |
-| Geçen | **1080** (ilk teslimde 1064) |
-| Atlanan (`KNOWN BUG`) | **12** (ilk teslimde 25 — bkz. §8) |
+| Toplam test | **1064** (ilk teslimde 1089; ölü v1 responsive testleri ve eski davranışı belgeleyen testler kaldırıldı) |
+| Geçen | **1064** (ilk teslimde 1064) |
+| Atlanan (`KNOWN BUG`) | **0** (ilk teslimde 25 — bkz. §8 ve §9) |
 | Başarısız | **0** |
 | Test dosyası | 100 (+5 yardımcı dosya) |
 | Test kodu | ≈18.200 satır (uygulama kodu ≈27.900 satır) |
 | Çalıştırma | 2 tam çalıştırma, ikisinde de aynı sonuç (flaky test yok) |
 | `flutter analyze` | Testlerden kaynaklı 0 sorun; `lib/` içinde önceden var olan 6 `info` |
 | Yeni paket | Yok (yalnızca `flutter_test`, elle yazılmış fake'ler) |
-| `lib/` değişikliği | İlk teslimde yok; ikinci turda 7 dosyada hata düzeltmesi (bkz. §8) |
+| `lib/` değişikliği | İlk teslimde yok; ikinci turda 7, üçüncü turda 11 dosyada hata düzeltmesi (bkz. §8, §9) |
 
 Proje bu çalışmadan önce hiç test içermiyordu. Suite; `lib/app`, `lib/domain`, `lib/data` ve `lib/ui` (ViewModel) katmanlarının platform SDK'sına bağlı olmayan tamamını kapsıyor. Testler sırasında kaynak kodda **22 gerçek hata** tespit edildi (bkz. §3); her biri için doğru davranışı iddia eden ve `skip: 'KNOWN BUG: …'` ile işaretlenmiş bir test yazıldı — hata düzeltildiğinde `skip` kaldırılarak test doğrudan regresyon testine dönüşür.
 
@@ -144,3 +144,24 @@ Yüksek öncelikli 7 hata ile aynı dosyalardaki 2 komşu hata düzeltildi; ilgi
 | 18 (komşu) | `app_resend_code_button.dart` | Geri sayım `resendCooldown` parametresinden hesaplanıyor (sabit 60 kaldırıldı). |
 
 Kalan 12 atlanan test: #9–#17 ve #19–#21 (bkz. §3 Orta/Düşük).
+
+## 9. Düzeltme durumu (31 Ağustos 2026, üçüncü tur)
+
+Kalan 12 atlanan testin karşılığı olan orta/düşük öncelikli hatalar düzeltildi; artık `KNOWN BUG` ile atlanan test yok. Ayrıca `DhikrUseCase`'te repository'nin üstlendiği `isSynced` işaretleme döngüsü kaldırıldı.
+
+| # | Konum | Düzeltme |
+|---|---|---|
+| 9 | `dhikr_repository_remote.dart` | `syncDhikrsToLocally` uzak listeyi tersten dolaşıyor; başa ekleyen `saveDhikrLocally` ile notifier uzak (yeni→eski) sırayı koruyor. |
+| 10 | `post_repository_remote.dart` | `fetchPostsByIds` önbelleği yalnızca uzunluk değil, id kümesi eşleşiyorsa kullanıyor. |
+| 11 | `shared_preferences_sevice.dart` | `fetchJson` çözülen değer `Map` değilse `FormatException` ile `Error` dönüyor (`as` cast kaldırıldı). |
+| 12 | `shared_preferences_sevice.dart` | `saveJson`, `JsonUnsupportedObjectError`'ı yakalayıp `Error(Exception)` dönüyor. |
+| 13 | `assistant_use_case.dart` | Limit gönderimden önce düşülmeye devam ediyor (yazma hatasında gönderimi engelleyen "fail-closed" davranış korundu) ama gönderim başarısız olursa **iade** ediliyor; iade hatası yalnızca loglanıyor. |
+| 14 | `edit_profile_view_model.dart` | `currentUserName/Surname/DateOfBirth/Gender` artık constructor'da oluşturulan, `currentUser` dinleyicisiyle güncellenen ve `dispose`'da temizlenen gerçek notifier'lar. |
+| 15 | `date_of_birth_value_object.dart` | Boş değer `DateOfBirthEmpty` üretiyor. Ürün dokümanına göre profil oluşturmada doğum tarihi zorunlu; kayıt ekranındaki alan hatayı yalnızca doğrulama tetiklendiğinde gösteriyor. **Not:** profil düzenleme ekranı DOB hatasını görsel olarak göstermiyor; doğum tarihi boş olan eski kullanıcılar kaydet'e bastığında sessizce engellenir — `DateOfBirthTextField`'a `displayError` bağlanması önerilir. |
+| 16 | `user.dart` | `isEmpty()` tüm alanları `User.empty()` değerleriyle karşılaştırıyor. |
+| 17 | `app_preferences.dart` | `isEmpty()` dört tercih alanını varsayılanlarla karşılaştırıyor; `lastLimitResetDate` (her zaman "bugün") hariç. |
+| 19 | `paginated_builder.dart` | `gridView` gerçek bir `GridView.builder` (varsayılan 2 sütun, `gridDelegate` parametresiyle özelleştirilebilir). |
+| 20, 21 | `responsive_helper.dart`, `responsive_extensions.dart` | **Silindi.** `responsive.dart` barrel'ı v1'i zaten `hide` ediyordu; uygulama kodundaki tüm `context.*` çağrıları v2'ye gidiyordu, dolayısıyla v1 ölü koddu ve tutarsızlık kaynağı ortadan kalktı. v1'e ait 22 test ve v1–v2 karşılaştırma testleri kaldırıldı; barrel'ın v2'ye çözümlendiğini doğrulayan bir test eklendi. |
+| — | `dhikr_use_case.dart` | `syncDhikrsToFirestore` sonrası `updateDhikrLocally` döngüsü kaldırıldı (repository #7 düzeltmesiyle bunu kendisi yapıyor). |
+
+Doğrulama: `flutter analyze` (yalnızca `lib/`'deki 6 eski `info`), `flutter test` iki ardışık çalıştırmada 1064 geçen / 0 atlanan / 0 başarısız.

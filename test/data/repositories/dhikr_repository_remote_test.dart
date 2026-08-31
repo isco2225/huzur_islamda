@@ -403,7 +403,7 @@ void main() {
       final result = await repository.syncDhikrsToLocally(userId: 'uid-1');
 
       expect(result, isA<Ok<void>>());
-      expect(hive.savedKeys, ['a', 'b']);
+      expect(hive.savedKeys, unorderedEquals(['a', 'b']));
       expect(hive.store.values.every((d) => d.isSynced), isTrue);
     });
 
@@ -424,28 +424,7 @@ void main() {
           'oldest',
         ]);
       },
-      skip:
-          'KNOWN BUG: syncDhikrsToLocally saves via saveDhikrLocally, which '
-          'prepends, so the createdAt-descending remote list ends up reversed '
-          '(oldest first) in the notifier.',
     );
-
-    test('currently reverses the remote order in the notifier', () async {
-      // Documents the actual behaviour behind the KNOWN BUG above.
-      firestore.fetchAllDhikrsResult = Result.ok([
-        Fixtures.dhikr(id: 'newest'),
-        Fixtures.dhikr(id: 'middle'),
-        Fixtures.dhikr(id: 'oldest'),
-      ]);
-
-      await repository.syncDhikrsToLocally(userId: 'uid-1');
-
-      expect(ids(repository.dhikrsLocally.value), [
-        'oldest',
-        'middle',
-        'newest',
-      ]);
-    });
 
     test('propagates a Firestore failure', () async {
       firestore.fetchAllDhikrsResult = const Error(DhikrFetchAllFailed());

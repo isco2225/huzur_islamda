@@ -776,6 +776,16 @@ class FakeAppRepository implements AppRepository {
     required int updatedDailyLimit,
   }) async {
     calls.add('updateAssistantDailyLimit($updatedDailyLimit)');
+    final handler = onUpdateAssistantDailyLimit;
+    if (handler != null) {
+      final result = await handler(updatedDailyLimit);
+      if (result is Ok) {
+        appPreferencesNotifier.value = appPreferencesNotifier.value.copyWith(
+          assistantDailyLimit: updatedDailyLimit,
+        );
+      }
+      return result;
+    }
     if (updateAssistantDailyLimitResult == null) {
       appPreferencesNotifier.value = appPreferencesNotifier.value.copyWith(
         assistantDailyLimit: updatedDailyLimit,
@@ -783,6 +793,11 @@ class FakeAppRepository implements AppRepository {
     }
     return updateAssistantDailyLimitResult ?? const Ok(null);
   }
+
+  /// Per-call handler for [updateAssistantDailyLimit]; takes precedence over
+  /// [updateAssistantDailyLimitResult] when set.
+  Future<Result<void>> Function(int updatedDailyLimit)?
+  onUpdateAssistantDailyLimit;
 
   @override
   Future<Result<void>> resetAssistantDailyLimit() async {

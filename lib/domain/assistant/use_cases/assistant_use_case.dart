@@ -69,6 +69,17 @@ class AssistantUseCase {
             case Ok():
               return Result.ok(messageResult.asOk.value);
             case Error():
+              // The user got no answer, so give the consumed unit back.
+              final refundResult = await appRepository
+                  .updateAssistantDailyLimit(
+                    updatedDailyLimit: assistantDailyLimit,
+                  );
+              if (refundResult is Error) {
+                _log.warning(
+                  'Failed to refund assistant daily limit after send error: '
+                  '${refundResult.asError.error}',
+                );
+              }
               return Result.error(messageResult.asError.error);
           }
         case Error():

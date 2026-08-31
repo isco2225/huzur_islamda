@@ -204,11 +204,22 @@ void main() {
 
         expect(nameListenable.value, 'Mehmet');
         expect(notifications, 1);
+        expect(viewModel.currentUserSurname.value, 'Yılmaz');
       },
-      skip:
-          'KNOWN BUG: currentUserName/currentUserSurname/currentUserDateOfBirth/'
-          'currentUserGender return a NEW ValueNotifier on every access that is '
-          'never updated, so listeners never fire after the user changes',
     );
+
+    test('stops following the user after dispose', () {
+      final nameListenable = viewModel.currentUserName;
+      viewModel.dispose();
+
+      // The listener is removed on dispose, so updating the user afterwards
+      // neither throws (disposed notifier) nor changes the old value.
+      userRepository.currentUserNotifier.value = Fixtures.user(name: 'Ayşe');
+
+      expect(nameListenable.value, 'Ahmet');
+
+      // Re-create so tearDown disposes a live instance.
+      viewModel = build();
+    });
   });
 }

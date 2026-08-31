@@ -180,10 +180,15 @@ void main() {
 
         expect(user.isEmpty(), isTrue);
       },
-      skip:
-          'KNOWN BUG: User has no == override, so isEmpty() compares identity '
-          'and returns false for any instance other than the const '
-          'User.empty() singleton.',
     );
+
+    test('isEmpty is false as soon as any field is set', () {
+      expect(User.empty().copyWith(uid: 'u').isEmpty(), isFalse);
+      expect(User.empty().copyWith(isRegistered: true).isEmpty(), isFalse);
+      expect(
+        User.empty().copyWith(supportPackage: SupportPackage.weekly).isEmpty(),
+        isFalse,
+      );
+    });
   });
 }

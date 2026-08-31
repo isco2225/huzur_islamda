@@ -17,6 +17,18 @@ class EditProfileViewModel {
        _schedulePrayerNotificationsUseCase = schedulePrayerNotificationsUseCase,
        _isNotificationsEnabled = ValueNotifier<bool>(
          appRepository.appPreferences.value.isNotificationsEnabled,
+       ),
+       _currentUserName = ValueNotifier<String>(
+         userRepository.currentUser.value.name,
+       ),
+       _currentUserSurname = ValueNotifier<String>(
+         userRepository.currentUser.value.surname,
+       ),
+       _currentUserDateOfBirth = ValueNotifier<String>(
+         userRepository.currentUser.value.dateOfBirth,
+       ),
+       _currentUserGender = ValueNotifier<String>(
+         userRepository.currentUser.value.gender,
        ) {
     // DEFINE COMMANDS
     updateProfile = Command1(
@@ -29,6 +41,7 @@ class EditProfileViewModel {
     );
     // DEFINE LISTENERS
     _appRepository.appPreferences.addListener(_onAppPreferencesChanged);
+    _userRepository.currentUser.addListener(_onCurrentUserChanged);
   }
 
   // LOGGER
@@ -41,14 +54,15 @@ class EditProfileViewModel {
   // DOMAIN
   ValueListenable<User> get currentUser => _userRepository.currentUser;
 
-  ValueListenable<String> get currentUserName =>
-      ValueNotifier<String>(currentUser.value.name);
-  ValueListenable<String> get currentUserSurname =>
-      ValueNotifier<String>(currentUser.value.surname);
-  ValueListenable<String> get currentUserDateOfBirth =>
-      ValueNotifier<String>(currentUser.value.dateOfBirth);
-  ValueListenable<String> get currentUserGender =>
-      ValueNotifier<String>(currentUser.value.gender);
+  ValueListenable<String> get currentUserName => _currentUserName;
+  ValueListenable<String> get currentUserSurname => _currentUserSurname;
+  ValueListenable<String> get currentUserDateOfBirth => _currentUserDateOfBirth;
+  ValueListenable<String> get currentUserGender => _currentUserGender;
+
+  final ValueNotifier<String> _currentUserName;
+  final ValueNotifier<String> _currentUserSurname;
+  final ValueNotifier<String> _currentUserDateOfBirth;
+  final ValueNotifier<String> _currentUserGender;
 
   final ValueNotifier<bool> _isNotificationsEnabled;
 
@@ -68,6 +82,11 @@ class EditProfileViewModel {
     updateUserLocation.dispose();
     _isNotificationsEnabled.dispose();
     _appRepository.appPreferences.removeListener(_onAppPreferencesChanged);
+    _userRepository.currentUser.removeListener(_onCurrentUserChanged);
+    _currentUserName.dispose();
+    _currentUserSurname.dispose();
+    _currentUserDateOfBirth.dispose();
+    _currentUserGender.dispose();
     _log.fine('EditProfileViewModel Disposed');
   }
 
@@ -137,5 +156,13 @@ class EditProfileViewModel {
   void _onAppPreferencesChanged() {
     _isNotificationsEnabled.value =
         _appRepository.appPreferences.value.isNotificationsEnabled;
+  }
+
+  void _onCurrentUserChanged() {
+    final user = currentUser.value;
+    _currentUserName.value = user.name;
+    _currentUserSurname.value = user.surname;
+    _currentUserDateOfBirth.value = user.dateOfBirth;
+    _currentUserGender.value = user.gender;
   }
 }

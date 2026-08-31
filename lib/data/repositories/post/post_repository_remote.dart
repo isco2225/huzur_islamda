@@ -195,7 +195,10 @@ class PostRepositoryRemote extends PostRepository {
     if (_savedPostIds.value.isEmpty) {
       return Result.ok([]);
     }
-    if (_savedPostIds.value.length == _savedPosts.value.length) {
+    final wantedIds = _savedPostIds.value.toSet();
+    final cachedIds = _savedPosts.value.map((post) => post.id).toSet();
+    if (cachedIds.length == wantedIds.length &&
+        cachedIds.containsAll(wantedIds)) {
       return Result.ok(_savedPosts.value);
     }
     try {

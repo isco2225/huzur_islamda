@@ -263,7 +263,9 @@ class DhikrRepositoryRemote implements DhikrRepository {
           return Result.ok(null);
         }
         _log.info('Found ${dhikrs.length} dhikrs to sync to locally');
-        for (final dhikr in dhikrs) {
+        // saveDhikrLocally prepends, so walk the remote list backwards to
+        // end up with the same (newest-first) order in the notifier.
+        for (final dhikr in dhikrs.reversed) {
           await saveDhikrLocally(dhikr: dhikr.copyWith(isSynced: true));
         }
 

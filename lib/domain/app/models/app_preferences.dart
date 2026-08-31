@@ -66,5 +66,13 @@ class AppPreferences {
     );
   }
 
-  bool isEmpty() => this == AppPreferences.empty();
+  /// True when every preference still has its default value.
+  /// [lastLimitResetDate] is ignored because the default is always "today".
+  bool isEmpty() {
+    final defaults = AppPreferences.empty();
+    return isVibrationEnabled == defaults.isVibrationEnabled &&
+        isNotificationsEnabled == defaults.isNotificationsEnabled &&
+        isOnboardingCompleted == defaults.isOnboardingCompleted &&
+        assistantDailyLimit == defaults.assistantDailyLimit;
+  }
 }

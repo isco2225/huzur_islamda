@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huzur_islamda/app/core/responsive/responsive_data.dart';
-import 'package:huzur_islamda/app/core/responsive/responsive_extensions.dart';
 import 'package:huzur_islamda/app/core/responsive/responsive_extensions_v2.dart';
 import 'package:huzur_islamda/app/core/responsive/responsive_helper_v2.dart'
     show ResponsiveSpacing;
@@ -129,77 +128,6 @@ void main() {
     });
   });
 
-  group('ResponsiveExtension (v1) on BuildContext', () {
-    testWidgets('320 is a small screen', (tester) async {
-      final context = await pumpWithWidth(tester, 320);
-
-      expect(ResponsiveExtension(context).screenWidth, 320);
-      expect(ResponsiveExtension(context).screenHeight, 800);
-      expect(ResponsiveExtension(context).isSmallScreen, isTrue);
-      expect(ResponsiveExtension(context).isMediumScreen, isFalse);
-      expect(ResponsiveExtension(context).isLargeScreen, isFalse);
-      expect(ResponsiveExtension(context).horizontalPadding, 16.0);
-      expect(ResponsiveExtension(context).verticalPadding, 12.0);
-      expect(ResponsiveExtension(context).spacingExtraSmall, 4.0);
-      expect(ResponsiveExtension(context).spacingSmall, 16.0);
-      expect(ResponsiveExtension(context).spacingMedium, 20.0);
-      expect(ResponsiveExtension(context).spacingLarge, 24.0);
-      expect(ResponsiveExtension(context).spacingExtraLarge, 32.0);
-      expect(ResponsiveExtension(context).maxContentWidth, 420.0);
-      expect(
-        ResponsiveExtension(context).responsiveFontSize(16),
-        closeTo(14.4, 0.0001),
-      );
-      expect(ResponsiveExtension(context).responsiveFontSize(null), isNull);
-    });
-
-    testWidgets('700 is neither small, medium nor large in v1', (tester) async {
-      final context = await pumpWithWidth(tester, 700);
-
-      expect(ResponsiveExtension(context).isSmallScreen, isFalse);
-      expect(ResponsiveExtension(context).isMediumScreen, isFalse);
-      expect(ResponsiveExtension(context).isLargeScreen, isFalse);
-      expect(ResponsiveExtension(context).horizontalPadding, 24.0);
-      expect(ResponsiveExtension(context).verticalPadding, 16.0);
-      expect(ResponsiveExtension(context).maxContentWidth, 420.0);
-      expect(ResponsiveExtension(context).responsiveFontSize(16), 16.0);
-      expect(
-        ResponsiveExtension(context).containerPadding,
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      );
-      expect(
-        ResponsiveExtension(context).dialogPadding,
-        const EdgeInsets.all(24),
-      );
-      expect(
-        ResponsiveExtension(context).dialogTitlePadding,
-        const EdgeInsets.fromLTRB(24, 24, 24, 16),
-      );
-      expect(
-        ResponsiveExtension(context).dialogContentPadding,
-        const EdgeInsets.fromLTRB(24, 20, 24, 16),
-      );
-      expect(
-        ResponsiveExtension(context).dialogActionsPadding,
-        const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      );
-    });
-
-    testWidgets('1000 is a large screen in v1', (tester) async {
-      final context = await pumpWithWidth(tester, 1000);
-
-      expect(ResponsiveExtension(context).isSmallScreen, isFalse);
-      expect(ResponsiveExtension(context).isMediumScreen, isFalse);
-      expect(ResponsiveExtension(context).isLargeScreen, isTrue);
-      expect(ResponsiveExtension(context).horizontalPadding, 32.0);
-      expect(ResponsiveExtension(context).maxContentWidth, 500.0);
-      expect(
-        ResponsiveExtension(context).responsiveFontSize(16),
-        closeTo(17.6, 0.0001),
-      );
-    });
-  });
-
   group('ResponsiveExtensionV2 on BuildContext', () {
     testWidgets('320 is a small screen', (tester) async {
       final context = await pumpWithWidth(tester, 320);
@@ -298,50 +226,17 @@ void main() {
     });
   });
 
-  group('v1 vs v2 extension consistency', () {
-    group(
-      'large screen classification',
-      () {
-        testWidgets('both extensions classify a 700-wide screen the same way', (
-          tester,
-        ) async {
-          final context = await pumpWithWidth(tester, 700);
+  group('barrel export', () {
+    testWidgets('context.isLargeScreen resolves to the v2 breakpoint scheme', (
+      tester,
+    ) async {
+      // Only ResponsiveExtensionV2 is exported by app/core/responsive/
+      // responsive.dart, so a 700-wide screen is "large" ([600, 900)).
+      final context = await pumpWithWidth(tester, 700);
 
-          expect(
-            ResponsiveExtension(context).isLargeScreen,
-            ResponsiveExtensionV2(context).isLargeScreen,
-          );
-          expect(
-            ResponsiveExtension(context).horizontalPadding,
-            ResponsiveExtensionV2(context).horizontalPadding,
-          );
-          expect(
-            ResponsiveExtension(context).maxContentWidth,
-            ResponsiveExtensionV2(context).maxContentWidth,
-          );
-        });
-      },
-      skip:
-          'KNOWN BUG: v1 isLargeScreen means width >= 900 while v2 '
-          'isLargeScreen means [600, 900); a 700-wide screen gets padding '
-          '24/maxWidth 420 from v1 but 32/500 from v2.',
-    );
-
-    testWidgets('both extensions agree on a small screen', (tester) async {
-      final context = await pumpWithWidth(tester, 320);
-
-      expect(
-        ResponsiveExtension(context).isSmallScreen,
-        ResponsiveExtensionV2(context).isSmallScreen,
-      );
-      expect(
-        ResponsiveExtension(context).horizontalPadding,
-        ResponsiveExtensionV2(context).horizontalPadding,
-      );
-      expect(
-        ResponsiveExtension(context).responsiveFontSize(16),
-        ResponsiveExtensionV2(context).responsiveFontSize(16),
-      );
+      expect(context.isLargeScreen, isTrue);
+      expect(context.horizontalPadding, 32.0);
+      expect(context.maxContentWidth, 500.0);
     });
   });
 }

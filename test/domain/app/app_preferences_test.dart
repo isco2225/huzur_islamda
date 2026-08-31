@@ -130,10 +130,14 @@ void main() {
         expect(AppPreferences.empty().isEmpty(), isTrue);
         expect(AppPreferences.fromJson({}).isEmpty(), isTrue);
       },
-      skip:
-          'KNOWN BUG: AppPreferences has no == override and empty() builds a '
-          'fresh instance each call, so isEmpty() is always false.',
     );
+
+    test('ignores lastLimitResetDate', () {
+      expect(
+        AppPreferences.empty().copyWith(lastLimitResetDate: '2020-01-01').isEmpty(),
+        isTrue,
+      );
+    });
   });
 
   group('AppLoadFailed', () {

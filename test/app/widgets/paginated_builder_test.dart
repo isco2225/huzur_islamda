@@ -116,9 +116,6 @@ void main() {
           expect(find.text('Item 1'), findsOneWidget);
         });
       },
-      skip:
-          'KNOWN BUG: PaginatedBuilder.gridView is a stub that renders a '
-          'fixed 320x320 blue Container and ignores itemBuilder/itemCount.',
     );
   });
 }

@@ -105,26 +105,9 @@ void main() {
 
         expect(ids(result.asOk.value), ['c', 'd']);
         expect(ids(repository.savedPosts.value), ['c', 'd']);
+        expect(service.fetchPostsByIdsCalls.length, 2);
       },
-      skip:
-          'KNOWN BUG: fetchPostsByIds only compares savedPostIds.length with '
-          'savedPosts.length, so a different id set of the same size returns '
-          'the stale cached posts.',
     );
-
-    test('currently serves stale posts when only the id set changed', () async {
-      // Documents the actual behaviour behind the KNOWN BUG above.
-      service.fetchSavedPostIdsResult = const Ok(['a', 'b']);
-      await repository.fetchSavedPostIds(userId: 'uid-1');
-      await repository.fetchPostsByIds();
-      service.fetchSavedPostIdsResult = const Ok(['c', 'd']);
-      await repository.fetchSavedPostIds(userId: 'uid-1');
-
-      final result = await repository.fetchPostsByIds();
-
-      expect(ids(result.asOk.value), ['a', 'b']);
-      expect(service.fetchPostsByIdsCalls.length, 1);
-    });
 
     test('propagates a service error and keeps the cache', () async {
       service.fetchSavedPostIdsResult = const Ok(['a']);

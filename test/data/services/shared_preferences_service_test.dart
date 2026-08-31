@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huzur_islamda/app/utils/result.dart';
 import 'package:huzur_islamda/data/data.dart';
@@ -51,26 +49,10 @@ void main() {
         final result = await service.fetchJson(key: 'list');
 
         expect(result, isA<Error<Map<String, Object?>?>>());
-      },
-      skip:
-          'KNOWN BUG: fetchJson casts jsonDecode() to Map with `as`, so a '
-          'stored JSON array throws a TypeError (not an Exception) that '
-          'escapes the `on Exception` clause instead of becoming Error.',
-    );
-
-    test(
-      'currently throws a TypeError when the stored JSON is an array',
-      () async {
-        // Documents the actual behaviour behind the KNOWN BUG above.
-        SharedPreferences.setMockInitialValues({'list': '[1,2,3]'});
-        final service = SharedPreferencesService();
-
-        await expectLater(
-          service.fetchJson(key: 'list'),
-          throwsA(isA<TypeError>()),
-        );
+        expect(result.asError.error, isA<FormatException>());
       },
     );
+
   });
 
   group('SharedPreferencesService.saveJson', () {
@@ -115,25 +97,7 @@ void main() {
         expect(result, isA<Error<dynamic>>());
         expect((await service.fetchJson(key: 'bad')).asOk.value, isNull);
       },
-      skip:
-          'KNOWN BUG: jsonEncode throws JsonUnsupportedObjectError, which is '
-          'a dart:core Error rather than an Exception, so it escapes the '
-          '`on Exception` clause in saveJson instead of becoming Error.',
     );
 
-    test(
-      'currently throws JsonUnsupportedObjectError for a non-encodable map',
-      () async {
-        // Documents the actual behaviour behind the KNOWN BUG above.
-        SharedPreferences.setMockInitialValues({});
-        final service = SharedPreferencesService();
-
-        await expectLater(
-          service.saveJson(key: 'bad', json: {'when': DateTime(2026)}),
-          throwsA(isA<JsonUnsupportedObjectError>()),
-        );
-        expect((await service.fetchJson(key: 'bad')).asOk.value, isNull);
-      },
-    );
   });
 }

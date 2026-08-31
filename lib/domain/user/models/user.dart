@@ -144,7 +144,22 @@ class User {
     );
   }
 
-  bool isEmpty() => this == User.empty();
+  bool isEmpty() =>
+      uid.isEmpty &&
+      email.isEmpty &&
+      name.isEmpty &&
+      surname.isEmpty &&
+      dateOfBirth.isEmpty &&
+      gender.isEmpty &&
+      !emailVerified &&
+      createdAt == null &&
+      updatedAt == null &&
+      !isRegistered &&
+      (country ?? '').isEmpty &&
+      (city ?? '').isEmpty &&
+      (districtId ?? '').isEmpty &&
+      lastSupportedAt == null &&
+      supportPackage == null;
 
   bool get isPremium => supportPackage != null;
 }

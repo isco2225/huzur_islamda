@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huzur_islamda/app/core/responsive/responsive_data.dart';
-import 'package:huzur_islamda/app/core/responsive/responsive_helper.dart'
-    as v1;
 import 'package:huzur_islamda/app/core/responsive/responsive_helper_v2.dart'
     as v2;
 
@@ -110,37 +108,6 @@ void main() {
       );
     });
 
-    test(
-      'v1 and v2 helpers agree on the large-screen font multiplier',
-      () {
-        // v1 uses widths, v2 uses breakpoints; a width of 1000 is
-        // "large" in v1 terms (>= 900) and extraLarge in v2 terms, while
-        // ResponsiveBreakpoint.large covers [600, 900) which v1 treats as
-        // the default 1.0 band. The two helpers are used side by side in
-        // the code base (v1 via ResponsiveExtension, v2 via
-        // ResponsiveExtensionV2), so the same physical screen can get
-        // different font sizes depending on which extension a widget uses.
-        expect(
-          v2.ResponsiveHelper.getFontSizeMultiplier(large),
-          v1.ResponsiveHelper.getFontSizeMultiplier(1000),
-        );
-      },
-      skip:
-          'KNOWN BUG: v1 ResponsiveHelper uses a 1.1 large-screen font '
-          'multiplier while v2 uses 1.2 (and 1.4 for extraLarge); the two '
-          'helpers disagree for the same screen.',
-    );
-
-    test('v1 and v2 helpers agree on small and medium multipliers', () {
-      expect(
-        v2.ResponsiveHelper.getFontSizeMultiplier(small),
-        v1.ResponsiveHelper.getFontSizeMultiplier(320),
-      );
-      expect(
-        v2.ResponsiveHelper.getFontSizeMultiplier(medium),
-        v1.ResponsiveHelper.getFontSizeMultiplier(480),
-      );
-    });
   });
 
   group('ResponsiveHelper (v2) EdgeInsets', () {

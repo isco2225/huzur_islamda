@@ -69,7 +69,7 @@ void main() {
     });
 
     test(
-      'pushes unsynced dhikrs to Firestore and marks each as synced',
+      'pushes unsynced dhikrs to Firestore and leaves marking to the repository',
       () async {
         dhikrRepository.getUnsyncedDhikrsResult = Ok([
           Fixtures.dhikr(id: 'a', isSynced: false),
@@ -82,13 +82,7 @@ void main() {
         expect(dhikrRepository.calls, [
           'getUnsyncedDhikrs()',
           'syncDhikrsToFirestore(userId=uid-1)',
-          'updateDhikrLocally(dhikrId=a, isSynced=true)',
-          'updateDhikrLocally(dhikrId=b, isSynced=true)',
         ]);
-        expect(
-          dhikrRepository.updatedDhikrs.map((d) => d.isSynced),
-          everyElement(isTrue),
-        );
         // The count comparison branch is not reached.
         expect(
           dhikrRepository.calls,

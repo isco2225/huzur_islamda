@@ -23,8 +23,14 @@ class SharedPreferencesService {
         _log.fine('No value in SharedPreferences');
         return Result.ok(null);
       }
-      final json = jsonDecode(jsonEncoded) as Map<String, dynamic>;
-      return Result.ok(json);
+      final decoded = jsonDecode(jsonEncoded);
+      if (decoded is! Map<String, dynamic>) {
+        _log.warning('Stored value for "$key" is not a JSON object');
+        return Result.error(
+          FormatException('Stored value for "$key" is not a JSON object'),
+        );
+      }
+      return Result.ok(decoded);
     } on Exception catch (e) {
       _log.warning('Failed to get token', e);
       return Result.error(e);
@@ -45,6 +51,10 @@ class SharedPreferencesService {
       }
       _log.info('Saved JSON to SharedPreferences: $key');
       return Result.ok(null);
+    } on JsonUnsupportedObjectError catch (e) {
+      // jsonEncode reports unsupported values as an Error, not an Exception.
+      _log.warning('Failed to encode JSON for "$key"', e);
+      return Result.error(Exception('Value for "$key" is not JSON encodable'));
     } on Exception catch (e) {
       _log.warning('Failed to save', e);
       return Result.error(e);

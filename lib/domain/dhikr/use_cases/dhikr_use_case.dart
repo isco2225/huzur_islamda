@@ -59,16 +59,10 @@ class DhikrUseCase {
           );
           switch (firestoreResult) {
             case Ok():
+              // The repository marks the pushed dhikrs as synced locally.
               _log.info(
                 'Successfully synced ${unsyncedDhikrs.length} unsynced dhikrs to firestore',
               );
-              // mark unsynced dhikrs as synced
-              for (final dhikr in unsyncedDhikrs) {
-                await _dhikrRepository.updateDhikrLocally(
-                  dhikrId: dhikr.id,
-                  dhikr: dhikr.copyWith(isSynced: true),
-                );
-              }
               return Result.ok(null);
             case Error():
               return Result.error(firestoreResult.asError.error);

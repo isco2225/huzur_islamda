@@ -39,17 +39,17 @@ void main() {
       expect(dhikrRepository.calls, isEmpty);
     });
 
-    test('pushes unsynced dhikrs to Firestore and marks them synced', () async {
+    test('pushes unsynced dhikrs to Firestore', () async {
       dhikrRepository.getUnsyncedDhikrsResult = Ok([
         Fixtures.dhikr(id: 'd-1', isSynced: false),
       ]);
 
       await viewModel.syncDhikrs.execute();
 
+      // Marking as synced is the repository's job (see DhikrRepositoryRemote).
       expect(dhikrRepository.calls, [
         'getUnsyncedDhikrs()',
         'syncDhikrsToFirestore(userId=uid-1)',
-        'updateDhikrLocally(dhikrId=d-1, isSynced=true)',
       ]);
       expect(viewModel.syncDhikrs.completed.value, isTrue);
     });
