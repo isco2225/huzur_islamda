@@ -142,15 +142,12 @@ void main() {
       expect(dob.displayError, isNull);
     });
 
-    test(
-      'empty value reports DateOfBirthEmpty',
-      () {
-        const dob = DateOfBirthValueObject.dirty('');
+    test('empty value is valid because the field is optional', () {
+      const dob = DateOfBirthValueObject.dirty('');
 
-        expect(dob.error, isA<DateOfBirthEmpty>());
-        expect(dob.isValid, isFalse);
-      },
-    );
+      expect(dob.error, isNull);
+      expect(dob.isValid, isTrue);
+    });
 
     test('rejects values that do not match dd/MM/yyyy', () {
       const invalid = [

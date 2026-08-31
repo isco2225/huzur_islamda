@@ -13,8 +13,9 @@ class DateOfBirthValueObject extends FormzInput<String, ValueObjectFailure> {
 
   @override
   ValueObjectFailure? validator(String value) {
+    // Date of birth is optional; only a non-empty value is validated.
     if (value.isEmpty) {
-      return DateOfBirthEmpty();
+      return null;
     }
     // Format control: GG/AA/YYYY
     if (!RegExp(

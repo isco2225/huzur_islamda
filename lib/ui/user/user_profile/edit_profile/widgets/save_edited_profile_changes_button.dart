@@ -12,6 +12,7 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
     required this.running,
     required this.displayNameError,
     required this.displaySurnameError,
+    required this.displayDateOfBirthError,
     required this.displayGenderError,
     required this.nameController,
     required this.surnameController,
@@ -23,6 +24,7 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
   final ValueListenable<bool> running;
   final ValueNotifier<bool> displayNameError;
   final ValueNotifier<bool> displaySurnameError;
+  final ValueNotifier<bool> displayDateOfBirthError;
   final ValueNotifier<bool> displayGenderError;
   final TextEditingController nameController;
   final TextEditingController surnameController;
@@ -64,6 +66,7 @@ class SaveEditedProfileChangesButton extends StatelessWidget {
 
     displayNameError.value = !isNameValid;
     displaySurnameError.value = !isSurnameValid;
+    displayDateOfBirthError.value = !isDateOfBirthValid;
     displayGenderError.value = !isGenderValid;
 
     return isNameValid && isSurnameValid && isDateOfBirthValid && isGenderValid;

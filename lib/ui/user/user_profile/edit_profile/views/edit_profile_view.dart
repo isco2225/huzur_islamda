@@ -19,6 +19,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final ValueNotifier<bool> _displayGenderError = ValueNotifier(false);
   final ValueNotifier<bool> _displayNameError = ValueNotifier(false);
   final ValueNotifier<bool> _displaySurnameError = ValueNotifier(false);
+  final ValueNotifier<bool> _displayDateOfBirthError = ValueNotifier(false);
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,9 @@ class _EditProfileViewState extends State<EditProfileView> {
     _surnameController.dispose();
     _dateOfBirthController.dispose();
     _displayGenderError.dispose();
+    _displayNameError.dispose();
+    _displaySurnameError.dispose();
+    _displayDateOfBirthError.dispose();
     super.dispose();
   }
 
@@ -81,6 +85,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 listenable: Listenable.merge([
                   _displayNameError,
                   _displaySurnameError,
+                  _displayDateOfBirthError,
                   _displayGenderError,
                 ]),
                 builder: (context, child) {
@@ -98,6 +103,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                       SizedBox(height: context.isSmallScreen ? 16 : 20),
                       DateOfBirthTextField(
                         controller: _dateOfBirthController,
+                        displayError: _displayDateOfBirthError,
                         onTap: _selectDate,
                       ),
                       SizedBox(height: context.isSmallScreen ? 16 : 20),
@@ -123,6 +129,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                   running: widget.viewModel.updateProfile.running,
                   displayNameError: _displayNameError,
                   displaySurnameError: _displaySurnameError,
+                  displayDateOfBirthError: _displayDateOfBirthError,
                   displayGenderError: _displayGenderError,
                   nameController: _nameController,
                   surnameController: _surnameController,
